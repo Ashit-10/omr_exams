@@ -1,1 +1,1 @@
-# [click here for website](github.github.io/Ashit-10/omr_exams)
+# [click here for website](https://ashit-10.github.io/omr_exams)
