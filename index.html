@@ -30,30 +30,11 @@
  <button style="font-size:40px" class="fa fa-folder" onclick="document.location='2024.html'"> 2024 - 25 </button>
 
 
-<input type="file" accept="image/*" capture="environment" />
-<video id="player" controls autoplay></video>
-<button id="capture">Capture</button>
-<canvas id="canvas" width="120" height="240"></canvas>
-<script>
-  const player = document.getElementById('player');
-  const canvas = document.getElementById('canvas');
-  const context = canvas.getContext('2d');
-  const captureButton = document.getElementById('capture');
+<label for="picture">Upload answer sheet to evaluate .</label>
 
-  const constraints = {
-    video: true,
-  };
+<input type="file" id="picture" name="picture" accept="image/*" capture="environment" />
 
-  captureButton.addEventListener('click', () => {
-    // Draw the video frame to the canvas.
-    context.drawImage(player, 1,1, canvas.width, canvas.height);
-  });
 
-  // Attach the video stream to the video element and autoplay.
-  navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-    player.srcObject = stream;
-  });
-</script>
 
  
     <py-script>  
