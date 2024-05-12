@@ -107,7 +107,7 @@
     <br><br><br><br><br><br>
     <div id="cameraContainer">
 
-    <video id="video" width="320" height="440" autoplay></video><br>
+    <video id="video" width="320" height="430" autoplay></video><br>
     <button id="capture-btn">Capture</button>
     
     <button id="flashlightButton">Cancel</button>
@@ -184,9 +184,9 @@ function sendImage() {
             var video = document.getElementById('video');
             var canvas = document.createElement('canvas');
             canvas.width = 320;
-            canvas.height = 440;
+            canvas.height = 430;
             var context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, 320, 440);
+            context.drawImage(video, 0, 0, 320, 430);
 
             // Draw captured image onto video element
             var videoParent = video.parentNode;
