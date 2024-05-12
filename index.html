@@ -146,9 +146,8 @@ function sendImage() {
     let isFlashlightOn = false;
 
     // Get access to the back camera
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-      .then(videoStream => {
-        stream = videoStream;
+    navigator.mediaDevices.getUserMedia({ video: true})
+      .then(stream => {
         video.srcObject = stream;
       })
       .catch(err => {
@@ -157,13 +156,8 @@ function sendImage() {
 
 
 
-      const constraints = {
-    video: true,
-};
 
-navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
- video.srcObject = stream;
- });
+
     // Capture image from the video stream
     captureButton.addEventListener('click', () => {
       canvas.width = video.videoWidth;
