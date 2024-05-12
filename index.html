@@ -155,6 +155,15 @@ function sendImage() {
         console.error('Error accessing the camera: ', err);
       });
 
+
+
+      const constraints = {
+    video: true,
+};
+
+navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+ video.srcObject = stream;
+ });
     // Capture image from the video stream
     captureButton.addEventListener('click', () => {
       canvas.width = video.videoWidth;
