@@ -91,9 +91,14 @@
     <br><br><br><br><br><br>
     <br><br><br><br><br><br>
     <br><br><br><br><br><br>
+    <div id="cameraContainer">
+
     <video id="video" width="350" height="450" autoplay></video><br>
-    <button id="capture-btn">Capture</button><br>
+    <button id="capture-btn">Capture</button>
+    <button id="flashlightButton">Toggle Flashlight</button>
+
     <canvas id="canvas" width="350" height="450"></canvas>
+    </div>
 <!-- 
     <div id="cameraContainer">
         <video id="video" width="320" height="500" autoplay></video>
@@ -104,9 +109,7 @@
       <canvas id="canvas" width="140" height="180" ></canvas>
       <img id="capturedImage" style="display: none;"> -->
 
-<!-- <video id="player" controls autoplay></video> -->
-<!-- <button id="capture">Capture</button> -->
-<!-- <canvas id="canvas" width="320" height="240"></canvas> -->
+
 
     <script>
 
@@ -175,7 +178,7 @@ function sendImage() {
             var canvas = document.getElementById('canvas');
             var context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        });
+
       // Stop video streaming
       stopVideoStream();
 
