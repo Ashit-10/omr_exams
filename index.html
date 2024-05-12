@@ -172,7 +172,7 @@ function sendImage() {
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             var context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, 320, 500);
+            context.drawImage(video, 0, 0, 250, 400);
 
             // Draw captured image onto video element
             var videoParent = video.parentNode;
@@ -180,6 +180,11 @@ function sendImage() {
 
             // Remove the video element
             // videoParent.removeChild(video);
+
+
+
+
+
             canvas.toBlob(function(blob) {
                 // Create File object from Blob
                 const file = new File([blob], 'captured_image.png', { type: 'image/png' });
