@@ -159,12 +159,14 @@
                             throw new Error('Failed to send image');
                         }
                         loader.style.display = 'none';
-                        // alert('Image sent successfully!');
+                        alert('Image sent successfully!');
+                        location.reload();
                     })
                     .catch(error => {
                         console.error('Error:', error);
                         loader.style.display = 'none';
                         alert('Failed to send image');
+                        location.reload();
                     });
             } else {
                 alert('Please select an image to send');
