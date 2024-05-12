@@ -10,6 +10,10 @@
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+   <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+   
+
 </head>
 <body>
 <!--     <a href="2023.html"><img src="Images/IMG_2157.jpg" alt="roll 1 jpg"> </a>    
@@ -26,7 +30,7 @@
  <button style="font-size:40px" class="fa fa-folder" onclick="document.location='2024.html'"> 2024 - 25 </button>
 
 
-<input type="file" accept="image/*" />
+<input type="file" accept="image/*" capture="environment" />
 <video id="player" controls autoplay></video>
 <button id="capture">Capture</button>
 <canvas id="canvas" width="120" height="240"></canvas>
@@ -50,5 +54,11 @@
     player.srcObject = stream;
   });
 </script>
+
+ 
+    <py-script>  
+   print("Hello World!")
+        
+   </py-script>
 </body>
 </html>
