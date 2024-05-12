@@ -144,6 +144,7 @@ function sendImage() {
 
 
 
+
     const video = document.getElementById('video');
     // const canvas = document.getElementById('canvas');
     const capturedImage = document.getElementById('capturedImage');
@@ -151,8 +152,11 @@ function sendImage() {
     const flashlightButton = document.getElementById('flashlightButton');
     let stream;
     let isFlashlightOn = false;
-        // Get access to the camera
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+
+
+    
+           // Get access to the camera
+           navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
         .then(function(stream) {
             var video = document.getElementById('video');
             video.srcObject = stream;
@@ -170,11 +174,15 @@ function sendImage() {
             var context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // Replace video with captured image
+            // Draw captured image onto video element
             var videoParent = video.parentNode;
-            videoParent.replaceChild(canvas);
-            // videoParent.appendChild(canvas);
+            videoParent.replaceChild(canvas, video);
+
+            // Remove the video element
+            // videoParent.removeChild(video);
         });
+
+
     // Toggle flashlight
     flashlightButton.addEventListener('click', () => {
       toggleFlashlight();
