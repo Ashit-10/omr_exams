@@ -222,11 +222,11 @@ function sendBlob(canvas){
             var videoParent = video.parentNode;
             videoParent.replaceChild(canvas, video);
           
-            
+
             // Remove the video element
             // videoParent.removeChild(video);
             stopVideoStream();
-            sendBlob(canvas);
+            sendBlob(context);
 
 
 
