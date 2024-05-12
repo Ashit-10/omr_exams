@@ -28,14 +28,20 @@
     
     <br><br><br>
  <button style="font-size:40px" class="fa fa-folder" onclick="document.location='2024.html'"> 2024 - 25 </button>
-
+<br><br><br><br><br><br>
 
 <label for="picture">Upload answer sheet to evaluate .</label>
 
 <input type="file" id="picture" name="picture" accept="image/*" capture="environment" />
 
 
+<script>
+let  got_file = document.getElementById("picture")
+let pic = URL.createObjectURL(got_file.files[0])
+console.log(pic)
+    
 
+</script>
  
     <py-script>  
    print("Hello World!")
