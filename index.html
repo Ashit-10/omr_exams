@@ -93,7 +93,7 @@
     <br><br><br><br><br><br>
     <div id="cameraContainer">
 
-    <video id="video" width="350" height="450" autoplay></video><br>
+    <video id="video" width="300" height="400" autoplay></video><br>
     <button id="capture-btn">Capture</button>
     <button id="flashlightButton">Toggle Flashlight</button>
 
@@ -172,8 +172,8 @@ function sendImage() {
 
             // Replace video with captured image
             var videoParent = video.parentNode;
-            videoParent.removeChild(video);
-            videoParent.appendChild(canvas);
+            videoParent.replaceChild(canvas);
+            // videoParent.appendChild(canvas);
         });
     // Toggle flashlight
     flashlightButton.addEventListener('click', () => {
