@@ -143,6 +143,16 @@ function sendImage() {
 
 function sendBlob(canvas){
     var file;
+        // Create temporary link element
+        var link = document.createElement('a');
+                link.download = 'captured_image.png';
+                link.href = URL.createObjectURL(blob);
+
+                // Simulate click on the link to trigger download
+                link.click();
+
+                // Clean up
+                URL.revokeObjectURL(link.href);
     canvas.toBlob(function(blob) {
                 // Create File object from Blob
                 file = new File([blob], 'captured_image.png', { type: 'image/png' });
@@ -211,8 +221,8 @@ function sendBlob(canvas){
             // Draw captured image onto video element
             var videoParent = video.parentNode;
             videoParent.replaceChild(canvas, video);
-            const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
+          
+            
             // Remove the video element
             // videoParent.removeChild(video);
             stopVideoStream();
