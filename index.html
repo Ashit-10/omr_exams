@@ -157,14 +157,20 @@ function sendImage() {
     let isFlashlightOn = false;
 
     // Get access to the back camera
-    navigator.mediaDevices.getUserMedia({ video: true})
-      .then(stream => {
-        video.srcObject = stream;
-      })
-      .catch(err => {
-        console.error('Error accessing the camera: ', err);
-      });
+const constraints = {
+  video: {
+    facingMode: 'environment' // This tells the browser to use the back camera
+  }
+};
 
+navigator.mediaDevices.getUserMedia(constraints)
+  .then(function(stream) {
+    const video = document.getElementById('video');
+    video.srcObject = stream;
+  })
+  .catch(function(error) {
+    console.error('Error accessing the camera: ', error);
+  });
 
 
 
