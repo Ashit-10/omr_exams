@@ -204,14 +204,15 @@ function sendBlob(canvas){
             var video = document.getElementById('video');
             var canvas = document.createElement('canvas');
             canvas.width = 320;
-            canvas.height = 500;
+            canvas.height = 480;
             var context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, 320, 500);
 
             // Draw captured image onto video element
             var videoParent = video.parentNode;
             videoParent.replaceChild(canvas, video);
-
+            const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
             // Remove the video element
             // videoParent.removeChild(video);
             stopVideoStream();
