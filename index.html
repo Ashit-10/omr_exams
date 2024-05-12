@@ -93,8 +93,8 @@
     <br><br><br><br><br><br>
 
     <div id="cameraContainer">
-        <video id="video" width="250" height="400" autoplay></video>
-        <button id="captureButton">Capture Image</button>
+        <video id="video" width="320" height="500" autoplay></video>
+        <button id="captureButton" onclick="sendImage()">Capture Image</button>
         <button id="flashlightButton">Toggle Flashlight</button>
       </div>
 
@@ -185,9 +185,9 @@ navigator.mediaDevices.getUserMedia(constraints)
       stopVideoStream();
 
       // Show captured image
-      const imageDataURL = canvas.toDataURL('image/jpeg');
-      capturedImage.src = imageDataURL;
-      capturedImage.style.display = 'block';
+    //   const imageDataURL = canvas.toDataURL('image/jpeg');
+    //   capturedImage.src = imageDataURL;
+    //   capturedImage.style.display = 'block';
     });
 
     // Toggle flashlight
