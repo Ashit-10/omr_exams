@@ -69,10 +69,11 @@
 </head>
 <body>
     <div id="cameraContainer">
-        <video id="video" width="640" height="480" autoplay></video>
-        <button id="captureButton">Capture Image</button>
-      </div>
-      <canvas id="canvas" style="display: none;"></canvas>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="captureButton">Capture Image</button>
+  </div>
+  <canvas id="canvas" style="display: none;"></canvas>
+  <img id="capturedImage" style="display: none;">
     
     <!-- <br><br><br>
 
@@ -136,11 +137,15 @@ function sendImage() {
 
         const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
+    const capturedImage = document.getElementById('capturedImage');
     const captureButton = document.getElementById('captureButton');
 
+    let stream;
+
     // Get access to the back camera
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }) // specify facingMode as 'environment' for back camera
-      .then(stream => {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(videoStream => {
+        stream = videoStream;
         video.srcObject = stream;
       })
       .catch(err => {
@@ -153,12 +158,22 @@ function sendImage() {
       canvas.height = video.videoHeight;
       canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
       
-      // Convert canvas content to data URL
+      // Stop video streaming
+      stopVideoStream();
+
+      // Show captured image
       const imageDataURL = canvas.toDataURL('image/jpeg');
-      
-      // Do something with the image data URL, like display it or send it to a server
-      console.log('Captured Image Data URL:', imageDataURL);
+      capturedImage.src = imageDataURL;
+      capturedImage.style.display = 'block';
     });
+
+    // Function to stop video streaming
+    function stopVideoStream() {
+      if (stream) {
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    };
 
     </script>
 <!-- 
