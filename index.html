@@ -69,11 +69,13 @@
 </head>
 <body>
     <div id="cameraContainer">
-    <video id="video" width="640" height="480" autoplay></video>
-    <button id="captureButton">Capture Image</button>
-  </div>
-  <canvas id="canvas" style="display: none;"></canvas>
-  <img id="capturedImage" style="display: none;">
+        <video id="video" width="640" height="480" autoplay></video>
+        <button id="captureButton">Capture Image</button>
+        <button id="flashlightButton">Toggle Flashlight</button>
+      </div>
+      <canvas id="canvas" style="display: none;"></canvas>
+      <img id="capturedImage" style="display: none;">
+    ;">
     
     <!-- <br><br><br>
 
@@ -139,8 +141,9 @@ function sendImage() {
     const canvas = document.getElementById('canvas');
     const capturedImage = document.getElementById('capturedImage');
     const captureButton = document.getElementById('captureButton');
-
+    const flashlightButton = document.getElementById('flashlightButton');
     let stream;
+    let isFlashlightOn = false;
 
     // Get access to the back camera
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
@@ -167,12 +170,35 @@ function sendImage() {
       capturedImage.style.display = 'block';
     });
 
+    // Toggle flashlight
+    flashlightButton.addEventListener('click', () => {
+      toggleFlashlight();
+    });
+
     // Function to stop video streaming
     function stopVideoStream() {
       if (stream) {
         const tracks = stream.getTracks();
         tracks.forEach(track => track.stop());
       }
+    }
+
+    // Function to toggle flashlight
+    function toggleFlashlight() {
+      if (!stream) return;
+      
+      const track = stream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities();
+
+      if (!capabilities.torch) {
+        console.error('Flashlight is not supported.');
+        return;
+      }
+
+      isFlashlightOn = !isFlashlightOn;
+      track.applyConstraints({
+        advanced: [{ torch: isFlashlightOn }]
+      });
     };
 
     </script>
