@@ -184,8 +184,8 @@ function sendImage() {
         document.getElementById('capture-btn').addEventListener('click', function() {
             var video = document.getElementById('video');
             var canvas = document.createElement('canvas');
-            canvas.width = 430;
-            canvas.height = 320;
+            canvas.width = 500;
+            canvas.height = 400;
             var context = canvas.getContext('2d');
             context.translate(0, canvas.height);
             context.rotate(-Math.PI / 2);
