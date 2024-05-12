@@ -186,6 +186,8 @@ function sendImage() {
             canvas.width = 320;
             canvas.height = 430;
             var context = canvas.getContext('2d');
+            context.translate(canvas.width, 0);
+            context.rotate(Math.PI / 2);
             context.drawImage(video, 0, 0, 320, 430);
 
             // Draw captured image onto video element
