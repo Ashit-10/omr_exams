@@ -91,7 +91,10 @@
     <br><br><br><br><br><br>
     <br><br><br><br><br><br>
     <br><br><br><br><br><br>
-
+    <video id="video" width="350" height="450" autoplay></video><br>
+    <button id="capture-btn">Capture</button><br>
+    <canvas id="canvas" width="350" height="450"></canvas>
+<!-- 
     <div id="cameraContainer">
         <video id="video" width="320" height="500" autoplay></video>
         <button id="captureButton" onclick="sendImage()">Capture Image</button>
@@ -99,7 +102,7 @@
       </div>
 
       <canvas id="canvas" width="140" height="180" ></canvas>
-      <img id="capturedImage" style="display: none;">
+      <img id="capturedImage" style="display: none;"> -->
 
 <!-- <video id="player" controls autoplay></video> -->
 <!-- <button id="capture">Capture</button> -->
@@ -156,31 +159,23 @@ function sendImage() {
     let stream;
     let isFlashlightOn = false;
 
-    // Get access to the back camera
-const constraints = {
-  video: {
-    facingMode: 'environment' // This tells the browser to use the back camera
-  }
-};
+        // Get access to the camera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(function(stream) {
+            var video = document.getElementById('video');
+            video.srcObject = stream;
+        })
+        .catch(function(err) {
+            console.log("An error occurred: " + err);
+        });
 
-navigator.mediaDevices.getUserMedia(constraints)
-  .then(function(stream) {
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-  })
-  .catch(function(error) {
-    console.error('Error accessing the camera: ', error);
-  });
-
-
-
-
-    // Capture image from the video stream
-    captureButton.addEventListener('click', () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-      
+        // Function to capture image
+        document.getElementById('capture-btn').addEventListener('click', function() {
+            var video = document.getElementById('video');
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        });
       // Stop video streaming
       stopVideoStream();
 
