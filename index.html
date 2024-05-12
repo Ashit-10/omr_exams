@@ -197,12 +197,13 @@
         document.getElementById('capture-btn').addEventListener('click', function () {
             var video = document.getElementById('video');
             var canvas = document.createElement('canvas');
-            canvas.width = 320;
-            canvas.height = 430;
+            canvas.width = video.videoHeight;
+            canvas.height = video.videoWidth;
             var context = canvas.getContext('2d');
-            context.translate(canvas.height, 0);
+            context.translate(canvas.width, 0);
             context.rotate(-Math.PI / 2);
             context.drawImage(video, 0, 0);
+
 
             // Draw captured image onto video element
             var videoParent = video.parentNode;
