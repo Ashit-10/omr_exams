@@ -184,11 +184,11 @@ function sendImage() {
         document.getElementById('capture-btn').addEventListener('click', function() {
             var video = document.getElementById('video');
             var canvas = document.createElement('canvas');
-            canvas.width = 500;
-            canvas.height = 300;
+            canvas.width = 320;
+            canvas.height = 430;
             var context = canvas.getContext('2d');
-            context.translate(canvas.height, 0);
-            context.rotate(-Math.PI / 2);
+            // context.translate(canvas.height, 0);
+            // context.rotate(-Math.PI / 2);
             context.drawImage(video, 0, 0);
 
             // Draw captured image onto video element
