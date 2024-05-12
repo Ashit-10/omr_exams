@@ -91,15 +91,17 @@
     <br><br><br><br><br><br>
     <br><br><br><br><br><br>
 
-    <div class="loader" id="loader"></div>
+    <div class="loader" id="loader">
+        <canvas id="canvas" width="380" height="480" ></canvas>
+        <img id="capturedImage" style="display: none;">
+  
+    </div>
     <div id="cameraContainer">
-        <video id="video" width="380" height="480" autoplay></video>
+        <video id="video" autoplay></video>
         <button id="captureButton">Capture Image</button>
         <button id="flashlightButton">Toggle Flashlight</button>
       </div>
-      <canvas id="canvas" style="display: none;"></canvas>
-      <img id="capturedImage" style="display: none;">
-
+     
 
     <script>
 
