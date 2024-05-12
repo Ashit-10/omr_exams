@@ -134,7 +134,8 @@
 
     <script>
 
-
+        const Fwidth = 320;
+        const Fheight = 430;
         function sendImage() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
@@ -273,6 +274,36 @@
 
 
 
+        // Check if video container is visible
+        function isVideoVisible() {
+            const rect = videoContainer.getBoundingClientRect();
+            return (
+                rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+            );
+        }
+
+        // Pause video if not visible, resume if visible
+        function handleVisibilityChange() {
+            if (isVideoVisible()) {
+                video.play();
+            } else {
+                //   Remove access to camera
+               navigator.mediaDevices.getUserMedia({ video: false })
+                            .then(function() {
+                                console.log('Access to camera removed.');
+                            })
+                            .catch(function(err) {
+                                console.log("An error occurred while removing access to camera: " + err);
+                            });
+
+            }
+        }
+
+        // Add event listener for visibility change
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
 
 
