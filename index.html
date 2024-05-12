@@ -112,7 +112,7 @@
     
     <button id="flashlightButton">Cancel</button>
     <div class="loader1" id="loader1"></div>
-    <br><br><br><br><br><br>
+    <br><br><br><br>
 
     <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
     </div>
@@ -204,13 +204,13 @@ function sendImage() {
                 }
 
    // Remove access to camera
-   navigator.mediaDevices.getUserMedia({ video: false })
-                .then(function() {
-                    console.log('Access to camera removed.');
-                })
-                .catch(function(err) {
-                    console.log("An error occurred while removing access to camera: " + err);
-                });
+//    navigator.mediaDevices.getUserMedia({ video: false })
+//                 .then(function() {
+//                     console.log('Access to camera removed.');
+//                 })
+//                 .catch(function(err) {
+//                     console.log("An error occurred while removing access to camera: " + err);
+//                 });
 
 
                 canvas.toBlob(function(blob) {
@@ -237,15 +237,34 @@ function sendImage() {
                         throw new Error('Failed to send image');
                     }
                     loader.style.display = 'none';
-                    // alert('Image sent successfully!');
+                    alert('Image sent successfully!');
+                     location.reload();
+
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     loader.style.display = 'none';
                     alert('Failed to send image');
+      location.reload();
+
                 });
                 }, 'image/png');
 
+
+
+
+
+
+
+        // again Get access to the camera
+        // navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        // .then(function(stream) {
+        //     var canvas = document.getElementById('canvas');
+        //     canvas.srcObject = stream;
+        // })
+        // .catch(function(err) {
+        //     console.log("An error occurred: " + err);
+        // });
          
         });
 
