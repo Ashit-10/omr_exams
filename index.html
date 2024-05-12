@@ -122,6 +122,39 @@ function sendImage() {
                 alert('Please select an image to send');
             }
         }
+
+
+
+
+
+
+
+        const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureButton = document.getElementById('captureButton');
+
+    // Get access to the back camera
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }) // specify facingMode as 'environment' for back camera
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => {
+        console.error('Error accessing the camera: ', err);
+      });
+
+    // Capture image from the video stream
+    captureButton.addEventListener('click', () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      // Convert canvas content to data URL
+      const imageDataURL = canvas.toDataURL('image/jpeg');
+      
+      // Do something with the image data URL, like display it or send it to a server
+      console.log('Captured Image Data URL:', imageDataURL);
+    });
+
     </script>
 <!-- 
 <py-script>
