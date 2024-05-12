@@ -98,7 +98,7 @@
         <button id="flashlightButton">Toggle Flashlight</button>
       </div>
 
-      <canvas id="canvas" width="380" height="280" ></canvas>
+      <canvas id="canvas" width="380" height="380" ></canvas>
       <img id="capturedImage" style="display: none;">
 
 <!-- <video id="player" controls autoplay></video> -->
@@ -156,24 +156,17 @@ function sendImage() {
     let stream;
     let isFlashlightOn = false;
 
-    const player = document.getElementById('player');
-//   const canvas = document.getElementById('canvas');
- const context = canvas.getContext('2d');
-//   const captureButton = document.getElementById('capture');
+    // Get access to the back camera
+    navigator.mediaDevices.getUserMedia({ video: true})
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => {
+        console.error('Error accessing the camera: ', err);
+      });
 
- const constraints = {
- video: true,
- };
 
- captureButton.addEventListener('click', () => {
- // Draw the video frame to the canvas.
- context.drawImage(player, 0, 0, canvas.width, canvas.height);
- });
 
- // Attach the video stream to the video element and autoplay.
- navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
- player.srcObject = stream;
- });
 
 
     // Capture image from the video stream
