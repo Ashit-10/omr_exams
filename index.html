@@ -203,8 +203,8 @@ function sendBlob(canvas){
         document.getElementById('capture-btn').addEventListener('click', function() {
             var video = document.getElementById('video');
             var canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+            canvas.width = 250;
+            canvas.height = 400;
             var context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, 250, 400);
 
