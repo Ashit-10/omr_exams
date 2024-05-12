@@ -105,10 +105,9 @@
 
     <br><br><br><br><br><br>
     <br><br><br><br><br><br>
-    <br><br><br><br><br><br>
     <div id="cameraContainer">
 
-    <video id="video" width="320" height="400" autoplay></video><br>
+    <video id="video" width="320" height="440" autoplay></video><br>
     <button id="capture-btn">Capture</button>
     
     <button id="flashlightButton">Cancel</button>
@@ -184,9 +183,9 @@ function sendImage() {
             var video = document.getElementById('video');
             var canvas = document.createElement('canvas');
             canvas.width = 320;
-            canvas.height = 400;
+            canvas.height = 440;
             var context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, 320, 400);
+            context.drawImage(video, 0, 0, 320, 440);
 
             // Draw captured image onto video element
             var videoParent = video.parentNode;
@@ -202,6 +201,15 @@ function sendImage() {
                         track.stop();
                     });
                 }
+
+   // Remove access to camera
+   navigator.mediaDevices.getUserMedia({ video: false })
+                .then(function() {
+                    console.log('Access to camera removed.');
+                })
+                .catch(function(err) {
+                    console.log("An error occurred while removing access to camera: " + err);
+                });
 
 
                 canvas.toBlob(function(blob) {
