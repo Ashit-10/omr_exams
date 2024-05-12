@@ -189,7 +189,7 @@ function sendImage() {
             var context = canvas.getContext('2d');
             context.translate(0, canvas.height);
             context.rotate(-Math.PI / 2);
-            context.drawImage(video, 0, 0, 320, 430);
+            context.drawImage(video, 0, 0);
 
             // Draw captured image onto video element
             var videoParent = video.parentNode;
