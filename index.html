@@ -92,16 +92,12 @@
     <br><br><br><br><br><br>
 
     <div class="loader" id="loader">
-        <canvas id="canvas" width="380" height="480" ></canvas>
-        <img id="capturedImage" style="display: none;">
+        <video id="player" controls autoplay></video>
+        <button id="capture">Capture</button>
+        <canvas id="canvas" width="320" height="240"></canvas>
   
     </div>
-    <div id="cameraContainer">
-        <video id="video" autoplay></video>
-        <button id="captureButton">Capture Image</button>
-        <button id="flashlightButton">Toggle Flashlight</button>
-      </div>
-     
+
 
     <script>
 
@@ -142,76 +138,24 @@ function sendImage() {
 
 
 
+        const player = document.getElementById('player');
+ const canvas = document.getElementById('canvas');
+ const context = canvas.getContext('2d');
+ const captureButton = document.getElementById('capture');
 
+ const constraints = {
+ video: true,
+ };
 
+ captureButton.addEventListener('click', () => {
+ // Draw the video frame to the canvas.
+ context.drawImage(player, 0, 0, canvas.width, canvas.height);
+ });
 
-
-        const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const capturedImage = document.getElementById('capturedImage');
-    const captureButton = document.getElementById('captureButton');
-    const flashlightButton = document.getElementById('flashlightButton');
-    let stream;
-    let isFlashlightOn = false;
-
-    // Get access to the back camera
-    navigator.mediaDevices.getUserMedia({ video: true})
-      .then(stream => {
-        video.srcObject = stream;
-      })
-      .catch(err => {
-        console.error('Error accessing the camera: ', err);
-      });
-
-
-
-
-
-    // Capture image from the video stream
-    captureButton.addEventListener('click', () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      // Stop video streaming
-      stopVideoStream();
-
-      // Show captured image
-      const imageDataURL = canvas.toDataURL('image/jpeg');
-      capturedImage.src = imageDataURL;
-      capturedImage.style.display = 'block';
-    });
-
-    // Toggle flashlight
-    flashlightButton.addEventListener('click', () => {
-      toggleFlashlight();
-    });
-
-    // Function to stop video streaming
-    function stopVideoStream() {
-      if (stream) {
-        const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
-      }
-    }
-
-    // Function to toggle flashlight
-    function toggleFlashlight() {
-      if (!stream) return;
-      
-      const track = stream.getVideoTracks()[0];
-      const capabilities = track.getCapabilities();
-
-      if (!capabilities.torch) {
-        console.error('Flashlight is not supported.');
-        return;
-      }
-
-      isFlashlightOn = !isFlashlightOn;
-      track.applyConstraints({
-        advanced: [{ torch: isFlashlightOn }]
-      });
-    };
+ // Attach the video stream to the video element and autoplay.
+ navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+ player.srcObject = stream;
+ });
 
     </script>
 <!-- 
