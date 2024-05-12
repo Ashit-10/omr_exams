@@ -113,6 +113,7 @@
     <button id="flashlightButton">Cancel</button>
     <div class="loader1" id="loader1"></div>
     <br><br>
+    <br>
 
     <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
     </div>
@@ -187,8 +188,9 @@ function sendImage() {
             canvas.height = 430;
             var context = canvas.getContext('2d');
             context.translate(canvas.width, 0);
+            console.log(Math.PI);
             context.rotate(Math.PI / 2);
-            context.drawImage(video, 0, 0, 320, 430);
+            context.drawImage(video, 0, 0, 430, 320);
 
             // Draw captured image onto video element
             var videoParent = video.parentNode;
