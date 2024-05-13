@@ -8,8 +8,8 @@
 </head>
 <body>
   <h1>Almost Square Contours Detection</h1>
-  <video id="videoElement" width="340" height="480" muted playsinline loop autoplay controls></video>
-  <canvas id="canvasOutput" width="340" height="480"></canvas>
+  <video id="videoElement" width="300" height="400" muted playsinline loop autoplay controls></video>
+  <canvas id="canvasOutput" width="300" height="400"></canvas>
   <button id="captureButton">Capture Image</button>
   <div id="capturedImage"></div>
 
@@ -64,7 +64,7 @@
             let area = cv.contourArea(approx);
             let boundingRect = cv.boundingRect(approx);
             let aspectRatio = boundingRect.width / boundingRect.height;
-            if (aspectRatio >= 0.9 && aspectRatio <= 1.1) {
+            if (aspectRatio >= 0.8 && aspectRatio <= 1.2) {
               // Draw the contour
               let contoursColor = new cv.Scalar(255, 0, 0, 255);
               cv.drawContours(frame, contours, i, contoursColor, 2, cv.LINE_8, hierarchy, 0);
