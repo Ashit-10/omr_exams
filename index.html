@@ -12,20 +12,10 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
-
-
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-    <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
-   <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
-    -->
-
     <style>
         .loader {
             border: 4px solid #f3f3f3;
-            /* Light grey */
             border-top: 4px solid #3498db;
-            /* Blue */
             border-radius: 50%;
             width: 30px;
             height: 30px;
@@ -44,22 +34,6 @@
                 transform: rotate(360deg);
             }
         }
-
-
-        .loader1 {
-            border: 4px solid #f3f3f3;
-            /* Light grey */
-            border-top: 4px solid #3498db;
-            /* Blue */
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-            margin-top: 15px;
-            display: none;
-        }
-
 
         body {
             font-family: Arial, sans-serif;
@@ -98,12 +72,9 @@
 
 <body>
 
-
     <br><br><br>
 
     <button style="font-size:40px" class="fa fa-folder" onclick="document.location='2023.html'"> 2023 - 24 </button>
-
-
 
     <br><br><br>
     <button style="font-size:40px" class="fa fa-folder" onclick="document.location='2024.html'"> 2024 - 25 </button>
@@ -120,25 +91,19 @@
     <br><br><br><br><br><br>
     <br><br><br><br><br><br>
     <div id="cameraContainer">
-
-        <video id="video" width="320" height="470" muted playsinline loop autoplay controls></video><br>
+        <button id="startCameraBtn" style="font-size: 20px;">Start Camera</button>
+        <video id="video" width="320" height="470" muted playsinline loop controls></video><br>
         <button id="capture-btn">Capture</button>
 
         <button id="flashlightButton">Cancel</button>
-        <div class="loader1" id="loader1"></div>
+        <div class="loader" id="loader1"></div>
         <br><br>
         <br>
-
-        <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
     </div>
 
-    <!-- Include CamanJS library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
-    <!-- Include sharp library -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/sharp/0.29.0/sharp.min.js"></script> -->
 
     <script>
-
         const Fwidth = 320;
         const Fheight = 470;
         function sendImage() {
@@ -180,9 +145,7 @@
             }
         }
 
-
-
-
+       
         const video = document.getElementById('video');
         // const canvas = document.getElementById('canvas');
         const capturedImage = document.getElementById('capturedImage');
@@ -191,20 +154,25 @@
         let stream;
         let isFlashlightOn = false;
 
+        let capturedImages = [];
 
+        // Start camera button click event
+        document.getElementById('startCameraBtn').addEventListener('click', function () {
+            startCamera();
+        });
 
-        // Get access to the camera
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-            .then(function (stream) {
-                var video = document.getElementById('video');
-                video.srcObject = stream;
-            })
-            .catch(function (err) {
-                console.log("An error occurred: " + err);
-            });
-
-
-
+        // Start camera function
+        function startCamera() {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(function (stream) {
+                    var video = document.getElementById('video');
+                    video.srcObject = stream;
+                    this.stream = stream;
+                })
+                .catch(function (err) {
+                    console.log("An error occurred: " + err);
+                });
+        }
 
         // Function to capture image
         function captureImage(delay) {
@@ -217,39 +185,20 @@
 
                 context.drawImage(video, 0, 0, Fwidth, Fheight);
 
+                capturedImages.push(canvas.toDataURL());
 
-
-                // Process image using CamanJS
-                Caman(canvas, function () {
-                    // Example enhancement - you can adjust these filters as needed
-                    this.brightness(10);
-                    this.contrast(10);
-                    this.saturation(10);
-                    this.render(function () {
-                        // After rendering, apply sharpening using sharp
-                        var imageData = context.getImageData(0, 0, Fwidth, Fheight);
-                        var data = {
-                            data: new Uint8Array(imageData.data.buffer),
-                            width: Fwidth,
-                            height: Fheight
-                        };
-
-                    });
-                });
-
-                // Draw captured image onto video element
-                var videoParent = video.parentNode;
-                videoParent.replaceChild(canvas, video);
-
-
-                stopVideoStream();
-                // Stop video streaming
-                if (stream) {
-                    stream.getTracks().forEach(track => {
-                        track.stop();
-                    });
+                if (capturedImages.length === 4) {
+                    // Combine captured images into one single photo
+                    // For simplicity, let's just display them in a new window
+                    var combinedImage = new Image();
+                    combinedImage.src = capturedImages.join('<br>');
+                    var combinedWindow = window.open();
+                    combinedWindow.document.write(combinedImage.outerHTML);
+                    capturedImages = []; // Reset captured images array
                 }
+                
 
+                
                 canvas.toBlob(function (blob) {
                     // Create File object from Blob
                     var file = new File([blob], 'captured_image.png', { type: 'image/png' });
@@ -287,32 +236,22 @@
                         });
                 }, 'image/png');
             }, delay);
-        };
-
+        }
 
         // Event listener for capture button
         document.getElementById('capture-btn').addEventListener('click', function () {
-            // Capture image after a delay of 500 milliseconds (adjust as needed)
-            captureImage(0);
+            // Capture 4 frames
+            for (let i = 0; i < 4; i++) {
+                captureImage(i * 500); // Delay each capture by 500 milliseconds
+            }
         });
 
-
         // Toggle flashlight
-        flashlightButton.addEventListener('click', () => {
+        document.getElementById('flashlightButton').addEventListener('click', function () {
             location.reload();
         });
 
-        // Function to stop video streaming
-        function stopVideoStream() {
-            if (stream) {
-                const tracks = stream.getTracks();
-                tracks.forEach(track => track.stop());
-            }
-        }
-
-
     </script>
-
 
 </body>
 
