@@ -9,7 +9,7 @@
     <h1>Camera Streaming and Capture</h1>
     <video id="video" width="1280" height="720" autoplay></video><br>
     <button id="captureButton">Capture Image</button><br>
-    <canvas id="canvas" width="1280" height="720" style="display: none;"></canvas><br>
+    <canvas id="canvas" width="400" height="1200" style="display: none;"></canvas><br>
     <img id="capturedImage" src="" alt="Captured Image">
 
     <script>
@@ -32,7 +32,7 @@
         captureButton.addEventListener('click', () => {
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageDataURL = canvas.toDataURL('image/jpeg', 0.9); // Adjust quality here if needed
+            const imageDataURL = canvas.toDataURL('image/jpeg', 1); // Adjust quality here if needed
             capturedImage.src = imageDataURL;
         });
 
