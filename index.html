@@ -121,7 +121,7 @@
     <br><br><br><br><br><br>
     <div id="cameraContainer">
 
-        <video id="video" width="320" height="430" muted playsinline loop autoplay controls></video><br>
+        <video id="video" width="280" height="470" muted playsinline loop autoplay controls></video><br>
         <button id="capture-btn">Capture</button>
 
         <button id="flashlightButton">Cancel</button>
@@ -139,8 +139,8 @@
 
     <script>
 
-        const Fwidth = 320;
-        const Fheight = 430;
+        const Fwidth = 280;
+        const Fheight = 470;
         function sendImage() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
@@ -211,13 +211,13 @@
             setTimeout(function () {
                 var video = document.getElementById('video');
                 var canvas = document.createElement('canvas');
-                canvas.width = 320;
-                canvas.height = 430;
+                canvas.width = Fwidth;
+                canvas.height = Fheight;
                 var context = canvas.getContext('2d');
                 // context.translate(canvas.height, 0);
                 // context.rotate(-Math.PI / 2);
 
-                context.drawImage(video, 0, 0, 320, 430);
+                context.drawImage(video, 0, 0, Fwidth, Fheight);
 
 
 
