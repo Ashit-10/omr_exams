@@ -211,15 +211,38 @@
             setTimeout(function () {
                 var video = document.getElementById('video');
                 var canvas = document.createElement('canvas');
+
                 canvas.width = 320;
                 canvas.height = 430;
-                var context = canvas.getContext('2d');
+
+                var frames = [];
+                var numFramesToCapture = 4; // Number of frames to capture
+                var frameCounter = 0;
+                // var context = canvas.getContext('2d');
                 // context.translate(canvas.height, 0);
                 // context.rotate(-Math.PI / 2);
 
-                context.drawImage(video, 0, 0, 320, 430);
+                // context.drawImage(video, 0, 0, 320, 430);
 
 
+                video.addEventListener('playing', function () {
+                    // Capture frames at regular intervals
+                    var intervalId = setInterval(function () {
+                        // Check if reached desired number of frames
+                        if (frameCounter >= numFramesToCapture) {
+                            clearInterval(intervalId); // Stop capturing frames
+                            combineFrames();
+                            return;
+                        }
+
+                        // Capture frame
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        frames.push(imageData);
+
+                        frameCounter++;
+                    }, 1000); // Capture frame every 1 second
+                });
 
                 // Process image using CamanJS
                 Caman(canvas, function () {
@@ -235,7 +258,7 @@
                             width: Fwidth,
                             height: Fheight
                         };
-                 
+
                     });
                 });
 
@@ -320,6 +343,29 @@
             // Capture image after a delay of 500 milliseconds (adjust as needed)
             captureImage(500);
         });
+
+
+        function combineFrames() {
+            // Combine frames by averaging pixel values
+            var combinedImageData = context.createImageData(canvas.width, canvas.height);
+            for (var i = 0; i < canvas.width * canvas.height * 4; i += 4) {
+                var sumRed = 0, sumGreen = 0, sumBlue = 0;
+                for (var j = 0; j < numFramesToCapture; j++) {
+                    var frameData = frames[j].data;
+                    sumRed += frameData[i];
+                    sumGreen += frameData[i + 1];
+                    sumBlue += frameData[i + 2];
+                }
+                combinedImageData.data[i] = sumRed / numFramesToCapture;
+                combinedImageData.data[i + 1] = sumGreen / numFramesToCapture;
+                combinedImageData.data[i + 2] = sumBlue / numFramesToCapture;
+                combinedImageData.data[i + 3] = 255; // Alpha channel
+            }
+
+            // Display the combined image
+            context.putImageData(combinedImageData, 0, 0);
+
+        }
 
 
 
