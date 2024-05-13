@@ -222,12 +222,12 @@
                 // Apply sharpening filter with reduced intensity (intensity = 0.8)
                 var filteredData = applySharpenFilter(context, adjustedImageData, 0.8);
 
-                // Rotate the image 90 degrees to the left
-                context.translate(Fwidth / 2, Fheight / 2);
-                context.rotate(-Math.PI / 2);
+                // // Rotate the image 90 degrees to the left
+                // context.translate(Fwidth / 2, Fheight / 2);
+                // context.rotate(-Math.PI / 2);
 
-                // Draw the rotated image
-                context.putImageData(filteredData, -Fheight / 2, -Fwidth / 2);
+                // // Draw the rotated image
+                // context.putImageData(filteredData, 0, 0);
 
                 // Apply sharpening filter
                 // var imageData = context.getImageData(0, 0, Fwidth, Fheight);
