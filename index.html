@@ -2,449 +2,458 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMR sheet</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OMR sheet</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
 
-    <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
 
 
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-    <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+  <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
     -->
 
-    <style>
-        .loader {
-            border: 4px solid #f3f3f3;
-            /* Light grey */
-            border-top: 4px solid #3498db;
-            /* Blue */
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-            margin-top: 15px;
-            display: none;
-        }
+  <style>
+    .loader {
+      border: 4px solid #f3f3f3;
+      /* Light grey */
+      border-top: 4px solid #3498db;
+      /* Blue */
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+      margin-top: 15px;
+      display: none;
+    }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
 
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-
-        .loader1 {
-            border: 4px solid #f3f3f3;
-            /* Light grey */
-            border-top: 4px solid #3498db;
-            /* Blue */
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-            margin-top: 15px;
-            display: none;
-        }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
 
 
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
+    .loader1 {
+      border: 4px solid #f3f3f3;
+      /* Light grey */
+      border-top: 4px solid #3498db;
+      /* Blue */
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+      margin-top: 15px;
+      display: none;
+    }
 
-        h1 {
-            margin-bottom: 20px;
-        }
 
-        #uploadedImageContainer {
-            margin-top: 20px;
-            text-align: center;
-        }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
 
-        #uploadedImage {
-            max-width: 300px;
-        }
+    h1 {
+      margin-bottom: 20px;
+    }
 
-        button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    #uploadedImageContainer {
+      margin-top: 20px;
+      text-align: center;
+    }
 
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    #uploadedImage {
+      max-width: 300px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 
 </head>
 
 <body>
 
 
-    <br><br><br>
+  <br><br><br>
 
-    <button style="font-size:40px" class="fa fa-folder" onclick="document.location='2023.html'"> 2023 - 24 </button>
-
-
-
-    <br><br><br>
-    <button style="font-size:40px" class="fa fa-folder" onclick="document.location='2024.html'"> 2024 - 25 </button>
-    <br><br><br><br><br><br>
-
-    <h1>OMR sheet evaluator
-    </h1>
-
-    <input type="file" id="fileInput">
-    <button onclick="sendImage()">Check Result</button>
-    <div class="loader" id="loader"></div>
+  <button style="font-size:40px" class="fa fa-folder" onclick="document.location='2023.html'"> 2023 - 24 </button>
 
 
-    <br><br><br><br><br><br>
-    <br><br><br><br><br><br>
-    <div id="cameraContainer">
 
-        <video id="video" width="280" height="470" muted playsinline loop autoplay controls></video><br>
-        <button id="capture-btn">Capture</button>
+  <br><br><br>
+  <button style="font-size:40px" class="fa fa-folder" onclick="document.location='2024.html'"> 2024 - 25 </button>
+  <br><br><br><br><br><br>
 
-        <button id="flashlightButton">Cancel</button>
-        <div class="loader1" id="loader1"></div>
-        <br><br>
-        <br>
+  <h1>OMR sheet evaluator
+  </h1>
 
-        <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
-    </div>
+  <input type="file" id="fileInput">
+  <button onclick="sendImage()">Check Result</button>
+  <div class="loader" id="loader"></div>
 
-    <!-- Include CamanJS library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
-    <!-- Include sharp library -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/sharp/0.29.0/sharp.min.js"></script> -->
 
-    <script>
+  <br><br><br><br><br><br>
+  <br><br><br><br><br><br>
+  <div id="cameraContainer">
 
-        const Fwidth = 280;
-        const Fheight = 470;
-        function sendImage() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
+    <video id="video" width="280" height="470" muted playsinline loop autoplay controls></video><br>
+    <button id="startCameraBtn" style="font-size: 20px;">Start Camera</button>
+    <button id="capture-btn">Capture</button>
 
-            if (file) {
-                const formData = new FormData();
-                formData.append('photo', file);
+    <button id="flashlightButton">Cancel</button>
+    <div class="loader1" id="loader1"></div>
+    <br><br>
+    <br>
 
-                const loader = document.getElementById('loader');
-                loader.style.display = 'block';
+    <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
+  </div>
 
-                const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
-                const chatId = '-1001971484231';
+  <!-- Include CamanJS library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+  <!-- Include sharp library -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/sharp/0.29.0/sharp.min.js"></script> -->
 
-                fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to send image');
-                        }
-                        loader.style.display = 'none';
-                        location.reload();
+  <script>
 
-                        alert('Image sent successfully!');
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        loader.style.display = 'none';
-                        location.reload();
+    const Fwidth = 280;
+    const Fheight = 470;
+    function sendImage() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
 
-                        alert('Failed to send image');
-                    });
-            } else {
-                alert('Please select an image to send');
+      if (file) {
+        const formData = new FormData();
+        formData.append('photo', file);
+
+        const loader = document.getElementById('loader');
+        loader.style.display = 'block';
+
+        const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
+        const chatId = '-1001971484231';
+
+        fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to send image');
             }
-        }
-
-
-
-
-        const video = document.getElementById('video');
-        // const canvas = document.getElementById('canvas');
-        const capturedImage = document.getElementById('capturedImage');
-        const captureButton = document.getElementById('captureButton');
-        const flashlightButton = document.getElementById('flashlightButton');
-        let stream;
-        let isFlashlightOn = false;
-
-
-
-        // Get access to the camera
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-            .then(function (stream) {
-                var video = document.getElementById('video');
-                video.srcObject = stream;
-            })
-            .catch(function (err) {
-                console.log("An error occurred: " + err);
-            });
-
-
-
-
-        // Function to capture image
-        function captureImage(delay) {
-            setTimeout(function () {
-                var video = document.getElementById('video');
-                var canvas = document.createElement('canvas');
-                canvas.width = Fwidth;
-                canvas.height = Fheight;
-                var context = canvas.getContext('2d');
-                // context.translate(canvas.height, 0);
-                // context.rotate(-Math.PI / 2);
-
-                context.drawImage(video, 0, 0, Fwidth, Fheight);
-
-
-
-                // Process image using CamanJS
-                Caman(canvas, function () {
-                    // Example enhancement - you can adjust these filters as needed
-                    this.brightness(10);
-                    this.contrast(10);
-                    this.saturation(10);
-                    this.render(function () {
-                        // After rendering, apply sharpening using sharp
-                        var imageData = context.getImageData(0, 0, Fwidth, Fheight);
-                        var data = {
-                            data: new Uint8Array(imageData.data.buffer),
-                            width: Fwidth,
-                            height: Fheight
-                        };
-                 
-                    });
-                });
-
-                // Apply brightness adjustment
-                // var imageData = context.getImageData(0, 0, Fwidth, Fheight);
-                // var adjustedImageData = adjustBrightness(imageData, 50); // Adjust brightness by +50
-
-                // Apply sharpening filter with reduced intensity (intensity = 0.8)
-                // var filteredData = applySharpenFilter(context, adjustedImageData, 0.8);
-
-
-
-
-
-                // Draw captured image onto video element
-                var videoParent = video.parentNode;
-                videoParent.replaceChild(canvas, video);
-
-
-                // Remove the video element
-                // videoParent.removeChild(video);
-                stopVideoStream();
-                // Stop video streaming
-                if (stream) {
-                    stream.getTracks().forEach(track => {
-                        track.stop();
-                    });
-                }
-
-                // Remove access to camera
-                //    navigator.mediaDevices.getUserMedia({ video: false })
-                //                 .then(function() {
-                //                     console.log('Access to camera removed.');
-                //                 })
-                //                 .catch(function(err) {
-                //                     console.log("An error occurred while removing access to camera: " + err);
-                //                 });
-
-
-                canvas.toBlob(function (blob) {
-                    // Create File object from Blob
-                    var file = new File([blob], 'captured_image.png', { type: 'image/png' });
-
-                    // Send file to Telegram using fetch
-                    var formData1 = new FormData();
-                    formData1.append('photo', file);
-
-
-                    const loader = document.getElementById('loader1');
-                    loader.style.display = 'block';
-
-                    const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
-                    const chatId = '-1001971484231';
-
-                    fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
-                        method: 'POST',
-                        body: formData1
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to send image');
-                            }
-                            loader.style.display = 'none';
-                            alert('Image sent successfully!');
-                            location.reload();
-
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            loader.style.display = 'none';
-                            alert('Failed to send image');
-                            location.reload();
-
-                        });
-                }, 'image/png');
-            }, delay);
-        };
-
-
-        // Event listener for capture button
-        document.getElementById('capture-btn').addEventListener('click', function () {
-            // Capture image after a delay of 500 milliseconds (adjust as needed)
-            captureImage(500);
-        });
-
-
-
-        // Check if video container is visible
-        function isVideoVisible() {
-            const rect = videoContainer.getBoundingClientRect();
-            return (
-                rect.top >= 0 &&
-                rect.left >= 0 &&
-                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-            );
-        }
-
-        // Pause video if not visible, resume if visible
-        function handleVisibilityChange() {
-            if (isVideoVisible()) {
-                video.play();
-            } else {
-                //   Remove access to camera
-                navigator.mediaDevices.getUserMedia({ video: false })
-                    .then(function () {
-                        console.log('Access to camera removed.');
-                    })
-                    .catch(function (err) {
-                        console.log("An error occurred while removing access to camera: " + err);
-                    });
-
-            }
-        }
-
-        // Add event listener for visibility change
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
-
-
-        // Toggle flashlight
-        flashlightButton.addEventListener('click', () => {
+            loader.style.display = 'none';
             location.reload();
+
+            alert('Image sent successfully!');
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            loader.style.display = 'none';
+            location.reload();
+
+            alert('Failed to send image');
+          });
+      } else {
+        alert('Please select an image to send');
+      }
+    }
+
+
+
+
+    const video = document.getElementById('video');
+    // const canvas = document.getElementById('canvas');
+    const capturedImage = document.getElementById('capturedImage');
+    const captureButton = document.getElementById('captureButton');
+    const flashlightButton = document.getElementById('flashlightButton');
+    let stream;
+    let isFlashlightOn = false;
+
+
+
+
+
+    // Start camera button click event
+    document.getElementById('startCameraBtn').addEventListener('click', function () {
+      startCamera();
+    });
+
+    // Start camera function
+    function startCamera() {
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(function (stream) {
+          var video = document.getElementById('video');
+          video.srcObject = stream;
+          this.stream = stream;
+        })
+        .catch(function (err) {
+          console.log("An error occurred: " + err);
+        });
+    }
+
+
+    // Function to capture image
+    function captureImage(delay) {
+      setTimeout(function () {
+        var video = document.getElementById('video');
+        var canvas = document.createElement('canvas');
+        canvas.width = Fwidth;
+        canvas.height = Fheight;
+        var context = canvas.getContext('2d');
+        // context.translate(canvas.height, 0);
+        // context.rotate(-Math.PI / 2);
+
+        context.drawImage(video, 0, 0, Fwidth, Fheight);
+
+
+
+        // Process image using CamanJS
+        Caman(canvas, function () {
+          // Example enhancement - you can adjust these filters as needed
+          this.brightness(10);
+          this.contrast(10);
+          this.saturation(10);
+          this.render(function () {
+            // After rendering, apply sharpening using sharp
+            var imageData = context.getImageData(0, 0, Fwidth, Fheight);
+            var data = {
+              data: new Uint8Array(imageData.data.buffer),
+              width: Fwidth,
+              height: Fheight
+            };
+
+          });
         });
 
-        // Function to stop video streaming
-        function stopVideoStream() {
-            if (stream) {
-                const tracks = stream.getTracks();
-                tracks.forEach(track => track.stop());
-            }
+        // Apply brightness adjustment
+        // var imageData = context.getImageData(0, 0, Fwidth, Fheight);
+        // var adjustedImageData = adjustBrightness(imageData, 50); // Adjust brightness by +50
+
+        // Apply sharpening filter with reduced intensity (intensity = 0.8)
+        // var filteredData = applySharpenFilter(context, adjustedImageData, 0.8);
+
+
+
+
+
+        // Draw captured image onto video element
+        var videoParent = video.parentNode;
+        videoParent.replaceChild(canvas, video);
+
+
+        // Remove the video element
+        // videoParent.removeChild(video);
+        stopVideoStream();
+        // Stop video streaming
+        if (stream) {
+          stream.getTracks().forEach(track => {
+            track.stop();
+          });
         }
 
-        // Function to toggle flashlight
-        function toggleFlashlight() {
-            if (!stream) return;
+        // Remove access to camera
+        //    navigator.mediaDevices.getUserMedia({ video: false })
+        //                 .then(function() {
+        //                     console.log('Access to camera removed.');
+        //                 })
+        //                 .catch(function(err) {
+        //                     console.log("An error occurred while removing access to camera: " + err);
+        //                 });
 
-            const track = stream.getVideoTracks()[0];
-            const capabilities = track.getCapabilities();
 
-            if (!capabilities.torch) {
-                console.error('Flashlight is not supported.');
-                return;
-            }
+        canvas.toBlob(function (blob) {
+          // Create File object from Blob
+          var file = new File([blob], 'captured_image.png', { type: 'image/png' });
 
-            isFlashlightOn = !isFlashlightOn;
-            track.applyConstraints({
-                advanced: [{ torch: isFlashlightOn }]
+          // Send file to Telegram using fetch
+          var formData1 = new FormData();
+          formData1.append('photo', file);
+
+
+          const loader = document.getElementById('loader1');
+          loader.style.display = 'block';
+
+          const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
+          const chatId = '-1001971484231';
+
+          fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
+            method: 'POST',
+            body: formData1
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to send image');
+              }
+              loader.style.display = 'none';
+              alert('Image sent successfully!');
+              location.reload();
+
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              loader.style.display = 'none';
+              alert('Failed to send image');
+              location.reload();
+
             });
-        };
+        }, 'image/png');
+      }, delay);
+    };
+
+
+    // Event listener for capture button
+    document.getElementById('capture-btn').addEventListener('click', function () {
+      // Capture image after a delay of 500 milliseconds (adjust as needed)
+      captureImage(500);
+    });
 
 
 
-        // Function to apply brightness adjustment
-        function adjustBrightness(imageData, brightness) {
-            var data = imageData.data;
-            for (var i = 0; i < data.length; i += 4) {
-                data[i] += brightness; // Red
-                data[i + 1] += brightness; // Green
-                data[i + 2] += brightness; // Blue
+    // Check if video container is visible
+    function isVideoVisible() {
+      const rect = videoContainer.getBoundingClientRect();
+      return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      );
+    }
+
+    // Pause video if not visible, resume if visible
+    function handleVisibilityChange() {
+      if (isVideoVisible()) {
+        video.play();
+      } else {
+        //   Remove access to camera
+        navigator.mediaDevices.getUserMedia({ video: false })
+          .then(function () {
+            console.log('Access to camera removed.');
+          })
+          .catch(function (err) {
+            console.log("An error occurred while removing access to camera: " + err);
+          });
+
+      }
+    }
+
+    // Add event listener for visibility change
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+
+
+    // Toggle flashlight
+    flashlightButton.addEventListener('click', () => {
+      location.reload();
+    });
+
+    // Function to stop video streaming
+    function stopVideoStream() {
+      if (stream) {
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    }
+
+    // Function to toggle flashlight
+    function toggleFlashlight() {
+      if (!stream) return;
+
+      const track = stream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities();
+
+      if (!capabilities.torch) {
+        console.error('Flashlight is not supported.');
+        return;
+      }
+
+      isFlashlightOn = !isFlashlightOn;
+      track.applyConstraints({
+        advanced: [{ torch: isFlashlightOn }]
+      });
+    };
+
+
+
+    // Function to apply brightness adjustment
+    function adjustBrightness(imageData, brightness) {
+      var data = imageData.data;
+      for (var i = 0; i < data.length; i += 4) {
+        data[i] += brightness; // Red
+        data[i + 1] += brightness; // Green
+        data[i + 2] += brightness; // Blue
+      }
+      return imageData;
+    }
+
+    // Function to apply sharpening filter with reduced intensity
+    function applySharpenFilter(context, imageData, intensity) {
+      var weights = [0, -1, 0, -1, 5, -1, 0, -1, 0];
+      var side = Math.round(Math.sqrt(weights.length));
+      var halfSide = Math.floor(side / 2);
+
+      var src = imageData.data;
+      var sw = imageData.width;
+      var sh = imageData.height;
+
+      var output = context.createImageData(imageData);
+
+      var alphaFac = 1;
+
+      for (var y = 0; y < sh; y++) {
+        for (var x = 0; x < sw; x++) {
+          var sy = y;
+          var sx = x;
+          var dstOff = (y * sw + x) * 4;
+          var r = 0,
+            g = 0,
+            b = 0,
+            a = 0;
+          for (var cy = 0; cy < side; cy++) {
+            for (var cx = 0; cx < side; cx++) {
+              var scy = Math.min(sh - 1, Math.max(0, sy + cy - halfSide));
+              var scx = Math.min(sw - 1, Math.max(0, sx + cx - halfSide));
+              var srcOff = (scy * sw + scx) * 4;
+              var wt = weights[cy * side + cx];
+              r += src[srcOff] * wt;
+              g += src[srcOff + 1] * wt;
+              b += src[srcOff + 2] * wt;
+              a += src[srcOff + 3] * wt;
             }
-            return imageData;
+          }
+          output.data[dstOff] = r * intensity + src[dstOff] * (1 - intensity);
+          output.data[dstOff + 1] = g * intensity + src[dstOff + 1] * (1 - intensity);
+          output.data[dstOff + 2] = b * intensity + src[dstOff + 2] * (1 - intensity);
+          output.data[dstOff + 3] = a + alphaFac * (255 - a);
         }
-
-        // Function to apply sharpening filter with reduced intensity
-        function applySharpenFilter(context, imageData, intensity) {
-            var weights = [0, -1, 0, -1, 5, -1, 0, -1, 0];
-            var side = Math.round(Math.sqrt(weights.length));
-            var halfSide = Math.floor(side / 2);
-
-            var src = imageData.data;
-            var sw = imageData.width;
-            var sh = imageData.height;
-
-            var output = context.createImageData(imageData);
-
-            var alphaFac = 1;
-
-            for (var y = 0; y < sh; y++) {
-                for (var x = 0; x < sw; x++) {
-                    var sy = y;
-                    var sx = x;
-                    var dstOff = (y * sw + x) * 4;
-                    var r = 0,
-                        g = 0,
-                        b = 0,
-                        a = 0;
-                    for (var cy = 0; cy < side; cy++) {
-                        for (var cx = 0; cx < side; cx++) {
-                            var scy = Math.min(sh - 1, Math.max(0, sy + cy - halfSide));
-                            var scx = Math.min(sw - 1, Math.max(0, sx + cx - halfSide));
-                            var srcOff = (scy * sw + scx) * 4;
-                            var wt = weights[cy * side + cx];
-                            r += src[srcOff] * wt;
-                            g += src[srcOff + 1] * wt;
-                            b += src[srcOff + 2] * wt;
-                            a += src[srcOff + 3] * wt;
-                        }
-                    }
-                    output.data[dstOff] = r * intensity + src[dstOff] * (1 - intensity);
-                    output.data[dstOff + 1] = g * intensity + src[dstOff + 1] * (1 - intensity);
-                    output.data[dstOff + 2] = b * intensity + src[dstOff + 2] * (1 - intensity);
-                    output.data[dstOff + 3] = a + alphaFac * (255 - a);
-                }
-            }
-            return output;
-        }
-    </script>
-    <!-- 
+      }
+      return output;
+    }
+  </script>
+  <!-- 
 <py-script>
 import requests
 
