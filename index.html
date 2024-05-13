@@ -69,7 +69,11 @@
             } else if (vertices === 4) {
               let boundingRect = cv.boundingRect(approx);
               let aspectRatio = boundingRect.width / boundingRect.height;
-              shapeType = aspectRatio >= 0.9 && aspectRatio <= 1.1 ? "Square" : "Rectangle";
+              if (aspectRatio >= 0.9 && aspectRatio <= 1.1) {
+                shapeType = "Square";
+              } else {
+                shapeType = "Rectangle";
+              }
             } else if (vertices > 6) {
               shapeType = "Circle";
             }
@@ -95,8 +99,22 @@
     captureButton.addEventListener('click', () => {
       if (frameCapture !== null) {
         let dataURL = canvas.toDataURL(); // Convert canvas to data URL
-        let img = document.createElement('img');
+        let img = new Image();
         img.src = dataURL;
+        img.onload = function() {
+          ctx.drawImage(img, 0, 0);
+          let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          let contours = new cv.MatVector();
+          let hierarchy = new cv.Mat();
+          cv.findContours(imageData, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+          for (let i = 0; i < contours.size(); i++) {
+            let contoursColor = new cv.Scalar(0, 255, 0, 255); // Green color
+            cv.drawContours(imageData, contours, i, contoursColor, 2, cv.LINE_8, hierarchy, 0);
+          }
+          cv.imshow('canvasOutput', imageData);
+          contours.delete();
+          hierarchy.delete();
+        };
         capturedImageDiv.innerHTML = ''; // Clear previous images
         capturedImageDiv.appendChild(img);
       }
