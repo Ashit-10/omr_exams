@@ -241,7 +241,7 @@
                         frames.push(imageData);
 
                         frameCounter++;
-                    }, 1000); // Capture frame every 1 second
+                    }, 200); // Capture frame every 1 second
                 });
 
                 // Process image using CamanJS
@@ -252,7 +252,7 @@
                     this.saturation(10);
                     this.render(function () {
                         // After rendering, apply sharpening using sharp
-                        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        var imageData = context.getImageData(0, 0, Fwidth, Fheight);
                         var data = {
                             data: new Uint8Array(imageData.data.buffer),
                             width: Fwidth,
