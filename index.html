@@ -196,8 +196,12 @@
                 console.log("An error occurred: " + err);
             });
 
+
+
+
         // Function to capture image
-        document.getElementById('capture-btn').addEventListener('click', function () {
+        function captureImage(delay) {
+            setTimeout(function() {
             var video = document.getElementById('video');
             var canvas = document.createElement('canvas');
             canvas.width = 320;
@@ -205,11 +209,9 @@
             var context = canvas.getContext('2d');
             // context.translate(canvas.height, 0);
             // context.rotate(-Math.PI / 2);
-            
+
             context.drawImage(video, 0, 0, 320, 430);
-        
-            
-            
+
             // Draw captured image onto video element
             var videoParent = video.parentNode;
             videoParent.replaceChild(canvas, video);
@@ -271,11 +273,18 @@
 
                     });
             }, 'image/png');
+        }, delay);3
+        };
 
-        });
 
+        // Event listener for capture button
+        document.getElementById('capture-btn').addEventListener('click',function() {
+    // Capture image after a delay of 500 milliseconds (adjust as needed)
+    captureImage(500);
+});
 
-
+        // Set interval to capture image every 5 seconds
+        // setInterval(captureImage, 5000);
 
 
 
@@ -296,13 +305,13 @@
                 video.play();
             } else {
                 //   Remove access to camera
-               navigator.mediaDevices.getUserMedia({ video: false })
-                            .then(function() {
-                                console.log('Access to camera removed.');
-                            })
-                            .catch(function(err) {
-                                console.log("An error occurred while removing access to camera: " + err);
-                            });
+                navigator.mediaDevices.getUserMedia({ video: false })
+                    .then(function () {
+                        console.log('Access to camera removed.');
+                    })
+                    .catch(function (err) {
+                        console.log("An error occurred while removing access to camera: " + err);
+                    });
 
             }
         }
