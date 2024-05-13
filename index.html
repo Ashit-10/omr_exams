@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Almost Square Contours Detection</title>
+  <title>Shape Detection and Contours</title>
   <script src="https://docs.opencv.org/4.5.4/opencv.js"></script>
 </head>
 <body>
-  <h1>Almost Square Contours Detection</h1>
-  <video id="videoElement" width="300" height="400" muted playsinline loop autoplay controls></video>
-  <canvas id="canvasOutput" width="300" height="400"></canvas>
+  <h1>Shape Detection and Contours</h1>
+  <video id="videoElement" width="140" height="180" muted playsinline loop autoplay controls></video>
+  <canvas id="canvasOutput" width="140" height="180"></canvas>
   <button id="captureButton">Capture Image</button>
   <div id="capturedImage"></div>
 
@@ -26,7 +26,7 @@
       startVideo();
     };
 
- // Function to start capturing video from back camera
+    // Function to start capturing video from back camera
     function startVideo() {
       navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }) // Specify facingMode
         .then((stream) => {
@@ -38,6 +38,7 @@
           console.error("Error accessing the back camera: " + err);
         });
     }
+
     // Function to process video frames
     function processVideo() {
       let cap = new cv.VideoCapture(video);
@@ -52,22 +53,31 @@
         let hierarchy = new cv.Mat();
         cv.findContours(gray, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
-        // Find almost square contours
+        // Draw contours for different shapes
         for (let i = 0; i < contours.size(); i++) {
           let contour = contours.get(i);
+          let area = cv.contourArea(contour);
           let perimeter = cv.arcLength(contour, true);
           let approx = new cv.Mat();
           cv.approxPolyDP(contour, approx, 0.03 * perimeter, true);
 
-          if (approx.rows === 4) {
-            let area = cv.contourArea(approx);
-            let boundingRect = cv.boundingRect(approx);
-            let aspectRatio = boundingRect.width / boundingRect.height;
-            if (aspectRatio >= 0.8 && aspectRatio <= 1.2) {
-              // Draw the contour
-              let contoursColor = new cv.Scalar(255, 0, 0, 255);
-              cv.drawContours(frame, contours, i, contoursColor, 2, cv.LINE_8, hierarchy, 0);
+          if (area > 100) {
+            let shapeType;
+            let vertices = approx.rows;
+            if (vertices === 3) {
+              shapeType = "Triangle";
+            } else if (vertices === 4) {
+              let boundingRect = cv.boundingRect(approx);
+              let aspectRatio = boundingRect.width / boundingRect.height;
+              shapeType = aspectRatio >= 0.9 && aspectRatio <= 1.1 ? "Square" : "Rectangle";
+            } else if (vertices > 6) {
+              shapeType = "Circle";
             }
+
+            // Draw contours based on shape type
+            let contoursColor = new cv.Scalar(0, 255, 0, 255); // Green color
+            cv.drawContours(frame, contours, i, contoursColor, 2, cv.LINE_8, hierarchy, 0);
+            cv.putText(frame, shapeType, new cv.Point(approx.data32S[0], approx.data32S[1]), cv.FONT_HERSHEY_SIMPLEX, 0.5, contoursColor, 2);
           }
           approx.delete();
         }
