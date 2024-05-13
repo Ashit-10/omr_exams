@@ -12,7 +12,8 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
+
 
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
     <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
@@ -131,6 +132,10 @@
         <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
     </div>
 
+    <!-- Include CamanJS library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
+    <!-- Include sharp library -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/sharp/0.29.0/sharp.min.js"></script> -->
 
     <script>
 
@@ -215,24 +220,33 @@
                 context.drawImage(video, 0, 0, 320, 430);
 
 
+
+                // Process image using CamanJS
+                Caman(canvas, function () {
+                    // Example enhancement - you can adjust these filters as needed
+                    this.brightness(10);
+                    this.contrast(10);
+                    this.saturation(10);
+                    this.render(function () {
+                        // After rendering, apply sharpening using sharp
+                        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        var data = {
+                            data: new Uint8Array(imageData.data.buffer),
+                            width: Fwidth,
+                            height: Fheight
+                        };
+                 
+                    });
+                });
+
                 // Apply brightness adjustment
-                var imageData = context.getImageData(0, 0, Fwidth, Fheight);
-                var adjustedImageData = adjustBrightness(imageData, 50); // Adjust brightness by +50
+                // var imageData = context.getImageData(0, 0, Fwidth, Fheight);
+                // var adjustedImageData = adjustBrightness(imageData, 50); // Adjust brightness by +50
 
                 // Apply sharpening filter with reduced intensity (intensity = 0.8)
-                var filteredData = applySharpenFilter(context, adjustedImageData, 0.8);
+                // var filteredData = applySharpenFilter(context, adjustedImageData, 0.8);
 
-                // // Rotate the image 90 degrees to the left
-                // context.translate(Fwidth / 2, Fheight / 2);
-                // context.rotate(-Math.PI / 2);
 
-                // // Draw the rotated image
-                // context.putImageData(filteredData, 0, 0);
-
-                // Apply sharpening filter
-                // var imageData = context.getImageData(0, 0, Fwidth, Fheight);
-                // var filteredData = applySharpenFilter(imageData, context);
-                // context.putImageData(filteredData, 0, 0);
 
 
 
@@ -306,6 +320,7 @@
             // Capture image after a delay of 500 milliseconds (adjust as needed)
             captureImage(500);
         });
+
 
 
         // Check if video container is visible
