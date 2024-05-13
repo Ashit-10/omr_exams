@@ -236,8 +236,8 @@
                         }
 
                         // Capture frame
-                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        context.drawImage(video, 0, 0, Fwidth, Fheight);
+                        var imageData = context.getImageData(0, 0, Fwidth, Fheight);
                         frames.push(imageData);
 
                         frameCounter++;
