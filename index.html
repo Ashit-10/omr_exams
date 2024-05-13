@@ -1,43 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Streaming and Capture</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Streaming and Capture</title>
+<style>
+    #video {
+        width: 100%;
+    }
+    #canvas {
+        display: none;
+    }
+    #captureBtn {
+        margin-top: 10px;
+    }
+</style>
 </head>
 <body>
-    <h1>Camera Streaming and Capture</h1>
-    <video id="video" width="1280" height="720" muted playsinline loop autoplay></video><br>
-    <button id="captureButton">Capture Image</button><br>
-    <canvas id="canvas" width="400" height="600" style="display: none;"></canvas><br>
-    <img id="capturedImage" src="" alt="Captured Image">
+    <h1>Video Streaming and Capture</h1>
+    <video id="video" muted playsinline loop autoplay controls></video>
+    <button id="captureBtn">Capture Image</button>
+    <canvas id="canvas"></canvas>
 
     <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
-        const captureButton = document.getElementById('captureButton');
-        const capturedImage = document.getElementById('capturedImage');
+        const captureBtn = document.getElementById('captureBtn');
+        const ctx = canvas.getContext('2d');
 
-        // Start video streaming from back camera
-        async function startVideo() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: 1280, height: 720 } });
+        // Get user media
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
                 video.srcObject = stream;
-            } catch (err) {
-                console.error('Error accessing camera:', err);
-            }
-        }
+            })
+            .catch(function(err) {
+                console.error('Error accessing the camera.', err);
+            });
 
-        // Capture image from video stream
-        captureButton.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageDataURL = canvas.toDataURL('image/jpeg', 1); // Adjust quality here if needed
-            capturedImage.src = imageDataURL;
+        // Capture Image
+        captureBtn.addEventListener('click', function() {
+            const scale = 2; // Increase scale for higher resolution
+            canvas.width = video.videoWidth * scale;
+            canvas.height = video.videoHeight * scale;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            // Convert canvas to image
+            const imgData = canvas.toDataURL('image/jpeg', 1.0); // Adjust quality here (1.0 is maximum)
+            const capturedImage = new Image();
+            capturedImage.src = imgData;
+            capturedImage.onload = function() {
+                // Downscale if needed
+                const downscaleCanvas = document.createElement('canvas');
+                downscaleCanvas.width = video.videoWidth;
+                downscaleCanvas.height = video.videoHeight;
+                const downscaleCtx = downscaleCanvas.getContext('2d');
+                downscaleCtx.drawImage(capturedImage, 0, 0, downscaleCanvas.width, downscaleCanvas.height);
+                // Convert to data URL
+                const downscaleImgData = downscaleCanvas.toDataURL('image/jpeg', 1.0);
+                const downscaleImage = new Image();
+                downscaleImage.src = downscaleImgData;
+                downscaleImage.onload = function() {
+                    document.body.appendChild(downscaleImage);
+                };
+            };
         });
-
-        // Start video streaming when the page loads
-        startVideo();
     </script>
 </body>
 </html>
