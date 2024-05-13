@@ -4,24 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camera Streaming and Capture</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        #captureButton {
-            font-size: 24px;
-            padding: 20px 40px;
-        }
-    </style>
 </head>
 <body>
     <h1>Camera Streaming and Capture</h1>
-    <video id="video" width="1280" height="720" muted playsinline loop autoplay controls></video><br>
+    <video id="video" width="1280" height="720" muted playsinline loop autoplay></video><br>
     <button id="captureButton">Capture Image</button><br>
     <canvas id="canvas" width="400" height="600" style="display: none;"></canvas><br>
     <img id="capturedImage" src="" alt="Captured Image">
@@ -46,7 +32,7 @@
         captureButton.addEventListener('click', () => {
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageDataURL = canvas.toDataURL('image/jpeg', 0.9); // Adjust quality here if needed
+            const imageDataURL = canvas.toDataURL('image/jpeg', 1); // Adjust quality here if needed
             capturedImage.src = imageDataURL;
         });
 
