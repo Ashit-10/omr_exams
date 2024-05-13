@@ -14,6 +14,11 @@
     #captureBtn {
         margin-top: 10px;
     }
+    #capturedImage {
+        max-width: 320px;
+        height: auto;
+        margin-top: 10px;
+    }
 </style>
 </head>
 <body>
@@ -21,12 +26,14 @@
     <video id="video" muted playsinline loop autoplay controls></video>
     <button id="captureBtn">Capture Image</button>
     <canvas id="canvas"></canvas>
+    <img id="capturedImage" alt="Captured Image">
 
     <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const captureBtn = document.getElementById('captureBtn');
         const ctx = canvas.getContext('2d');
+        const capturedImageElement = document.getElementById('capturedImage');
 
         // Get user media with back camera
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
@@ -46,25 +53,7 @@
             ctx.drawImage(video, 0, 0, width, height);
             // Convert canvas to image
             const imgData = canvas.toDataURL('image/jpeg', 1.0); // Adjust quality here (1.0 is maximum)
-            const capturedImage = new Image();
-            capturedImage.src = imgData;
-            capturedImage.onload = function() {
-                // Resize for display
-                const displayWidth = 640; // Adjust display width here
-                const displayHeight = (height / width) * displayWidth;
-                const displayCanvas = document.createElement('canvas');
-                displayCanvas.width = displayWidth;
-                displayCanvas.height = displayHeight;
-                const displayCtx = displayCanvas.getContext('2d');
-                displayCtx.drawImage(capturedImage, 0, 0, displayWidth, displayHeight);
-                // Convert to data URL
-                const displayImgData = displayCanvas.toDataURL('image/jpeg', 1.0);
-                const displayImage = new Image();
-                displayImage.src = displayImgData;
-                displayImage.onload = function() {
-                    document.body.appendChild(displayImage);
-                };
-            };
+            capturedImageElement.src = imgData;
         });
     </script>
 </body>
