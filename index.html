@@ -245,22 +245,22 @@
                 });
 
                 // Process image using CamanJS
-                Caman(canvas, function () {
-                    // Example enhancement - you can adjust these filters as needed
-                    this.brightness(10);
-                    this.contrast(10);
-                    this.saturation(10);
-                    this.render(function () {
-                        // After rendering, apply sharpening using sharp
-                        var imageData = context.getImageData(0, 0, Fwidth, Fheight);
-                        var data = {
-                            data: new Uint8Array(imageData.data.buffer),
-                            width: Fwidth,
-                            height: Fheight
-                        };
+                // Caman(canvas, function () {
+                //     // Example enhancement - you can adjust these filters as needed
+                //     this.brightness(10);
+                //     this.contrast(10);
+                //     this.saturation(10);
+                //     this.render(function () {
+                //         // After rendering, apply sharpening using sharp
+                //         var imageData = context.getImageData(0, 0, Fwidth, Fheight);
+                //         var data = {
+                //             data: new Uint8Array(imageData.data.buffer),
+                //             width: Fwidth,
+                //             height: Fheight
+                //         };
 
-                    });
-                });
+                //     });
+                // });
 
                 // Apply brightness adjustment
                 // var imageData = context.getImageData(0, 0, Fwidth, Fheight);
