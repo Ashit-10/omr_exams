@@ -208,8 +208,9 @@
             function captureFrame() {
             context.drawImage(video, 0, 0, 320, 430);
             }
+            
             video.addEventListener('playing', () => {
-          setInterval(captureFrame, 100);
+          setInterval(context.drawImage(video, 0, 0, 320, 430), 100);
         });
             // Draw captured image onto video element
             var videoParent = video.parentNode;
