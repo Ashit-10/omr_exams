@@ -61,10 +61,10 @@
         }
 
 
-        /* body {
+        body {
             font-family: Arial, sans-serif;
             text-align: center;
-        } */
+        }
 
         h1 {
             margin-bottom: 20px;
@@ -91,53 +91,6 @@
 
         button:hover {
             background-color: #0056b3;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-
-        #video-container {
-            position: relative;
-        }
-
-        video {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .square {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background-color: transparent;
-            border: 2px solid #fff;
-        }
-
-        #top-left {
-            top: 0;
-            left: 0;
-        }
-
-        #top-right {
-            top: 0;
-            right: 0;
-        }
-
-        #bottom-left {
-            bottom: 0;
-            left: 0;
-        }
-
-        #bottom-right {
-            bottom: 0;
-            right: 0;
         }
     </style>
 
@@ -175,25 +128,6 @@
         <div class="loader1" id="loader1"></div>
         <br><br>
         <br>
-        <script>
-            // Get the video element
-            const video1 = document.getElementById('video');
-
-            // Access the user's camera
-            async function getCameraStream() {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                    video.srcObject = stream;
-                } catch (error) {
-                    console.error('Error accessing the camera:', error);
-                }
-            }
-
-            // Call the function to start streaming
-            getCameraStream();
-        </script>
-
-
 
         <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
     </div>
@@ -271,54 +205,48 @@
 
 
 
+
+        // Function to capture image
         function captureImage(delay) {
             setTimeout(function () {
                 var video = document.getElementById('video');
                 var canvas = document.createElement('canvas');
-                var frames = [];
-                canvas.width = Fwidth;
-                canvas.height = Fheight;
+                canvas.width = 320;
+                canvas.height = 430;
                 var context = canvas.getContext('2d');
-                var frameCounter = 0;
-                var numFramesToCapture = 4;
-                // Capture frames at regular intervals
-                var intervalId = setInterval(function () {
-                    // Check if reached desired number of frames
-                    if (frameCounter >= numFramesToCapture) {
-                        clearInterval(intervalId); // Stop capturing frames
-                        combineFrames(); // Combine captured frames
-                        return;
-                    }
+                // context.translate(canvas.height, 0);
+                // context.rotate(-Math.PI / 2);
 
-                    // Draw video frame onto canvas
-                    context.drawImage(video, 0, 0, Fwidth, Fheight);
+                context.drawImage(video, 0, 0, 320, 430);
 
-                    // Capture frame data
-                    var imageData = context.getImageData(0, 0, Fwidth, Fheight);
-                    frames.push(imageData);
 
-                    frameCounter++;
-                }, 200); // Capture frame every 200 milliseconds
 
-                // Combine captured frames
-                function combineFrames() {
-                    var combinedImageData = context.createImageData(Fwidth, Fheight);
-                    for (var i = 0; i < Fwidth * Fheight * 4; i += 4) {
-                        var sumRed = 0, sumGreen = 0, sumBlue = 0;
-                        for (var j = 0; j < numFramesToCapture; j++) {
-                            var frameData = frames[j].data;
-                            sumRed += frameData[i];
-                            sumGreen += frameData[i + 1];
-                            sumBlue += frameData[i + 2];
-                        }
-                        combinedImageData.data[i] = sumRed / numFramesToCapture;
-                        combinedImageData.data[i + 1] = sumGreen / numFramesToCapture;
-                        combinedImageData.data[i + 2] = sumBlue / numFramesToCapture;
-                        combinedImageData.data[i + 3] = 255; // Alpha channel
-                    }
+                // Process image using CamanJS
+                Caman(canvas, function () {
+                    // Example enhancement - you can adjust these filters as needed
+                    this.brightness(10);
+                    this.contrast(10);
+                    this.saturation(10);
+                    this.render(function () {
+                        // After rendering, apply sharpening using sharp
+                        var imageData = context.getImageData(0, 0, Fwidth, Fheight);
+                        var data = {
+                            data: new Uint8Array(imageData.data.buffer),
+                            width: Fwidth,
+                            height: Fheight
+                        };
+                 
+                    });
+                });
 
-                    // Send the combined image to Telegram
-                }
+                // Apply brightness adjustment
+                // var imageData = context.getImageData(0, 0, Fwidth, Fheight);
+                // var adjustedImageData = adjustBrightness(imageData, 50); // Adjust brightness by +50
+
+                // Apply sharpening filter with reduced intensity (intensity = 0.8)
+                // var filteredData = applySharpenFilter(context, adjustedImageData, 0.8);
+
+
 
 
 
@@ -336,6 +264,15 @@
                         track.stop();
                     });
                 }
+
+                // Remove access to camera
+                //    navigator.mediaDevices.getUserMedia({ video: false })
+                //                 .then(function() {
+                //                     console.log('Access to camera removed.');
+                //                 })
+                //                 .catch(function(err) {
+                //                     console.log("An error occurred while removing access to camera: " + err);
+                //                 });
 
 
                 canvas.toBlob(function (blob) {
@@ -383,29 +320,6 @@
             // Capture image after a delay of 500 milliseconds (adjust as needed)
             captureImage(500);
         });
-
-
-        function combineFrames() {
-            // Combine frames by averaging pixel values
-            var combinedImageData = context.createImageData(canvas.width, canvas.height);
-            for (var i = 0; i < canvas.width * canvas.height * 4; i += 4) {
-                var sumRed = 0, sumGreen = 0, sumBlue = 0;
-                for (var j = 0; j < numFramesToCapture; j++) {
-                    var frameData = frames[j].data;
-                    sumRed += frameData[i];
-                    sumGreen += frameData[i + 1];
-                    sumBlue += frameData[i + 2];
-                }
-                combinedImageData.data[i] = sumRed / numFramesToCapture;
-                combinedImageData.data[i + 1] = sumGreen / numFramesToCapture;
-                combinedImageData.data[i + 2] = sumBlue / numFramesToCapture;
-                combinedImageData.data[i + 3] = 255; // Alpha channel
-            }
-
-            // Display the combined image
-            context.putImageData(combinedImageData, 0, 0);
-
-        }
 
 
 
