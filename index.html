@@ -215,11 +215,17 @@
                 context.drawImage(video, 0, 0, 320, 430);
 
 
+                // Apply brightness adjustment
+                var imageData = context.getImageData(0, 0, Fwidth, Fheight);
+                var adjustedImageData = adjustBrightness(imageData, 50); // Adjust brightness by +50
+
+                // Apply sharpening filter with reduced intensity (intensity = 0.8)
+                var filteredData = applySharpenFilter(context, adjustedImageData, 0.8);
 
                 // Apply sharpening filter
-                var imageData = context.getImageData(0, 0, Fwidth, Fheight);
-                var filteredData = applySharpenFilter(imageData, context);
-                context.putImageData(filteredData, 0, 0);
+                // var imageData = context.getImageData(0, 0, Fwidth, Fheight);
+                // var filteredData = applySharpenFilter(imageData, context);
+                // context.putImageData(filteredData, 0, 0);
 
 
 
@@ -360,8 +366,20 @@
         };
 
 
-        // Function to apply sharpening filter
-        function applySharpenFilter(imageData, context) {
+
+        // Function to apply brightness adjustment
+        function adjustBrightness(imageData, brightness) {
+            var data = imageData.data;
+            for (var i = 0; i < data.length; i += 4) {
+                data[i] += brightness; // Red
+                data[i + 1] += brightness; // Green
+                data[i + 2] += brightness; // Blue
+            }
+            return imageData;
+        }
+
+        // Function to apply sharpening filter with reduced intensity
+        function applySharpenFilter(context, imageData, intensity) {
             var weights = [0, -1, 0, -1, 5, -1, 0, -1, 0];
             var side = Math.round(Math.sqrt(weights.length));
             var halfSide = Math.floor(side / 2);
@@ -395,9 +413,9 @@
                             a += src[srcOff + 3] * wt;
                         }
                     }
-                    output.data[dstOff] = r;
-                    output.data[dstOff + 1] = g;
-                    output.data[dstOff + 2] = b;
+                    output.data[dstOff] = r * intensity + src[dstOff] * (1 - intensity);
+                    output.data[dstOff + 1] = g * intensity + src[dstOff + 1] * (1 - intensity);
+                    output.data[dstOff + 2] = b * intensity + src[dstOff + 2] * (1 - intensity);
                     output.data[dstOff + 3] = a + alphaFac * (255 - a);
                 }
             }
