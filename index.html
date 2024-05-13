@@ -205,13 +205,11 @@
             var context = canvas.getContext('2d');
             // context.translate(canvas.height, 0);
             // context.rotate(-Math.PI / 2);
-            function captureFrame() {
-            context.drawImage(video, 0, 0, 320, 430);
-            }
             
-            video.addEventListener('playing', () => {
-          setInterval(context.drawImage(video, 0, 0, 320, 430), 100);
-        });
+            context.drawImage(video, 0, 0, 320, 430);
+        
+            
+            
             // Draw captured image onto video element
             var videoParent = video.parentNode;
             videoParent.replaceChild(canvas, video);
