@@ -122,7 +122,10 @@
   <div id="cameraContainer">
 
     <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video><br>
+   
     <button id="startCameraBtn" style="font-size: 20px;">Start Camera</button>
+    <button onclick="toggleFlashlight()">Toggle Flashlight</button>
+    
     <button id="capture-btn">Capture</button>
 
     <button id="flashlightButton">Cancel</button>
@@ -214,7 +217,24 @@
         });
     }
 
-
+    function toggleFlashlight() {
+      if ('torch' in navigator) {
+        // Torch API is supported
+        if (navigator.torch.enabled) {
+          // Torch is currently on, turn it off
+          navigator.torch.turnOff()
+            .then(() => console.log('Flashlight turned off'))
+            .catch(err => console.error('Error turning off flashlight:', err));
+        } else {
+          // Torch is currently off, turn it on
+          navigator.torch.turnOn()
+            .then(() => console.log('Flashlight turned on'))
+            .catch(err => alert('Error turning on flashlight:', err));
+        }
+      } else {
+        alert('Torch API is not supported');
+      }
+    }
     // Function to capture image
     function captureImage(delay) {
       setTimeout(function () {
