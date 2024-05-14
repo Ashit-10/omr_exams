@@ -101,7 +101,7 @@
             width: 220px; /* Adjust size as needed */
             height: 440px; /* Adjust size as needed */
             pointer-events: none; /* Ensures the box doesn't interfere with clicking the video */
-            top: 56px;
+            top: 59px;
             left: calc(50% - 105px);
             transform: translate((-50%));
         }
@@ -216,7 +216,7 @@
 
         video.onloadedmetadata = function() {
             overlayBox.style.left = (video.offsetLeft + 50) + 'px'; // Adjust position as needed
-            overlayBox.style.top = (video.offsetTop + 50) + 'px'; // Adjust position as needed
+            // overlayBox.style.top = (video.offsetTop + 50) + 'px'; // Adjust position as needed
         };
         // Start camera function
         function startCamera() {
@@ -226,7 +226,7 @@
                     video.srcObject = stream;
                     this.stream = stream;
                     overlayBox.style.display = "block";
-                    overlayBox.style.top = "50px";
+                    // overlayBox.style.top = "50px";
                 })
                 .catch(function (err) {
                     console.log("An error occurred: " + err);
