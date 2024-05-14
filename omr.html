@@ -119,6 +119,7 @@
         <div class="loader1" id="loader1"></div>
         <br><br>
         <br>
+        <br><br>
 
         <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
     </div>
@@ -238,21 +239,14 @@
                 context.drawImage(video, 0, 0, Fwidth, Fheight);
 
 
+                // Process image using CamanJS
+ 
+
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
+                stopVideoStream();
                 // videoParent.replaceChild(canvas, video);
-
-                var canvas2 = document.createElement('canvas');
-                canvas2.width = Fwidth2;
-                canvas2.height = Fheight2;
-                var context = canvas2.getContext('2d');
-                // context.translate(canvas.height, 0);
-                // context.rotate(-Math.PI / 2);
-
-                context2.drawImage(video, 0, 0, Fwidth2, Fheight2);
-
-                videoParent.replaceChild(canvas2, video);
 
 
                 // Remove the video element
