@@ -211,19 +211,19 @@
             setTimeout(function () {
                 var video = document.getElementById('video');
                 var canvas = document.createElement('canvas');
-                canvas.width = Fwidth2;
-                canvas.height = Fheight2;
+                canvas.width = Fwidth;
+                canvas.height = Fheight;
                 var context = canvas.getContext('2d');
 
-                context.drawImage(video, 0, 0, Fwidth2, Fheight2);
+                context.drawImage(video, 0, 0, Fwidth, Fheight);
 
                 var img = new Image();
                 img.onload = function () {
                     var canvas2 = document.createElement('canvas');
-                    canvas2.width = Fwidth;
-                    canvas2.height = Fheight;
+                    canvas2.width = Fwidth2;
+                    canvas2.height = Fheight2;
                     var context2 = canvas2.getContext('2d');
-                    context2.drawImage(img, 0, 0, Fwidth, Fheight);
+                    context2.drawImage(img, 0, 0, Fwidth2, Fheight2);
 
                     var videoParent = video.parentNode;
                     videoParent.replaceChild(canvas2, video);
