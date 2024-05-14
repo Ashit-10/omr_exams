@@ -112,7 +112,7 @@
         #overlayText {
             position: absolute;
             top: 45%;
-            left: calc(50% - 40px); /* Adjust position to the right of the box */
+            left: calc(50% - 80px); /* Adjust position to the right of the box */
             transform: translateY(-50%) rotate(90deg); /* Rotate text vertically */
             color: rgb(90, 221, 50);
             font-size: 36px;
@@ -264,12 +264,12 @@
                 // Get coordinates of the box relative to the video frame
                 const boxRect = overlayBox.getBoundingClientRect();
                 const videoRect = video.getBoundingClientRect();
-                const x = boxRect.left - videoRect.left;
-                const y = boxRect.top - videoRect.top;
+                const x = boxRect.left;
+                const y = boxRect.top;
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
-                context.drawImage(video, x, y, width + 50, height, 0, 0, Fwidth, Fheight);
+                context.drawImage(video, x, y, width, height, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
