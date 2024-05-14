@@ -105,17 +105,17 @@
             /* Adjust size as needed */
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
-            top: 55px;
-            /* left: calc(50% - 105px); */
+            top: 54px;
+            left: calc(50% - 95px);
             transform: translate((-50%));
         }
         #overlayText {
             position: absolute;
-            top: 50%;
-            left: calc(50% + 60px); /* Adjust position to the right of the box */
+            top: 40%;
+            left: calc(50% + 40px); /* Adjust position to the right of the box */
             transform: translateY(-50%) rotate(90deg); /* Rotate text vertically */
-            color: rgb(231, 16, 203);
-            font-size: 16px;
+            color: rgb(90, 221, 50);
+            font-size: 36px;
             z-index: 1; /* Ensure the text appears above the video */
             white-space: nowrap; /* Prevent text from wrapping */
         }
@@ -133,7 +133,7 @@
 
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
         <div id="overlayBox"></div> <!-- Empty square -->
-        <div id="overlayText">Put the paper imside the boxS</div> <!-- Text over -->
+        <div id="overlayText">Put the paper imside the box</div> <!-- Text over -->
     </div>
     <br>
     <div>
@@ -269,7 +269,7 @@
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
-                context.drawImage(video, x, y, width, height, 0, 0, canvas.width, canvas.height);
+                context.drawImage(video, x, y, width, height, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
