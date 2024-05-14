@@ -207,24 +207,7 @@
                 });
         }
 
-        function toggleFlashlight() {
-            if ('torch' in navigator) {
-                // Torch API is supported
-                if (navigator.torch.enabled) {
-                    // Torch is currently on, turn it off
-                    navigator.torch.turnOff()
-                        .then(() => console.log('Flashlight turned off'))
-                        .catch(err => console.error('Error turning off flashlight:', err));
-                } else {
-                    // Torch is currently off, turn it on
-                    navigator.torch.turnOn()
-                        .then(() => console.log('Flashlight turned on'))
-                        .catch(err => alert('Error turning on flashlight:', err));
-                }
-            } else {
-                alert('Torch API is not supported');
-            }
-        }
+
         // Function to capture image
         function captureImage(delay) {
             setTimeout(function () {
@@ -243,18 +226,9 @@
                 stopVideoStream();
                 // videoParent.replaceChild(canvas, video);
 
-                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                    .then(function (stream) {
-                        var video = document.getElementById('video');
-                        video.srcObject = stream;
+            
                         video.pause(); // Pause the video stream
-                        this.stream = stream;
-                    })
-                    .catch(function (err) {
-                        console.log("An error occurred: " + err);
-                    });
-
-
+               
                 canvas.toBlob(function (blob) {
                     // Create File object from Blob
                     var file = new File([blob], 'captured_image.png', { type: 'image/png' });
@@ -303,38 +277,7 @@
 
 
 
-        // Check if video container is visible
-        function isVideoVisible() {
-            const rect = videoContainer.getBoundingClientRect();
-            return (
-                rect.top >= 0 &&
-                rect.left >= 0 &&
-                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-            );
-        }
-
-        // Pause video if not visible, resume if visible
-        function handleVisibilityChange() {
-            if (isVideoVisible()) {
-                video.play();
-            } else {
-                //   Remove access to camera
-                navigator.mediaDevices.getUserMedia({ video: false })
-                    .then(function () {
-                        console.log('Access to camera removed.');
-                    })
-                    .catch(function (err) {
-                        console.log("An error occurred while removing access to camera: " + err);
-                    });
-
-            }
-        }
-
-        // Add event listener for visibility change
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
-
+      
 
         // Toggle flashlight
         flashlightButton.addEventListener('click', () => {
@@ -349,23 +292,6 @@
             }
         }
 
-        // Function to toggle flashlight
-        function toggleFlashlight() {
-            if (!stream) return;
-
-            const track = stream.getVideoTracks()[0];
-            const capabilities = track.getCapabilities();
-
-            if (!capabilities.torch) {
-                console.error('Flashlight is not supported.');
-                return;
-            }
-
-            isFlashlightOn = !isFlashlightOn;
-            track.applyConstraints({
-                advanced: [{ torch: isFlashlightOn }]
-            });
-        };
 
 
 
