@@ -101,7 +101,7 @@
             width: 220px; /* Adjust size as needed */
             height: 440px; /* Adjust size as needed */
             pointer-events: none; /* Ensures the box doesn't interfere with clicking the video */
-            top: 53px;
+            top: 56px;
             left: calc(50% - 105px);
             transform: translate((-50%));
         }
@@ -203,6 +203,7 @@
         const capturedImage = document.getElementById('capturedImage');
         const captureButton = document.getElementById('captureButton');
         const flashlightButton = document.getElementById('flashlightButton');
+        const overlayBox = document.getElementById('overlayBox');
         let stream;
         let isFlashlightOn = false;
 
@@ -212,6 +213,7 @@
 
         // Start camera button click event
         startCamera();
+
         video.onloadedmetadata = function() {
             overlayBox.style.left = (video.offsetLeft + 50) + 'px'; // Adjust position as needed
             overlayBox.style.top = (video.offsetTop + 50) + 'px'; // Adjust position as needed
