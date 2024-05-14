@@ -238,27 +238,21 @@
 
                 context.drawImage(video, 0, 0, Fwidth, Fheight);
 
-
-                // Process image using CamanJS
- 
-
-
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
                 stopVideoStream();
                 // videoParent.replaceChild(canvas, video);
 
-
-                // Remove the video element
-                // videoParent.removeChild(video);
-                stopVideoStream();
-                // Stop video streaming
-                if (stream) {
-                    stream.getTracks().forEach(track => {
-                        track.stop();
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                    .then(function (stream) {
+                        var video = document.getElementById('video');
+                        video.srcObject = stream;
+                        video.pause(); // Pause the video stream
+                        this.stream = stream;
+                    })
+                    .catch(function (err) {
+                        console.log("An error occurred: " + err);
                     });
-                }
-
 
 
                 canvas.toBlob(function (blob) {
