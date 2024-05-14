@@ -106,7 +106,7 @@
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
             top: 54px;
-            left: calc(50% - 120px);
+            left: calc(50% - 116px);
             transform: translate((-50%));
         }
         #overlayText {
@@ -133,7 +133,7 @@
 
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
         <div id="overlayBox"></div> <!-- Empty square -->
-        <div id="overlayText">Put the paper imside the box</div> <!-- Text over -->
+        <div id="overlayText">Put the paper inside the box</div> <!-- Text over -->
     </div>
     <br>
     <div>
@@ -269,7 +269,7 @@
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
-                context.drawImage(video, x, 0, width + 80, height + 200, 0, 0, Fwidth, Fheight + 100);
+                context.drawImage(video, x, 0, width + 80, height + 250, 0, 0, Fwidth, Fheight + 200);
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
