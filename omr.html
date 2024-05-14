@@ -221,7 +221,9 @@
                 var context = canvas.getContext('2d');
                 // context.translate(canvas.height, 0);
                 // context.rotate(-Math.PI / 2);
+                video.pause(); // Pause the video stream
 
+                
                 context.drawImage(video, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
@@ -230,7 +232,7 @@
                 // videoParent.replaceChild(canvas, video);
 
 
-                video.pause(); // Pause the video stream
+              
 
                 canvas.toBlob(function (blob) {
                     // Create File object from Blob
