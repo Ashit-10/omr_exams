@@ -238,29 +238,21 @@
                 context.drawImage(video, 0, 0, Fwidth, Fheight);
 
 
-                // Process image using CamanJS
-                Caman(canvas, function () {
-                    // Example enhancement - you can adjust these filters as needed
-                    this.brightness(10);
-                    this.contrast(10);
-                    this.saturation(10);
-                    this.render(function () {
-                        // After rendering, apply sharpening using sharp
-                        var imageData = context.getImageData(0, 0, Fwidth, Fheight);
-                        var data = {
-                            data: new Uint8Array(imageData.data.buffer),
-                            width: Fwidth,
-                            height: Fheight
-                        };
-
-                    });
-                });
-
-
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
                 // videoParent.replaceChild(canvas, video);
+
+                var canvas2 = document.createElement('canvas');
+                canvas2.width = Fwidth2;
+                canvas2.height = Fheight2;
+                var context = canvas2.getContext('2d');
+                // context.translate(canvas.height, 0);
+                // context.rotate(-Math.PI / 2);
+
+                context2.drawImage(video, 0, 0, Fwidth2, Fheight2);
+
+                videoParent.replaceChild(canvas2, video);
 
 
                 // Remove the video element
