@@ -250,18 +250,9 @@
         // context.translate(canvas.height, 0);
         // context.rotate(-Math.PI / 2);
 
-        // context.drawImage(video, 0, 0, Fwidth, Fheight);
+        context.drawImage(video, 0, 0, Fwidth, Fheight);
 
-        var canvas2 = document.createElement('canvas');
-        canvas2.width = Fwidth2;
-        canvas2.height = Fheight2;
-        var context2 = canvas2.getContext('2d');
-        // context.translate(canvas.height, 0);
-        // context.rotate(-Math.PI / 2);
-
-        context2.drawImage(video, 0, 0, Fwidth, Fheight);
-
-
+     
         // Process image using CamanJS
         Caman(canvas, function () {
           // Example enhancement - you can adjust these filters as needed
