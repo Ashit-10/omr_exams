@@ -133,8 +133,8 @@
 
     <script>
 
-        const Fwidth = 330 * 3;
-        const Fheight = 440 * 3;
+        const Fwidth = 330 * 2;
+        const Fheight = 440 * 2;
 
         const Fwidth2 = 330;
         const Fheight2 = 440;
@@ -142,6 +142,7 @@
         function sendImage() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
+            video.pause(); // Pause the video stream
 
             if (file) {
                 const formData = new FormData();
