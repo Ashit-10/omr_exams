@@ -101,12 +101,7 @@
     <h1>OMR sheet evaluator
     </h1>
 
-    <input type="file" id="fileInput">
-    <button onclick="sendImage()">Check Result</button>
-    <div class="loader" id="loader"></div>
-
-
-    <br><br><br><br><br><br>
+   
     <div id="cameraContainer">
 
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video><br>
@@ -118,12 +113,19 @@
         <button id="flashlightButton">Cancel</button>
         <div class="loader1" id="loader1"></div>
         <br><br>
-        <br>
-        <br><br>
 
         <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
     </div>
+    <h15>Or select file from below
+    </h5>
+    <br>
 
+    <input type="file" id="fileInput">
+    <button onclick="sendImage()">Check Result</button>
+    <div class="loader" id="loader"></div>
+
+
+    <br><br><br><br>
     <!-- Include CamanJS library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
     <!-- Include sharp library -->
@@ -226,9 +228,9 @@
                 stopVideoStream();
                 // videoParent.replaceChild(canvas, video);
 
-            
-                        video.pause(); // Pause the video stream
-               
+
+                video.pause(); // Pause the video stream
+
                 canvas.toBlob(function (blob) {
                     // Create File object from Blob
                     var file = new File([blob], 'captured_image.png', { type: 'image/png' });
@@ -277,7 +279,7 @@
 
 
 
-      
+
 
         // Toggle flashlight
         flashlightButton.addEventListener('click', () => {
