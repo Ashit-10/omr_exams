@@ -252,15 +252,7 @@
 
         context.drawImage(video, 0, 0, Fwidth, Fheight);
 
-        var showCanvas = document.createElement('show-canvas');
-        showCanvas.width = Fwidth2;
-        showCanvas.height = Fheight2;
-        var context2 = showCanvas.getContext('2d');
-        // context.translate(canvas.height, 0);
-        // context.rotate(-Math.PI / 2);
-
-        context2.drawImage(video, 0, 0, Fwidth2, Fheight2);
-
+    
 
         // Process image using CamanJS
         Caman(canvas, function () {
@@ -284,7 +276,7 @@
 
         // Draw captured image onto video element
         var videoParent = video.parentNode;
-        videoParent.replaceChild(showCanvas, video);
+        videoParent.replaceChild(canvas, video);
 
 
         // Remove the video element
