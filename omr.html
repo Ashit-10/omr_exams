@@ -92,17 +92,21 @@
         button:hover {
             background-color: #0056b3;
         }
-   
+
 
         #overlayBox {
             display: none;
             position: absolute;
-            border: 4px solid rgb(41, 238, 74); /* Customize border style */
-            width: 220px; /* Adjust size as needed */
-            height: 440px; /* Adjust size as needed */
-            pointer-events: none; /* Ensures the box doesn't interfere with clicking the video */
+            border: 4px solid rgb(41, 238, 74);
+            /* Customize border style */
+            width: 220px;
+            /* Adjust size as needed */
+            height: 440px;
+            /* Adjust size as needed */
+            pointer-events: none;
+            /* Ensures the box doesn't interfere with clicking the video */
             top: 55px;
-            left: calc(50% - 105px);
+            /* left: calc(50% - 105px); */
             transform: translate((-50%));
         }
     </style>
@@ -114,7 +118,7 @@
     <h1>OMR sheet evaluator
     </h1>
 
-   
+
     <div id="cameraContainer">
 
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
@@ -214,7 +218,7 @@
         // Start camera button click event
         startCamera();
 
-        video.onloadedmetadata = function() {
+        video.onloadedmetadata = function () {
             overlayBox.style.left = (video.offsetLeft + 50) + 'px'; // Adjust position as needed
             // overlayBox.style.top = (video.offsetTop + 50) + 'px'; // Adjust position as needed
         };
@@ -246,8 +250,15 @@
                 // context.rotate(-Math.PI / 2);
                 video.pause(); // Pause the video stream
 
-
-                context.drawImage(video, 0, 0, Fwidth, Fheight);
+                // Get coordinates of the box relative to the video frame
+                const boxRect = overlayBox.getBoundingClientRect();
+                const videoRect = videoElement.getBoundingClientRect();
+                const x = boxRect.left - videoRect.left;
+                const y = boxRect.top - videoRect.top;
+                const width = boxRect.width;
+                const height = boxRect.height;
+                
+                context.drawImage(video, x, y, width, height, 0, 0, canvas.width, canvas.height);
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
@@ -255,7 +266,7 @@
                 // videoParent.replaceChild(canvas, video);
 
 
-              
+
 
                 canvas.toBlob(function (blob) {
                     // Create File object from Blob
