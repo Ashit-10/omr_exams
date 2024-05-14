@@ -106,7 +106,7 @@
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
             top: 54px;
-            left: calc(50% - 95px);
+            left: calc(50% - 110px);
             transform: translate((-50%));
         }
         #overlayText {
@@ -264,8 +264,8 @@
                 // Get coordinates of the box relative to the video frame
                 const boxRect = overlayBox.getBoundingClientRect();
                 const videoRect = video.getBoundingClientRect();
-                const x = boxRect.left;
-                const y = boxRect.top;
+                const x = boxRect.left + 50;
+                const y = boxRect.top + 70;
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
