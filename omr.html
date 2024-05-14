@@ -106,13 +106,13 @@
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
             top: 54px;
-            left: calc(50% - 110px);
+            left: calc(50% - 120px);
             transform: translate((-50%));
         }
         #overlayText {
             position: absolute;
-            top: 45%;
-            left: calc(50% - 65px); /* Adjust position to the right of the box */
+            top: 42%;
+            left: calc(50% - 55px); /* Adjust position to the right of the box */
             transform: translateY(-50%) rotate(90deg); /* Rotate text vertically */
             color: rgb(90, 221, 50);
             font-size: 30px;
@@ -269,7 +269,7 @@
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
-                context.drawImage(video, x, y, width + 70, height + 90, 0, 0, Fwidth, Fheight);
+                context.drawImage(video, x, 0, width + 80, height + 110, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
