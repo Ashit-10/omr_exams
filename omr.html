@@ -92,6 +92,19 @@
         button:hover {
             background-color: #0056b3;
         }
+        #videoContainer {
+            position: relative;
+            width: 640px; /* Adjust size as needed */
+            height: 480px; /* Adjust size as needed */
+        }
+
+        #overlayBox {
+            position: absolute;
+            border: 2px solid red; /* Customize border style */
+            width: 100px; /* Adjust size as needed */
+            height: 100px; /* Adjust size as needed */
+            pointer-events: none; /* Ensures the box doesn't interfere with clicking the video */
+        }
     </style>
 
 </head>
@@ -105,7 +118,9 @@
     <div id="cameraContainer">
 
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video><br>
-
+        <div id="overlayBox"></div> <!-- Empty square -->
+    </div>
+    <div>
         <!-- <button onclick="toggleFlashlight()">Toggle Flashlight</button> -->
 
         <button id="capture-btn">Capture</button>
@@ -196,7 +211,10 @@
 
         // Start camera button click event
         startCamera();
-
+        video.onloadedmetadata = function() {
+            overlayBox.style.left = (video.offsetLeft + 50) + 'px'; // Adjust position as needed
+            overlayBox.style.top = (video.offsetTop + 50) + 'px'; // Adjust position as needed
+        };
         // Start camera function
         function startCamera() {
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
@@ -223,7 +241,7 @@
                 // context.rotate(-Math.PI / 2);
                 video.pause(); // Pause the video stream
 
-                
+
                 context.drawImage(video, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
