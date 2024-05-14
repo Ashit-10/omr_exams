@@ -114,7 +114,7 @@
             top: 40%;
             left: calc(50% - 55px); /* Adjust position to the right of the box */
             transform: translateY(-50%) rotate(90deg); /* Rotate text vertically */
-            color: rgb(90, 221, 50);
+            color: rgb(0, 0, 0);
             font-size: 30px;
             z-index: 1; /* Ensure the text appears above the video */
             white-space: nowrap; /* Prevent text from wrapping */
@@ -269,7 +269,8 @@
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
-                context.drawImage(video, x, 0, width + 80, height + 250, 0, 0, Fwidth, Fheight);
+                context.drawImage(video, x, 0, width + 80, height + 200) 
+                // , 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
