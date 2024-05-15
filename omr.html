@@ -166,8 +166,8 @@
             /* Adjust size as needed */
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
-            top: 60px;
-            left: calc(50% - 50px);
+            top: 440px;
+            left: calc(50% + 30px);
             transform: translate((-50%));
         }
         #overlayText {
@@ -200,6 +200,7 @@
         <div id="overlayBox"></div>
         <div id="overlayBox2"></div> 
         <div id="overlayBox3"></div> 
+        <div id="overlayBox4"></div> 
         <div id="overlayBox1"></div> <!-- Empty square -->
         <div id="overlayText">Put the paper inside the box</div> <!-- Text over -->
     </div>
@@ -290,6 +291,7 @@
         const overlayBox1 = document.getElementById('overlayBox1');
         const overlayBox2 = document.getElementById('overlayBox2');
         const overlayBox3 = document.getElementById('overlayBox3');
+        const overlayBox4 = document.getElementById('overlayBox4');
         let stream;
         let isFlashlightOn = false;
 
@@ -315,6 +317,7 @@
                     overlayBox1.style.display = "block";
                     overlayBox2.style.display = "block";
                     overlayBox3.style.display = "block";
+                    overlayBox4.style.display = "block";
                     // overlayBox.style.top = "50px";
                 })
                 .catch(function (err) {
@@ -344,8 +347,8 @@
                 // const width = 250; //boxRect.width;
                 // const height = 1040; //boxRect.height;
 
-                const width = boxRect.width * 2;
-                const height = boxRect.height * 2;
+                const width = boxRect.width * 3;
+                const height = boxRect.height * 4;
 
                 const Fwidth3 = width * 3;
                 const Fheight3 = height * 3;
