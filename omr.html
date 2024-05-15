@@ -269,7 +269,8 @@
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
-                context.drawImage(video, x, y, width, height, 0, 0, Fwidth2, Fheight2);
+                // context.drawImage(video, x, y, width, height, 0, 0, Fwidth2, Fheight2);
+                context.drawImage(video, 0, 0, Fwidth2, Fheight2);
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
