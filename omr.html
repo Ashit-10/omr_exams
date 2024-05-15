@@ -264,12 +264,12 @@
                 // Get coordinates of the box relative to the video frame
                 const boxRect = overlayBox.getBoundingClientRect();
                 const videoRect = video.getBoundingClientRect();
-                const x = boxRect.left - videoRect.left;
-                const y = boxRect.top - videoRect.top;
+                const x = boxRect.left; // - videoRect.left;
+                const y = boxRect.top; // - videoRect.top;
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
-                context.drawImage(video, x, y, width, height, 0, 0, Fwidth - width, Fheight - height);
+                context.drawImage(video, x, y, width, height, 0, 0, Fwidth, Fheight);
                 // context.drawImage(video, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
