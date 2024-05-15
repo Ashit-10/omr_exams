@@ -122,7 +122,7 @@
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
             top: 60px;
-            left: calc(50% - 100px);
+            left: calc(50% - 70px);
             transform: translate((-50%));
         }
         #overlayBox2 {
@@ -151,8 +151,8 @@
             /* Adjust size as needed */
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
-            top: 60px;
-            left: calc(50% - 50px);
+            top: 480px;
+            left: calc(50% - 70px);
             transform: translate((-50%));
         }
         #overlayBox4 {
@@ -199,6 +199,7 @@
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
         <div id="overlayBox"></div>
         <div id="overlayBox2"></div> 
+        <div id="overlayBox3"></div> 
         <div id="overlayBox1"></div> <!-- Empty square -->
         <div id="overlayText">Put the paper inside the box</div> <!-- Text over -->
     </div>
@@ -288,6 +289,7 @@
         const overlayBox = document.getElementById('overlayBox');
         const overlayBox1 = document.getElementById('overlayBox1');
         const overlayBox2 = document.getElementById('overlayBox2');
+        const overlayBox3 = document.getElementById('overlayBox3');
         let stream;
         let isFlashlightOn = false;
 
@@ -312,6 +314,7 @@
                     overlayBox.style.display = "block";
                     overlayBox1.style.display = "block";
                     overlayBox2.style.display = "block";
+                    overlayBox3.style.display = "block";
                     // overlayBox.style.top = "50px";
                 })
                 .catch(function (err) {
@@ -339,13 +342,13 @@
                 const y = - videoRect.top;
 
 
-                const width = 250; //boxRect.width;
-                const height = 1040; //boxRect.height;
+                const width = 150; //boxRect.width;
+                const height = 1280; //boxRect.height;
 
                 const Fwidth3 = width * 2;
                 const Fheight3 = height * 2;
                 
-                context.drawImage(video, x, 0, width, height, 0, 0, Fwidth3, Fheight3);
+                context.drawImage(video, x, 0, width, height) //, 0, 0, Fwidth3, Fheight3);
                 // context.drawImage(video, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
