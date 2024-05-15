@@ -109,6 +109,21 @@
             left: calc(50% - 90px);
             transform: translate((-50%));
         }
+        #overlayBox1 {
+            display: none;
+            position: absolute;
+            border: 3px solid rgb(153, 240, 14);
+            /* Customize border style */
+            width: 30px;
+            /* Adjust size as needed */
+            height: 30px;
+            /* Adjust size as needed */
+            pointer-events: none;
+            /* Ensures the box doesn't interfere with clicking the video */
+            top: 55px;
+            left: calc(50% - 50px);
+            transform: translate((-50%));
+        }
         #overlayText {
             position: absolute;
             top: 40%;
@@ -132,7 +147,9 @@
     <div id="cameraContainer">
 
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
-        <div id="overlayBox"></div> <!-- Empty square -->
+        <div id="overlayBox"></div> 
+        <!-- <div id="overlayBox"></div>  -->
+        <div id="overlayBox1"></div> <!-- Empty square -->
         <div id="overlayText">Put the paper inside the box</div> <!-- Text over -->
     </div>
     <br>
@@ -269,7 +286,7 @@
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
-                context.drawImage(video, x, 0, 280, 640, 0, 0, Fwidth, Fheight);
+                context.drawImage(video, x, 0, 210, 640, 0, 0, Fwidth, Fheight);
                 // context.drawImage(video, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
