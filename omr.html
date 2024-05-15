@@ -109,21 +109,7 @@
             left: calc(50% - 90px);
             transform: translate((-50%));
         }
-      .blur{
-        display: block;
-        position: absolute;
-        top: 0;
-        /* bottom: 0; */
-        width: 50%;
-        backdrop-filter: blur(30px);
-        /* background: rgba(0,0,0,0.5); */
-      }
-      .left{
-        left: 0;
-      }
-      .right{
-        right: 0;
-      }
+
         #overlayBox1 {
             display: none;
             position: absolute;
@@ -204,14 +190,49 @@
         }
           /* Keyframe animation for sparkling effect */
           @keyframes sparkle {
-            0% { border-color: rgba(41, 238, 74, 0.5); }
-            50% { border-color: rgba(153, 240, 14, 0.5); }
-            100% { border-color: rgba(41, 238, 74, 0.5); }
+            0% { border-color: rgba(196, 238, 203, 0.5); }
+            10% { border-color: rgba(1, 20, 4, 0.5); }
+            20% { border-color: rgba(243, 209, 17, 0.5); }
+            30% { border-color: rgba(238, 30, 169, 0.5); }
+            40% { border-color: rgba(72, 31, 221, 0.5); }
+            50% { border-color: rgba(31, 235, 156, 0.5); }
+            60% { border-color: rgba(22, 235, 68, 0.5); }
+            70% { border-color: rgba(153, 240, 14, 0.5); }
+            80% { border-color: rgba(221, 31, 104, 0.5); }
+            90% { border-color: rgba(236, 233, 26, 0.5); }
+            100% { border-color: rgba(35, 228, 67, 0.5); }
         }
 
         /* Apply animation to overlay boxes */
         #overlayBox1, #overlayBox2, #overlayBox3, #overlayBox4 {
             animation: sparkle 1s infinite alternate;
+        }
+        /* Partial blur effect */
+        .blur {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blur:before {
+            content: "";
+            position: absolute;
+            width: calc(50% - 165px); /* Adjust as needed */
+            height: 100%;
+            filter: blur(10px); /* Adjust blur strength as needed */
+            left: 0;
+            top: 0;
+            z-index: -1;
+        }
+
+        .blur:after {
+            content: "";
+            position: absolute;
+            width: calc(50% - 165px); /* Adjust as needed */
+            height: 100%;
+            filter: blur(10px); /* Adjust blur strength as needed */
+            right: 0;
+            top: 0;
+            z-index: -1;
         }
     </style>
 
@@ -223,7 +244,7 @@
     </h1>
 
 
-    <div id="cameraContainer">
+    <div id="cameraContainer" class="blur">
 
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
         <div id="overlayBox"></div>
