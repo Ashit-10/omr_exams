@@ -151,8 +151,8 @@
             /* Adjust size as needed */
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
-            top: 400px;
-            left: calc(50% - 90px);
+            top: 450px;
+            left: calc(50% - 70px);
             transform: translate((-50%));
         }
         #overlayBox4 {
@@ -342,13 +342,13 @@
                 const y = - videoRect.top;
 
 
-                const width = 180; //boxRect.width;
-                const height = 440; //boxRect.height;
+                const width = boxRect.width;
+                const height = boxRect.height;
 
-                const Fwidth3 = width * 2;
-                const Fheight3 = height * 2;
+                const Fwidth3 = width * 3;
+                const Fheight3 = height * 3;
                 
-                context.drawImage(video, x, 0, width, height) //, 0, 0, Fwidth3, Fheight3);
+                context.drawImage(video, x, 0, width, height, 0, 0, Fwidth3, Fheight3);
                 // context.drawImage(video, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
