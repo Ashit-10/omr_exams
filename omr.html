@@ -109,7 +109,20 @@
             left: calc(50% - 90px);
             transform: translate((-50%));
         }
-
+      .blur{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 15%;
+        backdrop-filter: blur(10px);
+        background: rgba(0,0,0,0.5);
+      }
+      .left{
+        left: 0;
+      }
+      .right{
+        right: 0;
+      }
         #overlayBox1 {
             display: none;
             position: absolute;
@@ -202,6 +215,8 @@
 
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
         <div id="overlayBox"></div>
+        <div id="blur left"></div>
+        <div id="blur right"></div>
         <div id="overlayBox2"></div>
         <div id="overlayBox3"></div>
         <div id="overlayBox4"></div>
