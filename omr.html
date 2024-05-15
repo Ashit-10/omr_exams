@@ -249,32 +249,32 @@
         }
 
         /* Partial blur effect */
-        .blur {
+        .cameraContainer {
             position: relative;
             overflow: hidden;
         }
 
-        .blur:before {
+        .cameraContainer:before {
             content: "";
             position: absolute;
-            width: calc(50% - 165px);
-            /* Adjust as needed */
+            width: 50%;
+            /* Adjust the width of the blur effect as needed */
             height: 100%;
             filter: blur(10px);
-            /* Adjust blur strength as needed */
+            /* Adjust the blur strength as needed */
             left: 0;
             top: 0;
             z-index: -1;
         }
 
-        .blur:after {
+        .cameraContainer:after {
             content: "";
             position: absolute;
-            width: calc(50% - 165px);
-            /* Adjust as needed */
+            width: 50%;
+            /* Adjust the width of the blur effect as needed */
             height: 100%;
             filter: blur(10px);
-            /* Adjust blur strength as needed */
+            /* Adjust the blur strength as needed */
             right: 0;
             top: 0;
             z-index: -1;
