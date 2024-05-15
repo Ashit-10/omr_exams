@@ -99,9 +99,9 @@
             position: absolute;
             border: 4px solid rgb(41, 238, 74);
             /* Customize border style */
-            width: 220;
+            width: 180px;
             /* Adjust size as needed */
-            height: 440;
+            height: 440px;
             /* Adjust size as needed */
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
@@ -269,7 +269,7 @@
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
-                context.drawImage(video, x, 0, 320, 440, 0, 0, Fwidth, Fheight);
+                context.drawImage(video, x, 0, 300, 540, 0, 0, Fwidth, Fheight);
                 // context.drawImage(video, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
