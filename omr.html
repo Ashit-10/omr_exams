@@ -188,25 +188,66 @@
             white-space: nowrap;
             /* Prevent text from wrapping */
         }
-          /* Keyframe animation for sparkling effect */
-          @keyframes sparkle {
-            0% { border-color: rgba(245, 248, 245, 0.5); }
-            10% { border-color: rgba(1, 20, 4, 0.5); }
-            20% { border-color: rgba(151, 129, 1, 0.5); }
-            30% { border-color: rgba(248, 5, 167, 0.5); }
-            40% { border-color: rgba(42, 4, 179, 0.5); }
-            50% { border-color: rgba(2, 143, 89, 0.5); }
-            60% { border-color: rgba(5, 199, 47, 0.5); }
-            70% { border-color: rgba(153, 240, 14, 0.5); }
-            80% { border-color: rgba(230, 10, 94, 0.5); }
-            90% { border-color: rgba(248, 6, 6, 0.5); }
-            100% { border-color: rgba(35, 228, 67, 0.5); }
+
+        /* Keyframe animation for sparkling effect */
+        @keyframes sparkle {
+            0% {
+                border-color: rgba(245, 248, 245, 0.5);
+            }
+
+            10% {
+                border-color: rgba(1, 20, 4, 0.5);
+            }
+
+            20% {
+                border-color: rgba(151, 129, 1, 0.5);
+            }
+
+            30% {
+                border-color: rgba(248, 5, 167, 0.5);
+            }
+
+            40% {
+                border-color: rgba(42, 4, 179, 0.5);
+            }
+
+            50% {
+                border-color: rgba(2, 143, 89, 0.5);
+            }
+
+            60% {
+                border-color: rgba(5, 199, 47, 0.5);
+            }
+
+            70% {
+                border-color: rgba(153, 240, 14, 0.5);
+            }
+
+            80% {
+                border-color: rgba(230, 10, 94, 0.5);
+            }
+
+            90% {
+                border-color: rgba(248, 6, 6, 0.5);
+            }
+
+            100% {
+                border-color: rgba(35, 228, 67, 0.5);
+            }
         }
 
         /* Apply animation to overlay boxes */
-        #overlayBox1, #overlayBox2, #overlayBox3, #overlayBox4 {
+        #overlayBox1,
+        #overlayBox2,
+        #overlayBox3,
+        #overlayBox4 {
             animation: sparkle 1s infinite alternate;
         }
+
+        .green-border {
+            border-color: green !important;
+        }
+
         /* Partial blur effect */
         .blur {
             position: relative;
@@ -216,9 +257,11 @@
         .blur:before {
             content: "";
             position: absolute;
-            width: calc(50% - 165px); /* Adjust as needed */
+            width: calc(50% - 165px);
+            /* Adjust as needed */
             height: 100%;
-            filter: blur(10px); /* Adjust blur strength as needed */
+            filter: blur(10px);
+            /* Adjust blur strength as needed */
             left: 0;
             top: 0;
             z-index: -1;
@@ -227,9 +270,11 @@
         .blur:after {
             content: "";
             position: absolute;
-            width: calc(50% - 165px); /* Adjust as needed */
+            width: calc(50% - 165px);
+            /* Adjust as needed */
             height: 100%;
-            filter: blur(10px); /* Adjust blur strength as needed */
+            filter: blur(10px);
+            /* Adjust blur strength as needed */
             right: 0;
             top: 0;
             z-index: -1;
@@ -289,7 +334,18 @@
         const Fwidth = Fwidth2 * 4;
         const Fheight = Fheight2 * 4;
 
-
+        // Function to remove animation from overlay boxes
+        function stopSparkling() {
+            document.getElementById('overlayBox1').style.animation = 'none';
+            document.getElementById('overlayBox2').style.animation = 'none';
+            document.getElementById('overlayBox3').style.animation = 'none';
+            document.getElementById('overlayBox4').style.animation = 'none';
+            // Apply green border to overlay boxes
+            document.getElementById('overlayBox1').classList.add('green-border');
+            document.getElementById('overlayBox2').classList.add('green-border');
+            document.getElementById('overlayBox3').classList.add('green-border');
+            document.getElementById('overlayBox4').classList.add('green-border');
+        }
 
         function sendImage() {
             const fileInput = document.getElementById('fileInput');
@@ -390,7 +446,7 @@
                 // context.translate(canvas.height, 0);
                 // context.rotate(-Math.PI / 2);
                 video.pause(); // Pause the video stream
-
+                stopSparkling();
                 // Get coordinates of the box relative to the video frame
                 const boxRect = overlayBox.getBoundingClientRect();
                 const videoRect = video.getBoundingClientRect();
