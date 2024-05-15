@@ -106,7 +106,7 @@
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
             top: 52px;
-            left: calc(50% - 115px);
+            left: calc(50% - 90px);
             transform: translate((-50%));
         }
         #overlayText {
@@ -269,7 +269,7 @@
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
-                context.drawImage(video, x, 0, 300, 540, 0, 0, Fwidth, Fheight);
+                context.drawImage(video, x, 0, 280, 640, 0, 0, Fwidth, Fheight);
                 // context.drawImage(video, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
