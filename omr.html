@@ -115,17 +115,61 @@
             position: absolute;
             border: 3px solid rgb(153, 240, 14);
             /* Customize border style */
-            width: 30px;
+            width: 50px;
             /* Adjust size as needed */
-            height: 30px;
+            height: 50px;
             /* Adjust size as needed */
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
-            top: 55px;
+            top: 60px;
             left: calc(50% - 50px);
             transform: translate((-50%));
         }
-
+        #overlayBox2 {
+            display: none;
+            position: absolute;
+            border: 3px solid rgb(153, 240, 14);
+            /* Customize border style */
+            width: 50px;
+            /* Adjust size as needed */
+            height: 50px;
+            /* Adjust size as needed */
+            pointer-events: none;
+            /* Ensures the box doesn't interfere with clicking the video */
+            top: 60px;
+            left: calc(50% + 50px);
+            transform: translate((-50%));
+        }
+        #overlayBox3 {
+            display: none;
+            position: absolute;
+            border: 3px solid rgb(153, 240, 14);
+            /* Customize border style */
+            width: 50px;
+            /* Adjust size as needed */
+            height: 50px;
+            /* Adjust size as needed */
+            pointer-events: none;
+            /* Ensures the box doesn't interfere with clicking the video */
+            top: 60px;
+            left: calc(50% - 50px);
+            transform: translate((-50%));
+        }
+        #overlayBox4 {
+            display: none;
+            position: absolute;
+            border: 3px solid rgb(153, 240, 14);
+            /* Customize border style */
+            width: 50px;
+            /* Adjust size as needed */
+            height: 50px;
+            /* Adjust size as needed */
+            pointer-events: none;
+            /* Ensures the box doesn't interfere with clicking the video */
+            top: 60px;
+            left: calc(50% - 50px);
+            transform: translate((-50%));
+        }
         #overlayText {
             position: absolute;
             top: 40%;
@@ -154,7 +198,7 @@
 
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
         <div id="overlayBox"></div>
-        <!-- <div id="overlayBox"></div>  -->
+        <div id="overlayBox2"></div> 
         <div id="overlayBox1"></div> <!-- Empty square -->
         <div id="overlayText">Put the paper inside the box</div> <!-- Text over -->
     </div>
@@ -243,6 +287,7 @@
         const flashlightButton = document.getElementById('flashlightButton');
         const overlayBox = document.getElementById('overlayBox');
         const overlayBox1 = document.getElementById('overlayBox1');
+        const overlayBox2 = document.getElementById('overlayBox2');
         let stream;
         let isFlashlightOn = false;
 
@@ -254,7 +299,7 @@
         startCamera();
 
         video.onloadedmetadata = function () {
-            overlayBox.style.left = (video.offsetLeft + 0) + 'px'; // Adjust position as needed
+            overlayBox.style.left = (video.offsetLeft + 200) + 'px'; // Adjust position as needed
             // overlayBox.style.top = (video.offsetTop + 50) + 'px'; // Adjust position as needed
         };
         // Start camera function
@@ -266,6 +311,7 @@
                     this.stream = stream;
                     overlayBox.style.display = "block";
                     overlayBox1.style.display = "block";
+                    overlayBox2.style.display = "block";
                     // overlayBox.style.top = "50px";
                 })
                 .catch(function (err) {
@@ -293,8 +339,8 @@
                 const y = - videoRect.top;
 
 
-                const width = 230; //boxRect.width;
-                const height = 640; //boxRect.height;
+                const width = 250; //boxRect.width;
+                const height = 840; //boxRect.height;
 
                 const Fwidth3 = width * 2;
                 const Fheight3 = height * 2;
