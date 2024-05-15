@@ -122,7 +122,7 @@
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
             top: 60px;
-            left: calc(50% - 50px);
+            left: calc(50% - 100px);
             transform: translate((-50%));
         }
         #overlayBox2 {
@@ -137,7 +137,7 @@
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
             top: 60px;
-            left: calc(50% + 50px);
+            left: calc(50% + 30px);
             transform: translate((-50%));
         }
         #overlayBox3 {
@@ -298,10 +298,10 @@
         // Start camera button click event
         startCamera();
 
-        video.onloadedmetadata = function () {
-            overlayBox.style.left = (video.offsetLeft + 200) + 'px'; // Adjust position as needed
-            // overlayBox.style.top = (video.offsetTop + 50) + 'px'; // Adjust position as needed
-        };
+        // video.onloadedmetadata = function () {
+        //     overlayBox.style.left = (video.offsetLeft + 200) + 'px'; // Adjust position as needed
+        //     // overlayBox.style.top = (video.offsetTop + 50) + 'px'; // Adjust position as needed
+        // };
         // Start camera function
         function startCamera() {
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
@@ -340,7 +340,7 @@
 
 
                 const width = 250; //boxRect.width;
-                const height = 840; //boxRect.height;
+                const height = 1040; //boxRect.height;
 
                 const Fwidth3 = width * 2;
                 const Fheight3 = height * 2;
