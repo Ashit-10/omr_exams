@@ -125,6 +125,7 @@
             left: calc(50% - 85px);
             transform: translate((-50%));
         }
+
         #overlayBox2 {
             display: none;
             position: absolute;
@@ -140,6 +141,7 @@
             left: calc(50% + 30px);
             transform: translate((-50%));
         }
+
         #overlayBox3 {
             display: none;
             position: absolute;
@@ -155,6 +157,7 @@
             left: calc(50% - 85px);
             transform: translate((-50%));
         }
+
         #overlayBox4 {
             display: none;
             position: absolute;
@@ -170,6 +173,7 @@
             left: calc(50% + 30px);
             transform: translate((-50%));
         }
+
         #overlayText {
             position: absolute;
             top: 40%;
@@ -198,9 +202,9 @@
 
         <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
         <div id="overlayBox"></div>
-        <div id="overlayBox2"></div> 
-        <div id="overlayBox3"></div> 
-        <div id="overlayBox4"></div> 
+        <div id="overlayBox2"></div>
+        <div id="overlayBox3"></div>
+        <div id="overlayBox4"></div>
         <div id="overlayBox1"></div> <!-- Empty square -->
         <div id="overlayText">Put the paper inside the box</div> <!-- Text over -->
     </div>
@@ -233,11 +237,13 @@
 
     <script>
 
-        const Fwidth = 330 * 2;
-        const Fheight = 440 * 2;
-
-        const Fwidth2 = 330;
+        const Fwidth2 = 230;
         const Fheight2 = 440;
+
+        const Fwidth = Fwidth * 2;
+        const Fheight = Fheight * 2;
+
+
 
         function sendImage() {
             const fileInput = document.getElementById('fileInput');
@@ -348,12 +354,13 @@
                 // const height = 1040; //boxRect.height;
 
                 const width = boxRect.width * 1.6;
-                const height = boxRect.height * 1.4; 
+                const height = boxRect.height * 1.4;
 
                 const Fwidth3 = 180; //width * 3;
                 const Fheight3 = 440 * 2; //height * 3;
-                
-                context.drawImage(video, x, 0, width, height, 50, 0, 750, 880);
+
+                context.drawImage(video, x, 0, width, height, 0, 0, Fwidth, Fheight);
+                // context.drawImage(video, x, 0, width, height, 0, 0, 750, 880);
                 // context.drawImage(video, 0, 0, Fwidth, Fheight);
 
                 // Draw captured image onto video element
