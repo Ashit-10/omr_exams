@@ -264,8 +264,8 @@
                 // Get coordinates of the box relative to the video frame
                 const boxRect = overlayBox.getBoundingClientRect();
                 const videoRect = video.getBoundingClientRect();
-                const x = boxRect.left;
-                const y = boxRect.top;
+                const x = boxRect.left - videoRect.left;
+                const y = boxRect.top - videoRect.top;
                 const width = boxRect.width;
                 const height = boxRect.height;
                 
