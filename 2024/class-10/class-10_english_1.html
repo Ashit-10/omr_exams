@@ -209,7 +209,7 @@
     <br>
     <br>
     <br>
-    <h2>&nbsp;&nbsp;&nbsp;All student's answer sheeets (Roll number wise).</h2>
+    <h2 id="heading2">&nbsp;&nbsp;&nbsp;All student's answer sheeets (Roll number wise).</h2>
     <a id="imgs">
     <img src="class-10_english_1/eval_files/1_16.jpg" alt="shradhanjanli" width="380"> </a>
     <br>
@@ -362,7 +362,8 @@
             const filter = searchBar.value.trim().toLowerCase();
             let matchFound = false;
             let visibleImageCount = 0;
-
+            heading2.style.display = 'none';
+            
             // Search in the table
             for (let i = 0; i < rows.length; i++) {
                 const name = rows[i].getElementsByTagName('td')[0].textContent || rows[i].getElementsByTagName('td')[0].innerText;
