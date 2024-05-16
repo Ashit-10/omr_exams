@@ -199,43 +199,6 @@
             </tr>  </tbody>
     </table>
 
-    <script>
-        const searchBar = document.getElementById('search-bar');
-        const nameTable = document.getElementById('name-table').getElementsByTagName('tbody')[0];
-        const notFound = document.getElementById('not-found');
-        const rows = nameTable.getElementsByTagName('tr');
-        const images = document.querySelectorAll('img');
-
-        searchBar.addEventListener('input', () => {
-            const filter = searchBar.value.toLowerCase();
-            let matchFound = false;
-
-            for (let i = 0; i < rows.length; i++) {
-                const name = rows[i].getElementsByTagName('td')[0].textContent || rows[i].getElementsByTagName('td')[0].innerText;
-                if (name.toLowerCase().includes(filter)) {
-                    rows[i].style.display = '';
-                    matchFound = true;
-                } else {
-                    rows[i].style.display = 'none';
-                }
-            }
-  // Search in the images
-    images.forEach((img) => {
-        const altText = img.alt.toLowerCase();
-        if (altText.includes(filter)) {
-            img.style.display = '';
-            matchFound = true;
-        } else {
-            img.style.display = 'none';
-        }
-    });
-            if (matchFound) {
-                notFound.style.display = 'none';
-            } else {
-                notFound.style.display = 'block';
-            }
-        });
-    </script>
     <br>
     <br>
     <br>
@@ -388,4 +351,43 @@
   <br>
   <br>
   <br> <br>
+    
+    <script>
+        const searchBar = document.getElementById('search-bar');
+        const nameTable = document.getElementById('name-table').getElementsByTagName('tbody')[0];
+        const notFound = document.getElementById('not-found');
+        const rows = nameTable.getElementsByTagName('tr');
+        const images = document.querySelectorAll('img');
+
+        searchBar.addEventListener('input', () => {
+            const filter = searchBar.value.toLowerCase();
+            let matchFound = false;
+
+            for (let i = 0; i < rows.length; i++) {
+                const name = rows[i].getElementsByTagName('td')[0].textContent || rows[i].getElementsByTagName('td')[0].innerText;
+                if (name.toLowerCase().includes(filter)) {
+                    rows[i].style.display = '';
+                    matchFound = true;
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+  // Search in the images
+    images.forEach((img) => {
+        const altText = img.alt.toLowerCase();
+        if (altText.includes(filter)) {
+            img.style.display = '';
+            matchFound = true;
+        } else {
+            img.style.display = 'none';
+        }
+    });
+            if (matchFound) {
+                notFound.style.display = 'none';
+            } else {
+                notFound.style.display = 'block';
+            }
+        });
+    </script>
+    
                 </body>  </html>
