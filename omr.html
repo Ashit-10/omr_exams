@@ -380,7 +380,7 @@
         // };
         // Start camera function
         function startCamera() {
-            navigator.mediaDevices.getUserMedia()
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
                 .then(function (stream) {
                     var video = document.getElementById('video');
                     video.srcObject = stream;
