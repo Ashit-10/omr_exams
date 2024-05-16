@@ -459,6 +459,7 @@
                     const img = document.createElement('img');
                     img.src = photoUrl;
                     img.alt = 'Telegram Photo';
+                    img.style.width = '100vw'; // Set width to 100% of the viewport's width
                     messageElement.appendChild(img);
                     messagesDiv.appendChild(messageElement);
                     if (!isSending) {
