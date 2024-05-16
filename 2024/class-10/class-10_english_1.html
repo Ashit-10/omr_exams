@@ -396,10 +396,12 @@ searchBar.addEventListener('input', () => {
         br.remove();
     });
 
-    // Add a single <br> tag if there are multiple visible images
+    // Add two <br> tags if there are multiple visible images
     if (visibleImageCount > 1) {
-        const br = document.createElement('br');
-        imageContainer.appendChild(br);
+        const br1 = document.createElement('br');
+        const br2 = document.createElement('br');
+        imageContainer.appendChild(br1);
+        imageContainer.appendChild(br2);
     }
 
     // Toggle visibility of 'Not found' message
