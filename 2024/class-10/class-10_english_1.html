@@ -363,6 +363,7 @@ const images = document.querySelectorAll('img');
 searchBar.addEventListener('input', () => {
     const filter = searchBar.value.trim().toLowerCase();
     let matchFound = false;
+    let visibleImageCount = 0;
 
     // Search in the table
     for (let i = 0; i < rows.length; i++) {
@@ -380,16 +381,17 @@ searchBar.addEventListener('input', () => {
         const altText = img.alt.toLowerCase();
         if (altText.includes(filter)) {
             img.style.display = '';
+            visibleImageCount++;
             matchFound = true;
         } else {
             img.style.display = 'none';
         }
     });
 
-    // Toggle visibility of <br> tags based on match found
+    // Toggle visibility of <br> tags based on the number of visible images
     const brTags = document.querySelectorAll('br');
-    brTags.forEach((br) => {
-        br.style.display = matchFound ? 'none' : '';
+    brTags.forEach((br, index) => {
+        br.style.display = visibleImageCount > 1 && index % 2 === 0 ? '' : 'none';
     });
 
     // Toggle visibility of 'Not found' message
