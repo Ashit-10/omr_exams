@@ -354,11 +354,13 @@
     
     <script>
 
+
 const searchBar = document.getElementById('search-bar');
 const nameTable = document.getElementById('name-table').getElementsByTagName('tbody')[0];
 const notFound = document.getElementById('not-found');
 const rows = nameTable.getElementsByTagName('tr');
 const images = document.querySelectorAll('img');
+const imageContainer = document.querySelector('body');
 
 searchBar.addEventListener('input', () => {
     const filter = searchBar.value.trim().toLowerCase();
@@ -388,11 +390,17 @@ searchBar.addEventListener('input', () => {
         }
     });
 
-    // Toggle visibility of <br> tags based on the number of visible images
+    // Remove all existing <br> tags
     const brTags = document.querySelectorAll('br');
-    brTags.forEach((br, index) => {
-        br.style.display = visibleImageCount > 1 && index % 2 === 0 ? '' : 'none';
+    brTags.forEach((br) => {
+        br.remove();
     });
+
+    // Add a single <br> tag if there are multiple visible images
+    if (visibleImageCount > 1) {
+        const br = document.createElement('br');
+        imageContainer.appendChild(br);
+    }
 
     // Toggle visibility of 'Not found' message
     notFound.style.display = matchFound ? 'none' : 'block';
