@@ -353,26 +353,28 @@
   <br> <br>
     
     <script>
-        const searchBar = document.getElementById('search-bar');
-        const nameTable = document.getElementById('name-table').getElementsByTagName('tbody')[0];
-        const notFound = document.getElementById('not-found');
-        const rows = nameTable.getElementsByTagName('tr');
-        const images = document.querySelectorAll('img');
+ const searchBar = document.getElementById('search-bar');
+const nameTable = document.getElementById('name-table').getElementsByTagName('tbody')[0];
+const notFound = document.getElementById('not-found');
+const rows = nameTable.getElementsByTagName('tr');
+const images = document.querySelectorAll('img');
 
-        searchBar.addEventListener('input', () => {
-            const filter = searchBar.value.toLowerCase();
-            let matchFound = false;
+searchBar.addEventListener('input', () => {
+    const filter = searchBar.value.trim().toLowerCase();
+    let matchFound = false;
 
-            for (let i = 0; i < rows.length; i++) {
-                const name = rows[i].getElementsByTagName('td')[0].textContent || rows[i].getElementsByTagName('td')[0].innerText;
-                if (name.toLowerCase().includes(filter)) {
-                    rows[i].style.display = '';
-                    matchFound = true;
-                } else {
-                    rows[i].style.display = 'none';
-                }
-            }
-  // Search in the images
+    // Search in the table
+    for (let i = 0; i < rows.length; i++) {
+        const name = rows[i].getElementsByTagName('td')[0].textContent || rows[i].getElementsByTagName('td')[0].innerText;
+        if (name.toLowerCase().includes(filter)) {
+            rows[i].style.display = '';
+            matchFound = true;
+        } else {
+            rows[i].style.display = 'none';
+        }
+    }
+
+    // Search in the images
     images.forEach((img) => {
         const altText = img.alt.toLowerCase();
         if (altText.includes(filter)) {
@@ -382,12 +384,17 @@
             img.style.display = 'none';
         }
     });
-            if (matchFound) {
-                notFound.style.display = 'none';
-            } else {
-                notFound.style.display = 'block';
-            }
-        });
+
+    // Toggle visibility of <br> tags based on match found
+    const brTags = document.querySelectorAll('br');
+    brTags.forEach((br) => {
+        br.style.display = matchFound ? 'none' : '';
+    });
+
+    // Toggle visibility of 'Not found' message
+    notFound.style.display = matchFound ? 'none' : 'block';
+});
+
     </script>
     
                 </body>  </html>
