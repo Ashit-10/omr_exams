@@ -396,12 +396,20 @@ searchBar.addEventListener('input', () => {
         br.remove();
     });
 
-    // Add two <br> tags if there are multiple visible images
+    // Add two <br> tags after each visible image except for the last one
     if (visibleImageCount > 1) {
-        const br1 = document.createElement('br');
-        const br2 = document.createElement('br');
-        imageContainer.appendChild(br1);
-        imageContainer.appendChild(br2);
+        let brCount = 0;
+        images.forEach((img, index) => {
+            if (img.style.display === '') {
+                if (brCount < visibleImageCount - 1) {
+                    const br1 = document.createElement('br');
+                    const br2 = document.createElement('br');
+                    imageContainer.appendChild(br1);
+                    imageContainer.appendChild(br2);
+                    brCount++;
+                }
+            }
+        });
     }
 
     // Toggle visibility of 'Not found' message
