@@ -191,18 +191,50 @@
 
         /* Keyframe animation for sparkling effect */
         @keyframes sparkle {
-    0% { border-color: rgba(245, 248, 245, 1); }
-    10% { border-color: rgba(1, 20, 4, 1); }
-    20% { border-color: rgba(151, 129, 1, 1); }
-    30% { border-color: rgba(248, 5, 167, 1); }
-    40% { border-color: rgba(42, 4, 179, 1); }
-    50% { border-color: rgba(2, 143, 89, 1); }
-    60% { border-color: rgba(5, 199, 47, 1); }
-    70% { border-color: rgba(153, 240, 14, 1); }
-    80% { border-color: rgba(230, 10, 94, 1); }
-    90% { border-color: rgba(248, 6, 6, 1); }
-    100% { border-color: rgba(35, 228, 67, 1); }
-}
+            0% {
+                border-color: rgba(245, 248, 245, 1);
+            }
+
+            10% {
+                border-color: rgba(1, 20, 4, 1);
+            }
+
+            20% {
+                border-color: rgba(151, 129, 1, 1);
+            }
+
+            30% {
+                border-color: rgba(248, 5, 167, 1);
+            }
+
+            40% {
+                border-color: rgba(42, 4, 179, 1);
+            }
+
+            50% {
+                border-color: rgba(2, 143, 89, 1);
+            }
+
+            60% {
+                border-color: rgba(5, 199, 47, 1);
+            }
+
+            70% {
+                border-color: rgba(153, 240, 14, 1);
+            }
+
+            80% {
+                border-color: rgba(230, 10, 94, 1);
+            }
+
+            90% {
+                border-color: rgba(248, 6, 6, 1);
+            }
+
+            100% {
+                border-color: rgba(35, 228, 67, 1);
+            }
+        }
 
         /* Apply animation to overlay boxes */
         #overlayBox1,
@@ -216,8 +248,8 @@
             border-color: green !important;
         }
 
-         /* Partial blur effect */
-         .cameraContainer {
+        /* Partial blur effect */
+        .cameraContainer {
             position: relative;
             overflow: hidden;
         }
@@ -243,6 +275,22 @@
             top: 0;
             z-index: -1;
         }
+
+        /* Add this style for the loader */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            /* semi-transparent white */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            /* make sure it's above everything */
+        }
     </style>
 
 </head>
@@ -264,7 +312,7 @@
         <div id="overlayText">Put the paper inside the box</div> <!-- Text over -->
     </div>
     <br>
-    <div>
+    <div id="remove1">
         <!-- <button onclick="toggleFlashlight()">Toggle Flashlight</button> -->
 
         <button id="capture-btn">Capture</button>
@@ -275,15 +323,21 @@
 
         <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
     </div>
-    <h5>Or select file from below
-    </h5>
-    <br>
 
-    <input type="file" id="fileInput">
-    <button onclick="sendImage()">Check Result</button>
-    <div class="loader" id="loader"></div>
-
-
+    <div id="remove2">
+        <h5>Or select file from below
+        </h5>
+        <br>
+        <input type="file" id="fileInput">
+        <button onclick="sendImage()">Check Result</button>
+        <div class="loader" id="loader"></div>
+        <!-- Add loader overlay -->
+        <div class="loader-overlay" id="loaderOverlay" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
     <br><br><br><br>
     <!-- Include CamanJS library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
@@ -311,6 +365,19 @@
             document.getElementById('overlayBox4').classList.add('green-border');
         }
 
+        let lastUpdateId = 0;
+        let isSending = false;
+        var send_id = 0;
+        const messagesDiv = document.getElementById('cameraContainer');
+        const messagesDiv1 = document.getElementById('remove1');
+        const messagesDiv2 = document.getElementById('remove2');
+
+
+        const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
+        const chatId = '-1001570223088';
+        const TELEGRAM_API_URL = `https://api.telegram.org/bot${botToken}`;
+
+
         function sendImage() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
@@ -320,11 +387,10 @@
                 const formData = new FormData();
                 formData.append('photo', file);
 
-                const loader = document.getElementById('loader');
-                loader.style.display = 'block';
+                const loaderOverlay = document.getElementById('loaderOverlay');
+                loaderOverlay.style.display = 'flex'; // Display loader overlay
 
-                const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
-                const chatId = '-1001971484231';
+
 
                 fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
                     method: 'POST',
@@ -334,22 +400,111 @@
                         if (!response.ok) {
                             throw new Error('Failed to send image');
                         }
-                        loader.style.display = 'none';
-                        location.reload();
+                        return response.json(); // Parse response as JSON
+                    })
+                    .then(data => {
+                        // Hide loader overlay
+                        // loaderOverlay.style.display = 'none';
 
-                        alert('Image sent successfully!');
+                        // Display the photo sent by the bot
+                        send_id = data.result.message_id;
+                        // displayPhoto(data.result.photo.file_id);
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        loader.style.display = 'none';
-                        location.reload();
-
+                        loaderOverlay.style.display = 'none';
                         alert('Failed to send image');
                     });
             } else {
                 alert('Please select an image to send');
             }
         }
+
+        function displayMessage(text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            if (text === 'Photo sent successfully!') {
+                text = 'Checking OMR sheet, please wait...';
+            }
+            messagesDiv.innerHTML = ''; // Clear older messages
+            messagesDiv1.innerHTML = ''; // Clear older messages1
+            messagesDiv2.innerHTML = ''; // Clear older messages2
+            messageElement.textContent = text;
+            messagesDiv.appendChild(messageElement);
+            if (!isSending) {
+                loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
+            }
+        }
+
+
+
+
+        async function displayPhoto(fileId, caption = '') {
+            try {
+                const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
+                const data = await response.json();
+                if (data.ok) {
+                    const filePath = data.result.file_path;
+                    const photoUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+                    messagesDiv.innerHTML = ''; // Clear older messages
+                    messagesDiv1.innerHTML = ''; // Clear older messages1
+                    messagesDiv2.innerHTML = ''; // Clear older messages2
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    if (caption) {
+                        const captionElement = document.createElement('p');
+                        captionElement.innerHTML = caption.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
+                        messageElement.appendChild(captionElement);
+                    }
+                    const img = document.createElement('img');
+                    img.src = photoUrl;
+                    img.alt = 'Telegram Photo';
+                    messageElement.appendChild(img);
+                    messagesDiv.appendChild(messageElement);
+                    if (!isSending) {
+                        loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
+                    }
+                }
+            } catch (error) {
+                console.error('Error displaying photo:', error);
+            }
+        }
+
+        async function fetchBotReplies() {
+            try {
+                const response = await fetch(`${TELEGRAM_API_URL}/getUpdates?offset=${lastUpdateId + 1}`);
+                const data = await response.json();
+                if (data.ok) {
+                    const updates = data.result;
+                    updates.forEach(update => {
+                        lastUpdateId = update.update_id;
+                        if (update.message && update.message.reply_to_message && update.message.reply_to_message.photo) {
+                            var current_id = update.message.reply_to_message.message_id;
+                            console.log(current_id);
+                            console.log(send_id);
+
+
+                            if (current_id === send_id) {
+                                // messagesDiv.innerHTML = ''; // Clear older messages
+                                // messagesDiv1.innerHTML = ''; // Clear older messages
+                                // messagesDiv2.innerHTML = ''; // Clear older messages2
+
+                                if (update.message.photo) {
+                                    const photo = update.message.photo[update.message.photo.length - 1];
+                                    const caption = update.message.caption || '';
+                                    displayPhoto(photo.file_id, caption);
+                                } else if (update.message.text) {
+                                    displayMessage(update.message.text);
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching bot replies:', error);
+            }
+        }
+
 
 
 
@@ -447,11 +602,11 @@
                     formData1.append('photo', file);
 
 
-                    const loader = document.getElementById('loader1');
-                    loader.style.display = 'block';
+                    const loaderOverlay = document.getElementById('loaderOverlay');
+                    loaderOverlay.style.display = 'flex'; // Display loader overlay
 
-                    const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
-                    const chatId = '-1001971484231';
+                    // const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
+                    // const chatId = '-1001971484231';
 
                     fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
                         method: 'POST',
@@ -461,16 +616,21 @@
                             if (!response.ok) {
                                 throw new Error('Failed to send image');
                             }
-                            loader.style.display = 'none';
-                            alert('Image sent successfully!');
-                            location.reload();
+                            return response.json(); // Parse response as JSON
+                        })
+                        .then(data => {
+                            // Hide loader overlay
+                            // loaderOverlay.style.display = 'none';
 
+                            // Display the photo sent by the bot
+                            send_id = data.result.message_id;
+                            // displayPhoto(data.result.photo.file_id);
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            loader.style.display = 'none';
+                            loaderOverlay.style.display = 'none';
                             alert('Failed to send image');
-                            location.reload();
+                            // location.reload();
 
                         });
                 }, 'image/png');
@@ -486,7 +646,8 @@
 
 
 
-
+        // Polling function to fetch bot replies every 5 seconds
+        setInterval(fetchBotReplies, 3000);
 
         // Toggle flashlight
         flashlightButton.addEventListener('click', () => {
