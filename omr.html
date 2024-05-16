@@ -404,11 +404,13 @@
                     })
                     .then(data => {
                         // Hide loader overlay
-                        // loaderOverlay.style.display = 'none';
+                        loaderOverlay.style.display = 'none';
 
                         // Display the photo sent by the bot
                         send_id = data.result.message_id;
-                        // displayPhoto(data.result.photo.file_id);
+
+                        // Show "Processing..." message
+                        displayMessage('Processing...');
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -423,9 +425,15 @@
         function displayMessage(text) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
-            if (text === 'Photo sent successfully!') {
-                text = 'Checking OMR sheet, please wait...';
-            }
+            messageElement.style.fontSize = '20px'; // Set font size to 20px
+            messageElement.style.fontWeight = 'bold'; // Set font weight to bold
+            // if (text === 'Photo sent successfully!') {
+            //     text = 'Checking OMR sheet, please wait...';
+            // }
+            // Replace \n with <br> for line breaks
+            text = text.replace(/\n/g, '<br>');
+            messageElement.style.textAlign = 'left'; // Align text to the left
+
             messagesDiv.innerHTML = ''; // Clear older messages
             messagesDiv1.innerHTML = ''; // Clear older messages1
             messagesDiv2.innerHTML = ''; // Clear older messages2
@@ -454,6 +462,10 @@
                     if (caption) {
                         const captionElement = document.createElement('p');
                         captionElement.innerHTML = caption.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
+                        captionElement.style.fontSize = '20px'; // Set font size to 20px
+                        captionElement.style.fontWeight = 'bold'; // Set font weight to bold
+                        captionElement.style.textAlign = 'left'; // Align text to the left
+
                         messageElement.appendChild(captionElement);
                     }
                     const img = document.createElement('img');
@@ -622,11 +634,13 @@
                         })
                         .then(data => {
                             // Hide loader overlay
-                            // loaderOverlay.style.display = 'none';
+                            loaderOverlay.style.display = 'none';
 
                             // Display the photo sent by the bot
                             send_id = data.result.message_id;
-                            // displayPhoto(data.result.photo.file_id);
+
+                            // Show "Processing..." message
+                            displayMessage('Processing...');
                         })
                         .catch(error => {
                             console.error('Error:', error);
