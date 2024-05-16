@@ -353,7 +353,8 @@
   <br> <br>
     
     <script>
- const searchBar = document.getElementById('search-bar');
+
+const searchBar = document.getElementById('search-bar');
 const nameTable = document.getElementById('name-table').getElementsByTagName('tbody')[0];
 const notFound = document.getElementById('not-found');
 const rows = nameTable.getElementsByTagName('tr');
@@ -394,6 +395,7 @@ searchBar.addEventListener('input', () => {
     // Toggle visibility of 'Not found' message
     notFound.style.display = matchFound ? 'none' : 'block';
 });
+
 
     </script>
     
