@@ -255,7 +255,7 @@
 
     <div id="cameraContainer">
 
-        <video id="video" width="330" height="440"></video>
+        <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
         <div id="overlayBox"></div>
         <div id="overlayBox2"></div>
         <div id="overlayBox3"></div>
@@ -380,7 +380,7 @@
         // };
         // Start camera function
         function startCamera() {
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            navigator.mediaDevices.getUserMedia()
                 .then(function (stream) {
                     var video = document.getElementById('video');
                     video.srcObject = stream;
