@@ -427,18 +427,22 @@
             messageElement.classList.add('message');
             messageElement.style.fontSize = '20px'; // Set font size to 20px
             messageElement.style.fontWeight = 'bold'; // Set font weight to bold
-            // if (text === 'Photo sent successfully!') {
-            //     text = 'Checking OMR sheet, please wait...';
-            // }
-            // Replace \n with <br> for line breaks
-            text = text.replace(/\n/g, '<br>');
-            messageElement.style.textAlign = 'left'; // Align text to the left
+
+            // Check if text is "processing", then set text alignment to center
+            if (text.trim().toLowerCase() === "processing...") {
+                messageElement.style.textAlign = 'center';
+            } else {
+                messageElement.style.textAlign = 'left';
+                // Replace \n with <br> for line breaks
+                text = text.replace(/\n/g, '<br>');
+            }
 
             messagesDiv.innerHTML = ''; // Clear older messages
             messagesDiv1.innerHTML = ''; // Clear older messages1
             messagesDiv2.innerHTML = ''; // Clear older messages2
-            messageElement.textContent = text;
+            messageElement.innerHTML = text;
             messagesDiv.appendChild(messageElement);
+
             if (!isSending) {
                 loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
             }
