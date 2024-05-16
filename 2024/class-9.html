@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High Quality Image Capture</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        video, canvas, img {
+            max-width: 100%;
+            height: auto;
+        }
+        #captureButton {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>High Quality Image Capture</h1>
+    <video id="video" autoplay playsinline></video>
+    <br>
+    <button id="captureButton">Capture Photo</button>
+    <br>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <br>
+    <img id="photo" alt="Captured Image" style="margin-top: 20px;">
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const photo = document.getElementById('photo');
+        const captureButton = document.getElementById('captureButton');
+
+        async function setupCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: "environment" }, // Use the back camera
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
+                });
+                video.srcObject = stream;
+                video.play();
+            } catch (error) {
+                console.error('Error accessing the camera', error);
+            }
+        }
+
+        function captureImage() {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL('image/jpeg', 1.0); // High quality
+            photo.src = dataURL;
+        }
+
+        captureButton.addEventListener('click', captureImage);
+
+        setupCamera();
+    </script>
+</body>
+</html>
