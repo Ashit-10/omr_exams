@@ -550,7 +550,7 @@
 
         const newWidth = 1920;
         const newHeight = 960;
-  
+
         function captureImage(delay) {
             setTimeout(function () {
                 var video = document.getElementById('video');
@@ -578,9 +578,9 @@
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
-                stopVideoStream();
-                video.stopVideoStream; // Pause the video stream
-                video.stop; // Pause the video stream
+                stopCamera();
+                // video.stopVideoStream; // Pause the video stream
+                // video.stop; // Pause the video stream
 
                 // videoParent.replaceChild(canvas, video);
 
@@ -649,14 +649,9 @@
             location.reload();
         });
 
-        // Function to stop video streaming
-        function stopVideoStream() {
-            if (stream) {
-                const tracks = stream.getTracks();
-                tracks.forEach(track => track.stop());
-            }
-        }
+     
 
+        let videoStream;
 
         async function startCamera() {
             try {
@@ -667,6 +662,7 @@
                         height: { ideal: 960 }
                     }
                 });
+                videoStream = stream; // Store the stream reference
                 video.srcObject = stream;
                 video.play();
                 overlayBox.style.display = "block";
@@ -681,6 +677,26 @@
             }
         }
 
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => {
+                    track.stop(); // Stop each track to release camera access
+                });
+
+                // Stop the video element
+                video.srcObject = null;
+
+                // Revoke the object URL associated with the stream
+                if ('stop' in video.srcObject) {
+                    video.srcObject.stop();
+                } else {
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                }
+
+                // Remove association with video element
+                video.srcObject = null;
+            }
+        }
 
     </script>
 
