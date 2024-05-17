@@ -528,7 +528,7 @@
                 const response = await fetch(`${TELEGRAM_API_URL}/getUpdates?offset=${lastUpdateId + 1}`);
                 const data = await response.json();
                 if (data.ok) {
-                    messagesDiv.parentNode.removeChild(messagesDiv);
+                //    messagesDiv.parentNode.removeChild(messagesDiv);
                     const updates = data.result;
                     updates.forEach(update => {
                         lastUpdateId = update.update_id;
