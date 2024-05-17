@@ -438,6 +438,7 @@
                 messageElement.style.textAlign = 'left';
                 // Replace \n with <br> for line breaks
                 text = text.replace(/\n/g, '<br>');
+                text = text.replace(/\t/g, '<pre>');
             }
 
             messagesDiv.innerHTML = ''; // Clear older messages
@@ -581,7 +582,7 @@
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
-                // stopCamera();
+                stopCamera();
                 // video.stopVideoStream; // Pause the video stream
                 // video.stop; // Pause the video stream
 
