@@ -458,13 +458,19 @@
             messageElement.classList.add('message');
             messageElement.style.fontSize = '20px'; // Set font size to 20px
             messageElement.style.fontWeight = 'bold'; // Set font weight to bold
+            try {
    falseDiv.parentNode.removeChild(falseDiv);
+            }catch (error) {
+                console.log(error.message);
+            }
+                
             // Check if text is "processing", then set text alignment to center
             if (text.trim().toLowerCase() === "Processing...") {
                 console.log(text);
                 messageElement.style.marginLeft = 'auto';
         messageElement.style.marginRight = 'auto';
             } else {
+                
                 messageElement.style.textAlign = 'left';
                 // Replace \n with <br> for line breaks
                 console.log(text);
