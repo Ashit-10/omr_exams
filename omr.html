@@ -64,8 +64,8 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            border: 5px solid rgba(0, 0, 0, 0.1);
-            border-top-color: #333;
+            border: 5px solid rgba(147, 116, 231, 0.1);
+            border-top-color: #35c2ec;
             animation: spin 1s linear infinite;
         }
 
@@ -444,14 +444,15 @@
             // Check if text is "processing", then set text alignment to center
             if (text.trim().toLowerCase() === "Processing...") {
                 console.log(text);
-                messageElement.style.left = '44%';
+                messageElement.style.marginLeft = 'auto';
+        messageElement.style.marginRight = 'auto';
             } else {
                 messageElement.style.textAlign = 'left';
                 // Replace \n with <br> for line breaks
                 console.log(text);
 
                 text = text.replace(/\n/g, '<br>');
-                text = text.replace(/\t/g, '<pre>');
+                text = text.replace('\t', '<pre>');
             }
 
             messagesDiv.innerHTML = ''; // Clear older messages
@@ -644,8 +645,12 @@
                             // const loadingIndicator = document.createElement('div');
                             loadingIndicator.className = 'spinner'; // Apply appropriate CSS class for spinning circle
                             loadingIndicator.style.position = 'absolute';
+                            loadingIndicator.style.display = 'flex';
+
                             loadingIndicator.style.top = '30%';
                             loadingIndicator.style.left = '44%';
+                            // loadingIndicator.style.justify-content ='center';
+                            // loadingIndicator.style.align-items = 'center';
                             loadingIndicator.style.transform = 'translate(-50%, -50%)';
                             document.body.appendChild(loadingIndicator);
 
@@ -653,6 +658,8 @@
                             // const backButton = document.createElement('button');
                             backButton.innerText = 'Back';
                             backButton.style.position = 'absolute';
+                            loadingIndicator.style.display = 'flex';
+
                             backButton.style.top = '80%';
                             backButton.style.left = '50%';
                             backButton.style.transform = 'translate(-50%, -50%)';
