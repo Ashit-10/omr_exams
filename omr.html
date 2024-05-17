@@ -548,34 +548,9 @@
         // Start camera button click event
         startCamera();
 
-    const newWidth = 1920;
-    const newHeight = 960;
-        // Start camera function
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: { ideal: "environment" }, // Use the back camera
-                        width: { ideal: 1920 },
-                        height: { ideal: 960 }
-                    }
-                });
-                video.srcObject = stream;
-                video.play();
-                overlayBox.style.display = "block";
-                overlayBox.style.border = 0;
-                overlayBox1.style.display = "block";
-                overlayBox2.style.display = "block";
-                overlayBox3.style.display = "block";
-                overlayBox4.style.display = "block";
-                // Function to capture image
-            } catch (error) {
-                console.error('Error accessing the camera', error);
-            }
-        }
-
-
-
+        const newWidth = 1920;
+        const newHeight = 960;
+  
         function captureImage(delay) {
             setTimeout(function () {
                 var video = document.getElementById('video');
@@ -593,12 +568,9 @@
                 const x = boxRect.left; // - videoRect.left;
                 const y = - videoRect.top;
 
-             
 
                 const width = boxRect.width;
                 const height = boxRect.height;
-
-         
 
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
                 // context.drawImage(video, x, 0, width, height, 0, 0, 750, 880);
@@ -607,6 +579,8 @@
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
                 stopVideoStream();
+                video.stop(); // Pause the video stream
+
                 // videoParent.replaceChild(canvas, video);
 
 
@@ -683,6 +657,28 @@
         }
 
 
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: "environment" }, // Use the back camera
+                        width: { ideal: 1920 },
+                        height: { ideal: 960 }
+                    }
+                });
+                video.srcObject = stream;
+                video.play();
+                overlayBox.style.display = "block";
+                overlayBox.style.border = 0;
+                overlayBox1.style.display = "block";
+                overlayBox2.style.display = "block";
+                overlayBox3.style.display = "block";
+                overlayBox4.style.display = "block";
+                // Function to capture image
+            } catch (error) {
+                console.error('Error accessing the camera', error);
+            }
+        }
 
 
     </script>
