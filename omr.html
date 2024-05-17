@@ -549,7 +549,7 @@
         startCamera();
 
     const newWidth = 1920;
-    const newHeight = 1080;
+    const newHeight = 960;
         // Start camera function
         async function startCamera() {
             try {
@@ -557,7 +557,7 @@
                     video: {
                         facingMode: { ideal: "environment" }, // Use the back camera
                         width: { ideal: 1920 },
-                        height: { ideal: 1080 }
+                        height: { ideal: 960 }
                     }
                 });
                 video.srcObject = stream;
@@ -581,7 +581,7 @@
                 var video = document.getElementById('video');
                 var canvas = document.createElement('canvas');
                 canvas.width = newHeight;
-            canvas.height = newWidth;
+                canvas.height = newWidth;
                 var context = canvas.getContext('2d');
                 // context.translate(canvas.height, 0);
                 // context.rotate(-Math.PI / 2);
@@ -600,7 +600,7 @@
 
          
 
-                context.drawImage(video, x, 0, width, height, 0, 0, canvas.width, canvas.height);
+                context.drawImage(video, -x, 0, canvas.width, canvas.height);
                 // context.drawImage(video, x, 0, width, height, 0, 0, 750, 880);
                 // context.drawImage(video, 0, 0, Fwidth, Fheight);
 
