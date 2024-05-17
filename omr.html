@@ -595,12 +595,12 @@
 
              
 
-                const width = boxRect.width * 1.45;
-                const height = boxRect.height * 1.45;
+                const width = boxRect.width;
+                const height = boxRect.height;
 
          
 
-                context.drawImage(video, x, 0, width, height);
+                context.drawImage(video, 0, 0, newWidth, newHeight);
                 // context.drawImage(video, x, 0, width, height, 0, 0, 750, 880);
                 // context.drawImage(video, 0, 0, Fwidth, Fheight);
 
