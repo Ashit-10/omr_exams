@@ -367,6 +367,7 @@
 
         let lastUpdateId = 0;
         let videoStream;
+        let isPageVisible = true;
 
         let isSending = false;
         var send_id = 0;
@@ -653,7 +654,22 @@
             location.reload();
         });
 
-     
+        function handleVisibilityChange() {
+            if (document.hidden) {
+                // Page is now hidden, stop the camera
+                isPageVisible = false;
+                stopCamera();
+            } else {
+                // Page is now visible, start the camera if necessary
+                isPageVisible = true;
+                if (document.getElementById("startCameraButton")) {
+                    startCamera();
+                }
+            }
+        }
+
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
 
         async function startCamera() {
