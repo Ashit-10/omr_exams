@@ -60,6 +60,15 @@
             display: none;
         }
 
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-top-color: #333;
+            animation: spin 1s linear infinite;
+        }
+
 
         body {
             font-family: Arial, sans-serif;
@@ -433,8 +442,9 @@
             messageElement.style.fontWeight = 'bold'; // Set font weight to bold
 
             // Check if text is "processing", then set text alignment to center
-            if (text.trim().toLowerCase() === "processing...") {
-                messageElement.style.textAlign = 'center';
+            if (text.trim().toLowerCase() === "Processing...") {
+                console.log(text);
+                messageElement.style.left = '44%';
             } else {
                 messageElement.style.textAlign = 'left';
                 // Replace \n with <br> for line breaks
@@ -512,7 +522,8 @@
                                 // messagesDiv.innerHTML = ''; // Clear older messages
                                 // messagesDiv1.innerHTML = ''; // Clear older messages
                                 // messagesDiv2.innerHTML = ''; // Clear older messages2
-
+                                loadingIndicator.style.display = 'none';
+                                // backButton.style.display = 'none';
                                 if (update.message.photo) {
                                     const photo = update.message.photo[update.message.photo.length - 1];
                                     const caption = update.message.caption || '';
@@ -544,6 +555,8 @@
         const overlayBox3 = document.getElementById('overlayBox3');
         const overlayBox4 = document.getElementById('overlayBox4');
         const loaderOverlay = document.getElementById('loaderOverlay');
+        const loadingIndicator = document.createElement('div');
+        const backButton = document.createElement('button');
 
         let stream;
         let isFlashlightOn = false;
@@ -627,6 +640,26 @@
 
                             // Show "Processing..." message
                             displayMessage('Processing...');
+                            // Add spinning circle loading indicator
+                            // const loadingIndicator = document.createElement('div');
+                            loadingIndicator.className = 'spinner'; // Apply appropriate CSS class for spinning circle
+                            loadingIndicator.style.position = 'absolute';
+                            loadingIndicator.style.top = '30%';
+                            loadingIndicator.style.left = '44%';
+                            loadingIndicator.style.transform = 'translate(-50%, -50%)';
+                            document.body.appendChild(loadingIndicator);
+
+                            // Add back button in the middle of the device screen
+                            // const backButton = document.createElement('button');
+                            backButton.innerText = 'Back';
+                            backButton.style.position = 'absolute';
+                            backButton.style.top = '80%';
+                            backButton.style.left = '50%';
+                            backButton.style.transform = 'translate(-50%, -50%)';
+                            backButton.addEventListener('click', function () {
+                                location.reload();
+                            });
+                            document.body.appendChild(backButton);
                         })
                         .catch(error => {
                             console.error('Error:', error);
@@ -665,7 +698,7 @@
                 // Page is now visible, start the camera if necessary
                 isPageVisible = true;
                 // if (document.getElementById("startCameraButton")) {
-                    startCamera();
+                startCamera();
                 // }
             }
         }
