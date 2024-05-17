@@ -65,7 +65,7 @@
             height: 50px;
             border-radius: 50%;
             border: 5px solid rgba(147, 116, 231, 0.1);
-            border-top-color: #35c2ec;
+            border-top-color: #2b16e4;
             animation: spin 1s linear infinite;
         }
 
@@ -423,7 +423,25 @@
                         send_id = data.result.message_id;
 
                         // Show "Processing..." message
-                        displayMessage('Processing...');
+                        displayMessage('Processing... It may take 3-5 seconds');
+                        // Add spinning circle loading indicator
+                        loadingIndicator.className = 'spinner'; // Apply appropriate CSS class for spinning circle
+                            loadingIndicator.style.position = 'absolute';
+                            loadingIndicator.style.top = '30%';
+                            loadingIndicator.style.left = '44%';
+                            loadingIndicator.style.transform = 'translate(-50%, -50%)';
+                            document.body.appendChild(loadingIndicator);
+
+                            // Add back button in the middle of the device screen
+                            backButton.innerText = 'Back';
+                            backButton.style.position = 'absolute';
+                            backButton.style.top = '80%';
+                            backButton.style.left = '50%';
+                            backButton.style.transform = 'translate(-50%, -50%)';
+                            backButton.addEventListener('click', function () {
+                                location.reload();
+                            });
+                            document.body.appendChild(backButton);
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -640,26 +658,20 @@
                             send_id = data.result.message_id;
 
                             // Show "Processing..." message
-                            displayMessage('Processing...');
+                            displayMessage('Processing...  It may take 4-5 seconds');
+
+
                             // Add spinning circle loading indicator
-                            // const loadingIndicator = document.createElement('div');
                             loadingIndicator.className = 'spinner'; // Apply appropriate CSS class for spinning circle
                             loadingIndicator.style.position = 'absolute';
-                            loadingIndicator.style.display = 'flex';
-
                             loadingIndicator.style.top = '30%';
                             loadingIndicator.style.left = '44%';
-                            // loadingIndicator.style.justify-content ='center';
-                            // loadingIndicator.style.align-items = 'center';
                             loadingIndicator.style.transform = 'translate(-50%, -50%)';
                             document.body.appendChild(loadingIndicator);
 
                             // Add back button in the middle of the device screen
-                            // const backButton = document.createElement('button');
                             backButton.innerText = 'Back';
                             backButton.style.position = 'absolute';
-                            loadingIndicator.style.display = 'flex';
-
                             backButton.style.top = '80%';
                             backButton.style.left = '50%';
                             backButton.style.transform = 'translate(-50%, -50%)';
@@ -672,7 +684,7 @@
                             console.error('Error:', error);
                             loaderOverlay.style.display = 'none';
                             alert('Failed to send image');
-                            // location.reload();
+                            location.reload();
 
                         });
                 }, 'image/png');
@@ -704,9 +716,9 @@
             } else {
                 // Page is now visible, start the camera if necessary
                 isPageVisible = true;
-                // if (document.getElementById("startCameraButton")) {
+                if (document.getElementById("cameraContainer")) {
                 startCamera();
-                // }
+                }
             }
         }
 
