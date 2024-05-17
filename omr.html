@@ -438,8 +438,10 @@
             } else {
                 messageElement.style.textAlign = 'left';
                 // Replace \n with <br> for line breaks
+                console.log(text);
+
                 text = text.replace(/\n/g, '<br>');
-                text = text.replace(/\t/g, '<pre>');
+                text = text.replace('\t', '<pre>');
             }
 
             messagesDiv.innerHTML = ''; // Clear older messages
@@ -671,7 +673,10 @@
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
-
+        // Optionally, you can call startCamera() initially if the page starts visible
+        if (document.visibilityState === 'visible') {
+            startCamera();
+        }
         async function startCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
