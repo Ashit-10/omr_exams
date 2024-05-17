@@ -441,7 +441,7 @@
                 console.log(text);
 
                 text = text.replace(/\n/g, '<br>');
-                text = text.replace('\t', '<pre>');
+                text = text.replace(/\t/g, '<pre>');
             }
 
             messagesDiv.innerHTML = ''; // Clear older messages
@@ -664,9 +664,9 @@
             } else {
                 // Page is now visible, start the camera if necessary
                 isPageVisible = true;
-                if (document.getElementById("startCameraButton")) {
+                // if (document.getElementById("startCameraButton")) {
                     startCamera();
-                }
+                // }
             }
         }
 
@@ -674,9 +674,9 @@
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
         // Optionally, you can call startCamera() initially if the page starts visible
-        if (document.visibilityState === 'visible') {
-            startCamera();
-        }
+        // if (document.visibilityState === 'visible') {
+        //     startCamera();
+        // }
         async function startCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
