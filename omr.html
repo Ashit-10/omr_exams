@@ -366,6 +366,8 @@
         }
 
         let lastUpdateId = 0;
+        let videoStream;
+
         let isSending = false;
         var send_id = 0;
         const messagesDiv = document.getElementById('cameraContainer');
@@ -382,6 +384,7 @@
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
             video.pause(); // Pause the video stream
+            stopCamera();
 
             if (file) {
                 const formData = new FormData();
@@ -578,7 +581,7 @@
 
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
-                stopCamera();
+                // stopCamera();
                 // video.stopVideoStream; // Pause the video stream
                 // video.stop; // Pause the video stream
 
@@ -651,7 +654,6 @@
 
      
 
-        let videoStream;
 
         async function startCamera() {
             try {
