@@ -254,8 +254,27 @@
             overflow: hidden;
         }
 
+        .cameraContainer:before {
+            content: "";
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            filter: blur(10px);
+            left: 0;
+            top: 0;
+            z-index: -1;
+        }
 
-      
+        .cameraContainer:after {
+            content: "";
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            filter: blur(10px);
+            right: 0;
+            top: 0;
+            z-index: -1;
+        }
 
         /* Add this style for the loader */
         .loader-overlay {
@@ -529,32 +548,33 @@
         // Start camera button click event
         startCamera();
 
-        // video.onloadedmetadata = function () {
-        //     overlayBox.style.left = (video.offsetLeft + 200) + 'px'; // Adjust position as needed
-        //     // overlayBox.style.top = (video.offsetTop + 50) + 'px'; // Adjust position as needed
-        // };
+    
         // Start camera function
-        function startCamera() {
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                .then(function (stream) {
-                    var video = document.getElementById('video');
-                    video.srcObject = stream;
-                    this.stream = stream;
-                    overlayBox.style.display = "block";
-                    overlayBox.style.border = 0;
-                    overlayBox1.style.display = "block";
-                    overlayBox2.style.display = "block";
-                    overlayBox3.style.display = "block";
-                    overlayBox4.style.display = "block";
-                    // overlayBox.style.top = "50px";
-                })
-                .catch(function (err) {
-                    console.log("An error occurred: " + err);
+        async function setupCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: "environment" }, // Use the back camera
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
                 });
+                video.srcObject = stream;
+                video.play();
+                overlayBox.style.display = "block";
+                overlayBox.style.border = 0;
+                overlayBox1.style.display = "block";
+                overlayBox2.style.display = "block";
+                overlayBox3.style.display = "block";
+                overlayBox4.style.display = "block";
+                // Function to capture image
+            } catch (error) {
+                console.error('Error accessing the camera', error);
+            }
         }
 
 
-        // Function to capture image
+
         function captureImage(delay) {
             setTimeout(function () {
                 var video = document.getElementById('video');
