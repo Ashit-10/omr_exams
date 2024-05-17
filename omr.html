@@ -548,7 +548,8 @@
         // Start camera button click event
         startCamera();
 
-    
+    const newWidth = 1920;
+    const newHeight = 1080;
         // Start camera function
         async function startCamera() {
             try {
@@ -579,8 +580,8 @@
             setTimeout(function () {
                 var video = document.getElementById('video');
                 var canvas = document.createElement('canvas');
-                canvas.width = Fwidth;
-                canvas.height = Fheight;
+                canvas.width = newWidth;
+                canvas.height = newHeight;
                 var context = canvas.getContext('2d');
                 // context.translate(canvas.height, 0);
                 // context.rotate(-Math.PI / 2);
@@ -592,16 +593,14 @@
                 const x = boxRect.left; // - videoRect.left;
                 const y = - videoRect.top;
 
-                // const width = 250; //boxRect.width;
-                // const height = 1040; //boxRect.height;
+             
 
                 const width = boxRect.width * 1.45;
                 const height = boxRect.height * 1.45;
 
-                // const Fwidth3 = 180; //width * 3;
-                // const Fheight3 = 440 * 2; //height * 3;
+         
 
-                context.drawImage(video, x, 0, width, height, 0, 0, Fwidth, Fheight);
+                context.drawImage(video, x, 0, width, height);
                 // context.drawImage(video, x, 0, width, height, 0, 0, 750, 880);
                 // context.drawImage(video, 0, 0, Fwidth, Fheight);
 
