@@ -177,7 +177,7 @@
 
         #overlayText {
             position: absolute;
-            top: 60px;
+            top: 60%;
             left: calc(50% - 55px);
             /* Adjust position to the right of the box */
             transform: translateY(-50%) rotate(90deg);
@@ -442,6 +442,9 @@
 
                 const loaderOverlay = document.getElementById('loaderOverlay');
                 loaderOverlay.style.display = 'flex'; // Display loader overlay
+
+                const false_div = document.getElementById('false-div');
+                false_div.parentNode.removeChild(false_div);
 
 
 
@@ -737,11 +740,11 @@
                 stopCamera();
             } else {
                 // Check if the "hidden" class is present
-                var hiddenElements = document.getElementsByClassName("hidden");
-                if (hiddenElements.length > 0) {
+               // var hiddenElements = document.getElementsByClassName("hidden");
+             //   if (hiddenElements.length > 0) {
                     // stopCamera();
-                    console.log("Still not on");
-                } else {
+               //     console.log("Still not on");
+              //  } else {
                     // Page is now visible, start the camera if necessary
                     isPageVisible = true;
                     if (document.getElementById("false-div")) {
@@ -749,7 +752,7 @@
                     }
                 }
             }
-        }
+     //   }
 
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
