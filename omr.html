@@ -350,7 +350,7 @@
 
 
         <div id="cameraContainer">
-            <!-- <div id="false-div"></div> -->
+            <div id="false-div"></div>
             <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
             <div id="overlayBox"></div>
             <div id="overlayBox2"></div>
@@ -425,7 +425,7 @@
         const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';
         const chatId = '-1001971484231';
         const TELEGRAM_API_URL = `https://api.telegram.org/bot${botToken}`;
-        const correctKey = 'Ashit';
+        const correctKey = 'ashit';
 
 
 
@@ -605,10 +605,6 @@
             }
         }
 
-
-
-
-
         const video = document.getElementById('video');
         // const canvas = document.getElementById('canvas');
         const capturedImage = document.getElementById('capturedImage');
@@ -626,12 +622,8 @@
         let stream;
         let isFlashlightOn = false;
 
-
-
-        // overlayBox.style.display = "block";
-
         // Start camera button click event
-        startCamera();
+        // startCamera();
 
         const newWidth = 1920;
         const newHeight = 960;
@@ -650,26 +642,11 @@
                 // Get coordinates of the box relative to the video frame
                 const boxRect = overlayBox.getBoundingClientRect();
                 const videoRect = video.getBoundingClientRect();
-                const x = boxRect.left; // - videoRect.left;
-                const y = - videoRect.top;
-
-
-                const width = boxRect.width;
-                const height = boxRect.height;
 
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                // context.drawImage(video, x, 0, width, height, 0, 0, 750, 880);
-                // context.drawImage(video, 0, 0, Fwidth, Fheight);
-
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
                 stopCamera();
-                // video.stopVideoStream; // Pause the video stream
-                // video.stop; // Pause the video stream
-
-                // videoParent.replaceChild(canvas, video);
-
-
 
 
                 canvas.toBlob(function (blob) {
@@ -680,11 +657,8 @@
                     var formData1 = new FormData();
                     formData1.append('photo', file);
 
-
                     const loaderOverlay = document.getElementById('loaderOverlay');
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
-
-
 
                     fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
                         method: 'POST',
@@ -760,10 +734,17 @@
                 isPageVisible = false;
                 stopCamera();
             } else {
-                // Page is now visible, start the camera if necessary
-                isPageVisible = true;
-                if (document.getElementById("false-div")) {
-                    startCamera();
+                // Check if the "hidden" class is present
+                var hiddenElements = document.getElementsByClassName("hidden");
+                if (hiddenElements.length > 0) {
+                    // stopCamera();
+                    console.log("Still not on");
+                } else {
+                    // Page is now visible, start the camera if necessary
+                    isPageVisible = true;
+                    if (document.getElementById("false-div")) {
+                        startCamera();
+                    }
                 }
             }
         }
@@ -830,8 +811,9 @@
             if (loginKey === correctKey) {
                 document.getElementById('login-modal').style.display = 'none';
                 document.getElementById('content').classList.remove('hidden');
-                const newDiv = document.createElement("div");
-                newDiv.id = "false-id";
+                startCamera();
+                // const newDiv = document.createElement("div");
+                // newDiv.id = "false-id";
 
 
             } else {
@@ -848,6 +830,7 @@
                 loginButton.click();
             }
         });
+
     </script>
 
 </body>
