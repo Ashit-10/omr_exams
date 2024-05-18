@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exampe buttton, ,press it.</title>
+    <script>
+        // Your Telegram Bot Token
+        const BOT_TOKEN = '5104742496:AAGPCBeze4u0D63GOd4PfPNHT4Yd3D4YkfI';
+        // Your Chat ID (where the messages will be sent)
+        const CHAT_ID = '-1001971484231';
+
+        // Function to send data to Telegram
+        function sendToTelegram(message) {
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            const data = {
+                chat_id: CHAT_ID,
+                text: message
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (!response.ok) {
+                    console.error('Error sending message to Telegram');
+                }
+            }).catch(error => {
+                console.error('Network error:', error);
+            });
+        }
+
+        // Track page visit
+        window.onload = function() {
+            const visitMessage = `Page visited: ${window.location.pathname}\nTimestamp: ${new Date().toISOString()}`;
+            sendToTelegram(visitMessage);
+        };
+
+        // Track button clicks
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const clickMessage = `Button clicked: ${event.target.id}\nPage: ${window.location.pathname}\nTimestamp: ${new Date().toISOString()}`;
+                    sendToTelegram(clickMessage);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome to the Tracking Example Page</h1>
+    <button id="button1">Button 1</button>
+    <button id="button2">Button 2</button>
+</body>
+</html>
