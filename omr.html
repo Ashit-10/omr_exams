@@ -177,7 +177,7 @@
 
         #overlayText {
             position: absolute;
-            top: 40%;
+            top: 60px;
             left: calc(50% - 55px);
             /* Adjust position to the right of the box */
             transform: translateY(-50%) rotate(90deg);
@@ -352,12 +352,13 @@
         <div id="cameraContainer">
             <div id="false-div"></div>
             <video id="video" width="330" height="440" muted playsinline loop autoplay controls></video>
+            <div id="overlayText">Put the qr codes inside the box</div> <!-- Text over -->
+
             <div id="overlayBox"></div>
             <div id="overlayBox2"></div>
             <div id="overlayBox3"></div>
             <div id="overlayBox4"></div>
             <div id="overlayBox1"></div> <!-- Empty square -->
-            <div id="overlayText">Put the paper inside the box</div> <!-- Text over -->
         </div>
         <br>
         <div id="remove1">
@@ -801,36 +802,36 @@
                 // video.srcObject = null;
             }
         }
-        const loginButton = document.getElementById('login-button');
-        const loginKeyInput = document.getElementById('login-key');
-        const errorMessage = document.getElementById('error-message');
+        // const loginButton = document.getElementById('login-button');
+        // const loginKeyInput = document.getElementById('login-key');
+        // const errorMessage = document.getElementById('error-message');
         // const correctKey = mysecretKey; // Replace with your actual login key
 
-        loginButton.addEventListener('click', function () {
-            const loginKey = loginKeyInput.value;
+        // loginButton.addEventListener('click', function () {
+        //     const loginKey = loginKeyInput.value;
 
-            if (loginKey === correctKey) {
-                document.getElementById('login-modal').style.display = 'none';
-                document.getElementById('content').classList.remove('hidden');
-                startCamera();
-                // const newDiv = document.createElement("div");
-                // newDiv.id = "false-id";
+        //     if (loginKey === correctKey) {
+        //         document.getElementById('login-modal').style.display = 'none';
+        //         document.getElementById('content').classList.remove('hidden');
+        //         startCamera();
+        //         // const newDiv = document.createElement("div");
+        //         // newDiv.id = "false-id";
 
 
-            } else {
-                errorMessage.textContent = 'Invalid login key. Please try again.';
-            }
-        });
+        //     } else {
+        //         errorMessage.textContent = 'Invalid login key. Please try again.';
+        //     }
+        // });
 
-        loginKeyInput.addEventListener('input', function () {
-            errorMessage.textContent = '';
-        });
+        // loginKeyInput.addEventListener('input', function () {
+        //     errorMessage.textContent = '';
+        // });
 
-        loginKeyInput.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                loginButton.click();
-            }
-        });
+        // loginKeyInput.addEventListener('keydown', function (event) {
+        //     if (event.key === 'Enter') {
+        //         loginButton.click();
+        //     }
+        // });
 
     </script>
 
