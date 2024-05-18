@@ -478,7 +478,8 @@
                         backButton.style.left = '50%';
                         backButton.style.transform = 'translate(-50%, -50%)';
                         backButton.addEventListener('click', function () {
-                            location.reload();
+                          //  location.reload();
+                            loaderOverlay.style.display = "none";
                         });
                         document.body.appendChild(backButton);
                     })
