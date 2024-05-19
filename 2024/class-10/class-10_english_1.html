@@ -68,7 +68,7 @@
   <ul class="nav nav-pills">
         <li id="down-btn" class="nav-item">
 
-        <button class="btn btn-outline-warning" onclick="document.location='class-10_english_1/class-10_english_1_question.pdf'">View question paper </button>
+        <button class="btn btn-outline-warning" onclick="showPDF('class-10_eng.pdf')">View question paper </button>
     </li>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <li id="down-btn" class="nav-item">
@@ -338,6 +338,9 @@
     
                     
    <script>
+       function showPDF(pdfUrl) {
+            window.open(pdfUrl, '_blank');
+        }
  const searchBar = document.getElementById('search-bar');
         const nameTable = document.getElementById('name-table').getElementsByTagName('tbody')[0];
         const notFound = document.getElementById('not-found');
