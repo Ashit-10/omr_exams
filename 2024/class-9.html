@@ -16,33 +16,37 @@
   <button id="toggleButton">Turn On Flashlight</button>
 
   <script>
-    document.addEventListener('deviceready', onDeviceReady, false);
+    const toggleButton = document.getElementById('toggleButton');
+    let isFlashlightOn = false;
 
-    function onDeviceReady() {
-      const toggleButton = document.getElementById('toggleButton');
-      let isFlashlightOn = false;
+    async function toggleFlashlight() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        const track = stream.getVideoTracks()[0];
+        const imageCapture = new ImageCapture(track);
+        const photoCapabilities = await imageCapture.getPhotoCapabilities();
+        
+        if (!photoCapabilities.fillLightMode.includes('flash')) {
+          throw new Error('Flash not supported.');
+        }
 
-      // Function to turn on/off the flashlight
-      function toggleFlashlight() {
         if (isFlashlightOn) {
-          // Turn off the flashlight
-          window.plugins.flashlight.switchOff();
+          await track.applyConstraints({ advanced: [{ fillLightMode: 'off' }] });
           console.log('Flashlight turned off');
           toggleButton.textContent = 'Turn On Flashlight';
         } else {
-          // Turn on the flashlight
-          window.plugins.flashlight.switchOn();
+          await track.applyConstraints({ advanced: [{ fillLightMode: 'flash' }] });
           console.log('Flashlight turned on');
           toggleButton.textContent = 'Turn Off Flashlight';
         }
-        // Toggle the flashlight state
+        
         isFlashlightOn = !isFlashlightOn;
+      } catch (error) {
+        console.error('Error accessing camera:', error);
       }
-
-      // Event listener for the button click
-      toggleButton.addEventListener('click', toggleFlashlight);
     }
+
+    toggleButton.addEventListener('click', toggleFlashlight);
   </script>
-  <script src="cordova.js"></script>
 </body>
 </html>
