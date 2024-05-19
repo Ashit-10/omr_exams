@@ -96,8 +96,11 @@
                 document.getElementById('login-modal').style.display = 'none';
                 document.getElementById('content').classList.remove('hidden');
 
-                // Push the state of index.html before redirecting to scan.html
-                history.pushState(null, null, 'index.html');
+                // Store a flag in sessionStorage to indicate successful login
+                sessionStorage.setItem('loggedIn', 'true');
+
+                // Push a new state to history to track the navigation
+                history.pushState(null, null, window.location.href);
 
                 // Redirect to the scan page
                 window.location.href = 'scan.html';
