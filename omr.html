@@ -96,8 +96,8 @@
                 document.getElementById('login-modal').style.display = 'none';
                 document.getElementById('content').classList.remove('hidden');
 
-                // Store a flag in sessionStorage to indicate successful login
-                sessionStorage.setItem('loggedIn', 'true');
+                // Push the state of index.html before redirecting to scan.html
+                history.pushState(null, null, 'index.html');
 
                 // Redirect to the scan page
                 window.location.href = 'scan.html';
@@ -114,12 +114,6 @@
             if (event.key === 'Enter') {
                 loginButton.click();
             }
-        });
-
-        // Check if the user navigates back to this page
-        window.addEventListener('popstate', function () {
-            // If the user navigates back, redirect them to index.html
-            window.location.href = 'index.html';
         });
     </script>
 </body>
