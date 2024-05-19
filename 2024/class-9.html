@@ -34,7 +34,7 @@
 </head>
 <body>
     <video id="video" autoplay playsinline></video>
-    <button id="flashlight-toggle">Toggle Flashlight</button>
+    <button id="flashlight-toggle">Turn On Flashlight</button>
     <p id="status"></p>
     <script>
         let videoTrack;
@@ -71,11 +71,17 @@
                 const constraints = { advanced: [{ torch: !isFlashlightOn }] };
                 await videoTrack.applyConstraints(constraints);
                 isFlashlightOn = !isFlashlightOn;
+                updateButtonText();
                 document.getElementById('status').innerText = `Flashlight ${isFlashlightOn ? 'on' : 'off'}`;
             } catch (error) {
                 document.getElementById('status').innerText = 'Error toggling flashlight: ' + error.message;
                 console.error('Error toggling flashlight:', error);
             }
+        }
+
+        function updateButtonText() {
+            const toggleButton = document.getElementById('flashlight-toggle');
+            toggleButton.innerText = isFlashlightOn ? 'Turn Off Flashlight' : 'Turn On Flashlight';
         }
 
         startCamera();
