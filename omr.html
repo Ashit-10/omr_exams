@@ -11,6 +11,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
         }
+
         button {
             margin-top: 10px;
             padding: 10px 20px;
@@ -75,14 +76,10 @@
         </div>
     </div>
 
-
-    <div id="content" class="hidden"> 
-
-        please refresh ..
+    <div id="content" class="hidden">
+        loading .....
         <!-- // content goes here -->
-
-  </div>
-
+    </div>
 
     <script>
         const mysecretKey = "ashit";
@@ -99,11 +96,11 @@
                 document.getElementById('login-modal').style.display = 'none';
                 document.getElementById('content').classList.remove('hidden');
 
+                // Replace the current history state with the new page URL
+                history.replaceState(null, null, 'ashit-10.github.io/omr_exams');
+
+                // Redirect to the scan page
                 window.location.href = 'scan';
-                // const newDiv = document.createElement("div");
-                // newDiv.id = "false-id";
-
-
             } else {
                 errorMessage.textContent = 'Invalid login key. Please try again.';
             }
