@@ -14,18 +14,33 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            background: linear-gradient(to right, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
             animation: backgroundAnimation 10s ease infinite;
+            position: relative;
         }
 
         @keyframes backgroundAnimation {
-            0% { background: linear-gradient(to right, #1e3c72 0%, #2a5298 100%); }
-            50% { background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%); }
-            100% { background: linear-gradient(to right, #1e3c72 0%, #2a5298 100%); }
+            0% { background: linear-gradient(to right, #ff9a9e, #fad0c4); }
+            25% { background: linear-gradient(to right, #fbc2eb, #a6c1ee); }
+            50% { background: linear-gradient(to right, #ffecd2, #fcb69f); }
+            75% { background: linear-gradient(to right, #a1c4fd, #c2e9fb); }
+            100% { background: linear-gradient(to right, #ff9a9e, #fad0c4); }
+        }
+
+        .background-school {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://example.com/path-to-your-school-image.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0.1;
+            z-index: 1;
         }
 
         .button {
-            background-color: #007bff;
+            background-color: #4CAF50;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -38,9 +53,9 @@
             z-index: 10;
         }
 
-        .button:nth-child(1) { background-color: #e74c3c; }
-        .button:nth-child(2) { background-color: #8e44ad; }
-        .button:nth-child(3) { background-color: #3498db; }
+        .button:nth-child(1) { background-color: #ff6f61; }
+        .button:nth-child(2) { background-color: #ffa726; }
+        .button:nth-child(3) { background-color: #66bb6a; }
 
         .button:hover {
             transform: scale(1.05);
@@ -202,7 +217,7 @@
             left: 0;
             width: 100%;
             height: 15%;
-            background: rgba(30, 72, 104, 0.9);
+            background: rgba(52, 152, 219, 0.9);
             animation: wave 4s infinite ease-in-out;
         }
 
@@ -213,7 +228,7 @@
             height: 200%;
             top: -75%;
             left: -50%;
-            background: rgba(30, 72, 104, 0.7);
+            background: rgba(41, 128, 185, 0.7);
             border-radius: 45%;
             animation: wave 4s infinite ease-in-out;
         }
@@ -230,44 +245,15 @@
                 transform: translate(-25%, 10%);
             }
         }
-
-        /* School-themed animations */
-        .school-icons {
-            position: absolute;
-            top: 10%;
-            left: 5%;
-            font-size: 24px;
-            z-index: 9;
-        }
-
-        .icon {
-            display: inline-block;
-            margin: 0 15px;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .icon:nth-child(1) { animation-delay: 0s; }
-        .icon:nth-child(2) { animation-delay: 2s; }
-        .icon:nth-child(3) { animation-delay: 4s; }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-        }
     </style>
 </head>
 <body>
-    <button class="button" onclick="showPDF('2023-24.pdf')">2023 - 24</button>
-    <button class="button" onclick="showPDF('2024-25.pdf')">2024 - 25</button>
-    <button class="button" onclick="showPDF('omr-sheet.pdf')">Omr sheet checking online</button>
-    <div id="pdf-container">
-        <iframe id="pdf-frame"></iframe>
-    </div>
+    <div class="background-school"></div>
 
+    <button class="button" onclick="document.location='2023.html'">2023 - 24</button>
+    <button class="button" onclick="document.location='2024.html'">2024 - 25</button>
+    <button class="button" onclick="document.location='omr.html'">Omr sheet checking online</button>
+   
     <!-- Bubble elements -->
     <div class="bubble"></div>
     <div class="bubble"></div>
@@ -287,20 +273,61 @@
     <!-- Water animation -->
     <div class="water"></div>
 
-    <!-- School-themed animations -->
-    <div class="school-icons">
-        <span class="icon">📚</span>
-        <span class="icon">📝</span>
-        <span class="icon">🎓</span>
-    </div>
-
     <script>
-        function showPDF(pdfUrl) {
-            var pdfContainer = document.getElementById('pdf-container');
-            var pdfFrame = document.getElementById('pdf-frame');
-            pdfFrame.src = pdfUrl;
-            pdfContainer.style.display = 'block';
+      // Your Telegram Bot Token
+    const BOT_TOKEN = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+    // Your Chat ID (where the messages will be sent)
+    const CHAT_ID = '-1001774957665'; 
+
+    // Function to send data to Telegram
+    function sendToTelegram(message) {
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        const data = {
+            chat_id: CHAT_ID,
+            text: message
+        };
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (!response.ok) {
+                console.error('Error sending message to Telegram');
+            }
+        }).catch(error => {
+            console.error('Network error:', error);
+        });
+    }
+
+     // Function to collect and send user information
+     async function collectInfo() {
+        try {
+            // Get IP address
+            const ipAddressResponse = await fetch('https://api64.ipify.org?format=json');
+            const { ip } = await ipAddressResponse.json();
+
+            // Get browser name and version
+            const browserInfo = `Browser: ${navigator.userAgent}`;
+
+            // Get device name
+            const deviceInfo = `Device: ${navigator.platform}`;
+
+            // Get timestamp
+            const timestamp = new Date().toISOString();
+
+            // Send collected information to Telegram
+            sendToTelegram(`IP Address: ${ip}\nBrowser: ${browserInfo}\nDevice: ${deviceInfo}\nTimestamp: ${timestamp}`);
+        } catch (error) {
+            console.error('Error collecting user info:', error);
         }
+    }
+    // Track page visit
+    window.onload = async function() {
+        await collectInfo();
+    };
     </script>
 </body>
 </html>
