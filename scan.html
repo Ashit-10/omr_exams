@@ -836,7 +836,14 @@
         //         loginButton.click();
         //     }
         // });
+     // Check if the user is logged in by looking at the sessionStorage flag
+        if (sessionStorage.getItem('loggedIn') !== 'true') {
+            // If not logged in, redirect to index.html
+            window.location.href = 'index.html';
+        }
+
         window.addEventListener('popstate', function () {
+            // Redirect to index.html when the back button is pressed
             window.location.href = 'index.html';
         });
     </script>
