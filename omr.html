@@ -67,7 +67,7 @@
 </head>
 
 <body>
-   <div id="login-modal" class="modal">
+    <div id="login-modal" class="modal">
         <div class="modal-content">
             <h2>Enter Login Key</h2>
             <input type="password" id="login-key" placeholder="Login Key">
@@ -83,7 +83,7 @@
 
     <script>
         const mysecretKey = "ashit";
-    
+
         const loginButton = document.getElementById('login-button');
         const loginKeyInput = document.getElementById('login-key');
         const errorMessage = document.getElementById('error-message');
@@ -96,11 +96,11 @@
                 document.getElementById('login-modal').style.display = 'none';
                 document.getElementById('content').classList.remove('hidden');
 
-                // Replace the current history state with the new page URL
-                history.replaceState(null, null, '');
+                // Push the state of index.html before redirecting to scan.html
+                history.pushState(null, null, 'index.html');
 
                 // Redirect to the scan page
-                window.location.href = 'scan';
+                window.location.href = 'scan.html';
             } else {
                 errorMessage.textContent = 'Invalid login key. Please try again.';
             }
@@ -115,9 +115,7 @@
                 loginButton.click();
             }
         });
-
     </script>
-
 </body>
 
 </html>
