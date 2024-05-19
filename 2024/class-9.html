@@ -34,7 +34,8 @@
 </head>
 <body>
     <video id="video" autoplay playsinline></video>
-    <button id="flashlight-toggle">Turn On Flashlight</button>
+    <button id="flashlight-on">Turn On Flashlight</button>
+    <button id="flashlight-off">Turn Off Flashlight</button>
     <p id="status"></p>
     <script>
         let videoTrack;
@@ -48,16 +49,19 @@
             };
 
             try {
+                // Request access to the user's back camera
                 const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 const videoElement = document.getElementById('video');
                 videoElement.srcObject = stream;
 
-                // Access the video track to control the flashlight
+                // Get the video track to control the flashlight
                 videoTrack = stream.getVideoTracks()[0];
-                
-                // Add event listener to the button to toggle the flashlight
-                const toggleButton = document.getElementById('flashlight-toggle');
-                toggleButton.addEventListener('click', toggleFlashlight);
+
+                // Add event listeners to the buttons
+                const onButton = document.getElementById('flashlight-on');
+                const offButton = document.getElementById('flashlight-off');
+                onButton.addEventListener('click', () => toggleFlashlight(true));
+                offButton.addEventListener('click', () => toggleFlashlight(false));
 
                 document.getElementById('status').innerText = 'Camera started successfully.';
             } catch (error) {
@@ -66,24 +70,20 @@
             }
         }
 
-        async function toggleFlashlight() {
+        async function toggleFlashlight(state) {
             try {
-                const constraints = { advanced: [{ torch: !isFlashlightOn }] };
+                // Apply constraints to toggle the flashlight state
+                const constraints = { advanced: [{ torch: state }] };
                 await videoTrack.applyConstraints(constraints);
-                isFlashlightOn = !isFlashlightOn;
-                updateButtonText();
-                document.getElementById('status').innerText = `Flashlight ${isFlashlightOn ? 'on' : 'off'}`;
+                isFlashlightOn = state;
+                document.getElementById('status').innerText = `Flashlight ${state ? 'on' : 'off'}`;
             } catch (error) {
                 document.getElementById('status').innerText = 'Error toggling flashlight: ' + error.message;
                 console.error('Error toggling flashlight:', error);
             }
         }
 
-        function updateButtonText() {
-            const toggleButton = document.getElementById('flashlight-toggle');
-            toggleButton.innerText = isFlashlightOn ? 'Turn Off Flashlight' : 'Turn On Flashlight';
-        }
-
+        // Start the camera when the page loads
         startCamera();
     </script>
 </body>
