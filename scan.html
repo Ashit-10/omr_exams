@@ -346,6 +346,10 @@
             margin-right: 10px;
             /* Add margin to separate buttons */
         }
+        .warning {
+            color: red;
+            display: none;
+        }
     </style>
 
 </head>
@@ -383,6 +387,7 @@
 
         <!-- Add the input field next to the capture and cancel buttons -->
         <input type="text" id="rollNumberInput" placeholder="Enter Roll No (Optional)  ">
+<div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
 
         <button id="capture-btn">Capture</button>
 
@@ -836,12 +841,23 @@
             }
         }
 
-        // Add event listener to input field
-        document.getElementById('rollNumberInput').addEventListener('input', function (event) {
+         document.getElementById('rollNumberInput').addEventListener('input', function (event) {
             // Get the input value
             let inputValue = event.target.value;
             // Remove any non-digit characters
             inputValue = inputValue.replace(/\D/g, '');
+
+            // Check if the length exceeds 2 digits
+            if (inputValue.length > 2) {
+                // Display the warning message
+                document.getElementById('warningMessage').style.display = 'block';
+                // Truncate the input value to the first 2 digits
+                inputValue = inputValue.substring(0, 2);
+            } else {
+                // Hide the warning message
+                document.getElementById('warningMessage').style.display = 'none';
+            }
+
             // Update the input value
             event.target.value = inputValue;
         });
