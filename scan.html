@@ -841,20 +841,34 @@
             }
         }
 
-         document.getElementById('rollNumberInput').addEventListener('input', function (event) {
+         
+            
+
+        document.getElementById('rollNumberInput').addEventListener('input', function (event) {
             // Get the input value
             let inputValue = event.target.value;
+            // Flag to show warning message
+            let showWarning = false;
+
+            // Check for non-digit characters
+            if (/\D/.test(inputValue)) {
+                showWarning = true;
+            }
+
             // Remove any non-digit characters
             inputValue = inputValue.replace(/\D/g, '');
 
             // Check if the length exceeds 2 digits
             if (inputValue.length > 2) {
-                // Display the warning message
-                document.getElementById('warningMessage').style.display = 'block';
+                showWarning = true;
                 // Truncate the input value to the first 2 digits
                 inputValue = inputValue.substring(0, 2);
+            }
+
+            // Display or hide the warning message
+            if (showWarning) {
+                document.getElementById('warningMessage').style.display = 'block';
             } else {
-                // Hide the warning message
                 document.getElementById('warningMessage').style.display = 'none';
             }
 
