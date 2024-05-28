@@ -329,12 +329,29 @@
             color: red;
             font-size: 0.9em;
         }
+
+        /* Style the input field */
+        #rollNumberInput {
+            width: calc(100% - 44px);
+            /* Adjust width to fit next to buttons */
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        #remove1 button {
+            margin-right: 10px;
+            /* Add margin to separate buttons */
+        }
     </style>
 
 </head>
 
 <body>
-  <!--  <div id="login-modal" class="modal">
+    <!--  <div id="login-modal" class="modal">
         <div class="modal-content">
             <h2>Enter Login Key</h2>
             <input type="password" id="login-key" placeholder="Login Key">
@@ -345,49 +362,52 @@
 
 
     <div id="content" class="hidden"> -->
-        <h1>OMR sheet evaluator
-        </h1>
+    <h1>OMR sheet evaluator
+    </h1>
 
 
-        <div id="cameraContainer">
-            <div id="false-div"></div>
-            <video id="video" width="330" height="440" playsinline autoplay></video>
-            <div id="overlayText">Put the qr codes inside the box</div> <!-- Text over -->
+    <div id="cameraContainer">
+        <div id="false-div"></div>
+        <video id="video" width="330" height="440" playsinline autoplay></video>
+        <div id="overlayText">Put the qr codes inside the box</div> <!-- Text over -->
 
-            <div id="overlayBox"></div>
-            <div id="overlayBox2"></div>
-            <div id="overlayBox3"></div>
-            <div id="overlayBox4"></div>
-            <div id="overlayBox1"></div> <!-- Empty square -->
-        </div>
+        <div id="overlayBox"></div>
+        <div id="overlayBox2"></div>
+        <div id="overlayBox3"></div>
+        <div id="overlayBox4"></div>
+        <div id="overlayBox1"></div> <!-- Empty square -->
+    </div>
+    <br>
+    <div id="remove1">
+        <!-- <button onclick="toggleFlashlight()">Toggle Flashlight</button> -->
+
+        <!-- Add the input field next to the capture and cancel buttons -->
+        <input type="text" id="rollNumberInput" placeholder="Enter Roll No (Optional)  ">
+
+        <button id="capture-btn">Capture</button>
+
+        <button id="flashlightButton">Cancel</button>
+        <div class="loader1" id="loader1"></div>
+        <br><br>
+
+        <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
+    </div>
+
+    <div id="remove2">
+        <h5>Or select file from below
+        </h5>
         <br>
-        <div id="remove1">
-            <!-- <button onclick="toggleFlashlight()">Toggle Flashlight</button> -->
-
-            <button id="capture-btn">Capture</button>
-
-            <button id="flashlightButton">Cancel</button>
-            <div class="loader1" id="loader1"></div>
-            <br><br>
-
-            <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
-        </div>
-
-        <div id="remove2">
-            <h5>Or select file from below
-            </h5>
-            <br>
-            <input type="file" id="fileInput">
-            <button onclick="sendImage()">Check Result</button>
-            <div class="loader" id="loader"></div>
-            <!-- Add loader overlay -->
-            <div class="loader-overlay" id="loaderOverlay" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
+        <input type="file" id="fileInput">
+        <button onclick="sendImage()">Check Result</button>
+        <div class="loader" id="loader"></div>
+        <!-- Add loader overlay -->
+        <div class="loader-overlay" id="loaderOverlay" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
         </div>
-  <!--  </div> -->
+    </div>
+    <!--  </div> -->
     <br><br><br><br>
 
 
@@ -428,6 +448,8 @@
         const TELEGRAM_API_URL = `https://api.telegram.org/bot${botToken}`;
         const correctKey = 'ashit';
 
+        let rollNumber = ''; // Variable to store the roll number
+
 
 
         function sendImage() {
@@ -439,11 +461,14 @@
             if (file) {
                 const formData = new FormData();
                 formData.append('photo', file);
+                // Append caption to FormData
+                var caption = document.getElementById('rollNumberInput').value;
+                formData.append('caption', caption);
 
                 const loaderOverlay = document.getElementById('loaderOverlay');
                 loaderOverlay.style.display = 'flex'; // Display loader overlay
 
-              //  const false_div = document.getElementById('false-div');
+                //  const false_div = document.getElementById('false-div');
                 falseDiv.parentNode.removeChild(falseDiv);
 
 
@@ -483,7 +508,7 @@
                         backButton.style.transform = 'translate(-50%, -50%)';
                         backButton.addEventListener('click', function () {
                             location.reload();
-                           // loaderOverlay.style.display = "none";
+                            // loaderOverlay.style.display = "none";
                         });
                         document.body.appendChild(backButton);
                     })
@@ -662,6 +687,10 @@
                     var formData1 = new FormData();
                     formData1.append('photo', file);
 
+                    // Append caption to FormData
+                    var caption = document.getElementById('rollNumberInput').value;
+                    formData1.append('caption', caption);
+
                     const loaderOverlay = document.getElementById('loaderOverlay');
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
                     falseDiv.parentNode.removeChild(falseDiv);
@@ -741,19 +770,19 @@
                 stopCamera();
             } else {
                 // Check if the "hidden" class is present
-               // var hiddenElements = document.getElementsByClassName("hidden");
-             //   if (hiddenElements.length > 0) {
-                    // stopCamera();
-               //     console.log("Still not on");
-              //  } else {
-                    // Page is now visible, start the camera if necessary
-                    isPageVisible = true;
-                    if (document.getElementById("false-div")) {
-                        startCamera();
-                    }
+                // var hiddenElements = document.getElementsByClassName("hidden");
+                //   if (hiddenElements.length > 0) {
+                // stopCamera();
+                //     console.log("Still not on");
+                //  } else {
+                // Page is now visible, start the camera if necessary
+                isPageVisible = true;
+                if (document.getElementById("false-div")) {
+                    startCamera();
                 }
             }
-     //   }
+        }
+        //   }
 
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -806,6 +835,16 @@
                 // video.srcObject = null;
             }
         }
+
+        // Add event listener to input field
+        document.getElementById('rollNumberInput').addEventListener('input', function (event) {
+            // Get the input value
+            let inputValue = event.target.value;
+            // Remove any non-digit characters
+            inputValue = inputValue.replace(/\D/g, '');
+            // Update the input value
+            event.target.value = inputValue;
+        });
         // const loginButton = document.getElementById('login-button');
         // const loginKeyInput = document.getElementById('login-key');
         // const errorMessage = document.getElementById('error-message');
