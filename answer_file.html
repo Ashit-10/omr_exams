@@ -190,11 +190,14 @@
 <body>
     <form>
         <label for="filename">Filename:</label>
-        <input type="text" id="filename" name="filename" readonly><br><br>
+        <input type="text" id="filename" name="filename" readonly size="100"><br><br>
 
-        <label for="userInput">Enter characters (A, B, C, D):</label>
         <span id="serialNumberPreview">Question 1: </span>
-        <input type="text" id="userInput" name="userInput"><br><br>
+        &nbsp; &nbsp;
+        <input type="text" id="userInput" name="userInput" placeholder="Enter choice ...">
+       &nbsp; &nbsp; <label for="userInput">[A, B, C, D]</label>
+        <br><br>
+
     </form>
     <pre id="jsonResult">{}</pre>
     <button id="saveButton">Save</button>
