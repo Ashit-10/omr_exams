@@ -35,24 +35,29 @@
             userInputField.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    const input = Array.from(new Set(e.target.value.toUpperCase().split('')));
-                    if (input.length === 0) {
-                        alert('Please enter at least one option (A, B, C, or D)');
-                        return;
-                    }
-                    const isValid = input.every(char => ['A', 'B', 'C', 'D'].includes(char));
-                    if (isValid) {
-                        userInput.push(input);
-                        entryCount++;
-                        serialNumberPreview.textContent = `Question ${entryCount}: `;
-                        displayJson(userInput);
-                        e.target.value = ''; // Clear input field
-                        saveButton.style.display = 'block'; // Show save button after first entry
+                    if (entryCount <= 50) {
+                        const input = Array.from(new Set(e.target.value.toUpperCase().split('')));
+                        if (input.length === 0) {
+                            alert('Please enter at least one option (A, B, C, or D)');
+                            return;
+                        }
+                        const isValid = input.every(char => ['A', 'B', 'C', 'D'].includes(char));
+                        if (isValid) {
+                            userInput.push(input);
+                            entryCount++;
+                            serialNumberPreview.textContent = `Question ${entryCount}: `;
+                            displayJson(userInput);
+                            e.target.value = ''; // Clear input field
+                            saveButton.style.display = 'block'; // Show save button after first entry
+                        } else {
+                            alert('Please enter only characters A, B, C, or D');
+                        }
                     } else {
-                        alert('Please enter only characters A, B, C, or D');
+                        alert('Maximum 50 questions allowed.');
                     }
                 }
             });
+
 
             jsonResult.addEventListener('click', (e) => {
                 if (e.target && e.target.classList.contains('editable')) {
@@ -157,7 +162,6 @@
             margin-top: 10px;
             margin-left: auto;
             margin-right: auto;
-            display: block;
         }
 
         #loadingOverlay {
@@ -212,9 +216,14 @@
     </form>
     <pre id="jsonResult">{}</pre>
     <button id="saveButton">Save</button>
+    <br>
     <div id="loadingOverlay">
         <div id="loadingSpinner"></div>
     </div>
+    <br>
+    <br>
+    <br>
+
 </body>
 
 </html>
