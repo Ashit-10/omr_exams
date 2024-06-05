@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Name List</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    #savedData {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+        white-space: pre-wrap;
+        position: relative;
+        cursor: text;
+        overflow-wrap: break-word;
+    }
+    #savedData:hover {
+        background-color: #f0f0f0;
+    }
+    #copyButton {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    #copyButton:hover {
+        background-color: #0056b3;
+    }
+</style>
+</head>
+<body>
+    <h1>Name List</h1>
+    <div id="nameList">
+        <label for="nameInput">Enter a Name:</label>
+        <input type="text" id="nameInput" onkeypress="checkKeyPress(event)">
+        <button onclick="saveName()">Save</button>
+    </div>
+
+    <div id="savedData" contenteditable="true"></div>
+
+    <script>
+        let serialNumber = 1;
+        let savedNames = {};
+
+        function saveName() {
+            const nameInput = document.getElementById("nameInput");
+            const name = nameInput.value.trim();
+
+            if (name !== "") {
+                savedNames[serialNumber] = name;
+                serialNumber++;
+                nameInput.value = "";
+                nameInput.focus();
+                updateSavedData();
+            } else {
+                alert("Please enter a valid name.");
+            }
+        }
+
+        function checkKeyPress(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent form submission
+                saveName();
+            }
+        }
+
+        function updateSavedData() {
+            const savedDataDiv = document.getElementById("savedData");
+            const formattedData = JSON.stringify(savedNames, null, 4);
+            savedDataDiv.textContent = formattedData;
+
+            // Remove any existing copy button
+            const existingButton = document.getElementById("copyButton");
+            if (existingButton) {
+                existingButton.remove();
+            }
+
+            // Add the copy button
+            const copyButton = document.createElement("button");
+            copyButton.setAttribute("id", "copyButton");
+            copyButton.textContent = "Copy";
+            copyButton.onclick = function() {
+                copyToClipboard(formattedData);
+            };
+            savedDataDiv.appendChild(copyButton);
+        }
+
+        function copyToClipboard(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert("JSON data copied to clipboard!");
+        }
+
+        function validateAndCorrectJSON(jsonString) {
+            try {
+                return JSON.parse(jsonString);
+            } catch (e) {
+                // Attempt to correct common issues
+                jsonString = jsonString.replace(/,\s*}/g, '}'); // Remove trailing commas
+                jsonString = jsonString.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?\s*:/g, '"$2":'); // Ensure keys are quoted
+                return JSON.parse(jsonString); // Try parsing again
+            }
+        }
+
+        document.getElementById("savedData").addEventListener("blur", function() {
+            const newData = document.getElementById("savedData").innerText.trim();
+            try {
+                const parsedData = validateAndCorrectJSON(newData);
+                savedNames = parsedData;
+                serialNumber = Object.keys(savedNames).length + 1;
+                updateSavedData();
+            } catch (e) {
+                alert("Invalid JSON format. Changes were not saved.");
+                updateSavedData();
+            }
+        });
+
+        // Initial update to display empty object
+        updateSavedData();
+    </script>
+</body>
+</html>
