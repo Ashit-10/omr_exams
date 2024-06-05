@@ -36,6 +36,10 @@
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     const input = Array.from(new Set(e.target.value.toUpperCase().split('')));
+                    if (input.length === 0) {
+                        alert('Please enter at least one option (A, B, C, or D)');
+                        return;
+                    }
                     const isValid = input.every(char => ['A', 'B', 'C', 'D'].includes(char));
                     if (isValid) {
                         userInput.push(input);
@@ -79,7 +83,14 @@
                 jsonResult.innerHTML = formattedJsonString;
             }
 
-            async function saveData() {
+            async function saveData(e) {
+                e.preventDefault(); // Prevent form submission
+
+                if (userInput.length === 0) {
+                    alert('Please enter at least one option (A, B, C, or D)');
+                    return;
+                }
+
                 const jsonOutput = {};
                 userInput.forEach((entry, index) => {
                     jsonOutput[index + 1] = entry;
@@ -125,7 +136,7 @@
     </script>
     <style>
         pre {
-            background: linear-gradient(to bottom right, #9f46f3, #ff99cc);
+            background: linear-gradient(to bottom right, #4744f7, #ff99cc);
             /* Gradient background */
             padding: 10px;
             border: 1px solid #ddd;
@@ -188,15 +199,15 @@
 </head>
 
 <body>
-    <form>
+    <form onsubmit="saveData(event)">
         <label for="filename">Filename:</label>
-        <input type="text" id="filename" name="filename" readonly size="100"><br><br>
+        <input type="text" id="filename" name="filename" readonly size="50"><br><br>
 
-        <span id="serialNumberPreview">Question 1: </span>
-        &nbsp; &nbsp;
-        <input type="text" id="userInput" name="userInput" placeholder="Enter choice ...">
-       &nbsp; &nbsp; <label for="userInput">[A, B, C, D]</label>
-        <br><br>
+        <span id="serialNumberPreview">Question 1: </span> &nbsp;
+        <input type="text" id="userInput" name="userInput"><br><br>
+        &nbsp;
+        &nbsp;
+        <label for="userInput">Enter characters (A, B, C, D)</label>
 
     </form>
     <pre id="jsonResult">{}</pre>
