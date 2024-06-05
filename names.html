@@ -27,6 +27,7 @@
         border: none;
         cursor: pointer;
         margin-bottom: 10px;
+        float: right;
     }
     #copyButton:hover {
         background-color: #0056b3;
@@ -43,6 +44,12 @@
 
     <button id="copyButton" onclick="copyToClipboard()">Copy</button>
     <div id="savedData" contenteditable="true"></div>
+
+    <div id="fileNameInput">
+        <label for="fileName">Enter file name (optional):</label>
+        <input type="text" id="fileName" placeholder="Enter file name" oninput="toggleSendButton()">
+        <button id="sendButton" onclick="sendFileToTelegram()" style="display:none;">Send File to Telegram</button>
+    </div>
 
     <script>
         let serialNumber = 1;
@@ -110,6 +117,45 @@
             document.execCommand('copy');
             document.body.removeChild(el);
             alert("JSON data copied to clipboard!");
+        }
+
+        function toggleSendButton() {
+            const fileNameInput = document.getElementById("fileName").value.trim();
+            const sendButton = document.getElementById("sendButton");
+            if (fileNameInput) {
+                sendButton.style.display = "inline";
+            } else {
+                sendButton.style.display = "none";
+            }
+        }
+
+        async function sendFileToTelegram() {
+            const fileNameInput = document.getElementById("fileName").value.trim();
+            const fileName = fileNameInput ? `${fileNameInput}.txt` : "data.txt";
+            const fileContent = document.getElementById("savedData").innerText;
+            const chatId = "-1001774957665"; // Replace with your Telegram chat ID
+            const botToken = "1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0"; // Replace with your bot token
+
+            const formData = new FormData();
+            formData.append("chat_id", chatId);
+            formData.append("caption", fileName);
+            const file = new Blob([fileContent], { type: "text/plain" });
+            formData.append("document", file, fileName);
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert("File sent to Telegram successfully!");
+                } else {
+                    alert("Failed to send file to Telegram.");
+                }
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
         }
 
         // Initial update to display empty object
