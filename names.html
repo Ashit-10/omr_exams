@@ -21,14 +21,12 @@
         background-color: #f0f0f0;
     }
     #copyButton {
-        position: absolute;
-        top: 5px;
-        right: 5px;
         padding: 5px 10px;
         background-color: #007bff;
         color: white;
         border: none;
         cursor: pointer;
+        margin-bottom: 10px;
     }
     #copyButton:hover {
         background-color: #0056b3;
@@ -43,6 +41,7 @@
         <button onclick="saveName()">Save</button>
     </div>
 
+    <button id="copyButton" onclick="copyToClipboard()">Copy</button>
     <div id="savedData" contenteditable="true"></div>
 
     <script>
@@ -75,31 +74,6 @@
             const savedDataDiv = document.getElementById("savedData");
             const formattedData = JSON.stringify(savedNames, null, 4);
             savedDataDiv.textContent = formattedData;
-
-            // Remove any existing copy button
-            const existingButton = document.getElementById("copyButton");
-            if (existingButton) {
-                existingButton.remove();
-            }
-
-            // Add the copy button
-            const copyButton = document.createElement("button");
-            copyButton.setAttribute("id", "copyButton");
-            copyButton.textContent = "Copy";
-            copyButton.onclick = function() {
-                copyToClipboard(formattedData);
-            };
-            savedDataDiv.appendChild(copyButton);
-        }
-
-        function copyToClipboard(text) {
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            alert("JSON data copied to clipboard!");
         }
 
         function validateAndCorrectJSON(jsonString) {
@@ -125,6 +99,18 @@
                 updateSavedData();
             }
         });
+
+        function copyToClipboard() {
+            const savedDataDiv = document.getElementById("savedData");
+            const text = savedDataDiv.innerText;
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert("JSON data copied to clipboard!");
+        }
 
         // Initial update to display empty object
         updateSavedData();
