@@ -350,6 +350,9 @@
             color: red;
             display: none;
         }
+        #flashlightButton {
+            margin-left: 10px; /* Add some margin to separate the buttons */
+        }
     </style>
 
 </head>
@@ -363,7 +366,6 @@
             <p id="error-message" class="error-message"></p>
         </div>
     </div>
-
 
     <div id="content" class="hidden"> -->
     <h1>OMR sheet evaluator
@@ -390,7 +392,8 @@
 <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
 
         <button id="capture-btn">Capture</button>
-
+<!-- Add flashlight button -->
+<button id="flashlightButton">Flashlight</button>
         <button id="flashlightButton">Cancel</button>
         <div class="loader1" id="loader1"></div>
         <br><br>
@@ -774,28 +777,15 @@
                 isPageVisible = false;
                 stopCamera();
             } else {
-                // Check if the "hidden" class is present
-                // var hiddenElements = document.getElementsByClassName("hidden");
-                //   if (hiddenElements.length > 0) {
-                // stopCamera();
-                //     console.log("Still not on");
-                //  } else {
-                // Page is now visible, start the camera if necessary
                 isPageVisible = true;
                 if (document.getElementById("false-div")) {
                     startCamera();
                 }
             }
         }
-        //   }
 
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
-
-        // Optionally, you can call startCamera() initially if the page starts visible
-        // if (document.visibilityState === 'visible') {
-        //     startCamera();
-        // }
         async function startCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
@@ -825,19 +815,12 @@
                 videoStream.getTracks().forEach(track => {
                     track.stop(); // Stop each track to release camera access
                 });
-
-                // Stop the video element
-                // video.srcObject = null;
-
                 // Revoke the object URL associated with the stream
                 if ('stop' in video.srcObject) {
                     video.srcObject.stop();
                 } else {
                     video.srcObject.getTracks().forEach(track => track.stop());
                 }
-
-                // Remove association with video element
-                // video.srcObject = null;
             }
         }
 
@@ -875,40 +858,58 @@
             // Update the input value
             event.target.value = inputValue;
         });
-        // const loginButton = document.getElementById('login-button');
-        // const loginKeyInput = document.getElementById('login-key');
-        // const errorMessage = document.getElementById('error-message');
-        // const correctKey = mysecretKey; // Replace with your actual login key
+ // Variable to track flashlight state
+ let isFlashlightOn = false;
 
-        // loginButton.addEventListener('click', function () {
-        //     const loginKey = loginKeyInput.value;
+// Function to toggle flashlight
+function toggleFlashlight() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+        alert('MediaDevices API not supported');
+        return;
+    }
 
-        //     if (loginKey === correctKey) {
-        //         document.getElementById('login-modal').style.display = 'none';
-        //         document.getElementById('content').classList.remove('hidden');
-        //         startCamera();
-        //         // const newDiv = document.createElement("div");
-        //         // newDiv.id = "false-id";
+    navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+            const flashlightDevices = devices.filter(device => device.kind === 'videoinput');
+            if (flashlightDevices.length === 0) {
+                alert('No flashlight available');
+                return;
+            }
 
+            // Find the first video input device (which usually represents the camera with flashlight)
+            const flashlightDevice = flashlightDevices[0];
 
-        //     } else {
-        //         errorMessage.textContent = 'Invalid login key. Please try again.';
-        //     }
-        // });
+            // Use constraints to control flashlight
+            const constraints = {
+                video: {
+                    deviceId: flashlightDevice.deviceId,
+                    facingMode: 'environment', // Use the back camera
+                    width: { ideal: 1920 }, // Set preferred width
+                    height: { ideal: 1080 }, // Set preferred height
+                    advanced: [{ torch: isFlashlightOn }] // Turn flashlight on/off
+                }
+            };
 
-        // loginKeyInput.addEventListener('input', function () {
-        //     errorMessage.textContent = '';
-        // });
+            // Access camera with flashlight control
+            return navigator.mediaDevices.getUserMedia(constraints);
+        })
+        .then(stream => {
+            // Display camera stream (not required, but useful for debugging)
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.play();
+        })
+        .catch(error => {
+            console.error('Error accessing camera:', error);
+            alert('Failed to access camera');
+        });
+}
 
-        // loginKeyInput.addEventListener('keydown', function (event) {
-        //     if (event.key === 'Enter') {
-        //         loginButton.click();
-        //     }
-        // });
-
-      //   window.addEventListener('popstate', function () {
-      //      window.location.href = 'index.html';
-     //   });
+// Event listener for flashlight button click
+document.getElementById('flashlightButton').addEventListener('click', () => {
+    isFlashlightOn = !isFlashlightOn; // Toggle flashlight state
+    toggleFlashlight(); // Toggle flashlight
+});
     </script>
 
 </body>
