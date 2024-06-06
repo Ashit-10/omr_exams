@@ -393,10 +393,10 @@
         <!-- Add the input field next to the capture and cancel buttons -->
         <input type="text" id="rollNumberInput" placeholder="Enter Roll No (Optional)  ">
         <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
-  <!-- Add flashlight button -->
-  <button id="flashlightButton">Flashlight</button>
+        <!-- Add flashlight button -->
+        <button id="flashlightButton">Flashlight</button>
         <button id="capture-btn">Capture</button>
-      
+
         <button id="reloadbtn">Cancel</button>
         <div class="loader1" id="loader1"></div>
         <br><br>
@@ -651,7 +651,7 @@
         const capturedImage = document.getElementById('capturedImage');
         const captureButton = document.getElementById('captureButton');
         const flashlightButton = document.getElementById('flashlightButton');
-        const reloadBtn= document.getElementById('reloadbtn');
+        const reloadBtn = document.getElementById('reloadbtn');
         const overlayBox = document.getElementById('overlayBox');
         const overlayBox1 = document.getElementById('overlayBox1');
         const overlayBox2 = document.getElementById('overlayBox2');
@@ -881,29 +881,30 @@
                     // Find the first video input device (which usually represents the camera with flashlight)
                     const flashlightDevice = flashlightDevices[0];
 
-                    // Use constraints to control flashlight
-                    const constraints = {
+                    // Toggle flashlight
+                    const track = flashlightDevice.getCapabilities().torch;
+                    if (!track || !track.supported) {
+                        alert('Flashlight control not supported');
+                        return;
+                    }
+
+                    // Turn on/off flashlight
+                    const constraint = {
                         video: {
                             deviceId: flashlightDevice.deviceId,
                             facingMode: 'environment', // Use the back camera
-                            width: { ideal: 1920 }, // Set preferred width
-                            height: { ideal: 1080 }, // Set preferred height
-                            advanced: [{ torch: isFlashlightOn }] // Turn flashlight on/off
+                            advanced: [{ torch: true }] // Turn flashlight on/off
                         }
                     };
 
-                    // Access camera with flashlight control
-                    return navigator.mediaDevices.getUserMedia(constraints);
+                    return navigator.mediaDevices.getUserMedia(constraint);
                 })
-                .then(stream => {
-                    // Display camera stream (not required, but useful for debugging)
-                    const video = document.createElement('video');
-                    video.srcObject = stream;
-                    video.play();
+                .then(() => {
+                    alert('Flashlight toggled successfully');
                 })
                 .catch(error => {
-                    console.error('Error accessing camera:', error);
-                    alert('Failed to access camera');
+                    console.error('Error toggling flashlight:', error);
+                    alert('Failed to toggle flashlight');
                 });
         }
 
