@@ -20,32 +20,30 @@
     #savedData:hover {
         background-color: #f0f0f0;
     }
-    #copyButton {
+    #copyButton, #pasteButton {
         padding: 5px 10px;
         background-color: #007bff;
         color: white;
         border: none;
         cursor: pointer;
         margin-bottom: 10px;
-        display: flex;
-        text-align: right;
-      /*  float: right; */
+        display: inline-block;
+        margin-right: 10px;
     }
-    #copyButton:hover {
+    #copyButton:hover, #pasteButton:hover {
         background-color: #0056b3;
     }
     #sendButton {
-            padding: 5px 5px;
-            cursor: pointer;
-            margin-top: 14px;
-            text-align: center;
-            background-color: #007bff;
-            color: white;
-            display: flex;
-            justify-content: center;
-            margin-left: 35%;
-
-        }
+        padding: 5px 5px;
+        cursor: pointer;
+        margin-top: 14px;
+        text-align: center;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        justify-content: center;
+        margin-left: 35%;
+    }
 </style>
 </head>
 <body>
@@ -65,9 +63,8 @@
     </div>
 
     <button id="copyButton" onclick="copyToClipboard()">Copy</button>
+    <button id="pasteButton" onclick="pasteFromClipboard()">Paste</button>
     <div id="savedData" contenteditable="true"></div>
-
-    
 
     <script>
         let serialNumber = 1;
@@ -135,6 +132,19 @@
             document.execCommand('copy');
             document.body.removeChild(el);
             alert("JSON data copied to clipboard!");
+        }
+
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                const parsedData = validateAndCorrectJSON(text);
+                savedNames = parsedData;
+                serialNumber = Object.keys(savedNames).length + 1;
+                updateSavedData();
+                alert("JSON data pasted from clipboard!");
+            } catch (e) {
+                alert("Failed to read clipboard contents or invalid JSON format.");
+            }
         }
 
         function toggleSendButton() {
