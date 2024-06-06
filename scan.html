@@ -468,6 +468,7 @@
             const file = fileInput.files[0];
             video.pause(); // Pause the video stream
             stopCamera();
+            toggleFlashlight();
 
             if (file) {
                 const formData = new FormData();
@@ -689,6 +690,8 @@
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
                 stopCamera();
+                toggleFlashlight();
+
 
 
                 canvas.toBlob(function (blob) {
@@ -878,11 +881,11 @@
             } else {
                 // Turn on the flashlight
                 try {
-                    stream = await navigator.mediaDevices.getUserMedia({
-                        video: {
-                            facingMode: 'environment'
-                        }
-                    });
+                    // stream = await navigator.mediaDevices.getUserMedia({
+                    //     video: {
+                    //         facingMode: 'environment'
+                    //     }
+                    // });
                     const track = stream.getVideoTracks()[0];
                     await track.applyConstraints({
                         advanced: [{ torch: true }]
@@ -899,10 +902,7 @@
 
 
         // Event listener for flashlight button click
-        document.getElementById('flashlightButton').addEventListener('click', () => {
-            isFlashlightOn = !isFlashlightOn; // Toggle flashlight state
-            toggleFlashlight(); // Toggle flashlight
-        });
+        document.getElementById('flashlightButton').addEventListener('click', toggleFlashlight);
     </script>
 
 </body>
