@@ -80,7 +80,9 @@
             }
 
             userInputField.addEventListener('input', () => {
+                if (entryCount < 51) {
                 serialNumberPreview.textContent = `Question ${entryCount}: `;
+                }
             });
 
             userInputField.addEventListener('keypress', (e) => {
@@ -97,8 +99,8 @@
                             userInput.push(input);
                             entryCount++;
                            // if (entryCount < 50){
-                          //  serialNumberPreview.textContent = `Question ${entryCount}: `;
-                           // }
+                          serialNumberPreview.textContent = `Question ${entryCount}: `;
+                    
                             displayJson(userInput);
                             
                             e.target.value = ''; // Clear input field
