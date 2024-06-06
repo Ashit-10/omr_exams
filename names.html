@@ -86,7 +86,11 @@
         document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
             const filename = urlParams.get('filename');
+            const fileNameInput = document.getElementById("fileName");
+
             if (filename) {
+                fileNameInput.value = filename;
+                toggleSendButton();
                 loadFile(filename);
             } else {
                 updateSavedData();
