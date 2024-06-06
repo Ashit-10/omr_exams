@@ -22,6 +22,29 @@
             const saveButton = document.getElementById('saveButton');
             const loadingOverlay = document.getElementById('loadingOverlay');
 
+            function loadLocalFile() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.txt';
+
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.readAsText(file);
+                    reader.onload = () => {
+                        const data = reader.result;
+                        try {
+                            const jsonData = JSON.parse(data);
+                            processJSON(jsonData);
+                        } catch (error) {
+                            alert('Error parsing JSON data from the selected file.');
+                        }
+                    };
+                };
+
+                input.click();
+            }
+
             if (filename) {
                 document.getElementById('filename').value = filename;
                 fetch(filename)
@@ -32,21 +55,28 @@
                         return response.json();
                     })
                     .then(data => {
-                        for (const key in data) {
-                            if (data.hasOwnProperty(key)) {
-                                userInput.push(data[key]);
-                                entryCount = Math.max(entryCount, parseInt(key) + 1);
-                            }
-                        }
-                        displayJson(userInput);
-                        serialNumberPreview.textContent = `Question ${entryCount}: `;
+                        processJSON(data);
                     })
                     .catch(error => {
                         console.error('Error loading JSON file:', error);
-                        alert('Failed to load JSON file. Please ensure the file exists and is in the correct format.');
+                        const manualLoadButton = document.createElement('button');
+                        manualLoadButton.textContent = 'Select File Manually';
+                        manualLoadButton.onclick = loadLocalFile;
+                        document.body.appendChild(manualLoadButton);
                     });
             } else {
                 document.body.style.display = 'none';
+            }
+
+            function processJSON(data) {
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        userInput.push(data[key]);
+                        entryCount = Math.max(entryCount, parseInt(key) + 1);
+                    }
+                }
+                displayJson(userInput);
+                serialNumberPreview.textContent = `Question ${entryCount}: `;
             }
 
             userInputField.addEventListener('input', () => {
@@ -96,18 +126,6 @@
                 }
             });
 
-            function displayJson(data) {
-                const jsonOutput = {};
-                data.forEach((entry, index) => {
-                    jsonOutput[index + 1] = entry;
-                });
-                const jsonString = JSON.stringify(jsonOutput, null, 2);
-                const formattedJsonString = jsonString.replace(/"(\d+)": (\[[^\]]+\])/g, (match, p1, p2) => {
-                    return `"${p1}": <span class="editable" data-index="${p1 - 1}">${p2}</span>`;
-                });
-                jsonResult.innerHTML = formattedJsonString;
-            }
-
             async function saveData(e) {
                 e.preventDefault(); // Prevent form submission
 
@@ -154,6 +172,18 @@
                 } finally {
                     loadingOverlay.style.display = 'none'; // Hide loading overlay
                 }
+            }
+
+            function displayJson(data) {
+                const jsonOutput = {};
+                data.forEach((entry, index) => {
+                    jsonOutput[index + 1] = entry;
+                });
+                const jsonString = JSON.stringify(jsonOutput, null, 2);
+                const formattedJsonString = jsonString.replace(/"(\d+)": (\[[^\]]+\])/g, (match, p1, p2) => {
+                    return `"${p1}": <span class="editable" data-index="${p1 - 1}">${p2}</span>`;
+                });
+                jsonResult.innerHTML = formattedJsonString;
             }
 
             saveButton.addEventListener('click', saveData);
