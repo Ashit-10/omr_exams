@@ -13,12 +13,6 @@
             }
 
             const filename = getQueryParameter('filename');
-            if (!filename) {
-                document.body.style.display = 'none';
-            } else {
-                document.getElementById('filename').value = filename;
-            }
-
             const userInput = [];
             let entryCount = 1;
 
@@ -27,6 +21,63 @@
             const jsonResult = document.getElementById('jsonResult');
             const saveButton = document.getElementById('saveButton');
             const loadingOverlay = document.getElementById('loadingOverlay');
+
+            function loadLocalFile() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.txt';
+
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.readAsText(file);
+                    reader.onload = () => {
+                        const data = reader.result;
+                        try {
+                            const jsonData = JSON.parse(data);
+                            processJSON(jsonData);
+                        } catch (error) {
+                            alert('Error parsing JSON data from the selected file.');
+                        }
+                    };
+                };
+
+                input.click();
+            }
+
+            if (filename) {
+                document.getElementById('filename').value = filename;
+                fetch(filename)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        processJSON(data);
+                    })
+                    .catch(error => {
+                        console.error('Error loading JSON file:', error);
+                        // const manualLoadButton = document.createElement('button');
+                        // manualLoadButton.textContent = 'Select File Manually';
+                        // manualLoadButton.onclick = loadLocalFile;
+                        // document.body.appendChild(manualLoadButton);
+                    });
+            } else {
+                document.body.style.display = 'none';
+            }
+
+            function processJSON(data) {
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        userInput.push(data[key]);
+                        entryCount = Math.max(entryCount, parseInt(key) + 1);
+                    }
+                }
+                displayJson(userInput);
+                serialNumberPreview.textContent = `Question ${entryCount}: `;
+            }
 
             userInputField.addEventListener('input', () => {
                 serialNumberPreview.textContent = `Question ${entryCount}: `;
@@ -58,7 +109,6 @@
                 }
             });
 
-
             jsonResult.addEventListener('click', (e) => {
                 if (e.target && e.target.classList.contains('editable')) {
                     const index = e.target.getAttribute('data-index');
@@ -75,18 +125,6 @@
                     }
                 }
             });
-
-            function displayJson(data) {
-                const jsonOutput = {};
-                data.forEach((entry, index) => {
-                    jsonOutput[index + 1] = entry;
-                });
-                const jsonString = JSON.stringify(jsonOutput, null, 2);
-                const formattedJsonString = jsonString.replace(/"(\d+)": (\[[^\]]+\])/g, (match, p1, p2) => {
-                    return `"${p1}": <span class="editable" data-index="${p1 - 1}">${p2}</span>`;
-                });
-                jsonResult.innerHTML = formattedJsonString;
-            }
 
             async function saveData(e) {
                 e.preventDefault(); // Prevent form submission
@@ -136,6 +174,18 @@
                 }
             }
 
+            function displayJson(data) {
+                const jsonOutput = {};
+                data.forEach((entry, index) => {
+                    jsonOutput[index + 1] = entry;
+                });
+                const jsonString = JSON.stringify(jsonOutput, null, 2);
+                const formattedJsonString = jsonString.replace(/"(\d+)": (\[[^\]]+\])/g, (match, p1, p2) => {
+                    return `"${p1}": <span class="editable" data-index="${p1 - 1}">${p2}</span>`;
+                });
+                jsonResult.innerHTML = formattedJsonString;
+            }
+
             saveButton.addEventListener('click', saveData);
         });
     </script>
@@ -157,8 +207,11 @@
         }
 
         #saveButton {
-            display: none;
-            /* Initially hide the save button */
+            display: block;
+      padding: 10px 20px;
+      background-color: #4744f7;
+      color: #fff;
+      border-radius: 5px;
             margin-top: 10px;
             margin-left: auto;
             margin-right: auto;
@@ -208,7 +261,7 @@
         <input type="text" id="filename" name="filename" readonly size="50"><br><br>
 
         <span id="serialNumberPreview">Question 1: </span> &nbsp;
-        <input type="text" id="userInput" name="userInput" placeholder="Enter a, b, c or d">
+        <input type="text" id="userInput" name="userInput" placeholder="Enter A, B, C or D">
         &nbsp;
         &nbsp;
         <!-- <label for="userInput">[A, B, C, D]</label> -->
@@ -216,6 +269,7 @@
     </form>
     <pre id="jsonResult">{}</pre>
     <button id="saveButton">Save</button>
+    <br>
     <br>
     <div id="loadingOverlay">
         <div id="loadingSpinner"></div>
