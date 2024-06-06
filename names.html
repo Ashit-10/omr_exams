@@ -51,6 +51,11 @@
 <body>
     <h1>Name List</h1>
     <div id="nameList">
+        <div id="fileNameInput">
+        <label for="fileName">Enter file name (optional):</label>
+        <input type="text" id="fileName" placeholder="Enter file name" oninput="toggleSendButton()">
+        <button id="sendButton" onclick="sendFileToTelegram()" style="display:none;">Send File to Telegram</button>
+    </div>
         <label for="nameInput">Enter a Name:</label>
         <input type="text" id="nameInput" onkeypress="checkKeyPress(event)">
         <button onclick="saveName()">Save</button>
@@ -61,11 +66,7 @@
     <button id="copyButton" onclick="copyToClipboard()">Copy</button>
     <div id="savedData" contenteditable="true"></div>
 
-    <div id="fileNameInput">
-        <label for="fileName">Enter file name (optional):</label>
-        <input type="text" id="fileName" placeholder="Enter file name" oninput="toggleSendButton()">
-        <button id="sendButton" onclick="sendFileToTelegram()" style="display:none;">Send File to Telegram</button>
-    </div>
+    
 
     <script>
         let serialNumber = 1;
