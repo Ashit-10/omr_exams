@@ -231,7 +231,13 @@
 
         async function sendFileToTelegram() {
             const fileNameInput = document.getElementById("fileName").value.trim();
-            const fileName = fileNameInput ? `${fileNameInput}.txt` : "data.txt";
+            let fileName = fileNameInput ? fileNameInput : "data";
+
+            // Ensure no duplicate .txt extension
+            if (!fileName.endsWith(".txt")) {
+                fileName += ".txt";
+            }
+
             const fileContent = document.getElementById("savedData").innerText;
             const chatId = "-1001774957665"; // Replace with your Telegram chat ID
             const botToken = "1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0"; // Replace with your bot token
