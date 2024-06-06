@@ -84,32 +84,30 @@
             });
 
             userInputField.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        if (entryCount < 50) {
-            const input = Array.from(new Set(e.target.value.toUpperCase().split('')));
-            if (input.length === 0) {
-                alert('Please enter at least one option (A, B, C, or D)');
-                return;
-            }
-            const isValid = input.every(char => ['A', 'B', 'C', 'D'].includes(char));
-            if (isValid) {
-                userInput.push(input);
-                entryCount++;
-                serialNumberPreview.textContent = `Question ${entryCount}: `;
-                displayJson(userInput);
-                e.target.value = ''; // Clear input field
-                saveButton.style.display = 'block'; // Show save button after first entry
-            } else {
-                alert('Please enter only characters A, B, C, or D');
-            }
-        } else if (entryCount === 50) {
-            alert('Maximum 50 questions allowed.');
-            serialNumberPreview.textContent = ''; // Hide serial number preview
-        }
-    }
-});
-
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (entryCount <= 50) {
+                        const input = Array.from(new Set(e.target.value.toUpperCase().split('')));
+                        if (input.length === 0) {
+                            alert('Please enter at least one option (A, B, C, or D)');
+                            return;
+                        }
+                        const isValid = input.every(char => ['A', 'B', 'C', 'D'].includes(char));
+                        if (isValid) {
+                            userInput.push(input);
+                            entryCount++;
+                            serialNumberPreview.textContent = `Question ${entryCount}: `;
+                            displayJson(userInput);
+                            e.target.value = ''; // Clear input field
+                            saveButton.style.display = 'block'; // Show save button after first entry
+                        } else {
+                            alert('Please enter only characters A, B, C, or D');
+                        }
+                    } else {
+                        alert('Maximum 50 questions allowed.');
+                    }
+                }
+            }); 
             jsonResult.addEventListener('click', (e) => {
                 if (e.target && e.target.classList.contains('editable')) {
                     const index = e.target.getAttribute('data-index');
