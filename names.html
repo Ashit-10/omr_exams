@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Name List</title>
+<title>Roll Names List</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -49,13 +49,14 @@
 </style>
 </head>
 <body>
-    <h1>Name List</h1>
+    <h1>Roll Name List</h1>
     <div id="nameList">
         <div id="fileNameInput">
         <label for="fileName">Enter file name (optional):</label>
         <input type="text" id="fileName" placeholder="Enter file name" oninput="toggleSendButton()">
         <button id="sendButton" onclick="sendFileToTelegram()" style="display:none;">Send File to Telegram</button>
     </div>
+        <br><br>
         <label for="nameInput">Enter a Name:</label>
         <input type="text" id="nameInput" onkeypress="checkKeyPress(event)">
         <button onclick="saveName()">Save</button>
