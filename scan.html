@@ -878,7 +878,9 @@
                         advanced: [{ torch: false }]
                     });
                     torchOn = false;
+                    track.stop();
                     document.getElementById('flashlightButton').textContent = 'Turn On Flashlight';
+
                 } else {
                     // Turn on the flashlight
                     await track.applyConstraints({
