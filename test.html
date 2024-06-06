@@ -59,10 +59,10 @@
                     })
                     .catch(error => {
                         console.error('Error loading JSON file:', error);
-                        const manualLoadButton = document.createElement('button');
-                        manualLoadButton.textContent = 'Select File Manually';
-                        manualLoadButton.onclick = loadLocalFile;
-                        document.body.appendChild(manualLoadButton);
+                        // const manualLoadButton = document.createElement('button');
+                        // manualLoadButton.textContent = 'Select File Manually';
+                        // manualLoadButton.onclick = loadLocalFile;
+                        // document.body.appendChild(manualLoadButton);
                     });
             } else {
                 document.body.style.display = 'none';
@@ -207,6 +207,7 @@
         }
 
         #saveButton {
+            display: block;
       
             margin-top: 10px;
             margin-left: auto;
