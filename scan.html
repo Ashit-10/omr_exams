@@ -591,11 +591,43 @@ async function displayDocument(fileId, caption = '') {
                 captionElement.style.textAlign = 'left'; // Align text to the left
                 messageElement.appendChild(captionElement);
             }
-            const link = document.createElement('a');
-            link.href = documentUrl;
-            link.textContent = 'Download Document';
-            link.target = '_blank'; // Open in a new tab
-            messageElement.appendChild(link);
+
+            // Check document type and create appropriate element
+            if (filePath.endsWith('.pdf')) {
+                const iframe = document.createElement('iframe');
+                iframe.src = documentUrl;
+                iframe.style.width = '100vw';
+                iframe.style.height = '100vh';
+                messageElement.appendChild(iframe);
+            } else if (filePath.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+                const img = document.createElement('img');
+                img.src = documentUrl;
+                img.alt = 'Telegram Document';
+                img.style.width = '100vw';
+                messageElement.appendChild(img);
+            } else if (filePath.endsWith('.txt')) {
+                const response = await fetch(documentUrl);
+                const text = await response.text();
+                const pre = document.createElement('pre');
+                pre.textContent = text;
+                pre.style.whiteSpace = 'pre-wrap';
+                messageElement.appendChild(pre);
+            } else if (filePath.endsWith('.webm')) {
+                const video = document.createElement('video');
+                video.src = documentUrl;
+                video.controls = true;
+                video.style.width = '100vw';
+                messageElement.appendChild(video);
+            } else if (filePath.endsWith('.tgs')) {
+                const unsupportedMessage = document.createElement('p');
+                unsupportedMessage.textContent = 'TGS (Telegram Animated Stickers) are not supported for direct display.';
+                messageElement.appendChild(unsupportedMessage);
+            } else {
+                const unsupportedMessage = document.createElement('p');
+                unsupportedMessage.textContent = 'Unsupported document type.';
+                messageElement.appendChild(unsupportedMessage);
+            }
+
             messagesDiv.appendChild(messageElement);
             if (!isSending) {
                 loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
@@ -605,6 +637,7 @@ async function displayDocument(fileId, caption = '') {
         console.error('Error displaying document:', error);
     }
 }
+
 
 
 
