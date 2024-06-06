@@ -393,11 +393,11 @@
         <!-- Add the input field next to the capture and cancel buttons -->
         <input type="text" id="rollNumberInput" placeholder="Enter Roll No (Optional)  ">
         <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
-
+  <!-- Add flashlight button -->
+  <button id="flashlightButton">Flashlight</button>
         <button id="capture-btn">Capture</button>
-        <!-- Add flashlight button -->
-        <button id="flashlightButton">Flashlight</button>
-        <button id="flashlightButton">Cancel</button>
+      
+        <button id="reloadbtn">Cancel</button>
         <div class="loader1" id="loader1"></div>
         <br><br>
 
@@ -651,6 +651,7 @@
         const capturedImage = document.getElementById('capturedImage');
         const captureButton = document.getElementById('captureButton');
         const flashlightButton = document.getElementById('flashlightButton');
+        const reloadBtn= document.getElementById('reloadbtn');
         const overlayBox = document.getElementById('overlayBox');
         const overlayBox1 = document.getElementById('overlayBox1');
         const overlayBox2 = document.getElementById('overlayBox2');
@@ -770,7 +771,7 @@
         setInterval(fetchBotReplies, 3000);
 
         // Toggle flashlight
-        flashlightButton.addEventListener('click', () => {
+        reloadBtn.addEventListener('click', () => {
             location.reload();
         });
 
