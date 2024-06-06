@@ -96,10 +96,13 @@
                         if (isValid) {
                             userInput.push(input);
                             entryCount++;
+                            if (entryCount <= 50){
                             serialNumberPreview.textContent = `Question ${entryCount}: `;
                             displayJson(userInput);
+                            }
                             e.target.value = ''; // Clear input field
                             saveButton.style.display = 'block'; // Show save button after first entry
+                            
                         } else {
                             alert('Please enter only characters A, B, C, or D');
                         }
