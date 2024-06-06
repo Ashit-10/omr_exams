@@ -663,6 +663,7 @@
         const backButton = document.createElement('button');
 
         let stream;
+
         let isFlashlightOn = false;
 
         // Start camera button click event
@@ -795,7 +796,7 @@
         document.addEventListener('visibilitychange', handleVisibilityChange);
         async function startCamera() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
+                stream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: { ideal: "environment" }, // Use the back camera
                         width: { ideal: 1920 },
@@ -868,38 +869,28 @@
 
         let torchOn = false;
 
-        async function toggleFlashlight() {
-            if (torchOn) {
-                // Turn off the flashlight
-                if (stream) {
-                    const track = stream.getVideoTracks()[0];
-                    track.stop();
-                    stream = null;
-                }
-                torchOn = false;
-                document.getElementById('flashlightButton').textContent = 'Turn On Flashlight';
-            } else {
-                // Turn on the flashlight
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia({
-                        video: {
-                            facingMode: 'environment'
-                        }
+     async function toggleFlashlight() {
+            if (stream) {
+                const track = stream.getVideoTracks()[0];
+                if (torchOn) {
+                    // Turn off the flashlight
+                    await track.applyConstraints({
+                        advanced: [{ torch: false }]
                     });
-                    const track = stream.getVideoTracks()[0];
+                    torchOn = false;
+                    document.getElementById('flashlightButton').textContent = 'Turn On Flashlight';
+                } else {
+                    // Turn on the flashlight
                     await track.applyConstraints({
                         advanced: [{ torch: true }]
                     });
                     torchOn = true;
                     document.getElementById('flashlightButton').textContent = 'Turn Off Flashlight';
-                } catch (err) {
-                    console.error('Error accessing media devices.', err);
                 }
+            } else {
+                console.error('Stream not initialized');
             }
         }
-
-
-
 
         // Event listener for flashlight button click
         document.getElementById('flashlightButton').addEventListener('click', toggleFlashlight);
