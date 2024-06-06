@@ -863,50 +863,40 @@
             event.target.value = inputValue;
         });
 
-        // Function to toggle flashlight
-        function toggleFlashlight() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-                alert('MediaDevices API not supported');
-                return;
-            }
+        let torchOn = false;
 
-            navigator.mediaDevices.enumerateDevices()
-                .then(devices => {
-                    const flashlightDevices = devices.filter(device => device.kind === 'videoinput');
-                    if (flashlightDevices.length === 0) {
-                        alert('No flashlight available');
-                        return;
-                    }
-
-                    // Find the first video input device (which usually represents the camera with flashlight)
-                    const flashlightDevice = flashlightDevices[0];
-
-                    // Toggle flashlight
-                    const track = flashlightDevice.getCapabilities().torch;
-                    if (!track || !track.supported) {
-                        alert('Flashlight control not supported');
-                        return;
-                    }
-
-                    // Turn on/off flashlight
-                    const constraint = {
+        async function toggleFlashlight() {
+            if (torchOn) {
+                // Turn off the flashlight
+                if (stream) {
+                    const track = stream.getVideoTracks()[0];
+                    track.stop();
+                    stream = null;
+                }
+                torchOn = false;
+                document.getElementById('flashlightButton').textContent = 'Turn On Flashlight';
+            } else {
+                // Turn on the flashlight
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({
                         video: {
-                            deviceId: flashlightDevice.deviceId,
-                            facingMode: 'environment', // Use the back camera
-                            advanced: [{ torch: true }] // Turn flashlight on/off
+                            facingMode: 'environment'
                         }
-                    };
-
-                    return navigator.mediaDevices.getUserMedia(constraint);
-                })
-                .then(() => {
-                    alert('Flashlight toggled successfully');
-                })
-                .catch(error => {
-                    console.error('Error toggling flashlight:', error);
-                    alert('Failed to toggle flashlight');
-                });
+                    });
+                    const track = stream.getVideoTracks()[0];
+                    await track.applyConstraints({
+                        advanced: [{ torch: true }]
+                    });
+                    torchOn = true;
+                    document.getElementById('flashlightButton').textContent = 'Turn Off Flashlight';
+                } catch (err) {
+                    console.error('Error accessing media devices.', err);
+                }
+            }
         }
+
+
+
 
         // Event listener for flashlight button click
         document.getElementById('flashlightButton').addEventListener('click', () => {
