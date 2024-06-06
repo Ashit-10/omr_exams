@@ -1087,9 +1087,19 @@
     <br>
     <br>
     <br>
-    <br> <br>
-                    
+    <br> <br> <br> <br>
+                    <p id="visitor-count">Views: 0</p>
+     <br> <br> <br> <br>
    <script>
+       document.addEventListener('DOMContentLoaded', (event) => {
+            let visitorCount = localStorage.getItem('visitorCount');
+            if (!visitorCount) {
+                visitorCount = 0;
+            }
+            visitorCount++;
+            localStorage.setItem('visitorCount', visitorCount);
+            document.getElementById('visitor-count').innerText = `Views: ${visitorCount}`;
+        });
  const searchBar = document.getElementById('search-bar');
         const nameTable = document.getElementById('name-table').getElementsByTagName('tbody')[0];
         const notFound = document.getElementById('not-found');
