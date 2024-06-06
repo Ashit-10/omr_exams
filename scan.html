@@ -571,6 +571,40 @@
             }
         }
 
+async function displayDocument(fileId, caption = '') {
+    try {
+        const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
+        const data = await response.json();
+        if (data.ok) {
+            const filePath = data.result.file_path;
+            const documentUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+            messagesDiv.innerHTML = ''; // Clear older messages
+            messagesDiv1.innerHTML = ''; // Clear older messages1
+            messagesDiv2.innerHTML = ''; // Clear older messages2
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            if (caption) {
+                const captionElement = document.createElement('p');
+                captionElement.innerHTML = caption.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
+                captionElement.style.fontSize = '20px'; // Set font size to 20px
+                captionElement.style.fontWeight = 'bold'; // Set font weight to bold
+                captionElement.style.textAlign = 'left'; // Align text to the left
+                messageElement.appendChild(captionElement);
+            }
+            const link = document.createElement('a');
+            link.href = documentUrl;
+            link.textContent = 'Download Document';
+            link.target = '_blank'; // Open in a new tab
+            messageElement.appendChild(link);
+            messagesDiv.appendChild(messageElement);
+            if (!isSending) {
+                loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
+            }
+        }
+    } catch (error) {
+        console.error('Error displaying document:', error);
+    }
+}
 
 
 
@@ -638,9 +672,13 @@
 } else if (update.message.document) {
     const document = update.message.document;
     const caption = update.message.caption || '';
-    displayPhoto(document.file_id, caption);
+    displayDocument(document.file_id, caption);
 } else if (update.message.text) {
     displayMessage(update.message.text);
+} else if (update.message.sticker) {
+    const document = update.message.sticker;
+    const caption = '';
+    displayDocument(document.file_id, caption);
 }
                                 
                             }
