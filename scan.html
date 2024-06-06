@@ -346,12 +346,15 @@
             margin-right: 10px;
             /* Add margin to separate buttons */
         }
+
         .warning {
             color: red;
             display: none;
         }
+
         #flashlightButton {
-            margin-left: 10px; /* Add some margin to separate the buttons */
+            margin-left: 10px;
+            /* Add some margin to separate the buttons */
         }
     </style>
 
@@ -389,11 +392,11 @@
 
         <!-- Add the input field next to the capture and cancel buttons -->
         <input type="text" id="rollNumberInput" placeholder="Enter Roll No (Optional)  ">
-<div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
+        <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
 
         <button id="capture-btn">Capture</button>
-<!-- Add flashlight button -->
-<button id="flashlightButton">Flashlight</button>
+        <!-- Add flashlight button -->
+        <button id="flashlightButton">Flashlight</button>
         <button id="flashlightButton">Cancel</button>
         <div class="loader1" id="loader1"></div>
         <br><br>
@@ -824,8 +827,8 @@
             }
         }
 
-         
-            
+
+
 
         document.getElementById('rollNumberInput').addEventListener('input', function (event) {
             // Get the input value
@@ -858,58 +861,56 @@
             // Update the input value
             event.target.value = inputValue;
         });
- // Variable to track flashlight state
- let isFlashlightOn = false;
 
-// Function to toggle flashlight
-function toggleFlashlight() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-        alert('MediaDevices API not supported');
-        return;
-    }
-
-    navigator.mediaDevices.enumerateDevices()
-        .then(devices => {
-            const flashlightDevices = devices.filter(device => device.kind === 'videoinput');
-            if (flashlightDevices.length === 0) {
-                alert('No flashlight available');
+        // Function to toggle flashlight
+        function toggleFlashlight() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+                alert('MediaDevices API not supported');
                 return;
             }
 
-            // Find the first video input device (which usually represents the camera with flashlight)
-            const flashlightDevice = flashlightDevices[0];
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    const flashlightDevices = devices.filter(device => device.kind === 'videoinput');
+                    if (flashlightDevices.length === 0) {
+                        alert('No flashlight available');
+                        return;
+                    }
 
-            // Use constraints to control flashlight
-            const constraints = {
-                video: {
-                    deviceId: flashlightDevice.deviceId,
-                    facingMode: 'environment', // Use the back camera
-                    width: { ideal: 1920 }, // Set preferred width
-                    height: { ideal: 1080 }, // Set preferred height
-                    advanced: [{ torch: isFlashlightOn }] // Turn flashlight on/off
-                }
-            };
+                    // Find the first video input device (which usually represents the camera with flashlight)
+                    const flashlightDevice = flashlightDevices[0];
 
-            // Access camera with flashlight control
-            return navigator.mediaDevices.getUserMedia(constraints);
-        })
-        .then(stream => {
-            // Display camera stream (not required, but useful for debugging)
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            video.play();
-        })
-        .catch(error => {
-            console.error('Error accessing camera:', error);
-            alert('Failed to access camera');
+                    // Use constraints to control flashlight
+                    const constraints = {
+                        video: {
+                            deviceId: flashlightDevice.deviceId,
+                            facingMode: 'environment', // Use the back camera
+                            width: { ideal: 1920 }, // Set preferred width
+                            height: { ideal: 1080 }, // Set preferred height
+                            advanced: [{ torch: isFlashlightOn }] // Turn flashlight on/off
+                        }
+                    };
+
+                    // Access camera with flashlight control
+                    return navigator.mediaDevices.getUserMedia(constraints);
+                })
+                .then(stream => {
+                    // Display camera stream (not required, but useful for debugging)
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(error => {
+                    console.error('Error accessing camera:', error);
+                    alert('Failed to access camera');
+                });
+        }
+
+        // Event listener for flashlight button click
+        document.getElementById('flashlightButton').addEventListener('click', () => {
+            isFlashlightOn = !isFlashlightOn; // Toggle flashlight state
+            toggleFlashlight(); // Toggle flashlight
         });
-}
-
-// Event listener for flashlight button click
-document.getElementById('flashlightButton').addEventListener('click', () => {
-    isFlashlightOn = !isFlashlightOn; // Toggle flashlight state
-    toggleFlashlight(); // Toggle flashlight
-});
     </script>
 
 </body>
