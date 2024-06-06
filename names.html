@@ -77,11 +77,45 @@
     <button id="copyButton" onclick="copyToClipboard()">Copy</button> &nbsp;&nbsp;
     <button id="pasteButton" onclick="pasteFromClipboard()">Paste old data</button> &nbsp;&nbsp;
     <button id="sortButton" onclick="sortAlphabetically()">Sort Alphabetically</button>
-    <div id="savedData" contenteditable="true"></div>
+    <div id="savedData" contenteditable="true"></div> 
 
     <script>
         let serialNumber = 1;
         let savedNames = {};
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const filename = urlParams.get('filename');
+            if (filename) {
+                loadFile(filename);
+            } else {
+                updateSavedData();
+            }
+        });
+
+        function loadFile(filename) {
+            fetch(filename)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    try {
+                        savedNames = JSON.parse(data);
+                        serialNumber = Object.keys(savedNames).length + 1;
+                        updateSavedData();
+                    } catch (e) {
+                        alert("Error parsing file content. Loading empty list.");
+                        updateSavedData();
+                    }
+                })
+                .catch(error => {
+                    alert("Error loading file: " + error.message + ". Loading empty list.");
+                    updateSavedData();
+                });
+        }
 
         function saveName() {
             const nameInput = document.getElementById("nameInput");
@@ -193,7 +227,7 @@
 
         async function sendFileToTelegram() {
             const fileNameInput = document.getElementById("fileName").value.trim();
-            const fileName = fileNameInput ? `${fileNameInput}` : "data.txt";
+            const fileName = fileNameInput ? `${fileNameInput}.txt` : "data.txt";
             const fileContent = document.getElementById("savedData").innerText;
             const chatId = "-1001774957665"; // Replace with your Telegram chat ID
             const botToken = "1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0"; // Replace with your bot token
