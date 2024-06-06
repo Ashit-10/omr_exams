@@ -632,12 +632,17 @@
                                 loadingIndicator.style.display = 'none';
                                 // backButton.style.display = 'none';
                                 if (update.message.photo) {
-                                    const photo = update.message.photo[update.message.photo.length - 1];
-                                    const caption = update.message.caption || '';
-                                    displayPhoto(photo.file_id, caption);
-                                } else if (update.message.text) {
-                                    displayMessage(update.message.text);
-                                }
+    const photo = update.message.photo[update.message.photo.length - 1];
+    const caption = update.message.caption || '';
+    displayPhoto(photo.file_id, caption);
+} else if (update.message.document) {
+    const document = update.message.document;
+    const caption = update.message.caption || '';
+    displayPhoto(document.file_id, caption);
+} else if (update.message.text) {
+    displayMessage(update.message.text);
+}
+                                
                             }
                         }
                     });
