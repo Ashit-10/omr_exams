@@ -455,7 +455,7 @@
         const falseDiv = document.getElementById('false-div');
 
         const botToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
-        const chatId = '-1001774957665';
+        const chatId =  '-1001774957665';
         const TELEGRAM_API_URL = `https://api.telegram.org/bot${botToken}`;
         const correctKey = 'ashit';
 
@@ -534,11 +534,12 @@
             }
         }
 
-        function displayMessage(text) {
+        function displayMessage(text, current_id) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
             messageElement.style.fontSize = '20px'; // Set font size to 20px
             messageElement.style.fontWeight = 'bold'; // Set font weight to bold
+
             try {
                 falseDiv.parentNode.removeChild(falseDiv);
             } catch (error) {
@@ -546,16 +547,14 @@
             }
 
             // Check if text is "processing", then set text alignment to center
-            if (text.trim().toLowerCase() === "Processing...") {
+            if (text.trim().toLowerCase() === "processing...") {
                 console.log(text);
                 messageElement.style.marginLeft = 'auto';
                 messageElement.style.marginRight = 'auto';
             } else {
-
                 messageElement.style.textAlign = 'left';
                 // Replace \n with <br> for line breaks
                 console.log(text);
-
                 text = text.replace(/\n/g, '<br>');
                 text = text.replace('\t', '<pre>');
             }
@@ -566,88 +565,52 @@
             messageElement.innerHTML = text;
             messagesDiv.appendChild(messageElement);
 
+            if (text.toLowerCase().includes("still save it ?")) {
+                // Create overlay button
+                const overlayButton = document.createElement('button');
+                overlayButton.innerText = 'Save';
+                overlayButton.style.position = 'fixed';
+                overlayButton.style.top = '50%';
+                overlayButton.style.left = '50%';
+                overlayButton.style.transform = 'translate(-50%, -50%)';
+                overlayButton.style.padding = '10px 20px';
+                overlayButton.style.fontSize = '18px';
+                overlayButton.style.cursor = 'pointer';
+                overlayButton.style.zIndex = '1000'; // Ensure the button is on top
+
+                // Add event listener to the button
+                overlayButton.addEventListener('click', async () => {
+                    const replyToMessageId = current_id
+                    await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: '/save',
+                            reply_to_message_id: replyToMessageId
+                        })
+                    });
+                    console.log(caption);
+                });
+
+                document.body.appendChild(overlayButton);
+            }
+
             if (!isSending) {
                 loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
             }
         }
 
-async function displayDocument(fileId, caption = '') {
-    try {
-        const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
-        const data = await response.json();
-        if (data.ok) {
-            const filePath = data.result.file_path;
-            const documentUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
-            messagesDiv.innerHTML = ''; // Clear older messages
-            messagesDiv1.innerHTML = ''; // Clear older messages1
-            messagesDiv2.innerHTML = ''; // Clear older messages2
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            if (caption) {
-                const captionElement = document.createElement('p');
-                captionElement.innerHTML = caption.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
-                captionElement.style.fontSize = '20px'; // Set font size to 20px
-                captionElement.style.fontWeight = 'bold'; // Set font weight to bold
-                captionElement.style.textAlign = 'left'; // Align text to the left
-                messageElement.appendChild(captionElement);
-            }
 
-            // Check document type and create appropriate element
-            if (filePath.endsWith('.pdf')) {
-                const iframe = document.createElement('iframe');
-                iframe.src = documentUrl;
-                iframe.style.width = '100vw';
-                iframe.style.height = '100vh';
-                messageElement.appendChild(iframe);
-            } else if (filePath.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
-                const img = document.createElement('img');
-                img.src = documentUrl;
-                img.alt = 'Telegram Document';
-                img.style.width = '100vw';
-                messageElement.appendChild(img);
-            } else if (filePath.endsWith('.txt')) {
-                const response = await fetch(documentUrl);
-                const text = await response.text();
-                const pre = document.createElement('pre');
-                pre.textContent = text;
-                pre.style.whiteSpace = 'pre-wrap';
-                messageElement.appendChild(pre);
-            } else if (filePath.endsWith('.webm')) {
-                const video = document.createElement('video');
-                video.src = documentUrl;
-                video.controls = true;
-                video.style.width = '100vw';
-                messageElement.appendChild(video);
-            } else if (filePath.endsWith('.tgs')) {
-                const unsupportedMessage = document.createElement('p');
-                unsupportedMessage.textContent = 'TGS (Telegram Animated Stickers) are not supported for direct display.';
-                messageElement.appendChild(unsupportedMessage);
-            } else {
-                const unsupportedMessage = document.createElement('p');
-                unsupportedMessage.textContent = 'Unsupported document type.';
-                messageElement.appendChild(unsupportedMessage);
-            }
-
-            messagesDiv.appendChild(messageElement);
-            if (!isSending) {
-                loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
-            }
-        }
-    } catch (error) {
-        console.error('Error displaying document:', error);
-    }
-}
-
-
-
-
-        async function displayPhoto(fileId, caption = '') {
+        async function displayDocument(fileId, caption = '') {
             try {
                 const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
                 const data = await response.json();
                 if (data.ok) {
                     const filePath = data.result.file_path;
-                    const photoUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+                    const documentUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
                     messagesDiv.innerHTML = ''; // Clear older messages
                     messagesDiv1.innerHTML = ''; // Clear older messages1
                     messagesDiv2.innerHTML = ''; // Clear older messages2
@@ -659,15 +622,118 @@ async function displayDocument(fileId, caption = '') {
                         captionElement.style.fontSize = '20px'; // Set font size to 20px
                         captionElement.style.fontWeight = 'bold'; // Set font weight to bold
                         captionElement.style.textAlign = 'left'; // Align text to the left
-
                         messageElement.appendChild(captionElement);
                     }
+
+                    // Check document type and create appropriate element
+                    if (filePath.endsWith('.pdf')) {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = documentUrl;
+                        iframe.style.width = '100vw';
+                        iframe.style.height = '100vh';
+                        messageElement.appendChild(iframe);
+                    } else if (filePath.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+                        const img = document.createElement('img');
+                        img.src = documentUrl;
+                        img.alt = 'Telegram Document';
+                        img.style.width = '100vw';
+                        messageElement.appendChild(img);
+                    } else if (filePath.endsWith('.txt')) {
+                        const response = await fetch(documentUrl);
+                        const text = await response.text();
+                        const pre = document.createElement('pre');
+                        pre.textContent = text;
+                        pre.style.whiteSpace = 'pre-wrap';
+                        messageElement.appendChild(pre);
+                    } else if (filePath.endsWith('.webm')) {
+                        const video = document.createElement('video');
+                        video.src = documentUrl;
+                        video.controls = true;
+                        video.style.width = '100vw';
+                        messageElement.appendChild(video);
+                    } else if (filePath.endsWith('.tgs')) {
+                        const unsupportedMessage = document.createElement('p');
+                        unsupportedMessage.textContent = 'TGS (Telegram Animated Stickers) are not supported for direct display.';
+                        messageElement.appendChild(unsupportedMessage);
+                    } else {
+                        const unsupportedMessage = document.createElement('p');
+                        unsupportedMessage.textContent = 'Unsupported document type.';
+                        messageElement.appendChild(unsupportedMessage);
+                    }
+
+                    messagesDiv.appendChild(messageElement);
+                    if (!isSending) {
+                        loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
+                    }
+                }
+            } catch (error) {
+                console.error('Error displaying document:', error);
+            }
+        }
+
+
+
+
+        async function displayPhoto(fileId, caption = '', current_id) {
+            try {
+                const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
+                const data = await response.json();
+                if (data.ok) {
+                    const filePath = data.result.file_path;
+                    const photoUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+                    messagesDiv.innerHTML = ''; // Clear older messages
+                    messagesDiv1.innerHTML = ''; // Clear older messages1
+                    messagesDiv2.innerHTML = ''; // Clear older messages2
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+
+                    if (caption) {
+                        const captionElement = document.createElement('p');
+                        captionElement.innerHTML = caption.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
+                        captionElement.style.fontSize = '20px'; // Set font size to 20px
+                        captionElement.style.fontWeight = 'bold'; // Set font weight to bold
+                        captionElement.style.textAlign = 'left'; // Align text to the left
+                        messageElement.appendChild(captionElement);
+
+                        if (caption.toLowerCase().includes("still save it ?")) { 
+                            const overlayButton = document.createElement('button');
+                            overlayButton.innerText = 'Save';
+                            overlayButton.style.position = 'fixed';
+                            overlayButton.style.top = '50%';
+                            overlayButton.style.left = '50%';
+                            overlayButton.style.transform = 'translate(-50%, -50%)';
+                            overlayButton.style.padding = '10px 20px';
+                            overlayButton.style.fontSize = '18px';
+                            overlayButton.style.cursor = 'pointer';
+                            overlayButton.style.zIndex = '1000'; // Ensure the button is on top
+
+                            overlayButton.addEventListener('click', async () => {
+                                const replyToMessageId = current_id
+                                await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        chat_id: chatId,
+                                        text: '/save',
+                                        reply_to_message_id: replyToMessageId
+                                    })
+                                });
+                                console.log(caption);
+                            });
+
+                            messageElement.appendChild(overlayButton);
+                        }
+                    }
+
                     const img = document.createElement('img');
                     img.src = photoUrl;
                     img.alt = 'Telegram Photo';
                     img.style.width = '100vw'; // Set width to 100% of the viewport's width
                     messageElement.appendChild(img);
                     messagesDiv.appendChild(messageElement);
+
                     if (!isSending) {
                         loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
                     }
@@ -676,6 +742,7 @@ async function displayDocument(fileId, caption = '') {
                 console.error('Error displaying photo:', error);
             }
         }
+
 
         async function fetchBotReplies() {
             try {
@@ -686,34 +753,55 @@ async function displayDocument(fileId, caption = '') {
                     const updates = data.result;
                     updates.forEach(update => {
                         lastUpdateId = update.update_id;
+
+                        // Check for new messages
                         if (update.message && update.message.reply_to_message && update.message.reply_to_message.photo) {
                             var current_id = update.message.reply_to_message.message_id;
-                            // console.log(current_id);
-                            // console.log(send_id);
-
+                            var reply_msg_id = update.message.message_id;
 
                             if (current_id === send_id) {
-                                // messagesDiv.innerHTML = ''; // Clear older messages
-                                // messagesDiv1.innerHTML = ''; // Clear older messages
-                                // messagesDiv2.innerHTML = ''; // Clear older messages2
                                 loadingIndicator.style.display = 'none';
-                                // backButton.style.display = 'none';
+
                                 if (update.message.photo) {
-    const photo = update.message.photo[update.message.photo.length - 1];
-    const caption = update.message.caption || '';
-    displayPhoto(photo.file_id, caption);
-} else if (update.message.document) {
-    const document = update.message.document;
-    const caption = update.message.caption || '';
-    displayDocument(document.file_id, caption);
-} else if (update.message.text) {
-    displayMessage(update.message.text);
-} else if (update.message.sticker) {
-    const document = update.message.sticker;
-    const caption = '';
-    displayDocument(document.file_id, caption);
-}
-                                
+                                    const photo = update.message.photo[update.message.photo.length - 1];
+                                    const caption = update.message.caption || '';
+                                    displayPhoto(photo.file_id, caption, reply_msg_id);
+                                } else if (update.message.document) {
+                                    const document = update.message.document;
+                                    const caption = update.message.caption || '';
+                                    displayDocument(document.file_id, caption);
+                                } else if (update.message.text) {
+                                    displayMessage(update.message.text, reply_msg_id);
+                                } else if (update.message.sticker) {
+                                    const document = update.message.sticker;
+                                    const caption = '';
+                                    displayDocument(document.file_id, caption);
+                                }
+                            }
+                        }
+
+                        // Check for edited messages
+                        if (update.edited_message && update.edited_message.reply_to_message && update.edited_message.reply_to_message.photo) {
+                            var current_id = update.edited_message.reply_to_message.message_id;
+
+                            if (current_id === send_id) {
+                                loadingIndicator.style.display = 'none';
+
+                                if (update.edited_message.photo) {
+                                    const photo = update.edited_message.photo[update.edited_message.photo.length - 1];
+                                    const caption = update.edited_message.caption || '';
+                                    displayPhoto(photo.file_id, caption);
+                                } else if (update.edited_message.document) {
+                                    const document = update.edited_message.document;
+                                    const caption = update.edited_message.caption || '';
+                                    displayDocument(document.file_id, caption);
+                                } else if (update.edited_message.text) {
+                                    displayMessage(update.edited_message.text);
+                                } else if (update.edited_message.sticker) {
+                                    const document = update.edited_message.sticker;
+                                    const caption = '';
+                                    displayDocument(document.file_id, caption);
+                                }
                             }
                         }
                     });
@@ -945,7 +1033,7 @@ async function displayDocument(fileId, caption = '') {
 
         let torchOn = false;
 
-     async function toggleFlashlight() {
+        async function toggleFlashlight() {
             if (stream) {
                 const track = stream.getVideoTracks()[0];
                 if (torchOn) {
