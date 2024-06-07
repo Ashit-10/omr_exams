@@ -515,7 +515,7 @@
                         // Add back button in the middle of the device screen
                         backButton.innerText = 'Back';
                         backButton.style.position = 'absolute';
-                        backButton.style.top = '95%';
+                        backButton.style.top = '80%';
                         backButton.style.left = '50%';
                         backButton.style.transform = 'translate(-50%, -50%)';
                         backButton.addEventListener('click', function () {
@@ -690,7 +690,7 @@
                     if (caption) {
                         const captionElement = document.createElement('p');
                         captionElement.innerHTML = caption.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
-                        captionElement.style.fontSize = '15px'; // Set font size to 20px
+                        captionElement.style.fontSize = '10px'; // Set font size to 20px
                         captionElement.style.fontWeight = 'bold'; // Set font weight to bold
                         captionElement.style.textAlign = 'left'; // Align text to the left
                         captionElement.style.paddingLeft = '10px';
@@ -700,7 +700,7 @@
                             const overlayButton = document.createElement('button');
                             overlayButton.innerText = 'Save';
                             overlayButton.style.position = 'fixed';
-                            overlayButton.style.top = '60%';
+                            overlayButton.style.top = '80%';
                             overlayButton.style.left = '50%';
                             overlayButton.style.transform = 'translate(-50%, -50%)';
                             overlayButton.style.padding = '10px 20px';
@@ -711,7 +711,7 @@
                             const spinner = document.createElement('div');
                             spinner.id = 'save-spinner';
                             spinner.style.display = 'none'; // Initially hidden
-                            spinner.innerHTML = '<div class="loader"></div>';
+                            spinner.innerHTML = '<div class="save-loader"></div>';
                             overlayButton.appendChild(spinner);
 
                             overlayButton.addEventListener('click', async () => {
@@ -939,7 +939,7 @@
                             // Add back button in the middle of the device screen
                             backButton.innerText = 'Back';
                             backButton.style.position = 'absolute';
-                            backButton.style.top = '95%';
+                            backButton.style.top = '80%';
                             backButton.style.left = '50%';
                             backButton.style.transform = 'translate(-50%, -50%)';
                             backButton.addEventListener('click', function () {
