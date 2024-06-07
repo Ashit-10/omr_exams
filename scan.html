@@ -690,7 +690,7 @@
                     if (caption) {
                         const captionElement = document.createElement('p');
                         captionElement.innerHTML = caption.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
-                        captionElement.style.fontSize = '10px'; // Set font size to 20px
+                        captionElement.style.fontSize = '12px'; // Set font size to 20px
                         captionElement.style.fontWeight = 'bold'; // Set font weight to bold
                         captionElement.style.textAlign = 'left'; // Align text to the left
                         captionElement.style.paddingLeft = '10px';
@@ -701,21 +701,21 @@
                             overlayButton.innerText = 'Save';
                             overlayButton.style.position = 'fixed';
                             overlayButton.style.top = '80%';
-                            overlayButton.style.left = '50%';
+                            overlayButton.style.left = '60%';
                             overlayButton.style.transform = 'translate(-50%, -50%)';
                             overlayButton.style.padding = '10px 20px';
                             overlayButton.style.fontSize = '18px';
                             overlayButton.style.cursor = 'pointer';
                             overlayButton.style.zIndex = '1000'; // Ensure the button is on top
 
-                            const spinner = document.createElement('div');
-                            spinner.id = 'save-spinner';
-                            spinner.style.display = 'none'; // Initially hidden
-                            spinner.innerHTML = '<div class="save-loader"></div>';
-                            overlayButton.appendChild(spinner);
+                            const savespinner = document.createElement('div');
+                            savespinner.id = 'save-spinner';
+                            savespinner.style.display = 'none'; // Initially hidden
+                            savespinner.innerHTML = '<div class="save-loader-spinner"></div>';
+                            overlayButton.appendChild(savespinner);
 
                             overlayButton.addEventListener('click', async () => {
-                                spinner.style.display = 'inline-block'; // Show spinner
+                                savespinner.style.display = 'inline-block'; // Show spinner
                                 overlayButton.innerText = 'Saving...'; // Change button text
                                 overlayButton.disabled = true; // Disable button
                                 const replyToMessageId = current_id;
