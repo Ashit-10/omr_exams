@@ -462,6 +462,8 @@
         let rollNumber = ''; // Variable to store the roll number
 
 
+        // const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+        // const telegramChatId = '-1001774957665';
 
         function sendImage() {
             const fileInput = document.getElementById('fileInput');
@@ -580,7 +582,7 @@
 
                 // Add event listener to the button
                 overlayButton.addEventListener('click', async () => {
-                    const replyToMessageId = current_id
+                    const replyToMessageId = current_id;
                     await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
                         method: 'POST',
                         headers: {
@@ -598,11 +600,48 @@
                 document.body.appendChild(overlayButton);
             }
 
+            // Create input field for update number
+            const inputField = document.createElement('input');
+            inputField.type = 'number';
+            inputField.maxLength = 2;
+            inputField.style.marginRight = '10px';
+            inputField.style.width = '50px';
+
+            // Create update button
+            const updateButton = document.createElement('button');
+            updateButton.innerText = 'Update';
+            updateButton.style.fontSize = '18px';
+            updateButton.style.cursor = 'pointer';
+
+            // Add event listener to the update button
+            updateButton.addEventListener('click', async () => {
+                const number = inputField.value.trim();
+                if (number !== '' && !isNaN(number) && number.length <= 2) {
+                    const replyToMessageId = current_id;
+                    await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: `/roll ${number}`,
+                            reply_to_message_id: replyToMessageId
+                        })
+                    });
+                } else {
+                    alert('Please enter a valid integer number with a maximum of 2 digits.');
+                }
+            });
+
+            // Append input field and update button to the document
+            document.body.appendChild(inputField);
+            document.body.appendChild(updateButton);
+
             if (!isSending) {
                 loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
             }
         }
-
 
         async function displayDocument(fileId, caption = '') {
             try {
