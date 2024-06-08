@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,17 +10,22 @@
             position: relative;
             display: inline-block;
         }
+
         #image-container img {
             max-width: 100%;
         }
+
         .box {
             position: absolute;
             width: 50px;
             height: 50px;
-            border: 3px solid #00f; /* Brighter blue color */
+            border: 3px solid #00f;
+            /* Brighter blue color */
             cursor: move;
-            background-color: rgba(0, 0, 255, 0.2); /* Light blue background */
+            background-color: rgba(0, 0, 255, 0.2);
+            /* Light blue background */
         }
+
         @media (max-width: 600px) {
             .box {
                 width: 15px;
@@ -27,9 +33,11 @@
                 border-width: 2px;
             }
         }
+
         #coordinates {
             margin-top: 10px;
         }
+
         #saveButton {
             margin-top: 10px;
             padding: 10px 20px;
@@ -39,9 +47,11 @@
             border: none;
             cursor: pointer;
         }
+
         #saveButton:hover {
             background-color: #45a049;
         }
+
         #overlay {
             display: none;
             position: fixed;
@@ -57,11 +67,10 @@
         }
     </style>
 </head>
+
 <body>
-    <h1>Upload Image and Select Coordinates</h1>
-    <input type="file" id="fileInput" accept="image/*">
     <div id="image-container">
-        <img id="image" style="display: none;" alt="Uploaded Image">
+        <img id="image" alt="Telegram Photo">
         <div class="box" id="box1" style="display: none;"></div>
         <div class="box" id="box2" style="display: none;"></div>
         <div class="box" id="box3" style="display: none;"></div>
@@ -72,10 +81,9 @@
         <ul id="coordsList"></ul>
     </div>
     <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
-    <div id="overlay">Waiting...</div>
+    <div id="overlay" style="display: none;">Waiting...</div>
 
     <script>
-        const fileInput = document.getElementById('fileInput');
         const image = document.getElementById('image');
         const coordsList = document.getElementById('coordsList');
         const boxes = [
@@ -86,46 +94,43 @@
         ];
         const saveButton = document.getElementById('saveButton');
         const overlay = document.getElementById('overlay');
+        const manualButton = document.getElementById('manualButton');
 
         const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001393678025'; //'-1001774957665';
 
+        // Get the photoUrl from the query string
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const photoUrl = urlParams.get('photoUrl');
+        if (photoUrl) {
+            image.src = photoUrl;
+            image.onload = function () {
+                const rect = image.getBoundingClientRect();
+                const offset = 20; // Offset to move the boxes inside the corners
+                const boxSize = parseInt(getComputedStyle(boxes[0]).width);
+                boxes[0].style.left = `${offset}px`;
+                boxes[0].style.top = `${offset}px`;
+                boxes[1].style.left = `${rect.width - offset - boxSize}px`;
+                boxes[1].style.top = `${offset}px`;
+                boxes[2].style.left = `${offset}px`;
+                boxes[2].style.top = `${rect.height - offset - boxSize}px`;
+                boxes[3].style.left = `${rect.width - offset - boxSize}px`;
+                boxes[3].style.top = `${rect.height - offset - boxSize}px`;
 
-        fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    image.src = e.target.result;
-                    image.style.display = 'block';
-                    image.onload = function() {
-                        const rect = image.getBoundingClientRect();
-                        const offset = 20; // Offset to move the boxes inside the corners
-                        const boxSize = parseInt(getComputedStyle(boxes[0]).width);
-                        boxes[0].style.left = `${offset}px`;
-                        boxes[0].style.top = `${offset}px`;
-                        boxes[1].style.left = `${rect.width - offset - boxSize}px`;
-                        boxes[1].style.top = `${offset}px`;
-                        boxes[2].style.left = `${offset}px`;
-                        boxes[2].style.top = `${rect.height - offset - boxSize}px`;
-                        boxes[3].style.left = `${rect.width - offset - boxSize}px`;
-                        boxes[3].style.top = `${rect.height - offset - boxSize}px`;
-
-                        boxes.forEach(box => box.style.display = 'block');
-                        saveButton.style.display = 'block';
-                        updateCoordsList(); // Initial update
-                    };
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
+                boxes.forEach(box => box.style.display = 'block');
+                saveButton.style.display = 'block';
+                updateCoordsList(); // Initial update
+            };
+        };
+        // reader.readAsDataURL(file);
+   
         boxes.forEach(box => {
             let isDragging = false;
             let startX, startY, initialLeft, initialTop;
 
             // Mouse events for dragging
-            box.addEventListener('mousedown', function(event) {
+            box.addEventListener('mousedown', function (event) {
                 isDragging = true;
                 startX = event.clientX;
                 startY = event.clientY;
@@ -135,7 +140,7 @@
                 event.preventDefault(); // Prevent image from moving
             });
 
-            document.addEventListener('mousemove', function(event) {
+            document.addEventListener('mousemove', function (event) {
                 if (isDragging) {
                     const dx = event.clientX - startX;
                     const dy = event.clientY - startY;
@@ -145,7 +150,7 @@
                 }
             });
 
-            document.addEventListener('mouseup', function() {
+            document.addEventListener('mouseup', function () {
                 if (isDragging) {
                     isDragging = false;
                     box.style.zIndex = 1; // Reset z-index
@@ -154,7 +159,7 @@
             });
 
             // Touch events for dragging on mobile devices
-            box.addEventListener('touchstart', function(event) {
+            box.addEventListener('touchstart', function (event) {
                 isDragging = true;
                 const touch = event.touches[0];
                 startX = touch.clientX;
@@ -165,7 +170,7 @@
                 event.preventDefault(); // Prevent image from moving
             });
 
-            document.addEventListener('touchmove', function(event) {
+            document.addEventListener('touchmove', function (event) {
                 if (isDragging) {
                     const touch = event.touches[0];
                     const dx = touch.clientX - startX;
@@ -176,7 +181,7 @@
                 }
             });
 
-            document.addEventListener('touchend', function() {
+            document.addEventListener('touchend', function () {
                 if (isDragging) {
                     isDragging = false;
                     box.style.zIndex = 1; // Reset z-index
@@ -185,7 +190,7 @@
             });
         });
 
-        image.addEventListener('click', function(event) {
+        image.addEventListener('click', function (event) {
             const rect = image.getBoundingClientRect();
             const clickX = event.clientX - rect.left;
             const clickY = event.clientY - rect.top;
@@ -226,7 +231,7 @@
             });
         }
 
-        saveButton.addEventListener('click', function() {
+        saveButton.addEventListener('click', function () {
             const coordinates = boxes.map((box, index) => {
                 const rect = box.getBoundingClientRect();
                 const parentRect = image.getBoundingClientRect();
@@ -239,16 +244,17 @@
 
             const message = coordinates.join('\n');
             saveButton.textContent = 'Sending to Telegram...';
-            overlay.style.display = 'block';
+            overlay.style.display = 'block'; // Show the overlay while waiting for the response
 
             sendToTelegram(message).then(success => {
+                overlay.style.display = 'none'; // Hide the overlay once the response is received
                 if (success) {
                     saveButton.textContent = 'Sent successfully';
                 } else {
                     saveButton.textContent = 'Failed to send';
                 }
-                overlay.style.display = 'none';
             });
+
         });
 
         function sendToTelegram(message) {
@@ -265,13 +271,14 @@
                 },
                 body: JSON.stringify(params),
             })
-            .then(response => response.json())
-            .then(data => data.ok)
-            .catch(error => {
-                console.error('Error sending message to Telegram', error);
-                return false;
-            });
+                .then(response => response.json())
+                .then(data => data.ok)
+                .catch(error => {
+                    console.error('Error sending message to Telegram', error);
+                    return false;
+                });
         }
     </script>
 </body>
+
 </html>
