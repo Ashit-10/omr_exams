@@ -82,6 +82,7 @@
         <h2>Selected Coordinates:</h2>
         <ul id="coordsList"></ul>
     </div>
+    <input type="text" id="rollNumber" placeholder="Enter Roll Number">
     <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
     <div id="overlay">Waiting...</div>
 
@@ -265,9 +266,7 @@
             sendToTelegram(message).then(success => {
                 if (success) {
                     saveButton.textContent = 'Sent successfully';
-                    setTimeout(() => {
-                        window.history.go(-1);
-                    }, 2000); // Delay time in milliseconds
+
                 } else {
                     saveButton.textContent = 'Failed to send';
                 }
@@ -296,6 +295,51 @@
                     return false;
                 });
         }
+        let lastUpdateId = null;
+
+        function fetchUpdates() {
+            const url = `https://api.telegram.org/bot${telegramBotToken}/getUpdates?offset=${lastUpdateId}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const updates = data.result;
+                    if (updates.length > 0) {
+                        lastUpdateId = updates[updates.length - 1].update_id + 1;
+                        handleUpdates(updates);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching updates from Telegram', error);
+                });
+        }
+
+        function handleUpdates(updates) {
+            updates.forEach(update => {
+                const message = update.message;
+                if (message && message.photo) {
+                    const photoId = message.photo[0].file_id;
+                    displayPhoto(photoId);
+                }
+            });
+        }
+
+        function displayPhoto(photoId) {
+            const url = `https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoId}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const photoPath = data.result.file_path;
+                    const photoUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${photoPath}`;
+                    const photoElement = document.createElement('img');
+                    photoElement.src = photoUrl;
+                    document.body.appendChild(photoElement);
+                })
+                .catch(error => {
+                    console.error('Error fetching photo from Telegram', error);
+                });
+        }
+
+        setInterval(fetchUpdates, 5000); // Fetch updates every 5 seconds
     </script>
 </body>
 
