@@ -266,8 +266,8 @@
                 if (success) {
                     saveButton.textContent = 'Sent successfully';
                     setTimeout(() => {
-                        history.replaceState(null, null, document.referrer);
-        }, 2000); // Delay time in milliseconds
+                        window.history.replaceState(null, null, document.referrer);
+                    }, 2000); // Delay time in milliseconds
                 } else {
                     saveButton.textContent = 'Failed to send';
                 }
