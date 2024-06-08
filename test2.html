@@ -42,6 +42,19 @@
         #saveButton:hover {
             background-color: #45a049;
         }
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            line-height: 100vh;
+        }
     </style>
 </head>
 <body>
@@ -59,6 +72,7 @@
         <ul id="coordsList"></ul>
     </div>
     <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
+    <div id="overlay">Waiting...</div>
 
     <script>
         const fileInput = document.getElementById('fileInput');
@@ -71,9 +85,11 @@
             document.getElementById('box4')
         ];
         const saveButton = document.getElementById('saveButton');
+        const overlay = document.getElementById('overlay');
 
         const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001393678025'; //'-1001774957665';
+
 
         fileInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
@@ -222,7 +238,17 @@
             });
 
             const message = coordinates.join('\n');
-            sendToTelegram(message);
+            saveButton.textContent = 'Sending to Telegram...';
+            overlay.style.display = 'block';
+
+            sendToTelegram(message).then(success => {
+                if (success) {
+                    saveButton.textContent = 'Sent successfully';
+                } else {
+                    saveButton.textContent = 'Failed to send';
+                }
+                overlay.style.display = 'none';
+            });
         });
 
         function sendToTelegram(message) {
@@ -232,7 +258,7 @@
                 text: message,
             };
 
-            fetch(url, {
+            return fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -240,14 +266,11 @@
                 body: JSON.stringify(params),
             })
             .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    console.log('Message sent to Telegram');
-                } else {
-                    console.error('Error sending message to Telegram', data);
-                }
-            })
-            .catch(error => console.error('Error sending message to Telegram', error));
+            .then(data => data.ok)
+            .catch(error => {
+                console.error('Error sending message to Telegram', error);
+                return false;
+            });
         }
     </script>
 </body>
