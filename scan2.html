@@ -767,17 +767,17 @@
                             updateButton.innerText = 'Updating...'; // Change button text
                             updateButton.disabled = true; // Disable button
                             const replyToMessageId = current_id;
-                            await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    chat_id: chatId,
-                                    text: `/roll ${rollNumber}`,
-                                    reply_to_message_id: og_id
-                                })
-                            });
+                            await fetch(`${TELEGRAM_API_URL}/editMessageCaption`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            message_id: og_id,
+                            caption: rollNumber
+                        })
+                    });
                         } else {
                             alert('Please enter a valid roll number (0-99).');
                         }
