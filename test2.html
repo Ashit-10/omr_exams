@@ -340,9 +340,9 @@
 
         function drawContoursOnImage() {
             const context = canvas.getContext('2d');
-            canvas.width = image.width;
-            canvas.height = image.height;
-            context.drawImage(image, 0, 0, image.width, image.height);
+            canvas.width = image.naturalWidth;
+            canvas.height = image.naturalHeight;
+            context.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight);
 
             context.strokeStyle = 'black';
             context.lineWidth = 3;
@@ -355,10 +355,14 @@
                 const width = rect.width;
                 const height = rect.height;
 
-                context.strokeRect(x, y, width, height);
+                context.strokeRect(x * (image.naturalWidth / parentRect.width), y * (image.naturalHeight / parentRect.height), width * (image.naturalWidth / parentRect.width), height * (image.naturalHeight / parentRect.height));
             });
 
-            return canvas.toDataURL('image/jpeg');
+            return new Promise((resolve) => {
+                canvas.toBlob((blob) => {
+                    resolve(blob);
+                }, 'image/jpeg');
+            });
         }
 
         saveButton.addEventListener('click', function () {
@@ -373,32 +377,28 @@
             });
 
             const message = coordinates.join('\n');
-            const photoDataUrl = drawContoursOnImage();
 
-            fetch(photoDataUrl)
-                .then(res => res.blob())
-                .then(blob => {
-                    const photoData = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
+            saveButton.textContent = 'Sending to Telegram...';
+            overlay.style.display = 'block';
 
-                    saveButton.textContent = 'Sending to Telegram...';
-                    overlay.style.display = 'block';
+            drawContoursOnImage().then((blob) => {
+                const photoData = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
 
-                    sendToTelegram(message, photoData).then(success => {
-                        if (success) {
-                            saveButton.textContent = 'Sent successfully';
-                        } else {
-                            saveButton.textContent = 'Failed to send';
-                        }
-                        overlay.style.display = 'none';
-
-                        // Poll for updates from Telegram
-                        setInterval(fetchUpdates, 5000);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error processing image', error);
+                sendToTelegram(message, photoData).then(success => {
+                    if (success) {
+                        saveButton.textContent = 'Sent successfully';
+                    } else {
+                        saveButton.textContent = 'Failed to send';
+                    }
+                    overlay.style.display = 'none';
                 });
+            }).catch(error => {
+                console.error('Error processing image', error);
+            });
         });
+
+        // Poll for updates from Telegram
+        setInterval(fetchUpdates, 5000);
     </script>
 </body>
 
