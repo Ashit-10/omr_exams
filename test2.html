@@ -266,8 +266,8 @@
                 if (success) {
                     saveButton.textContent = 'Sent successfully';
                     setTimeout(() => {
-                        window.history.back(); // Go back to the previous page after a delay
-                    }, 2000); // Delay time in milliseconds
+                        history.replaceState(null, null, document.referrer);
+        }, 2000); // Delay time in milliseconds
                 } else {
                     saveButton.textContent = 'Failed to send';
                 }
