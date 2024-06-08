@@ -20,10 +20,8 @@
             width: 50px;
             height: 50px;
             border: 3px solid #00f;
-            /* Brighter blue color */
             cursor: move;
             background-color: rgba(0, 0, 255, 0.2);
-            /* Light blue background */
         }
 
         @media (max-width: 600px) {
@@ -84,11 +82,8 @@
     </div>
     <input type="text" id="rollNumber" placeholder="Enter Roll Number">
     <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
-    <div id="overlay" style="display: none;">Waiting...</div>
-
-    <!-- New back button -->
-    <button id="backButton" style="display: none;">Back to Scan</button>
-
+    <div id="overlay">Waiting...</div>
+    <button id="backButton" style="display: none;">Back</button>
 
     <script>
         const fileInput = document.getElementById('fileInput');
@@ -106,6 +101,8 @@
 
         const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001774957665';
+
+        let lastUpdateId = null;
 
         // Check if filename parameter is provided in the URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -253,35 +250,6 @@
             });
         }
 
-        saveButton.addEventListener('click', function () {
-            const coordinates = boxes.map((box, index) => {
-                const rect = box.getBoundingClientRect();
-                const parentRect = image.getBoundingClientRect();
-                const x = rect.left - parentRect.left;
-                const y = rect.top - parentRect.top;
-                const width = rect.width;
-                const height = rect.height;
-                return `Box ${index + 1}: (${Math.round(x)}, ${Math.round(y)}) - Width: ${Math.round(width)}, Height: ${Math.round(height)}`;
-            });
-
-            const message = coordinates.join('\n');
-            saveButton.textContent = 'Sending to Telegram...';
-            overlay.style.display = 'block';
-
-            sendToTelegram(message).then(success => {
-                if (success) {
-                    saveButton.textContent = 'Sent successfully';
-
-                } else {
-                    saveButton.textContent = 'Failed to send';
-                }
-                overlay.style.display = 'none';
-            });
-        });
-
-     
-        let lastUpdateId = null;
-
         function sendToTelegram(message, photoData) {
             const formData = new FormData();
             formData.append('chat_id', telegramChatId);
@@ -385,13 +353,10 @@
                 }
                 overlay.style.display = 'none';
             });
-        });
 
-        document.getElementById('backButton').addEventListener('click', function () {
-            window.location.href = 'scan.html'; // Redirect to scan.html
+            // Poll for updates from Telegram
+            setInterval(fetchUpdates, 5000);
         });
-
-        setInterval(fetchUpdates, 5000); // Fetch updates every 5 seconds
     </script>
 </body>
 
