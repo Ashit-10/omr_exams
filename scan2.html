@@ -752,7 +752,7 @@
                         const errorButton = document.createElement('button');
                         errorButton.innerText = 'Click here to select QR code manually';
                         errorButton.addEventListener('click', function () {
-                            window.location.href = 'test2.html';
+                            window.location.href = 'test2.html?filename=' + encodeURIComponent(photoUrl);
                         });
                         messageElement.appendChild(errorButton);
                     }
