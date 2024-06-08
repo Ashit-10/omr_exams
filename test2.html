@@ -6,10 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Box Selector</title>
     <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         #image-container {
             position: relative;
-            display: inline-block;
             width: 100%;
+            max-width: 600px;
         }
 
         #image-container img {
@@ -39,6 +45,7 @@
         }
 
         #saveButton {
+            display: none;
             margin-top: 10px;
             padding: 10px 20px;
             font-size: 16px;
@@ -80,6 +87,11 @@
         #backButton:hover {
             background-color: #45a049;
         }
+
+        .centered {
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 
@@ -98,9 +110,11 @@
         <ul id="coordsList"></ul>
     </div>
     <input type="text" id="rollNumber" placeholder="Enter Roll Number">
-    <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
+    <div class="centered">
+        <button id="saveButton">Save Coordinates and Send to Telegram</button>
+    </div>
     <div id="overlay">Waiting...</div>
-    <button id="backButton" style="display: none;">Back</button>
+    <button id="backButton">Back</button>
 
     <script>
         const fileInput = document.getElementById('fileInput');
@@ -370,23 +384,32 @@
             });
 
             const message = coordinates.join('\n');
-            const photoData = fileInput.files[0];
-            saveButton.textContent = 'Sending to Telegram...';
-            overlay.style.display = 'block';
+            const photoDataUrl = image.src;
 
-            sendToTelegram(message, photoData).then(success => {
-                if (success) {
-                    saveButton.textContent = 'Sent successfully';
-                } else {
-                    saveButton.textContent = 'Failed to send';
-                }
-                overlay.style.display = 'none';
+            fetch(photoDataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    const photoData = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
 
-                
-            });
+                    saveButton.textContent = 'Sending to Telegram...';
+                    overlay.style.display = 'block';
+
+                    sendToTelegram(message, photoData).then(success => {
+                        if (success) {
+                            saveButton.textContent = 'Sent successfully';
+                        } else {
+                            saveButton.textContent = 'Failed to send';
+                        }
+                        overlay.style.display = 'none';
+
+                        // Poll for updates from Telegram
+                        setInterval(fetchUpdates, 5000);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error processing image', error);
+                });
         });
-        // Poll for updates from Telegram
-        setInterval(fetchUpdates, 5000);
     </script>
 </body>
 
