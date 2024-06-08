@@ -127,9 +127,9 @@
         const saveButton = document.getElementById('saveButton');
         const overlay = document.getElementById('overlay');
         const backButton = document.getElementById('backButton');
-const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+
+        const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001774957665';
-        
 
         let lastUpdateId = null;
         let sentMessageId = null;
@@ -361,7 +361,7 @@ const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
             return canvas.toDataURL('image/jpeg');
         }
 
-        document.getElementById('saveButton').addEventListener('click', function () {
+        saveButton.addEventListener('click', function () {
             const coordinates = boxes.map((box, index) => {
                 const rect = box.getBoundingClientRect();
                 const parentRect = image.getBoundingClientRect();
