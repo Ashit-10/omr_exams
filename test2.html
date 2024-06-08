@@ -9,10 +9,12 @@
         #image-container {
             position: relative;
             display: inline-block;
+            width: 100%;
         }
 
         #image-container img {
-            max-width: 100%;
+            width: 100%;
+            height: auto;
         }
 
         .box {
@@ -63,6 +65,21 @@
             text-align: center;
             line-height: 100vh;
         }
+
+        #backButton {
+            display: none;
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #backButton:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 
@@ -103,6 +120,7 @@
         const telegramChatId = '-1001774957665';
 
         let lastUpdateId = null;
+        let sentMessageId = null; // To track the sent message ID
 
         // Check if filename parameter is provided in the URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -244,6 +262,7 @@
                 const y = rect.top - parentRect.top;
                 const width = rect.width;
                 const height = rect.height;
+
                 const li = document.createElement('li');
                 li.textContent = `Box ${index + 1}: (${Math.round(x)}, ${Math.round(y)}) - Width: ${Math.round(width)}, Height: ${Math.round(height)}`;
                 coordsList.appendChild(li);
@@ -264,6 +283,9 @@
             })
                 .then(response => response.json())
                 .then(data => {
+                    if (data.ok) {
+                        sentMessageId = data.result.message_id; // Store the sent message ID
+                    }
                     return data.ok;
                 })
                 .catch(error => {
@@ -275,9 +297,12 @@
         function handleUpdates(updates) {
             updates.forEach(update => {
                 const message = update.message;
-                if (message && message.photo) {
-                    const photoId = message.photo[0].file_id;
-                    const caption = message.caption;
+                const editedMessage = update.edited_message;
+
+                if ((message && message.reply_to_message && message.reply_to_message.message_id === sentMessageId) ||
+                    (editedMessage && editedMessage.reply_to_message && editedMessage.reply_to_message.message_id === sentMessageId)) {
+                    const photoId = (message ? message.photo : editedMessage.photo).pop().file_id;
+                    const caption = message ? message.caption : editedMessage.caption;
                     displayRepliedPhoto(photoId, caption);
                 }
             });
@@ -294,16 +319,22 @@
                     const photoUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${photoPath}`;
                     const photoElement = document.createElement('img');
                     photoElement.src = photoUrl;
+                    photoElement.style.width = '100%';
+                    photoElement.style.height = 'auto';
 
                     const captionElement = document.createElement('div');
                     captionElement.textContent = caption;
+                    captionElement.style.padding = '10px';
+                    captionElement.style.backgroundColor = '#f0f0f0';
+                    captionElement.style.textAlign = 'center';
 
                     backButton.addEventListener('click', function () {
                         window.location.href = 'scan.html';
                     });
+                    backButton.style.display = 'block';
 
-                    document.body.appendChild(photoElement);
                     document.body.appendChild(captionElement);
+                    document.body.appendChild(photoElement);
                     document.body.appendChild(backButton);
                 })
                 .catch(error => {
@@ -320,8 +351,6 @@
                     if (updates.length > 0) {
                         lastUpdateId = updates[updates.length - 1].update_id + 1;
                         handleUpdates(updates);
-                    } else {
-                        overlay.style.display = 'block';
                     }
                 })
                 .catch(error => {
@@ -352,11 +381,12 @@
                     saveButton.textContent = 'Failed to send';
                 }
                 overlay.style.display = 'none';
-            });
 
-            // Poll for updates from Telegram
-            setInterval(fetchUpdates, 5000);
+                
+            });
         });
+        // Poll for updates from Telegram
+        setInterval(fetchUpdates, 5000);
     </script>
 </body>
 
