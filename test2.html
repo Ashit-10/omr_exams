@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Box Selector</title>
+    <style>
+        #image-container {
+            position: relative;
+            display: inline-block;
+        }
+        #image-container img {
+            max-width: 100%;
+        }
+        .box {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 3px solid green;
+            cursor: move;
+        }
+        @media (max-width: 600px) {
+            .box {
+                width: 25px;
+                height: 25px;
+                border-width: 2px;
+            }
+        }
+        #coordinates {
+            margin-top: 10px;
+        }
+        #saveButton {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #saveButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Image and Select Coordinates</h1>
+    <input type="file" id="fileInput" accept="image/*">
+    <div id="image-container">
+        <img id="image" style="display: none;" alt="Uploaded Image">
+        <div class="box" id="box1" style="display: none;"></div>
+        <div class="box" id="box2" style="display: none;"></div>
+        <div class="box" id="box3" style="display: none;"></div>
+        <div class="box" id="box4" style="display: none;"></div>
+    </div>
+    <div id="coordinates">
+        <h2>Selected Coordinates:</h2>
+        <ul id="coordsList"></ul>
+    </div>
+    <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const image = document.getElementById('image');
+        const coordsList = document.getElementById('coordsList');
+        const boxes = [
+            document.getElementById('box1'),
+            document.getElementById('box2'),
+            document.getElementById('box3'),
+            document.getElementById('box4')
+        ];
+        const saveButton = document.getElementById('saveButton');
+
+        const telegramBotToken = 'YOUR_TELEGRAM_BOT_TOKEN';
+        const telegramChatId = 'YOUR_TELEGRAM_CHAT_ID';
+
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    image.src = e.target.result;
+                    image.style.display = 'block';
+                    image.onload = function() {
+                        const rect = image.getBoundingClientRect();
+                        const offset = 20; // Offset to move the boxes inside the corners
+                        boxes[0].style.left = `${offset}px`;
+                        boxes[0].style.top = `${offset}px`;
+                        boxes[1].style.left = `${rect.width - offset - 50}px`;
+                        boxes[1].style.top = `${offset}px`;
+                        boxes[2].style.left = `${offset}px`;
+                        boxes[2].style.top = `${rect.height - offset - 50}px`;
+                        boxes[3].style.left = `${rect.width - offset - 50}px`;
+                        boxes[3].style.top = `${rect.height - offset - 50}px`;
+
+                        boxes.forEach(box => box.style.display = 'block');
+                        saveButton.style.display = 'block';
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        boxes.forEach(box => {
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+
+            // Mouse events for dragging
+            box.addEventListener('mousedown', function(event) {
+                isDragging = true;
+                startX = event.clientX;
+                startY = event.clientY;
+                initialLeft = parseInt(box.style.left || 0, 10);
+                initialTop = parseInt(box.style.top || 0, 10);
+                box.style.zIndex = 1000; // Bring the box to the top
+            });
+
+            document.addEventListener('mousemove', function(event) {
+                if (isDragging) {
+                    const dx = event.clientX - startX;
+                    const dy = event.clientY - startY;
+                    box.style.left = `${initialLeft + dx}px`;
+                    box.style.top = `${initialTop + dy}px`;
+                }
+            });
+
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    box.style.zIndex = 1; // Reset z-index
+                    updateCoordsList();
+                }
+            });
+
+            // Touch events for dragging on mobile devices
+            box.addEventListener('touchstart', function(event) {
+                isDragging = true;
+                const touch = event.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                initialLeft = parseInt(box.style.left || 0, 10);
+                initialTop = parseInt(box.style.top || 0, 10);
+                box.style.zIndex = 1000; // Bring the box to the top
+            });
+
+            document.addEventListener('touchmove', function(event) {
+                if (isDragging) {
+                    const touch = event.touches[0];
+                    const dx = touch.clientX - startX;
+                    const dy = touch.clientY - startY;
+                    box.style.left = `${initialLeft + dx}px`;
+                    box.style.top = `${initialTop + dy}px`;
+                }
+            });
+
+            document.addEventListener('touchend', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    box.style.zIndex = 1; // Reset z-index
+                    updateCoordsList();
+                }
+            });
+        });
+
+        function updateCoordsList() {
+            coordsList.innerHTML = '';
+            boxes.forEach((box, index) => {
+                const rect = box.getBoundingClientRect();
+                const parentRect = image.getBoundingClientRect();
+                const x = rect.left - parentRect.left;
+                const y = rect.top - parentRect.top;
+                const li = document.createElement('li');
+                li.textContent = `Box ${index + 1}: (${Math.round(x)}, ${Math.round(y)})`;
+                coordsList.appendChild(li);
+            });
+        }
+
+        saveButton.addEventListener('click', function() {
+            const coordinates = boxes.map((box, index) => {
+                const rect = box.getBoundingClientRect();
+                const parentRect = image.getBoundingClientRect();
+                const x = rect.left - parentRect.left;
+                const y = rect.top - parentRect.top;
+                return `Box ${index + 1}: (${Math.round(x)}, ${Math.round(y)})`;
+            });
+
+            const message = coordinates.join('\n');
+            sendToTelegram(message);
+        });
+
+        function sendToTelegram(message) {
+            const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+            const params = {
+                chat_id: telegramChatId,
+                text: message,
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(params),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('Coordinates sent to Telegram successfully!');
+                } else {
+                    alert('Failed to send coordinates to Telegram.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error sending coordinates to Telegram.');
+            });
+        }
+    </script>
+</body>
+</html>
