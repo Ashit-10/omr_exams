@@ -582,7 +582,7 @@
 
                 // Add event listener to the button
                 overlayButton.addEventListener('click', async () => {
-                    const replyToMessageId = current_id;
+                    const replyToMessageId = current_id
                     await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
                         method: 'POST',
                         headers: {
@@ -600,48 +600,11 @@
                 document.body.appendChild(overlayButton);
             }
 
-            // Create input field for update number
-            const inputField = document.createElement('input');
-            inputField.type = 'number';
-            inputField.maxLength = 2;
-            inputField.style.marginRight = '10px';
-            inputField.style.width = '50px';
-
-            // Create update button
-            const updateButton = document.createElement('button');
-            updateButton.innerText = 'Update';
-            updateButton.style.fontSize = '18px';
-            updateButton.style.cursor = 'pointer';
-
-            // Add event listener to the update button
-            updateButton.addEventListener('click', async () => {
-                const number = inputField.value.trim();
-                if (number !== '' && !isNaN(number) && number.length <= 2) {
-                    const replyToMessageId = current_id;
-                    await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            chat_id: chatId,
-                            text: `/roll ${number}`,
-                            reply_to_message_id: replyToMessageId
-                        })
-                    });
-                } else {
-                    alert('Please enter a valid integer number with a maximum of 2 digits.');
-                }
-            });
-
-            // Append input field and update button to the document
-            document.body.appendChild(inputField);
-            document.body.appendChild(updateButton);
-
             if (!isSending) {
                 loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
             }
         }
+
 
         async function displayDocument(fileId, caption = '') {
             try {
@@ -712,7 +675,6 @@
 
 
 
-
         async function displayPhoto(fileId, caption = '', current_id) {
             try {
                 const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
@@ -774,7 +736,6 @@
 
                             messageElement.appendChild(overlayButton);
                         }
-
                     }
 
                     const img = document.createElement('img');
@@ -783,6 +744,48 @@
                     img.style.width = '100vw'; // Set width to 100% of the viewport's width
                     messageElement.appendChild(img);
                     messagesDiv.appendChild(messageElement);
+
+                    // Add input field and button for updating roll number
+                    const rollInputContainer = document.createElement('div');
+                    rollInputContainer.style.marginTop = '10px';
+
+                    const rollInput = document.createElement('input');
+                    rollInput.type = 'number';
+                    rollInput.max = '99';
+                    rollInput.placeholder = 'Enter roll no';
+                    rollInput.style.marginRight = '10px';
+
+                    const updateButton = document.createElement('button');
+                    updateButton.innerText = 'Update Roll No';
+                    updateButton.style.padding = '10px 20px';
+                    updateButton.style.fontSize = '18px';
+                    updateButton.style.cursor = 'pointer';
+
+                    updateButton.addEventListener('click', async () => {
+                        const rollNumber = rollInput.value;
+                        if (rollNumber && rollNumber <= 99 && rollNumber >= 0) {
+                            updateButton.innerText = 'Updating...'; // Change button text
+                            updateButton.disabled = true; // Disable button
+                            const replyToMessageId = current_id;
+                            await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    chat_id: chatId,
+                                    text: `/roll ${rollNumber}`,
+                                    reply_to_message_id: replyToMessageId
+                                })
+                            });
+                        } else {
+                            alert('Please enter a valid roll number (0-99).');
+                        }
+                    });
+
+                    rollInputContainer.appendChild(rollInput);
+                    rollInputContainer.appendChild(updateButton);
+                    messageElement.appendChild(rollInputContainer);
 
                     if (!isSending) {
                         loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
@@ -795,7 +798,6 @@
                         });
                         messageElement.appendChild(errorButton);
                     }
-
                 }
             } catch (error) {
                 console.error('Error displaying photo:', error);
@@ -805,17 +807,18 @@
         // Add this CSS for the spinner
         const style = document.createElement('style');
         style.innerHTML = `
-                #save-spinner {
-                    display: inline-block;
-                    width: 20px;
-                    height: 20px;
-                    border: 3px solid rgba(255, 255, 255, 0.3);
-                    border-radius: 50%;
-                    border-top-color: #fff;
-                    animation: spin 1s ease-in-out infinite;
-                }
-                `;
+        #save-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        `;
         document.head.appendChild(style);
+
 
 
 
