@@ -100,6 +100,7 @@
     <input type="file" id="fileInput" accept="image/*">
     <div id="image-container">
         <img id="image" style="display: none;" alt="Uploaded Image">
+        <canvas id="canvas" style="display: none;"></canvas>
         <div class="box" id="box1" style="display: none;"></div>
         <div class="box" id="box2" style="display: none;"></div>
         <div class="box" id="box3" style="display: none;"></div>
@@ -119,6 +120,7 @@
     <script>
         const fileInput = document.getElementById('fileInput');
         const image = document.getElementById('image');
+        const canvas = document.getElementById('canvas');
         const coordsList = document.getElementById('coordsList');
         const boxes = [
             document.getElementById('box1'),
@@ -134,9 +136,8 @@
         const telegramChatId = '-1001774957665';
 
         let lastUpdateId = null;
-        let sentMessageId = null; // To track the sent message ID
+        let sentMessageId = null;
 
-        // Check if filename parameter is provided in the URL
         const urlParams = new URLSearchParams(window.location.search);
         const filename = urlParams.get('filename');
         if (filename) {
@@ -144,7 +145,7 @@
             image.style.display = 'block';
             boxes.forEach(box => box.style.display = 'block');
             saveButton.style.display = 'block';
-            updateCoordsList(); // Initial update
+            updateCoordsList();
         }
 
         fileInput.addEventListener('change', function (event) {
@@ -156,7 +157,7 @@
                     image.style.display = 'block';
                     image.onload = function () {
                         const rect = image.getBoundingClientRect();
-                        const offset = 20; // Offset to move the boxes inside the corners
+                        const offset = 20;
                         const boxSize = parseInt(getComputedStyle(boxes[0]).width);
                         boxes[0].style.left = `${offset}px`;
                         boxes[0].style.top = `${offset}px`;
@@ -169,7 +170,7 @@
 
                         boxes.forEach(box => box.style.display = 'block');
                         saveButton.style.display = 'block';
-                        updateCoordsList(); // Initial update
+                        updateCoordsList();
                     };
                 };
                 reader.readAsDataURL(file);
@@ -180,15 +181,14 @@
             let isDragging = false;
             let startX, startY, initialLeft, initialTop;
 
-            // Mouse events for dragging
             box.addEventListener('mousedown', function (event) {
                 isDragging = true;
                 startX = event.clientX;
                 startY = event.clientY;
                 initialLeft = parseInt(box.style.left || 0, 10);
                 initialTop = parseInt(box.style.top || 0, 10);
-                box.style.zIndex = 1000; // Bring the box to the top
-                event.preventDefault(); // Prevent image from moving
+                box.style.zIndex = 1000;
+                event.preventDefault();
             });
 
             document.addEventListener('mousemove', function (event) {
@@ -197,19 +197,18 @@
                     const dy = event.clientY - startY;
                     box.style.left = `${initialLeft + dx}px`;
                     box.style.top = `${initialTop + dy}px`;
-                    updateCoordsList(); // Update coordinates while dragging
+                    updateCoordsList();
                 }
             });
 
             document.addEventListener('mouseup', function () {
                 if (isDragging) {
                     isDragging = false;
-                    box.style.zIndex = 1; // Reset z-index
+                    box.style.zIndex = 1;
                     updateCoordsList();
                 }
             });
 
-            // Touch events for dragging on mobile devices
             box.addEventListener('touchstart', function (event) {
                 isDragging = true;
                 const touch = event.touches[0];
@@ -217,8 +216,8 @@
                 startY = touch.clientY;
                 initialLeft = parseInt(box.style.left || 0, 10);
                 initialTop = parseInt(box.style.top || 0, 10);
-                box.style.zIndex = 1000; // Bring the box to the top
-                event.preventDefault(); // Prevent image from moving
+                box.style.zIndex = 1000;
+                event.preventDefault();
             });
 
             document.addEventListener('touchmove', function (event) {
@@ -228,14 +227,14 @@
                     const dy = touch.clientY - startY;
                     box.style.left = `${initialLeft + dx}px`;
                     box.style.top = `${initialTop + dy}px`;
-                    updateCoordsList(); // Update coordinates while dragging
+                    updateCoordsList();
                 }
             });
 
             document.addEventListener('touchend', function () {
                 if (isDragging) {
                     isDragging = false;
-                    box.style.zIndex = 1; // Reset z-index
+                    box.style.zIndex = 1;
                     updateCoordsList();
                 }
             });
@@ -372,6 +371,29 @@
                 });
         }
 
+        function drawContoursOnImage() {
+            const context = canvas.getContext('2d');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            context.drawImage(image, 0, 0, image.width, image.height);
+
+            context.strokeStyle = 'black';
+            context.lineWidth = 3;
+
+            boxes.forEach(box => {
+                const rect = box.getBoundingClientRect();
+                const parentRect = image.getBoundingClientRect();
+                const x = rect.left - parentRect.left;
+                const y = rect.top - parentRect.top;
+                const width = rect.width;
+                const height = rect.height;
+
+                context.strokeRect(x, y, width, height);
+            });
+
+            return canvas.toDataURL('image/jpeg');
+        }
+
         document.getElementById('saveButton').addEventListener('click', function () {
             const coordinates = boxes.map((box, index) => {
                 const rect = box.getBoundingClientRect();
@@ -384,7 +406,7 @@
             });
 
             const message = coordinates.join('\n');
-            const photoDataUrl = image.src;
+            const photoDataUrl = drawContoursOnImage();
 
             fetch(photoDataUrl)
                 .then(res => res.blob())
