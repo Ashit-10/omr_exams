@@ -735,9 +735,7 @@
 
                             messageElement.appendChild(overlayButton);
                         }
-                        if (caption.toLowerCase().includes("error")) {
-                            window.location.href = 'test2.html';
-                        }
+
                     }
 
                     const img = document.createElement('img');
@@ -750,6 +748,15 @@
                     if (!isSending) {
                         loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
                     }
+                    if (caption.toLowerCase().includes("error")) {
+                        const errorButton = document.createElement('button');
+                        errorButton.innerText = 'Click here to select QR code manually';
+                        errorButton.addEventListener('click', function () {
+                            window.location.href = 'test2.html';
+                        });
+                        messageElement.appendChild(errorButton);
+                    }
+
                 }
             } catch (error) {
                 console.error('Error displaying photo:', error);
