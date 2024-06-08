@@ -84,7 +84,11 @@
     </div>
     <input type="text" id="rollNumber" placeholder="Enter Roll Number">
     <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
-    <div id="overlay">Waiting...</div>
+    <div id="overlay" style="display: none;">Waiting...</div>
+
+    <!-- New back button -->
+    <button id="backButton" style="display: none;">Back to Scan</button>
+
 
     <script>
         const fileInput = document.getElementById('fileInput');
@@ -98,6 +102,7 @@
         ];
         const saveButton = document.getElementById('saveButton');
         const overlay = document.getElementById('overlay');
+        const backButton = document.getElementById('backButton');
 
         const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001774957665';
@@ -274,28 +279,69 @@
             });
         });
 
-        function sendToTelegram(message) {
-            const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
-            const params = {
-                chat_id: telegramChatId,
-                text: message,
-            };
+     
+        let lastUpdateId = null;
+
+        function sendToTelegram(message, photoData) {
+            const formData = new FormData();
+            formData.append('chat_id', telegramChatId);
+            formData.append('caption', message);
+            formData.append('photo', photoData);
+
+            const url = `https://api.telegram.org/bot${telegramBotToken}/sendPhoto`;
 
             return fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(params),
+                body: formData,
             })
                 .then(response => response.json())
-                .then(data => data.ok)
+                .then(data => {
+                    return data.ok;
+                })
                 .catch(error => {
                     console.error('Error sending message to Telegram', error);
                     return false;
                 });
         }
-        let lastUpdateId = null;
+
+        function handleUpdates(updates) {
+            updates.forEach(update => {
+                const message = update.message;
+                if (message && message.photo) {
+                    const photoId = message.photo[0].file_id;
+                    const caption = message.caption;
+                    displayRepliedPhoto(photoId, caption);
+                }
+            });
+        }
+
+        function displayRepliedPhoto(photoId, caption) {
+            document.body.innerHTML = '';
+
+            const url = `https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoId}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const photoPath = data.result.file_path;
+                    const photoUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${photoPath}`;
+                    const photoElement = document.createElement('img');
+                    photoElement.src = photoUrl;
+
+                    const captionElement = document.createElement('div');
+                    captionElement.textContent = caption;
+
+                    backButton.addEventListener('click', function () {
+                        window.location.href = 'scan.html';
+                    });
+
+                    document.body.appendChild(photoElement);
+                    document.body.appendChild(captionElement);
+                    document.body.appendChild(backButton);
+                })
+                .catch(error => {
+                    console.error('Error fetching photo from Telegram', error);
+                });
+        }
 
         function fetchUpdates() {
             const url = `https://api.telegram.org/bot${telegramBotToken}/getUpdates?offset=${lastUpdateId}`;
@@ -306,6 +352,8 @@
                     if (updates.length > 0) {
                         lastUpdateId = updates[updates.length - 1].update_id + 1;
                         handleUpdates(updates);
+                    } else {
+                        overlay.style.display = 'block';
                     }
                 })
                 .catch(error => {
@@ -313,31 +361,35 @@
                 });
         }
 
-        function handleUpdates(updates) {
-            updates.forEach(update => {
-                const message = update.message;
-                if (message && message.photo) {
-                    const photoId = message.photo[0].file_id;
-                    displayPhoto(photoId);
-                }
+        document.getElementById('saveButton').addEventListener('click', function () {
+            const coordinates = boxes.map((box, index) => {
+                const rect = box.getBoundingClientRect();
+                const parentRect = image.getBoundingClientRect();
+                const x = rect.left - parentRect.left;
+                const y = rect.top - parentRect.top;
+                const width = rect.width;
+                const height = rect.height;
+                return `Box ${index + 1}: (${Math.round(x)}, ${Math.round(y)}) - Width: ${Math.round(width)}, Height: ${Math.round(height)}`;
             });
-        }
 
-        function displayPhoto(photoId) {
-            const url = `https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoId}`;
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const photoPath = data.result.file_path;
-                    const photoUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${photoPath}`;
-                    const photoElement = document.createElement('img');
-                    photoElement.src = photoUrl;
-                    document.body.appendChild(photoElement);
-                })
-                .catch(error => {
-                    console.error('Error fetching photo from Telegram', error);
-                });
-        }
+            const message = coordinates.join('\n');
+            const photoData = fileInput.files[0];
+            saveButton.textContent = 'Sending to Telegram...';
+            overlay.style.display = 'block';
+
+            sendToTelegram(message, photoData).then(success => {
+                if (success) {
+                    saveButton.textContent = 'Sent successfully';
+                } else {
+                    saveButton.textContent = 'Failed to send';
+                }
+                overlay.style.display = 'none';
+            });
+        });
+
+        document.getElementById('backButton').addEventListener('click', function () {
+            window.location.href = 'scan.html'; // Redirect to scan.html
+        });
 
         setInterval(fetchUpdates, 5000); // Fetch updates every 5 seconds
     </script>
