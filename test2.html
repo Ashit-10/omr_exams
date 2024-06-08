@@ -45,7 +45,6 @@
         }
 
         #saveButton {
-            display: none;
             margin-top: 10px;
             padding: 10px 20px;
             font-size: 16px;
@@ -97,7 +96,6 @@
 
 <body>
     <h1>Upload Image and Select Coordinates</h1>
-    <input type="file" id="fileInput" accept="image/*">
     <div id="image-container">
         <img id="image" style="display: none;" alt="Uploaded Image">
         <canvas id="canvas" style="display: none;"></canvas>
@@ -110,7 +108,6 @@
         <h2>Selected Coordinates:</h2>
         <ul id="coordsList"></ul>
     </div>
-    <input type="text" id="rollNumber" placeholder="Enter Roll Number">
     <div class="centered">
         <button id="saveButton">Save Coordinates and Send to Telegram</button>
     </div>
@@ -118,7 +115,6 @@
     <button id="backButton">Back</button>
 
     <script>
-        const fileInput = document.getElementById('fileInput');
         const image = document.getElementById('image');
         const canvas = document.getElementById('canvas');
         const coordsList = document.getElementById('coordsList');
@@ -131,9 +127,9 @@
         const saveButton = document.getElementById('saveButton');
         const overlay = document.getElementById('overlay');
         const backButton = document.getElementById('backButton');
-
-        const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001774957665';
+        
 
         let lastUpdateId = null;
         let sentMessageId = null;
@@ -147,35 +143,6 @@
             saveButton.style.display = 'block';
             updateCoordsList();
         }
-
-        fileInput.addEventListener('change', function (event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    image.src = e.target.result;
-                    image.style.display = 'block';
-                    image.onload = function () {
-                        const rect = image.getBoundingClientRect();
-                        const offset = 20;
-                        const boxSize = parseInt(getComputedStyle(boxes[0]).width);
-                        boxes[0].style.left = `${offset}px`;
-                        boxes[0].style.top = `${offset}px`;
-                        boxes[1].style.left = `${rect.width - offset - boxSize}px`;
-                        boxes[1].style.top = `${offset}px`;
-                        boxes[2].style.left = `${offset}px`;
-                        boxes[2].style.top = `${rect.height - offset - boxSize}px`;
-                        boxes[3].style.left = `${rect.width - offset - boxSize}px`;
-                        boxes[3].style.top = `${rect.height - offset - boxSize}px`;
-
-                        boxes.forEach(box => box.style.display = 'block');
-                        saveButton.style.display = 'block';
-                        updateCoordsList();
-                    };
-                };
-                reader.readAsDataURL(file);
-            }
-        });
 
         boxes.forEach(box => {
             let isDragging = false;
