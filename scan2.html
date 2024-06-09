@@ -1062,7 +1062,7 @@
         document.addEventListener('visibilitychange', handleVisibilityChange);
         async function startCamera() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
+                stream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: { ideal: "environment" }, // Use the back camera
                         width: { ideal: 1920 },
@@ -1070,17 +1070,15 @@
                     }
                 });
                 videoStream = stream; // Store the stream reference
-                const video = document.querySelector('video');
                 video.srcObject = stream;
-                await video.play(); // Use await to ensure the video starts playing
-
-                // Display overlay elements
-                document.querySelector('#overlayBox').style.display = "block";
-                document.querySelector('#overlayBox').style.border = 0;
-                document.querySelector('#overlayBox1').style.display = "block";
-                document.querySelector('#overlayBox2').style.display = "block";
-                document.querySelector('#overlayBox3').style.display = "block";
-                document.querySelector('#overlayBox4').style.display = "block";
+                video.play();
+                overlayBox.style.display = "block";
+                overlayBox.style.border = 0;
+                overlayBox1.style.display = "block";
+                overlayBox2.style.display = "block";
+                overlayBox3.style.display = "block";
+                overlayBox4.style.display = "block";
+                // Function to capture image
             } catch (error) {
                 console.error('Error accessing the camera', error);
             }
@@ -1088,7 +1086,15 @@
 
         function stopCamera() {
             if (videoStream) {
-                videoStream.getTracks().forEach(track => track.stop()); // Stop each track to release camera access
+                videoStream.getTracks().forEach(track => {
+                    track.stop(); // Stop each track to release camera access
+                });
+                // Revoke the object URL associated with the stream
+                if ('stop' in video.srcObject) {
+                    video.srcObject.stop();
+                } else {
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                }
                 videoStream = null; // Clear the stream reference
                 const video = document.querySelector('video');
                 video.srcObject = null; // Clear the video source
