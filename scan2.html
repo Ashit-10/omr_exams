@@ -1095,9 +1095,6 @@
                 } else {
                     video.srcObject.getTracks().forEach(track => track.stop());
                 }
-                videoStream = null; // Clear the stream reference
-                const video = document.querySelector('video');
-                video.srcObject = null; // Clear the video source
             }
         }
 
