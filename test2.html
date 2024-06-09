@@ -267,7 +267,7 @@
             formData.append('caption', caption);
             formData.append('photo', image.src);
 
-            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendPhoto`, {
+            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendPhoto?chat_id=${telegramChatId}`, {
                 method: 'POST',
                 body: formData,
             })
