@@ -697,11 +697,19 @@
                         captionElement.style.paddingLeft = '10px';
                         messageElement.appendChild(captionElement);
 
+                        // Extract the roll number using a regular expression
+                        // var rollNumberMatch = caption.match(/Roll: (\d+)/);
+                        // var oldRollNumber = 0;
+                        // // Check if a match was found and extract the roll number
+                        // if (rollNumberMatch) {
+                        //     oldRollNumber = rollNumberMatch[1];
+                        // }
+
                         if (caption.toLowerCase().includes("still save it ?")) {
                             const overlayButton = document.createElement('button');
                             overlayButton.innerText = 'Save';
-                            overlayButton.style.position = 'fixed';
-                            overlayButton.style.top = '80%';
+                            // overlayButton.style.position = 'fixed';
+                            // overlayButton.style.top = '80%';
                             overlayButton.style.left = '75%';
                             overlayButton.style.transform = 'translate(-50%, -50%)';
                             overlayButton.style.padding = '10px 20px';
@@ -765,7 +773,7 @@
 
                     updateButton.addEventListener('click', async () => {
                         const rollNumber = rollInput.value;
-                        if (rollNumber && rollNumber <= 99 && rollNumber >= 0) {
+                        if (rollNumber && rollNumber <= 99 && rollNumber > 0) {
                             updateButton.innerText = 'Updating...'; // Change button text
                             if (rollNumber == old_caption) {
                                 alert('Please enter a new roll number, different from old roll number!');
@@ -789,7 +797,7 @@
                                 });
                             }
                         } else {
-                            alert('Please enter a valid roll number (0-99).');
+                            alert('Please enter a valid roll number (1-99).');
                         }
                     });
 
