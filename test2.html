@@ -117,6 +117,8 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const filename = urlParams.get('filename');
+        const replyId = urlParams.get('replyid');
+
         if (filename) {
             image.src = filename;
             image.style.display = 'block';
@@ -260,40 +262,41 @@
                 };
             });
 
-            const messageText = `Selected coordinates:\n` + coordinates.map(coord => `Box ${coord.index}: (${coord.x}, ${coord.y}) - Width: ${coord.width}, Height: ${coord.height}`).join('\n');
+            const messageText = coordinates.map(coord => `Box ${coord.index}: (${coord.x}, ${coord.y}) - Width: ${coord.width}, Height: ${coord.height}`).join('\n');
 
             overlay.style.display = 'block';
-            sendTelegramMessage(messageText);
+            sendMessageToTelegram(messageText);
         });
 
-        function sendTelegramMessage(text) {
-            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            const telegramUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+        function sendMessageToTelegram(messageText) {
+            const telegramApiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+            const params = {
+                chat_id: telegramChatId,
+                text: messageText,
+                reply_to_message_id: replyId
+            };
 
-            fetch(proxyUrl + telegramUrl, {
+            fetch(telegramApiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    chat_id: telegramChatId,
-                    text: text
-                })
+                body: JSON.stringify(params)
             })
                 .then(response => response.json())
                 .then(data => {
-                    overlay.style.display = 'none';
                     if (data.ok) {
                         lastSentMessageId = data.result.message_id;
                         alert('Coordinates sent successfully!');
                     } else {
-                        alert('Failed to send coordinates. Please try again.');
+                        alert('Error sending coordinates: ' + data.description);
                     }
+                    overlay.style.display = 'none';
                 })
                 .catch(error => {
-                    overlay.style.display = 'none';
                     console.error('Error:', error);
-                    alert('Failed to send coordinates. Please try again.');
+                    alert('Error sending coordinates: ' + error.message);
+                    overlay.style.display = 'none';
                 });
         }
 
