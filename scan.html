@@ -462,6 +462,8 @@
         let rollNumber = ''; // Variable to store the roll number
 
 
+        // const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+        // const telegramChatId = '-1001774957665';
 
         function sendImage() {
             const fileInput = document.getElementById('fileInput');
@@ -673,8 +675,7 @@
 
 
 
-
-        async function displayPhoto(fileId, caption = '', current_id) {
+        async function displayPhoto(fileId, caption = '', current_id, og_id, old_caption) {
             try {
                 const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
                 const data = await response.json();
@@ -696,11 +697,19 @@
                         captionElement.style.paddingLeft = '10px';
                         messageElement.appendChild(captionElement);
 
+                        // Extract the roll number using a regular expression
+                        // var rollNumberMatch = caption.match(/Roll: (\d+)/);
+                        // var oldRollNumber = 0;
+                        // // Check if a match was found and extract the roll number
+                        // if (rollNumberMatch) {
+                        //     oldRollNumber = rollNumberMatch[1];
+                        // }
+
                         if (caption.toLowerCase().includes("still save it ?")) {
                             const overlayButton = document.createElement('button');
                             overlayButton.innerText = 'Save';
-                            overlayButton.style.position = 'fixed';
-                            overlayButton.style.top = '80%';
+                            // overlayButton.style.position = 'fixed';
+                            // overlayButton.style.top = '80%';
                             overlayButton.style.left = '75%';
                             overlayButton.style.transform = 'translate(-50%, -50%)';
                             overlayButton.style.padding = '10px 20px';
@@ -744,8 +753,68 @@
                     messageElement.appendChild(img);
                     messagesDiv.appendChild(messageElement);
 
+                    // Add input field and button for updating roll number
+                    const rollInputContainer = document.createElement('div');
+                    rollInputContainer.style.marginTop = '10px';
+
+                    const rollInput = document.createElement('input');
+                    rollInput.type = 'number';
+                    rollInput.max = '99';
+                    rollInput.placeholder = 'Enter roll no';
+                    rollInput.style.marginRight = '10px';
+                    rollInput.style.width = '30%';
+
+                    const updateButton = document.createElement('button');
+                    updateButton.innerText = 'Update Roll No';
+                    updateButton.style.padding = '10px 20px';
+                    updateButton.style.fontSize = '18px';
+                    updateButton.style.cursor = 'pointer';
+                    updateButton.style.width = '60%';
+
+                    updateButton.addEventListener('click', async () => {
+                        const rollNumber = rollInput.value;
+                        if (rollNumber && rollNumber <= 99 && rollNumber > 0) {
+                            updateButton.innerText = 'Updating...'; // Change button text
+                            if (rollNumber == old_caption) {
+                                alert('Please enter a new roll number, different from old roll number!');
+                                updateButton.innerText = 'Update Roll No'; // Change button text
+
+                            } else {
+                                updateButton.disabled = true; // Disable button
+                                // const replyToMessageId = current_id;
+                                console.log(og_id);
+                                console.log(rollNumber);
+                                await fetch(`${TELEGRAM_API_URL}/editMessageCaption`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        chat_id: chatId,
+                                        message_id: og_id,
+                                        caption: rollNumber
+                                    })
+                                });
+                            }
+                        } else {
+                            alert('Please enter a valid roll number (1-99).');
+                        }
+                    });
+
+                    rollInputContainer.appendChild(rollInput);
+                    rollInputContainer.appendChild(updateButton);
+                    messageElement.appendChild(rollInputContainer);
+
                     if (!isSending) {
                         loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
+                    }
+                    if (caption.toLowerCase().includes("error")) {
+                        const errorButton = document.createElement('button');
+                        errorButton.innerText = 'Click here to select QR code manually';
+                        errorButton.addEventListener('click', function () {
+                            window.location.href = 'test2.html?filename=' + encodeURIComponent(photoUrl);
+                        });
+                        messageElement.appendChild(errorButton);
                     }
                 }
             } catch (error) {
@@ -756,17 +825,18 @@
         // Add this CSS for the spinner
         const style = document.createElement('style');
         style.innerHTML = `
-                #save-spinner {
-                    display: inline-block;
-                    width: 20px;
-                    height: 20px;
-                    border: 3px solid rgba(255, 255, 255, 0.3);
-                    border-radius: 50%;
-                    border-top-color: #fff;
-                    animation: spin 1s ease-in-out infinite;
-                }
-                `;
+        #save-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        `;
         document.head.appendChild(style);
+
 
 
 
@@ -784,6 +854,7 @@
                         if (update.message && update.message.reply_to_message && update.message.reply_to_message.photo) {
                             var current_id = update.message.reply_to_message.message_id;
                             var reply_msg_id = update.message.message_id;
+                            var old_caption = update.message.reply_to_message.caption;
 
                             if (current_id === send_id) {
                                 loadingIndicator.style.display = 'none';
@@ -791,7 +862,8 @@
                                 if (update.message.photo) {
                                     const photo = update.message.photo[update.message.photo.length - 1];
                                     const caption = update.message.caption || '';
-                                    displayPhoto(photo.file_id, caption, reply_msg_id);
+                                    displayPhoto(photo.file_id, caption, reply_msg_id, current_id, old_caption);
+
                                 } else if (update.message.document) {
                                     const document = update.message.document;
                                     const caption = update.message.caption || '';
@@ -809,6 +881,9 @@
                         // Check for edited messages
                         if (update.edited_message && update.edited_message.reply_to_message && update.edited_message.reply_to_message.photo) {
                             var current_id = update.edited_message.reply_to_message.message_id;
+                            var recent_id = update.edited_message.message_id;
+                            var old_caption = update.edited_message.reply_to_message.caption;
+
 
                             if (current_id === send_id) {
                                 loadingIndicator.style.display = 'none';
@@ -816,7 +891,8 @@
                                 if (update.edited_message.photo) {
                                     const photo = update.edited_message.photo[update.edited_message.photo.length - 1];
                                     const caption = update.edited_message.caption || '';
-                                    displayPhoto(photo.file_id, caption);
+                                    displayPhoto(photo.file_id, caption, recent_id, current_id, old_caption);
+
                                 } else if (update.edited_message.document) {
                                     const document = update.edited_message.document;
                                     const caption = update.edited_message.caption || '';
