@@ -262,7 +262,7 @@
                 };
             });
 
-            const messageText = coordinates.map(coord => `Box ${coord.index}: (${coord.x}, ${coord.y}) - Width: ${coord.width}, Height: ${coord.height}`).join('\n');
+            const messageText = coordinates.map(coord => `/coords Box ${coord.index}: (${coord.x}, ${coord.y}) - Width: ${coord.width}, Height: ${coord.height}`).join('\n');
 
             overlay.style.display = 'block';
             sendMessageToTelegram(messageText);
