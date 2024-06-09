@@ -69,8 +69,7 @@
 </head>
 
 <body>
-    <h1>Upload Image and Select Coordinates</h1>
-    <input type="file" id="fileInput" accept="image/*">
+    <h1>Select Coordinates on Image</h1>
     <div id="image-container">
         <img id="image" style="display: none;" alt="Uploaded Image">
         <div class="box" id="box1" style="display: none;"></div>
@@ -86,7 +85,6 @@
     <div id="overlay">Waiting...</div>
 
     <script>
-        const fileInput = document.getElementById('fileInput');
         const image = document.getElementById('image');
         const coordsList = document.getElementById('coordsList');
         const boxes = [
@@ -98,8 +96,8 @@
         const saveButton = document.getElementById('saveButton');
         const overlay = document.getElementById('overlay');
 
-        const telegramBotToken = 'YOUR_TELEGRAM_BOT_TOKEN';
-        const telegramChatId = 'YOUR_TELEGRAM_CHAT_ID';
+        const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+        const telegramChatId = '-1001774957665';
 
         // Check if filename parameter is provided in the URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -107,39 +105,24 @@
         if (filename) {
             image.src = filename;
             image.style.display = 'block';
-            boxes.forEach(box => box.style.display = 'block');
-            saveButton.style.display = 'block';
-            updateCoordsList(); // Initial update
+            image.onload = function () {
+                const rect = image.getBoundingClientRect();
+                const offset = 20; // Offset to move the boxes inside the corners
+                const boxSize = parseInt(getComputedStyle(boxes[0]).width);
+                boxes[0].style.left = `${offset}px`;
+                boxes[0].style.top = `${offset}px`;
+                boxes[1].style.left = `${rect.width - offset - boxSize}px`;
+                boxes[1].style.top = `${offset}px`;
+                boxes[2].style.left = `${offset}px`;
+                boxes[2].style.top = `${rect.height - offset - boxSize}px`;
+                boxes[3].style.left = `${rect.width - offset - boxSize}px`;
+                boxes[3].style.top = `${rect.height - offset - boxSize}px`;
+
+                boxes.forEach(box => box.style.display = 'block');
+                saveButton.style.display = 'block';
+                updateCoordsList(); // Initial update
+            };
         }
-
-        fileInput.addEventListener('change', function (event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    image.src = e.target.result;
-                    image.style.display = 'block';
-                    image.onload = function () {
-                        const rect = image.getBoundingClientRect();
-                        const offset = 20; // Offset to move the boxes inside the corners
-                        const boxSize = parseInt(getComputedStyle(boxes[0]).width);
-                        boxes[0].style.left = `${offset}px`;
-                        boxes[0].style.top = `${offset}px`;
-                        boxes[1].style.left = `${rect.width - offset - boxSize}px`;
-                        boxes[1].style.top = `${offset}px`;
-                        boxes[2].style.left = `${offset}px`;
-                        boxes[2].style.top = `${rect.height - offset - boxSize}px`;
-                        boxes[3].style.left = `${rect.width - offset - boxSize}px`;
-                        boxes[3].style.top = `${rect.height - offset - boxSize}px`;
-
-                        boxes.forEach(box => box.style.display = 'block');
-                        saveButton.style.display = 'block';
-                        updateCoordsList(); // Initial update
-                    };
-                };
-                reader.readAsDataURL(file);
-            }
-        });
 
         boxes.forEach(box => {
             let isDragging = false;
@@ -262,36 +245,56 @@
             saveButton.textContent = 'Sending to Telegram...';
             overlay.style.display = 'block';
 
-            sendToTelegram(message).then(success => {
-                if (success) {
-                    saveButton.textContent = 'Sent successfully';
-                } else {
-                    saveButton.textContent = 'Failed to send';
-                }
-                overlay.style.display = 'none';
-            });
+            drawContoursAndSend(message);
         });
 
-        function sendToTelegram(message) {
-            const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
-            const params = {
-                chat_id: telegramChatId,
-                text: message,
-            };
+        function drawContoursAndSend(caption) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.src = image.src;
 
-            return fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(params),
-            })
-                .then(response => response.json())
-                .then(data => data.ok)
-                .catch(error => {
-                    console.error('Error sending message to Telegram', error);
-                    return false;
+            img.onload = function () {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                ctx.fillStyle = 'black';
+                boxes.forEach(box => {
+                    const rect = box.getBoundingClientRect();
+                    const parentRect = image.getBoundingClientRect();
+                    const x = rect.left - parentRect.left;
+                    const y = rect.top - parentRect.top;
+                    const size = parseInt(getComputedStyle(box).width, 10);
+                    ctx.fillRect(x, y, size, size);
                 });
+
+                canvas.toBlob(function (blob) {
+                    const formData = new FormData();
+                    formData.append('chat_id', telegramChatId);
+                    formData.append('caption', caption);
+                    formData.append('photo', blob, 'image.png');
+
+                    fetch(`https://api.telegram.org/bot${telegramBotToken}/sendPhoto`, {
+                        method: 'POST',
+                        body: formData,
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.ok) {
+                                saveButton.textContent = 'Sent successfully';
+                            } else {
+                                saveButton.textContent = 'Failed to send';
+                            }
+                            overlay.style.display = 'none';
+                        })
+                        .catch(error => {
+                            console.error('Error sending image to Telegram', error);
+                            saveButton.textContent = 'Failed to send';
+                            overlay.style.display = 'none';
+                        });
+                });
+            };
         }
     </script>
 </body>
