@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,6 +65,7 @@
         }
     </style>
 </head>
+
 <body>
     <h1>Upload Image and Select Coordinates</h1>
     <div id="image-container">
@@ -97,10 +99,15 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const filename = urlParams.get('filename');
-
+// https%3A%2F%2Fapi.telegram.org%2Ffile%2Fbot1848113090%3AAAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0%2Fphotos%2Ffile_361.jpg
         if (filename) {
             fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(filename)}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     const base64Data = btoa(data.contents);
                     image.src = `data:image/jpeg;base64,${base64Data}`;
@@ -108,8 +115,16 @@
                     boxes.forEach(box => box.style.display = 'block');
                     saveButton.style.display = 'block';
                     updateCoordsList();
+                })
+                .catch(error => {
+                    console.error('Error fetching or displaying the image:', error);
+                    const errorMessage = document.createElement('div');
+                    errorMessage.textContent = 'An error occurred while displaying the image.';
+                    errorMessage.style.color = 'red';
+                    document.body.appendChild(errorMessage);
                 });
         }
+
 
         boxes.forEach(box => {
             let isDragging = false;
@@ -273,5 +288,5 @@
         }
     </script>
 </body>
-</html>
 
+</html>
