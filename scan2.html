@@ -769,6 +769,8 @@
                             updateButton.innerText = 'Updating...'; // Change button text
                             if (rollNumber == old_caption) {
                                 alert('Please enter a new roll number, different from old roll number!');
+                                updateButton.innerText = 'Update Roll No'; // Change button text
+
                             } else {
                                 updateButton.disabled = true; // Disable button
                                 // const replyToMessageId = current_id;
