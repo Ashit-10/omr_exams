@@ -1,35 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>qr selector</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-
+    <title>QR Selector</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <style>
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-
         #image-container {
             position: relative;
             width: 100%;
             max-width: 600px;
         }
-
         #image-container img {
             width: 100%;
             height: auto;
         }
-
         .box {
             position: absolute;
             width: 50px;
@@ -38,7 +29,6 @@
             cursor: move;
             background-color: rgba(0, 0, 255, 0.2);
         }
-
         @media (max-width: 600px) {
             .box {
                 width: 15px;
@@ -46,11 +36,9 @@
                 border-width: 2px;
             }
         }
-
         #coordinates {
             margin-top: 10px;
         }
-
         #saveButton {
             margin-top: 10px;
             padding: 10px 20px;
@@ -60,11 +48,9 @@
             border: none;
             cursor: pointer;
         }
-
         #saveButton:hover {
             background-color: #45a049;
         }
-
         #overlay {
             display: none;
             position: fixed;
@@ -78,7 +64,6 @@
             text-align: center;
             line-height: 100vh;
         }
-
         #backButton {
             display: none;
             margin-top: 10px;
@@ -89,18 +74,15 @@
             border: none;
             cursor: pointer;
         }
-
         #backButton:hover {
             background-color: #45a049;
         }
-
         .centered {
             display: flex;
             justify-content: center;
         }
     </style>
 </head>
-
 <body>
     <h1>Upload Image and Select Coordinates</h1>
     <div id="image-container">
@@ -148,6 +130,25 @@
             image.style.display = 'block';
             boxes.forEach(box => box.style.display = 'block');
             saveButton.style.display = 'block';
+            image.onload = positionBoxes;
+        }
+
+        function positionBoxes() {
+            const imgRect = image.getBoundingClientRect();
+            const padding = 10; // Padding to move the boxes slightly inside the image
+
+            boxes[0].style.left = `${padding}px`;
+            boxes[0].style.top = `${padding}px`;
+
+            boxes[1].style.left = `${imgRect.width - boxes[1].offsetWidth - padding}px`;
+            boxes[1].style.top = `${padding}px`;
+
+            boxes[2].style.left = `${padding}px`;
+            boxes[2].style.top = `${imgRect.height - boxes[2].offsetHeight - padding}px`;
+
+            boxes[3].style.left = `${imgRect.width - boxes[3].offsetWidth - padding}px`;
+            boxes[3].style.top = `${imgRect.height - boxes[3].offsetHeight - padding}px`;
+
             updateCoordsList();
         }
 
@@ -243,170 +244,65 @@
         function updateCoordsList() {
             coordsList.innerHTML = '';
             boxes.forEach((box, index) => {
-                const rect = box.getBoundingClientRect();
-                const parentRect = image.getBoundingClientRect();
-                const x = rect.left - parentRect.left;
-                const y = rect.top - parentRect.top;
-                const width = rect.width;
-                const height = rect.height;
-
+                const left = parseInt(box.style.left || 0, 10);
+                const top = parseInt(box.style.top || 0, 10);
                 const li = document.createElement('li');
-                li.textContent = `Box ${index + 1}: (${Math.round(x)}, ${Math.round(y)}) - Width: ${Math.round(width)}, Height: ${Math.round(height)}`;
+                li.textContent = `Box ${index + 1}: (${left}, ${top})`;
                 coordsList.appendChild(li);
             });
         }
 
-        function sendToTelegram(message, photoData) {
-            const formData = new FormData();
-            formData.append('chat_id', telegramChatId);
-            formData.append('caption', message);
-            formData.append('photo', photoData);
-
-            const url = `https://api.telegram.org/bot${telegramBotToken}/sendPhoto`;
-
-            return fetch(url, {
-                method: 'POST',
-                body: formData,
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.ok) {
-                        sentMessageId = data.result.message_id; // Store the sent message ID
-                    }
-                    return data.ok;
-                })
-                .catch(error => {
-                    console.error('Error sending message to Telegram', error);
-                    return false;
-                });
-        }
-
-        function handleUpdates(updates) {
-            updates.forEach(update => {
-                const message = update.message;
-                const editedMessage = update.edited_message;
-
-                if ((message && message.reply_to_message && message.reply_to_message.message_id === sentMessageId) ||
-                    (editedMessage && editedMessage.reply_to_message && editedMessage.reply_to_message.message_id === sentMessageId)) {
-                    const photoId = (message ? message.photo : editedMessage.photo).pop().file_id;
-                    const caption = message ? message.caption : editedMessage.caption;
-                    displayRepliedPhoto(photoId, caption);
-                }
-            });
-        }
-
-        function displayRepliedPhoto(photoId, caption) {
-            document.body.innerHTML = '';
-
-            const url = `https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoId}`;
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const photoPath = data.result.file_path;
-                    const photoUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${photoPath}`;
-                    const photoElement = document.createElement('img');
-                    photoElement.src = photoUrl;
-                    photoElement.style.width = '100%';
-                    photoElement.style.height = 'auto';
-
-                    const captionElement = document.createElement('div');
-                    captionElement.textContent = caption;
-                    captionElement.style.padding = '10px';
-                    captionElement.style.backgroundColor = '#f0f0f0';
-                    captionElement.style.textAlign = 'center';
-
-                    backButton.addEventListener('click', function () {
-                        window.location.href = 'scan.html';
-                    });
-                    backButton.style.display = 'block';
-
-                    document.body.appendChild(captionElement);
-                    document.body.appendChild(photoElement);
-                    document.body.appendChild(backButton);
-                })
-                .catch(error => {
-                    console.error('Error fetching photo from Telegram', error);
-                });
-        }
-
-        function fetchUpdates() {
-            const url = `https://api.telegram.org/bot${telegramBotToken}/getUpdates?offset=${lastUpdateId}`;
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const updates = data.result;
-                    if (updates.length > 0) {
-                        lastUpdateId = updates[updates.length - 1].update_id + 1;
-                        handleUpdates(updates);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching updates from Telegram', error);
-                });
-        }
-
-        function drawContoursOnImage() {
-            const context = canvas.getContext('2d');
-            canvas.width = image.naturalWidth;
-            canvas.height = image.naturalHeight;
-            context.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight);
-
-            context.strokeStyle = 'black';
-            context.lineWidth = 3;
-
-            boxes.forEach(box => {
-                const rect = box.getBoundingClientRect();
-                const parentRect = image.getBoundingClientRect();
-                const x = rect.left - parentRect.left;
-                const y = rect.top - parentRect.top;
-                const width = rect.width;
-                const height = rect.height;
-
-                context.strokeRect(x * (image.naturalWidth / parentRect.width), y * (image.naturalHeight / parentRect.height), width * (image.naturalWidth / parentRect.width), height * (image.naturalHeight / parentRect.height));
-            });
-
-            return new Promise((resolve) => {
-                canvas.toBlob((blob) => {
-                    resolve(blob);
-                }, 'image/jpeg');
-            });
-        }
-
-        saveButton.addEventListener('click', function () {
-            const coordinates = boxes.map((box, index) => {
-                const rect = box.getBoundingClientRect();
-                const parentRect = image.getBoundingClientRect();
-                const x = rect.left - parentRect.left;
-                const y = rect.top - parentRect.top;
-                const width = rect.width;
-                const height = rect.height;
-                return `Box ${index + 1}: (${Math.round(x)}, ${Math.round(y)}) - Width: ${Math.round(width)}, Height: ${Math.round(height)}`;
-            });
-
-            const message = coordinates.join('\n');
-
-            saveButton.textContent = 'Sending to Telegram...';
+        saveButton.addEventListener('click', async () => {
             overlay.style.display = 'block';
 
-            drawContoursOnImage().then((blob) => {
-                const photoData = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
-
-                sendToTelegram(message, photoData).then(success => {
-                    if (success) {
-                        saveButton.textContent = 'Sent successfully';
-                    } else {
-                        saveButton.textContent = 'Failed to send';
-                    }
-                    overlay.style.display = 'none';
-                });
-            }).catch(error => {
-                console.error('Error processing image', error);
+            const coords = boxes.map(box => {
+                const rect = image.getBoundingClientRect();
+                const left = parseInt(box.style.left || 0, 10);
+                const top = parseInt(box.style.top || 0, 10);
+                return { left, top, width: rect.width, height: rect.height };
             });
+
+            const photoId = 'YOUR_PHOTO_ID';
+            const caption = 'Your caption here';
+
+            const photoUrl = await fetchPhotoUrl(photoId);
+            const proxyUrl = `https://cors-anywhere.herokuapp.com/${photoUrl}`;
+
+            const response = await fetch(proxyUrl);
+            const blob = await response.blob();
+
+            const formData = new FormData();
+            formData.append('chat_id', telegramChatId);
+            formData.append('caption', JSON.stringify(coords));
+            formData.append('photo', blob, 'photo.jpg');
+
+            const sendResponse = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendPhoto`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const sendData = await sendResponse.json();
+
+            if (sendData.ok) {
+                alert('Coordinates and image sent to Telegram successfully!');
+            } else {
+                alert('Failed to send data to Telegram.');
+            }
+
+            overlay.style.display = 'none';
         });
 
-        // Poll for updates from Telegram
-        setInterval(fetchUpdates, 5000);
+        backButton.addEventListener('click', () => {
+            displayRepliedPhoto(photoId, caption);
+        });
+
+        async function fetchPhotoUrl(photoId) {
+            const url = `https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoId}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            const photoPath = data.result.file_path;
+            return `https://api.telegram.org/file/bot${telegramBotToken}/${photoPath}`;
+        }
     </script>
 </body>
-
 </html>

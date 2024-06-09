@@ -761,7 +761,7 @@
                     updateButton.style.padding = '10px 20px';
                     updateButton.style.fontSize = '18px';
                     updateButton.style.cursor = 'pointer';
-                    updateButton.style.width = '30%';
+                    updateButton.style.width = '40%';
 
                     updateButton.addEventListener('click', async () => {
                         const rollNumber = rollInput.value;
@@ -847,8 +847,7 @@
                                 if (update.message.photo) {
                                     const photo = update.message.photo[update.message.photo.length - 1];
                                     const caption = update.message.caption || '';
-                                    const roll_photo_id = update.message.reply_to_message.message_id || update.edited_message.reply_to_message.message_id;
-                                    displayPhoto(photo.file_id, caption, reply_msg_id, roll_photo_id);
+                                    displayPhoto(photo.file_id, caption, reply_msg_id, current_id);
 
                                 } else if (update.message.document) {
                                     const document = update.message.document;
@@ -867,6 +866,7 @@
                         // Check for edited messages
                         if (update.edited_message && update.edited_message.reply_to_message && update.edited_message.reply_to_message.photo) {
                             var current_id = update.edited_message.reply_to_message.message_id;
+                            var recent_id = update.edited_message.message_id;
 
                             if (current_id === send_id) {
                                 loadingIndicator.style.display = 'none';
@@ -874,7 +874,8 @@
                                 if (update.edited_message.photo) {
                                     const photo = update.edited_message.photo[update.edited_message.photo.length - 1];
                                     const caption = update.edited_message.caption || '';
-                                    displayPhoto(photo.file_id, caption);
+                                    displayPhoto(photo.file_id, caption, recent_id, current_id);
+
                                 } else if (update.edited_message.document) {
                                     const document = update.edited_message.document;
                                     const caption = update.edited_message.caption || '';
