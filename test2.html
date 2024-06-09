@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,9 +64,8 @@
         }
     </style>
 </head>
-
 <body>
-    <h1>Select Coordinates on Image</h1>
+    <h1>Upload Image and Select Coordinates</h1>
     <div id="image-container">
         <img id="image" style="display: none;" alt="Uploaded Image">
         <div class="box" id="box1" style="display: none;"></div>
@@ -99,56 +97,35 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const filename = urlParams.get('filename');
+
         if (filename) {
-            fetchImage(filename)
-                .then((blobUrl) => {
-                    image.src = blobUrl;
+            fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(filename)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const base64Data = btoa(data.contents);
+                    image.src = `data:image/jpeg;base64,${base64Data}`;
                     image.style.display = 'block';
-                    image.onload = function () {
-                        const rect = image.getBoundingClientRect();
-                        const offset = 20;
-                        const boxSize = parseInt(getComputedStyle(boxes[0]).width);
-                        boxes[0].style.left = `${offset}px`;
-                        boxes[0].style.top = `${offset}px`;
-                        boxes[1].style.left = `${rect.width - offset - boxSize}px`;
-                        boxes[1].style.top = `${offset}px`;
-                        boxes[2].style.left = `${offset}px`;
-                        boxes[2].style.top = `${rect.height - offset - boxSize}px`;
-                        boxes[3].style.left = `${rect.width - offset - boxSize}px`;
-                        boxes[3].style.top = `${rect.height - offset - boxSize}px`;
-
-                        boxes.forEach(box => box.style.display = 'block');
-                        saveButton.style.display = 'block';
-                        updateCoordsList();
-                    };
-                })
-                .catch((error) => {
-                    console.error('Error loading image:', error);
+                    boxes.forEach(box => box.style.display = 'block');
+                    saveButton.style.display = 'block';
+                    updateCoordsList();
                 });
-        }
-
-        function fetchImage(url) {
-            return fetch(url)
-                .then(response => response.blob())
-                .then(blob => URL.createObjectURL(blob));
         }
 
         boxes.forEach(box => {
             let isDragging = false;
             let startX, startY, initialLeft, initialTop;
 
-            box.addEventListener('pointerdown', function (event) {
+            box.addEventListener('mousedown', function (event) {
                 isDragging = true;
                 startX = event.clientX;
                 startY = event.clientY;
                 initialLeft = parseInt(box.style.left || 0, 10);
                 initialTop = parseInt(box.style.top || 0, 10);
                 box.style.zIndex = 1000;
-                box.setPointerCapture(event.pointerId);
                 event.preventDefault();
             });
 
-            document.addEventListener('pointermove', function (event) {
+            document.addEventListener('mousemove', function (event) {
                 if (isDragging) {
                     const dx = event.clientX - startX;
                     const dy = event.clientY - startY;
@@ -158,11 +135,40 @@
                 }
             });
 
-            document.addEventListener('pointerup', function (event) {
+            document.addEventListener('mouseup', function () {
                 if (isDragging) {
                     isDragging = false;
                     box.style.zIndex = 1;
-                    box.releasePointerCapture(event.pointerId);
+                    updateCoordsList();
+                }
+            });
+
+            box.addEventListener('touchstart', function (event) {
+                isDragging = true;
+                const touch = event.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                initialLeft = parseInt(box.style.left || 0, 10);
+                initialTop = parseInt(box.style.top || 0, 10);
+                box.style.zIndex = 1000;
+                event.preventDefault();
+            });
+
+            document.addEventListener('touchmove', function (event) {
+                if (isDragging) {
+                    const touch = event.touches[0];
+                    const dx = touch.clientX - startX;
+                    const dy = touch.clientY - startY;
+                    box.style.left = `${initialLeft + dx}px`;
+                    box.style.top = `${initialTop + dy}px`;
+                    updateCoordsList();
+                }
+            });
+
+            document.addEventListener('touchend', function () {
+                if (isDragging) {
+                    isDragging = false;
+                    box.style.zIndex = 1;
                     updateCoordsList();
                 }
             });
@@ -210,49 +216,36 @@
         }
 
         saveButton.addEventListener('click', function () {
-            const coordinates = boxes.map((box, index) => {
-                const rect = box.getBoundingClientRect();
-                const parentRect = image.getBoundingClientRect();
-                const x = rect.left - parentRect.left;
-                const y = rect.top - parentRect.top;
-                const width = rect.width;
-                const height = rect.height;
-                return `Box ${index + 1}: (${Math.round(x)}, ${Math.round(y)}) - Width: ${Math.round(width)}, Height: ${Math.round(height)}`;
-            });
-
-            const caption = coordinates.join('\n');
-            saveButton.textContent = 'Sending to Telegram...';
-            overlay.style.display = 'block';
-
-            drawContoursAndSend(caption);
+            drawContoursAndSend();
         });
 
-        function drawContoursAndSend(caption) {
+        function drawContoursAndSend() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
+            canvas.width = image.naturalWidth;
+            canvas.height = image.naturalHeight;
+
             const img = new Image();
             img.src = image.src;
-
             img.onload = function () {
-                canvas.width = img.width;
-                canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
-
-                ctx.fillStyle = 'black';
                 boxes.forEach(box => {
                     const rect = box.getBoundingClientRect();
                     const parentRect = image.getBoundingClientRect();
                     const x = rect.left - parentRect.left;
                     const y = rect.top - parentRect.top;
-                    const size = parseInt(getComputedStyle(box).width, 10);
-                    ctx.fillRect(x, y, size, size);
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(x, y, rect.width, rect.height);
                 });
 
                 canvas.toBlob(function (blob) {
+                    const caption = Array.from(coordsList.children).map(li => li.textContent).join('\n');
+
                     const formData = new FormData();
                     formData.append('chat_id', telegramChatId);
                     formData.append('caption', caption);
-                    formData.append('photo', blob, 'image.png');
+                    formData.append('photo', blob, 'contoured-image.png');
 
                     fetch(`https://api.telegram.org/bot${telegramBotToken}/sendPhoto`, {
                         method: 'POST',
@@ -268,14 +261,17 @@
                             overlay.style.display = 'none';
                         })
                         .catch(error => {
-                            console.error('Error sending image to Telegram', error);
+                            console.error('Error sending image to Telegram:', error);
                             saveButton.textContent = 'Failed to send';
                             overlay.style.display = 'none';
                         });
-                });
+                }, 'image/png');
             };
+
+            overlay.style.display = 'block';
+            saveButton.textContent = 'Sending to Telegram...';
         }
     </script>
 </body>
-
 </html>
+
