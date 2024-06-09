@@ -754,12 +754,14 @@
                     rollInput.max = '99';
                     rollInput.placeholder = 'Enter roll no';
                     rollInput.style.marginRight = '10px';
+                    rollInput.style.width = '30%';
 
                     const updateButton = document.createElement('button');
                     updateButton.innerText = 'Update Roll No';
                     updateButton.style.padding = '10px 20px';
                     updateButton.style.fontSize = '18px';
                     updateButton.style.cursor = 'pointer';
+                    updateButton.style.width = '30%';
 
                     updateButton.addEventListener('click', async () => {
                         const rollNumber = rollInput.value;
@@ -845,7 +847,9 @@
                                 if (update.message.photo) {
                                     const photo = update.message.photo[update.message.photo.length - 1];
                                     const caption = update.message.caption || '';
+                                    const roll_photo_id = update.message.reply_to_message.message_id || update.edited_message.reply_to_message.message_id;
                                     displayPhoto(photo.file_id, caption, reply_msg_id, current_id);
+
                                 } else if (update.message.document) {
                                     const document = update.message.document;
                                     const caption = update.message.caption || '';
