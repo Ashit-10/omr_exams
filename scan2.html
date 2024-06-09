@@ -848,7 +848,7 @@
                                     const photo = update.message.photo[update.message.photo.length - 1];
                                     const caption = update.message.caption || '';
                                     const roll_photo_id = update.message.reply_to_message.message_id || update.edited_message.reply_to_message.message_id;
-                                    displayPhoto(photo.file_id, caption, reply_msg_id, current_id);
+                                    displayPhoto(photo.file_id, caption, reply_msg_id, roll_photo_id);
 
                                 } else if (update.message.document) {
                                     const document = update.message.document;
