@@ -20,10 +20,8 @@
             width: 50px;
             height: 50px;
             border: 3px solid #00f;
-            /* Brighter blue color */
             cursor: move;
             background-color: rgba(0, 0, 255, 0.2);
-            /* Light blue background */
         }
 
         @media (max-width: 600px) {
@@ -99,91 +97,72 @@
         const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001774957665';
 
-        // Check if filename parameter is provided in the URL
         const urlParams = new URLSearchParams(window.location.search);
         const filename = urlParams.get('filename');
         if (filename) {
-            image.src = filename;
-            image.style.display = 'block';
-            image.onload = function () {
-                const rect = image.getBoundingClientRect();
-                const offset = 20; // Offset to move the boxes inside the corners
-                const boxSize = parseInt(getComputedStyle(boxes[0]).width);
-                boxes[0].style.left = `${offset}px`;
-                boxes[0].style.top = `${offset}px`;
-                boxes[1].style.left = `${rect.width - offset - boxSize}px`;
-                boxes[1].style.top = `${offset}px`;
-                boxes[2].style.left = `${offset}px`;
-                boxes[2].style.top = `${rect.height - offset - boxSize}px`;
-                boxes[3].style.left = `${rect.width - offset - boxSize}px`;
-                boxes[3].style.top = `${rect.height - offset - boxSize}px`;
+            fetchImage(filename)
+                .then((blobUrl) => {
+                    image.src = blobUrl;
+                    image.style.display = 'block';
+                    image.onload = function () {
+                        const rect = image.getBoundingClientRect();
+                        const offset = 20;
+                        const boxSize = parseInt(getComputedStyle(boxes[0]).width);
+                        boxes[0].style.left = `${offset}px`;
+                        boxes[0].style.top = `${offset}px`;
+                        boxes[1].style.left = `${rect.width - offset - boxSize}px`;
+                        boxes[1].style.top = `${offset}px`;
+                        boxes[2].style.left = `${offset}px`;
+                        boxes[2].style.top = `${rect.height - offset - boxSize}px`;
+                        boxes[3].style.left = `${rect.width - offset - boxSize}px`;
+                        boxes[3].style.top = `${rect.height - offset - boxSize}px`;
 
-                boxes.forEach(box => box.style.display = 'block');
-                saveButton.style.display = 'block';
-                updateCoordsList(); // Initial update
-            };
+                        boxes.forEach(box => box.style.display = 'block');
+                        saveButton.style.display = 'block';
+                        updateCoordsList();
+                    };
+                })
+                .catch((error) => {
+                    console.error('Error loading image:', error);
+                });
+        }
+
+        function fetchImage(url) {
+            return fetch(url)
+                .then(response => response.blob())
+                .then(blob => URL.createObjectURL(blob));
         }
 
         boxes.forEach(box => {
             let isDragging = false;
             let startX, startY, initialLeft, initialTop;
 
-            // Mouse events for dragging
-            box.addEventListener('mousedown', function (event) {
+            box.addEventListener('pointerdown', function (event) {
                 isDragging = true;
                 startX = event.clientX;
                 startY = event.clientY;
                 initialLeft = parseInt(box.style.left || 0, 10);
                 initialTop = parseInt(box.style.top || 0, 10);
-                box.style.zIndex = 1000; // Bring the box to the top
-                event.preventDefault(); // Prevent image from moving
+                box.style.zIndex = 1000;
+                box.setPointerCapture(event.pointerId);
+                event.preventDefault();
             });
 
-            document.addEventListener('mousemove', function (event) {
+            document.addEventListener('pointermove', function (event) {
                 if (isDragging) {
                     const dx = event.clientX - startX;
                     const dy = event.clientY - startY;
                     box.style.left = `${initialLeft + dx}px`;
                     box.style.top = `${initialTop + dy}px`;
-                    updateCoordsList(); // Update coordinates while dragging
-                }
-            });
-
-            document.addEventListener('mouseup', function () {
-                if (isDragging) {
-                    isDragging = false;
-                    box.style.zIndex = 1; // Reset z-index
                     updateCoordsList();
                 }
             });
 
-            // Touch events for dragging on mobile devices
-            box.addEventListener('touchstart', function (event) {
-                isDragging = true;
-                const touch = event.touches[0];
-                startX = touch.clientX;
-                startY = touch.clientY;
-                initialLeft = parseInt(box.style.left || 0, 10);
-                initialTop = parseInt(box.style.top || 0, 10);
-                box.style.zIndex = 1000; // Bring the box to the top
-                event.preventDefault(); // Prevent image from moving
-            });
-
-            document.addEventListener('touchmove', function (event) {
-                if (isDragging) {
-                    const touch = event.touches[0];
-                    const dx = touch.clientX - startX;
-                    const dy = touch.clientY - startY;
-                    box.style.left = `${initialLeft + dx}px`;
-                    box.style.top = `${initialTop + dy}px`;
-                    updateCoordsList(); // Update coordinates while dragging
-                }
-            });
-
-            document.addEventListener('touchend', function () {
+            document.addEventListener('pointerup', function (event) {
                 if (isDragging) {
                     isDragging = false;
-                    box.style.zIndex = 1; // Reset z-index
+                    box.style.zIndex = 1;
+                    box.releasePointerCapture(event.pointerId);
                     updateCoordsList();
                 }
             });
@@ -268,6 +247,7 @@
                     const size = parseInt(getComputedStyle(box).width, 10);
                     ctx.fillRect(x, y, size, size);
                 });
+
 
                 canvas.toBlob(function (blob) {
                     const formData = new FormData();
