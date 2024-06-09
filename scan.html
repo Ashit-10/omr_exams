@@ -449,6 +449,8 @@
 
         let isSending = false;
         var send_id = 0;
+        var coordinates_reply_id = 0;
+
         const messagesDiv = document.getElementById('cameraContainer');
         const messagesDiv1 = document.getElementById('remove1');
         const messagesDiv2 = document.getElementById('remove2');
@@ -809,10 +811,11 @@
                         loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
                     }
                     if (caption.toLowerCase().includes("error")) {
+                        coordinates_reply_id = og_id;
                         const errorButton = document.createElement('button');
                         errorButton.innerText = 'Click here to select QR code manually';
                         errorButton.addEventListener('click', function () {
-                            window.location.href = 'test2.html?filename=' + encodeURIComponent(photoUrl);
+                            window.location.href = 'test2.html?filename=' + encodeURIComponent(photoUrl) + '&&replyid=' + encodeURIComponent(coordinates_reply_id);
                         });
                         messageElement.appendChild(errorButton);
                     }
