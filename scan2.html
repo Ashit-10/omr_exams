@@ -766,7 +766,9 @@
                         if (rollNumber && rollNumber <= 99 && rollNumber >= 0) {
                             updateButton.innerText = 'Updating...'; // Change button text
                             updateButton.disabled = true; // Disable button
-                            const replyToMessageId = current_id;
+                            // const replyToMessageId = current_id;
+                            console.log(og_id);
+                            console.log(rollNumber);
                             await fetch(`${TELEGRAM_API_URL}/editMessageCaption`, {
                         method: 'POST',
                         headers: {
