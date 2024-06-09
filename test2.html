@@ -63,11 +63,25 @@
             text-align: center;
             line-height: 100vh;
         }
+
+        #backButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #backButton:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 
 <body>
-    <h1>Upload Image and Select Coordinates</h1>
+    <h1>Select Coordinates on Image</h1>
     <div id="image-container">
         <img id="image" style="display: none;" alt="Uploaded Image">
         <div class="box" id="box1" style="display: none;"></div>
@@ -81,6 +95,7 @@
     </div>
     <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
     <div id="overlay">Waiting...</div>
+    <button id="backButton" style="display: none;" onclick="goBack()">Back</button>
 
     <script>
         const image = document.getElementById('image');
@@ -93,38 +108,36 @@
         ];
         const saveButton = document.getElementById('saveButton');
         const overlay = document.getElementById('overlay');
+        const backButton = document.getElementById('backButton');
 
         const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001774957665';
 
+        let lastSentMessageId;
+
         const urlParams = new URLSearchParams(window.location.search);
         const filename = urlParams.get('filename');
-// https%3A%2F%2Fapi.telegram.org%2Ffile%2Fbot1848113090%3AAAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0%2Fphotos%2Ffile_361.jpg
         if (filename) {
-            fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(filename)}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const base64Data = btoa(data.contents);
-                    image.src = `data:image/jpeg;base64,${base64Data}`;
-                    image.style.display = 'block';
-                    boxes.forEach(box => box.style.display = 'block');
-                    saveButton.style.display = 'block';
-                    updateCoordsList();
-                })
-                .catch(error => {
-                    console.error('Error fetching or displaying the image:', error);
-                    const errorMessage = document.createElement('div');
-                    errorMessage.textContent = 'An error occurred while displaying the image.';
-                    errorMessage.style.color = 'red';
-                    document.body.appendChild(errorMessage);
-                });
-        }
+            image.src = filename;
+            image.style.display = 'block';
+            image.onload = function () {
+                const rect = image.getBoundingClientRect();
+                const offset = 20;
+                const boxSize = parseInt(getComputedStyle(boxes[0]).width);
+                boxes[0].style.left = `${offset}px`;
+                boxes[0].style.top = `${offset}px`;
+                boxes[1].style.left = `${rect.width - offset - boxSize}px`;
+                boxes[1].style.top = `${offset}px`;
+                boxes[2].style.left = `${offset}px`;
+                boxes[2].style.top = `${rect.height - offset - boxSize}px`;
+                boxes[3].style.left = `${rect.width - offset - boxSize}px`;
+                boxes[3].style.top = `${rect.height - offset - boxSize}px`;
 
+                boxes.forEach(box => box.style.display = 'block');
+                saveButton.style.display = 'block';
+                updateCoordsList();
+            };
+        }
 
         boxes.forEach(box => {
             let isDragging = false;
@@ -231,60 +244,96 @@
         }
 
         saveButton.addEventListener('click', function () {
-            drawContoursAndSend();
+            const coordinates = boxes.map((box, index) => {
+                const rect = box.getBoundingClientRect();
+                const parentRect = image.getBoundingClientRect();
+                const x = rect.left - parentRect.left;
+                const y = rect.top - parentRect.top;
+                const width = rect.width;
+                const height = rect.height;
+                return [[Math.round(x), Math.round(y)], [Math.round(width), Math.round(height)]];
+            });
+
+            const message = JSON.stringify(coordinates);
+            saveButton.textContent = 'Sending to Telegram...';
+            overlay.style.display = 'block';
+
+            sendToTelegram(message);
         });
 
-        function drawContoursAndSend() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = image.naturalWidth;
-            canvas.height = image.naturalHeight;
+        function sendToTelegram(caption) {
+            const formData = new FormData();
+            formData.append('chat_id', telegramChatId);
+            formData.append('caption', caption);
+            formData.append('photo', image.src);
 
-            const img = new Image();
-            img.src = image.src;
-            img.onload = function () {
-                ctx.drawImage(img, 0, 0);
-                boxes.forEach(box => {
-                    const rect = box.getBoundingClientRect();
-                    const parentRect = image.getBoundingClientRect();
-                    const x = rect.left - parentRect.left;
-                    const y = rect.top - parentRect.top;
-                    ctx.strokeStyle = 'black';
-                    ctx.lineWidth = 3;
-                    ctx.strokeRect(x, y, rect.width, rect.height);
+            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendPhoto`, {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        saveButton.textContent = 'Sent successfully';
+                        lastSentMessageId = data.result.message_id;
+                        waitForTelegramResponse();
+                    } else {
+                        saveButton.textContent = 'Failed to send';
+                        overlay.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending image to Telegram', error);
+                    saveButton.textContent = 'Failed to send';
+                    overlay.style.display = 'none';
                 });
+        }
 
-                canvas.toBlob(function (blob) {
-                    const caption = Array.from(coordsList.children).map(li => li.textContent).join('\n');
-
-                    const formData = new FormData();
-                    formData.append('chat_id', telegramChatId);
-                    formData.append('caption', caption);
-                    formData.append('photo', blob, 'contoured-image.png');
-
-                    fetch(`https://api.telegram.org/bot${telegramBotToken}/sendPhoto`, {
-                        method: 'POST',
-                        body: formData,
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.ok) {
-                                saveButton.textContent = 'Sent successfully';
-                            } else {
-                                saveButton.textContent = 'Failed to send';
+        function waitForTelegramResponse() {
+            const checkResponse = setInterval(() => {
+                fetch(`https://api.telegram.org/bot${telegramBotToken}/getUpdates`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.result && data.result.length > 0) {
+                            const reply = data.result.find(
+                                update => update.message && update.message.reply_to_message && update.message.reply_to_message.message_id === lastSentMessageId
+                            );
+                            if (reply) {
+                                clearInterval(checkResponse);
+                                displayTelegramResponse(reply);
                             }
-                            overlay.style.display = 'none';
-                        })
-                        .catch(error => {
-                            console.error('Error sending image to Telegram:', error);
-                            saveButton.textContent = 'Failed to send';
-                            overlay.style.display = 'none';
-                        });
-                }, 'image/png');
-            };
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching updates from Telegram', error);
+                    });
+            }, 3000);
+        }
 
-            overlay.style.display = 'block';
-            saveButton.textContent = 'Sending to Telegram...';
+        function displayTelegramResponse(reply) {
+            const responseContainer = document.createElement('div');
+            if (reply.message.photo) {
+                const photo = reply.message.photo[reply.message.photo.length - 1];
+                const imageUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${photo.file_path}`;
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                responseContainer.appendChild(img);
+            } else if (reply.message.text) {
+                const text = document.createElement('p');
+                text.textContent = reply.message.text;
+                responseContainer.appendChild(text);
+            }
+            const caption = document.createElement('p');
+            caption.textContent = `Caption: ${reply.message.caption}`;
+            responseContainer.appendChild(caption);
+            document.body.appendChild(responseContainer);
+
+            backButton.style.display = 'block';
+            overlay.style.display = 'none';
+        }
+
+        function goBack() {
+            window.location.href = 'scan.html';
         }
     </script>
 </body>
