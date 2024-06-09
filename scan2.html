@@ -675,7 +675,7 @@
 
 
 
-        async function displayPhoto(fileId, caption = '', current_id, og_id) {
+        async function displayPhoto(fileId, caption = '', current_id, og_id, old_caption) {
             try {
                 const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
                 const data = await response.json();
@@ -761,27 +761,31 @@
                     updateButton.style.padding = '10px 20px';
                     updateButton.style.fontSize = '18px';
                     updateButton.style.cursor = 'pointer';
-                    updateButton.style.width = '40%';
+                    updateButton.style.width = '60%';
 
                     updateButton.addEventListener('click', async () => {
                         const rollNumber = rollInput.value;
                         if (rollNumber && rollNumber <= 99 && rollNumber >= 0) {
                             updateButton.innerText = 'Updating...'; // Change button text
-                            updateButton.disabled = true; // Disable button
-                            // const replyToMessageId = current_id;
-                            console.log(og_id);
-                            console.log(rollNumber);
-                            await fetch(`${TELEGRAM_API_URL}/editMessageCaption`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            chat_id: chatId,
-                            message_id: og_id,
-                            caption: rollNumber
-                        })
-                    });
+                            if (rollNumber == old_caption) {
+                                alert('Please enter a new roll number, different from old roll number!');
+                            } else {
+                                updateButton.disabled = true; // Disable button
+                                // const replyToMessageId = current_id;
+                                console.log(og_id);
+                                console.log(rollNumber);
+                                await fetch(`${TELEGRAM_API_URL}/editMessageCaption`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        chat_id: chatId,
+                                        message_id: og_id,
+                                        caption: rollNumber
+                                    })
+                                });
+                            }
                         } else {
                             alert('Please enter a valid roll number (0-99).');
                         }
@@ -840,6 +844,7 @@
                         if (update.message && update.message.reply_to_message && update.message.reply_to_message.photo) {
                             var current_id = update.message.reply_to_message.message_id;
                             var reply_msg_id = update.message.message_id;
+                            var old_caption = update.message.reply_to_message.caption;
 
                             if (current_id === send_id) {
                                 loadingIndicator.style.display = 'none';
@@ -847,7 +852,7 @@
                                 if (update.message.photo) {
                                     const photo = update.message.photo[update.message.photo.length - 1];
                                     const caption = update.message.caption || '';
-                                    displayPhoto(photo.file_id, caption, reply_msg_id, current_id);
+                                    displayPhoto(photo.file_id, caption, reply_msg_id, current_id, old_caption);
 
                                 } else if (update.message.document) {
                                     const document = update.message.document;
@@ -867,6 +872,8 @@
                         if (update.edited_message && update.edited_message.reply_to_message && update.edited_message.reply_to_message.photo) {
                             var current_id = update.edited_message.reply_to_message.message_id;
                             var recent_id = update.edited_message.message_id;
+                            var old_caption = update.edited_message.reply_to_message.caption;
+
 
                             if (current_id === send_id) {
                                 loadingIndicator.style.display = 'none';
@@ -874,7 +881,7 @@
                                 if (update.edited_message.photo) {
                                     const photo = update.edited_message.photo[update.edited_message.photo.length - 1];
                                     const caption = update.edited_message.caption || '';
-                                    displayPhoto(photo.file_id, caption, recent_id, current_id);
+                                    displayPhoto(photo.file_id, caption, recent_id, current_id, old_caption);
 
                                 } else if (update.edited_message.document) {
                                     const document = update.edited_message.document;
