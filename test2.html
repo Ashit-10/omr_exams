@@ -77,6 +77,10 @@
         #backButton:hover {
             background-color: #45a049;
         }
+
+        #reply-container {
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -96,6 +100,10 @@
     <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
     <div id="overlay">Waiting...</div>
     <button id="backButton" style="display: none;" onclick="goBack()">Back</button>
+    <div id="reply-container">
+        <h2>Replies:</h2>
+        <div id="replies"></div>
+    </div>
 
     <script>
         const image = document.getElementById('image');
@@ -109,6 +117,7 @@
         const saveButton = document.getElementById('saveButton');
         const overlay = document.getElementById('overlay');
         const backButton = document.getElementById('backButton');
+        const repliesContainer = document.getElementById('replies');
 
         const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001774957665';
@@ -253,16 +262,10 @@
                 const y = rect.top - parentRect.top;
                 const width = rect.width;
                 const height = rect.height;
-                return {
-                    index: index + 1,
-                    x: Math.round(x),
-                    y: Math.round(y),
-                    width: Math.round(width),
-                    height: Math.round(height)
-                };
+                return { index: index + 1, x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) };
             });
 
-            const messageText = coordinates.map(coord => `/coords Box ${coord.index}: (${coord.x}, ${coord.y}) - Width: ${coord.width}, Height: ${coord.height}`).join('\n');
+            const messageText = coordinates.map(coord => `Box ${coord.index}: (${coord.x}, ${coord.y}) - Width: ${coord.width}, Height: ${coord.height}`).join('\n');
 
             overlay.style.display = 'block';
             sendMessageToTelegram(messageText);
@@ -288,6 +291,7 @@
                     if (data.ok) {
                         lastSentMessageId = data.result.message_id;
                         alert('Coordinates sent successfully!');
+                        waitForTelegramResponse();
                     } else {
                         alert('Error sending coordinates: ' + data.description);
                     }
@@ -298,6 +302,50 @@
                     alert('Error sending coordinates: ' + error.message);
                     overlay.style.display = 'none';
                 });
+        }
+
+        function waitForTelegramResponse() {
+            const checkResponse = setInterval(() => {
+                fetch(`https://api.telegram.org/bot${telegramBotToken}/getUpdates`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.result && data.result.length > 0) {
+                            const reply = data.result.find(
+                                update => update.message && update.message.reply_to_message && update.message.reply_to_message.message_id === lastSentMessageId
+                            );
+                            if (reply) {
+                                clearInterval(checkResponse);
+                                displayTelegramResponse(reply);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching updates from Telegram', error);
+                    });
+            }, 3000);
+        }
+
+        function displayTelegramResponse(reply) {
+            const responseContainer = document.createElement('div');
+            if (reply.message.photo) {
+                const photoFileId = reply.message.photo[reply.message.photo.length - 1].file_id;
+                fetch(`https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoFileId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const imageUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${data.result.file_path}`;
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        responseContainer.appendChild(img);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching photo from Telegram', error);
+                    });
+            } else if (reply.message.text) {
+                const text = document.createElement('p');
+                text.textContent = reply.message.text;
+                responseContainer.appendChild(text);
+            }
+            repliesContainer.appendChild(responseContainer);
         }
 
         function goBack() {
