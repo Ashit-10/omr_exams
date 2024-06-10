@@ -128,11 +128,13 @@
     image.onload = function () {
         if (image.height > image.width) {
             image.style.transform = 'rotate(-90deg)';
-            image.style.transformOrigin = 'center';
-
-            // Adjust dimensions for CSS rotation
-            image.style.width = `${image.height}px`;
-            image.style.height = `${image.width}px`;
+                    imageContainer.style.width = `${image.height}px`;
+                    imageContainer.style.height = `${image.width}px`;
+                    image.style.width = '100%'; // Fit the rotated image within the container
+                    image.style.height = 'auto'; // Maintain aspect ratio
+                    image.style.top = '50%';
+                    image.style.left = '50%';
+                    image.style.transform = 'rotate(-90deg) translate(-50%, -50%)';
         }
 
         const rect = image.getBoundingClientRect();
