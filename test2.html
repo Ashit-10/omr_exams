@@ -122,46 +122,38 @@
         const replyId = urlParams.get('replyid');
 
         if (filename) {
-            image.src = filename;
-            image.style.display = 'block';
+    image.src = filename;
+    image.style.display = 'block';
 
-            image.onload = function () {
-                if (image.height > image.width) {
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
+    image.onload = function () {
+        if (image.height > image.width) {
+            image.style.transform = 'rotate(-90deg)';
+            image.style.transformOrigin = 'center';
 
-                    // // Set canvas dimensions for the rotated image
-                    canvas.width = image.height;
-                    canvas.height = image.width;
-
-                    // // Rotate the canvas context
-                    context.translate(canvas.width / 2, canvas.height / 2);
-                    context.rotate(-Math.PI / 2);
-                    context.drawImage(image, -image.width / 2, -image.height / 2);
-
-                    // // Update the image source to the rotated canvas
-                    // image.src = canvas.toDataURL();
-                    // console.log(canvas.toDataURL());
-                    console.log("hiiiiiiiiiiii");
-                }
-                const rect = image.getBoundingClientRect();
-                const offset = 30;
-                const boxSize = parseInt(getComputedStyle(boxes[0]).width);
-                boxes[0].style.left = `${offset}px`;
-                boxes[0].style.top = `${offset}px`;
-                boxes[1].style.left = `${rect.width - offset - boxSize}px`;
-                boxes[1].style.top = `${offset}px`;
-                boxes[2].style.left = `${offset}px`;
-                boxes[2].style.top = `${rect.height - offset - boxSize}px`;
-                boxes[3].style.left = `${rect.width - offset - boxSize}px`;
-                boxes[3].style.top = `${rect.height - offset - boxSize}px`;
-
-                boxes.forEach(box => box.style.display = 'block');
-                saveButton.style.display = 'block';
-                updateCoordsList();
-            };
+            // Adjust dimensions for CSS rotation
+            image.style.width = `${image.height}px`;
+            image.style.height = `${image.width}px`;
         }
 
+        const rect = image.getBoundingClientRect();
+        const offset = 30;
+        const boxSize = parseInt(getComputedStyle(boxes[0]).width);
+        boxes[0].style.left = `${offset}px`;
+        boxes[0].style.top = `${offset}px`;
+        boxes[1].style.left = `${rect.width - offset - boxSize}px`;
+        boxes[1].style.top = `${offset}px`;
+        boxes[2].style.left = `${offset}px`;
+        boxes[2].style.top = `${rect.height - offset - boxSize}px`;
+        boxes[3].style.left = `${rect.width - offset - boxSize}px`;
+        boxes[3].style.top = `${rect.height - offset - boxSize}px`;
+
+        boxes.forEach(box => box.style.display = 'block');
+        saveButton.style.display = 'block';
+        updateCoordsList();
+    };
+}
+
+                     
         boxes.forEach(box => {
             let isDragging = false;
             let startX, startY, initialLeft, initialTop;
