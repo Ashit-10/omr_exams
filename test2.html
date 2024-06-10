@@ -7,18 +7,12 @@
     <title>Image Box Selector</title>
     <style>
         #image-container {
-            width: 100vw;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
         }
-#image {
-        max-width: 100vw;
-        height: auto;
-        transform-origin: center center;
-    }
-        #image-container img {
+
+        #image {
             max-width: 100%;
         }
 
@@ -106,6 +100,7 @@
 
 
     <script>
+        const imageContainer = document.getElementById('image-container');
         const image = document.getElementById('image');
         const coordsList = document.getElementById('coordsList');
         const boxes = [
@@ -129,34 +124,42 @@
         const replyId = urlParams.get('replyid');
 
         if (filename) {
-    image.src = filename;
-    image.style.display = 'block';
+            image.src = filename;
+            image.style.display = 'inline';
 
-    image.onload = function () {
-        if (image.height > image.width) {
-            image.style.transform = 'rotate(-90deg)';
-            
+            image.onload = function () {
+                if (image.height > image.width) {
+                    image.style.transform = 'rotate(-90deg)';
+                    image.style.transformOrigin = '50% 25%';
+                    console.log(image.height, image.width);
+
+                    // Adjust dimensions for CSS rotation
+                    image.style.height = `${image.width}px`;
+                    // image.style.width = `${image.height}px`;
+
+imageContainer.style.maxWidth = `${image.height}px`;
+
+                    console.log(image.height, image.width);
+
+                }
+                const rect = image.getBoundingClientRect();
+                const offset = 30;
+                const boxSize = parseInt(getComputedStyle(boxes[0]).width);
+                boxes[0].style.left = `${offset}px`;
+                boxes[0].style.top = `${offset}px`;
+                boxes[1].style.left = `${rect.width - offset - boxSize}px`;
+                boxes[1].style.top = `${offset}px`;
+                boxes[2].style.left = `${offset}px`;
+                boxes[2].style.top = `${rect.height - offset - boxSize}px`;
+                boxes[3].style.left = `${rect.width - offset - boxSize}px`;
+                boxes[3].style.top = `${rect.height - offset - boxSize}px`;
+
+                boxes.forEach(box => box.style.display = 'block');
+                saveButton.style.display = 'block';
+                updateCoordsList();
+            };
         }
 
-        const rect = image.getBoundingClientRect();
-        const offset = 30;
-        const boxSize = parseInt(getComputedStyle(boxes[0]).width);
-        boxes[0].style.left = `${offset}px`;
-        boxes[0].style.top = `${offset}px`;
-        boxes[1].style.left = `${rect.width - offset - boxSize}px`;
-        boxes[1].style.top = `${offset}px`;
-        boxes[2].style.left = `${offset}px`;
-        boxes[2].style.top = `${rect.height - offset - boxSize}px`;
-        boxes[3].style.left = `${rect.width - offset - boxSize}px`;
-        boxes[3].style.top = `${rect.height - offset - boxSize}px`;
-
-        boxes.forEach(box => box.style.display = 'block');
-        saveButton.style.display = 'block';
-        updateCoordsList();
-    };
-}
-
-                     
         boxes.forEach(box => {
             let isDragging = false;
             let startX, startY, initialLeft, initialTop;
