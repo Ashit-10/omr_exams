@@ -7,10 +7,17 @@
     <title>Image Box Selector</title>
     <style>
         #image-container {
-            position: relative;
-            display: inline-block;
+            width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
         }
-
+#image {
+        max-width: 100vw;
+        height: auto;
+        transform-origin: center center;
+    }
         #image-container img {
             max-width: 100%;
         }
@@ -128,13 +135,7 @@
     image.onload = function () {
         if (image.height > image.width) {
             image.style.transform = 'rotate(-90deg)';
-            image.style.transformOrigin = 'center center';
-          image.style.width = `${image.width}px`; // Use height as width
-            image.style.height = `${image.height}px`; // Use width as height
             
-            // Make sure the image fits within the viewport
-            image.style.maxWidth = '100vh'; // Fit the rotated image within the viewport height
-                    
         }
 
         const rect = image.getBoundingClientRect();
