@@ -450,6 +450,7 @@
         let isSending = false;
         var send_id = 0;
         var coordinates_reply_id = 0;
+        let captured_photo;
 
         const messagesDiv = document.getElementById('cameraContainer');
         const messagesDiv1 = document.getElementById('remove1');
@@ -477,6 +478,7 @@
             if (file) {
                 const formData = new FormData();
                 formData.append('photo', file);
+
                 // Append caption to FormData
                 var caption = document.getElementById('rollNumberInput').value;
                 formData.append('caption', caption);
@@ -505,7 +507,15 @@
 
                         // Display the photo sent by the bot
                         send_id = data.result.message_id;
-
+                        photo_file_id = data.result.photo[data.result.photo.length - 1].file_id
+                        // console.log(photo_file_id);
+                        fetch(`${TELEGRAM_API_URL}/getFile?file_id=${photo_file_id}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                captured_photo = `https://api.telegram.org/file/bot${botToken}/${data.result.file_path}`
+                                // console.log(captured_photo);
+                            }
+                            );
                         // Show "Processing..." message
                         displayMessage('Processing... It may take 3-5 seconds');
                         // Add spinning circle loading indicator
@@ -815,7 +825,7 @@
                         const errorButton = document.createElement('button');
                         errorButton.innerText = 'Click here to select QR code manually';
                         errorButton.addEventListener('click', function () {
-                            window.location.href = 'test2.html?filename=' + encodeURIComponent(photoUrl) + '&&replyid=' + encodeURIComponent(coordinates_reply_id);
+                            window.location.href = 'test2.html?filename=' + encodeURIComponent(captured_photo) + '&&replyid=' + encodeURIComponent(coordinates_reply_id);
                         });
                         messageElement.appendChild(errorButton);
                     }
@@ -996,6 +1006,15 @@
 
                             // Display the photo sent by the bot
                             send_id = data.result.message_id;
+                            photo_file_id = data.result.photo[data.result.photo.length - 1].file_id
+                            // console.log(photo_file_id);
+                            fetch(`${TELEGRAM_API_URL}/getFile?file_id=${photo_file_id}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    captured_photo = `https://api.telegram.org/file/bot${botToken}/${data.result.file_path}`
+                                    // console.log(captured_photo);
+                                }
+                                );
 
                             // Show "Processing..." message
                             displayMessage('Processing...  It may take 4-5 seconds');
