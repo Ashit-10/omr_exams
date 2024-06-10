@@ -242,7 +242,7 @@
                 const width = rect.width;
                 const height = rect.height;
                 const li = document.createElement('li');
-                li.textContent = `Box ${index + 1}: (${Math.round(x)}, ${Math.round(y)}) - Width: ${Math.round(width)}, Height: ${Math.round(height)}`;
+                li.textContent = `Box ${index + 1}: [${Math.round(x)}, ${Math.round(y)}] - Width: ${Math.round(width)}, Height: ${Math.round(height)}`;
                 coordsList.appendChild(li);
             });
         }
@@ -258,17 +258,21 @@
                 return { index: index + 1, x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) };
             });
 
+            const imageWidth = Math.round(image.clientWidth);
+            const imageHeight = Math.round(image.clientHeight);
+
             const messageText = coordinates.map(coord => `[[${coord.x}, ${coord.y}], [${coord.width}, ${coord.height}]]`).join(',');
+            const message = `/coords [${messageText}] [Image: ${imageWidth}x${imageHeight}]`;
 
             overlay.style.display = 'block';
-            sendMessageToTelegram(messageText);
+            sendMessageToTelegram(message);
         });
 
         function sendMessageToTelegram(messageText) {
             const telegramApiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
             const params = {
                 chat_id: telegramChatId,
-                text: '/coords [' + messageText + ']',
+                text: messageText,
                 reply_to_message_id: replyId
             };
 
@@ -283,14 +287,12 @@
                 .then(data => {
                     if (data.ok) {
                         lastSentMessageId = data.result.message_id;
-                        // alert('Coordinates sent successfully!');
-                        overlay.style.textContent = 'Waiting ...';
+                        overlay.textContent = 'Waiting ...';
 
                         waitForTelegramResponse();
                     } else {
                         alert('Error sending coordinates: ' + data.description);
                         overlay.style.display = 'none';
-
                     }
                 })
                 .catch(error => {
