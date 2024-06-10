@@ -262,7 +262,7 @@
             const imageHeight = Math.round(image.clientHeight);
 
             const messageText = coordinates.map(coord => `[[${coord.x}, ${coord.y}], [${coord.width}, ${coord.height}]]`).join(',');
-            const message = `/coords [${messageText}] [Image: ${imageWidth}x${imageHeight}]`;
+            const message = `/coords [${messageText}] [Image: [${imageWidth},${imageHeight}]`;
 
             overlay.style.display = 'block';
             sendMessageToTelegram(message);
@@ -363,9 +363,10 @@
 
             // Add back button
             const backButton = document.createElement('button');
-            backButton.textContent = 'Back';
+            backButton.innerText = 'Back';
             backButton.style.position = 'absolute';
             backButton.style.left = '50%';
+            backButton.style.transform = 'translate(-50%, -50%)';
             backButton.addEventListener('click', goBack);
             document.body.appendChild(backButton);
         }
