@@ -34,7 +34,8 @@
         }
 
         #coordinates {
-            margin-top: 10px;
+            margin-top: -40%;
+            /* position: sticky; */
         }
 
         #saveButton {
@@ -93,8 +94,9 @@
     <div id="coordinates">
         <h2>Selected Coordinates:</h2>
         <ul id="coordsList"></ul>
-    </div>
     <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
+
+    </div>
     <div id="overlay">Sending ...</div>
     <button id="backButton" style="display: none;" onclick="goBack()">Back</button>
 
@@ -137,11 +139,12 @@
                     image.style.height = `${image.width}px`;
                     // image.style.width = `${image.height}px`;
 
-imageContainer.style.maxWidth = `${image.height}px`;
+                    imageContainer.style.maxHeight = `${image.width}px`;
 
                     console.log(image.height, image.width);
 
                 }
+
                 const rect = image.getBoundingClientRect();
                 const offset = 30;
                 const boxSize = parseInt(getComputedStyle(boxes[0]).width);
