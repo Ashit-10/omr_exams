@@ -718,6 +718,8 @@
                             overlayButton.style.fontSize = '18px';
                             overlayButton.style.cursor = 'pointer';
                             overlayButton.style.zIndex = '1000'; // Ensure the button is on top
+                            overlayButton.style.display = 'none';
+                            overlayButton.style.display = 'inline';
 
                             const savespinner = document.createElement('div');
                             savespinner.id = 'save-spinner';
@@ -772,7 +774,8 @@
                     updateButton.style.fontSize = '18px';
                     updateButton.style.cursor = 'pointer';
                     updateButton.style.width = '60%';
-
+                    updateButton.style.display = 'none';
+                    updateButton.style.display = 'inline';
                     updateButton.addEventListener('click', async () => {
                         const rollNumber = rollInput.value;
                         if (rollNumber && rollNumber <= 99 && rollNumber > 0) {
