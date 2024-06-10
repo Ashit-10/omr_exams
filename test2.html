@@ -125,23 +125,44 @@
             image.src = filename;
             image.style.display = 'block';
             image.onload = function () {
-                const rect = image.getBoundingClientRect();
-                const offset = 20;
-                const boxSize = parseInt(getComputedStyle(boxes[0]).width);
-                boxes[0].style.left = `${offset}px`;
-                boxes[0].style.top = `${offset}px`;
-                boxes[1].style.left = `${rect.width - offset - boxSize}px`;
-                boxes[1].style.top = `${offset}px`;
-                boxes[2].style.left = `${offset}px`;
-                boxes[2].style.top = `${rect.height - offset - boxSize}px`;
-                boxes[3].style.left = `${rect.width - offset - boxSize}px`;
-                boxes[3].style.top = `${rect.height - offset - boxSize}px`;
+                if (image.height > image.width) {
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
 
-                boxes.forEach(box => box.style.display = 'block');
-                saveButton.style.display = 'block';
-                updateCoordsList();
+                    // Set canvas dimensions for the rotated image
+                    canvas.width = image.height;
+                    canvas.height = image.width;
+
+                    // Rotate the canvas context
+                    context.translate(canvas.width / 2, canvas.height / 2);
+                    context.rotate(-Math.PI / 2);
+                    context.drawImage(image, -image.width / 2, -image.height / 2);
+
+                    // Update the image source to the rotated canvas
+                    image.src = canvas.toDataURL();
+                }
+
+                // Wait for the rotated image to load
+                image.onload = function () {
+                    const rect = image.getBoundingClientRect();
+                    const offset = 30;
+                    const boxSize = parseInt(getComputedStyle(boxes[0]).width);
+                    boxes[0].style.left = `${offset}px`;
+                    boxes[0].style.top = `${offset}px`;
+                    boxes[1].style.left = `${rect.width - offset - boxSize}px`;
+                    boxes[1].style.top = `${offset}px`;
+                    boxes[2].style.left = `${offset}px`;
+                    boxes[2].style.top = `${rect.height - offset - boxSize}px`;
+                    boxes[3].style.left = `${rect.width - offset - boxSize}px`;
+                    boxes[3].style.top = `${rect.height - offset - boxSize}px`;
+
+                    boxes.forEach(box => box.style.display = 'block');
+                    saveButton.style.display = 'block';
+                    updateCoordsList();
+                };
             };
         }
+
 
         boxes.forEach(box => {
             let isDragging = false;
