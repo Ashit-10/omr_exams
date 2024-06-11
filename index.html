@@ -28,9 +28,7 @@
             font-size: 3em;
             margin-bottom: 0.5em;
         }
-
-        .results-button,
-        .esc-button {
+        .next-page-button {
             background-color: #FFFFFF;
             color: #FF6F61;
             padding: 15px 30px;
@@ -42,8 +40,7 @@
             margin: 10px 0;
         }
 
-        .results-button:hover,
-        .esc-button:hover {
+        .next-page-button:hover {
             background-color: #FFCCBC;
         }
 
@@ -193,8 +190,8 @@
     </div>
     <div class="container" onclick="toggleDropdownBody()">
         <h1>OMR Exam Results</h1>
-        <button class="results-button" onclick="location.href='mvm.html'">MVM, Ankurabandha</button>
-        <button class="esc-button" onclick="location.href='wsc.html'">WSC, Siko</button>
+        <button class="next-page-button" onclick="location.href='mvm.html'">MVM, Ankurabandha</button>
+        <button class="next-page-button" onclick="location.href='wsc.html'">WSC, Siko</button>
     </div>
     <div class="floating-objects">
         <span style="left: 10%; animation-delay: 0s;"></span>
@@ -222,6 +219,10 @@
         }
         function changeColor(color1, color2) {
             document.body.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
+            var dropdownContent = document.getElementById("dropdown-content");
+            dropdownContent.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
+            var nextPageButton = document.getElementById("next-page-button");
+            nextPageButton.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
         }
     </script>
 </body>
