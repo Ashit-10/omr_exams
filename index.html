@@ -190,8 +190,8 @@
     </div>
     <div class="container" onclick="toggleDropdownBody()">
         <h1>OMR Exam Results</h1>
-        <button class="next-page-button" onclick="location.href='mvm.html'">MVM, Ankurabandha</button>
-        <button class="next-page-button" onclick="location.href='wsc.html'">WSC, Siko</button>
+        <button id="nextbutton" class="next-page-button" onclick="location.href='mvm.html'">MVM, Ankurabandha</button>
+        <button id="nextbutton" class="next-page-button" onclick="location.href='wsc.html'">WSC, Siko</button>
     </div>
     <div class="floating-objects">
         <span style="left: 10%; animation-delay: 0s;"></span>
@@ -219,9 +219,9 @@
         }
         function changeColor(color1, color2) {
             document.body.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
-            var dropdownContent = document.getElementById("dropdown-content");
+            var dropdownContent = document.getElementById("dropdown");
             dropdownContent.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
-            var nextPageButton = document.getElementById("next-page-button");
+            var nextPageButton = document.getElementById("nextbutton");
             nextPageButton.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
         }
     </script>
