@@ -28,7 +28,7 @@
             font-size: 3em;
             margin-bottom: 0.5em;
         }
-        #nextbutton {
+        .next-page-button {
             background-color: #FFFFFF;
             color: #FF6F61;
             padding: 15px 30px;
@@ -190,8 +190,8 @@
     </div>
     <div class="container" onclick="toggleDropdownBody()">
         <h1>OMR Exam Results</h1>
-        <button id="nextbutton" class="next-page-button" onclick="location.href='mvm.html'">MVM, Ankurabandha</button>
-        <button id="nextbutton" class="next-page-button" onclick="location.href='wsc.html'">WSC, Siko</button>
+        <button id="nextbutton1" class="next-page-button" onclick="location.href='mvm.html'">MVM, Ankurabandha</button>
+        <button id="nextbutton2" class="next-page-button" onclick="location.href='wsc.html'">WSC, Siko</button>
     </div>
     <div class="floating-objects">
         <span style="left: 10%; animation-delay: 0s;"></span>
@@ -221,8 +221,10 @@
             document.body.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
             var dropdownContent = document.getElementById("dropdown");
             dropdownContent.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
-            var nextPageButton = document.getElementById("nextbutton");
-            nextPageButton.style.color = `${color1}`;
+            var nextPageButton1 = document.getElementById("nextbutton1");
+            nextPageButton1.style.color = `${color1}`;
+            var nextPageButton2 = document.getElementById("nextbutton2");
+            nextPageButton2.style.color = `${color1}`;
         }
     </script>
 </body>
