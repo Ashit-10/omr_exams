@@ -99,13 +99,18 @@
             margin: 6px 0;
             cursor: pointer;
         }
-
+        .drop-div-bar {
+            /* width: 200px; */
+            height: 1px;
+            background-color: white;
+            margin: 6px 0;
+        }
         .dropdown-content {
             display: none;
             position: absolute;
             right: 0;
             background-color: #FF6F61;
-            border-radius: 5px;
+            border-radius: 15px;
             overflow: hidden;
             box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
         }
@@ -122,51 +127,16 @@
         .dropdown-content a:hover {
             background-color: #DE4313;
         }
-
-        .color-options {
-            position: absolute;
-            left: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .color-option {
-            cursor: pointer;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 50%;
-            width: 10px;
-            height: 10px;
-        }
-        .color-option.red {background-color: #FF6F61;}
-        .color-option.green {background-color: #108513;}
-        .color-option.blue {background-color: #0d8df5;}
-        .color-option.yellow {background-color: #FFC107;}
-        .color-option.purple {background-color: #d216f3;}
-        .color-option.orange {background-color: #FF9800;}
-        .color-option.pink {background-color: #ff00bf;}
-        .color-option.spider {background-color: #f32424;}
-        .color-option:hover {opacity: 0.7;}
     </style>
 </head>
 <body>
-    <div class="color-options">
-        <div class="color-option red" onclick="changeColor('#FF6F61', '#4814a8')"></div>
-        <div class="color-option green" onclick="changeColor('#108513', '#3d2b8d')"></div>
-        <div class="color-option blue" onclick="changeColor('#0d8df5', '#f50d0d')"></div>
-        <div class="color-option yellow" onclick="changeColor('#FFC107', '#ff0707')"></div>
-        <div class="color-option purple" onclick="changeColor('#d216f3', '#1cec09')"></div>
-        <div class="color-option orange" onclick="changeColor('#FF9800', '#0011ff')"></div>
-        <div class="color-option pink" onclick="changeColor('#ff00bf', '#EF6C00')"></div>
-        <div class="color-option spider" onclick="changeColor('#f32424', '#0f0bf8')"></div>
-    </div>
     <div class="menu" onclick="toggleDropdown()">
         <div class="menu-bar"></div>
         <div class="menu-bar"></div>
         <div class="menu-bar"></div>
         <div id="dropdown" class="dropdown-content">
             <a href="names.html">JSON Roll Data</a>
+            <div class="drop-div-bar"></div>
             <a href="scan.html">Scan OMR Sheet</a>
         </div>
     </div>
@@ -208,6 +178,29 @@
             var nextPageButton2 = document.getElementById("nextbutton2");
             nextPageButton2.style.color = `${color1}`;
         }
+
+        // Array of color pairs
+        const colors = [
+            ['#FF6F61', '#4814a8'],
+            ['#108513', '#3d2b8d'],
+            ['#0d8df5', '#f50d0d'],
+            ['#FFC107', '#ff0707'],
+            ['#d216f3', '#1cec09'],
+            ['#FF9800', '#0011ff'],
+            ['#ff00bf', '#EF6C00'],
+            ['#f32424', '#0f0bf8']
+        ];
+        let currentColorIndex = 0;
+
+        // Function to cycle through colors
+        function cycleColors() {
+            const [color1, color2] = colors[currentColorIndex];
+            changeColor(color1, color2);
+            currentColorIndex = (currentColorIndex + 1) % colors.length;
+        }
+
+        // Start cycling colors every 5 seconds
+        setInterval(cycleColors, 3000);
     </script>
 </body>
 
