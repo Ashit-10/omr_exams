@@ -10,7 +10,7 @@
             margin: 0;
             font-family: Arial, sans-serif;
             overflow: hidden;
-            background: linear-gradient(135deg, #FF6F61, #DE4313);
+            background: linear-gradient(135deg, #f32424, #0f0bf8);
             color: white;
             transition: background 0.5s;
         }
@@ -139,45 +139,27 @@
             width: 10px;
             height: 10px;
         }
-
-        .color-option.red {
-            background-color: #FF6F61;
-        }
-
-        .color-option.green {
-            background-color: #4CAF50;
-        }
-
-        .color-option.blue {
-            background-color: #2196F3;
-        }
-
-        .color-option.yellow {
-            background-color: #FFC107;
-        }
-
-        .color-option.purple {
-            background-color: #9C27B0;
-        }
-
-        .color-option.orange {
-            background-color: #FF9800;
-        }
-
-        .color-option:hover {
-            opacity: 0.7;
-        }
+        .color-option.red {background-color: #FF6F61;}
+        .color-option.green {background-color: #108513;}
+        .color-option.blue {background-color: #0d8df5;}
+        .color-option.yellow {background-color: #FFC107;}
+        .color-option.purple {background-color: #d216f3;}
+        .color-option.orange {background-color: #FF9800;}
+        .color-option.pink {background-color: #ff00bf;}
+        .color-option.spider {background-color: #f32424;}
+        .color-option:hover {opacity: 0.7;}
     </style>
 </head>
-
 <body>
     <div class="color-options">
-        <div class="color-option red" onclick="changeColor('#FF6F61', '#DE4313')"></div>
-        <div class="color-option green" onclick="changeColor('#4CAF50', '#2E7D32')"></div>
-        <div class="color-option blue" onclick="changeColor('#2196F3', '#1565C0')"></div>
-        <div class="color-option yellow" onclick="changeColor('#FFC107', '#FFA000')"></div>
-        <div class="color-option purple" onclick="changeColor('#9C27B0', '#6A1B9A')"></div>
-        <div class="color-option orange" onclick="changeColor('#FF9800', '#EF6C00')"></div>
+        <div class="color-option red" onclick="changeColor('#FF6F61', '#4814a8')"></div>
+        <div class="color-option green" onclick="changeColor('#108513', '#3d2b8d')"></div>
+        <div class="color-option blue" onclick="changeColor('#0d8df5', '#f50d0d')"></div>
+        <div class="color-option yellow" onclick="changeColor('#FFC107', '#ff0707')"></div>
+        <div class="color-option purple" onclick="changeColor('#d216f3', '#1cec09')"></div>
+        <div class="color-option orange" onclick="changeColor('#FF9800', '#0011ff')"></div>
+        <div class="color-option pink" onclick="changeColor('#ff00bf', '#EF6C00')"></div>
+        <div class="color-option spider" onclick="changeColor('#f32424', '#0f0bf8')"></div>
     </div>
     <div class="menu" onclick="toggleDropdown()">
         <div class="menu-bar"></div>
