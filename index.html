@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,7 +29,8 @@
             margin-bottom: 0.5em;
         }
 
-        .results-button, .esc-button {
+        .results-button,
+        .esc-button {
             background-color: #FFFFFF;
             color: #FF6F61;
             padding: 15px 30px;
@@ -40,7 +42,8 @@
             margin: 10px 0;
         }
 
-        .results-button:hover, .esc-button:hover {
+        .results-button:hover,
+        .esc-button:hover {
             background-color: #FFCCBC;
         }
 
@@ -69,6 +72,7 @@
                 transform: translateY(0) rotate(0deg);
                 opacity: 1;
             }
+
             100% {
                 transform: translateY(-1000px) rotate(720deg);
                 opacity: 0;
@@ -106,7 +110,7 @@
             background-color: #FF6F61;
             border-radius: 5px;
             overflow: hidden;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
         }
 
         .dropdown-content a {
@@ -168,6 +172,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="color-options">
         <div class="color-option red" onclick="changeColor('#FF6F61', '#DE4313')"></div>
@@ -186,7 +191,7 @@
             <a href="scan.html">Scan OMR Sheet</a>
         </div>
     </div>
-    <div class="container">
+    <div class="container" onclick="toggleDropdownBody()">
         <h1>OMR Exam Results</h1>
         <button class="results-button" onclick="location.href='mvm.html'">MVM, Ankurabandha</button>
         <button class="esc-button" onclick="location.href='wsc.html'">WSC, Siko</button>
@@ -211,10 +216,14 @@
                 dropdown.style.display = "block";
             }
         }
-
+        function toggleDropdownBody() {
+            var dropdown = document.getElementById("dropdown");
+            dropdown.style.display = "none";
+        }
         function changeColor(color1, color2) {
             document.body.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
         }
     </script>
 </body>
+
 </html>
