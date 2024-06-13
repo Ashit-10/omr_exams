@@ -164,11 +164,13 @@
     <h4> (Drag each arraw to corner points of the QR code boxes)</h4>
     <div id="image-container">
         <img id="image" style="display: none;" alt="Uploaded Image">
+        <canvas id="canvas" style="position: absolute; top: 0; left: 0;"></canvas>
         <div class="arrow" id="arrow1" style="display: none;"></div>
         <div class="arrow" id="arrow2" style="display: none;"></div>
         <div class="arrow" id="arrow3" style="display: none;"></div>
         <div class="arrow" id="arrow4" style="display: none;"></div>
     </div>
+
     <div id="coordinates">
         <h2>Selected Coordinates:</h2>
         <ul id="coordsList"></ul>
@@ -181,6 +183,7 @@
     <script>
         const imageContainer = document.getElementById('image-container');
         const image = document.getElementById('image');
+        const canvas = document.getElementById('canvas');
         const coordsList = document.getElementById('coordsList');
         const arrows = [
             document.getElementById('arrow1'),
@@ -191,12 +194,10 @@
         const saveButton = document.getElementById('saveButton');
         const overlay = document.getElementById('overlay');
         const backButton = document.getElementById('backButton');
-        const repliesContainer = document.getElementById('replies');
+        const ctx = canvas.getContext('2d');
 
-        const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
-        const telegramChatId = '-1001774957665';
-
-        let lastSentMessageId;
+        const telegramBotToken = 'YOUR_TELEGRAM_BOT_TOKEN';
+        const telegramChatId = 'YOUR_TELEGRAM_CHAT_ID';
 
         const urlParams = new URLSearchParams(window.location.search);
         const filename = urlParams.get('filename');
@@ -210,16 +211,10 @@
                 if (image.height > image.width) {
                     image.style.transform = 'rotate(-90deg)';
                     image.style.transformOrigin = '50% 25%';
-                    console.log(image.height, image.width);
 
                     // Adjust dimensions for CSS rotation
                     image.style.height = `${image.width}px`;
-                    // image.style.width = `${image.height}px`;
-
                     imageContainer.style.maxHeight = `${image.width}px`;
-
-                    console.log(image.height, image.width);
-
                 }
 
                 const rect = image.getBoundingClientRect();
@@ -236,8 +231,15 @@
 
                 arrows.forEach(arrow => arrow.style.display = 'block');
                 saveButton.style.display = 'block';
+                updateCanvasSize();
                 updateCoordsList();
+                drawLines();
             };
+        }
+
+        function updateCanvasSize() {
+            canvas.width = image.width;
+            canvas.height = image.height;
         }
 
         arrows.forEach(arrow => {
@@ -261,6 +263,7 @@
                     arrow.style.left = `${initialLeft + dx}px`;
                     arrow.style.top = `${initialTop + dy}px`;
                     updateCoordsList();
+                    drawLines();
                 }
             });
 
@@ -269,6 +272,7 @@
                     isDragging = false;
                     arrow.style.zIndex = 1;
                     updateCoordsList();
+                    drawLines();
                 }
             });
 
@@ -291,6 +295,7 @@
                     arrow.style.left = `${initialLeft + dx}px`;
                     arrow.style.top = `${initialTop + dy}px`;
                     updateCoordsList();
+                    drawLines();
                 }
             });
 
@@ -299,6 +304,7 @@
                     isDragging = false;
                     arrow.style.zIndex = 1;
                     updateCoordsList();
+                    drawLines();
                 }
             });
         });
@@ -326,6 +332,7 @@
                 nearestArrow.style.left = `${clickX - boxSize / 2}px`;
                 nearestArrow.style.top = `${clickY - boxSize / 2}px`;
                 updateCoordsList();
+                drawLines();
             }
         });
 
@@ -344,6 +351,35 @@
             });
         }
 
+        function drawLines() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = '#00f';
+            ctx.lineWidth = 2;
+
+            // Get the external points of the arrows
+            const points = arrows.map(arrow => {
+                const rect = arrow.getBoundingClientRect();
+                const parentRect = image.getBoundingClientRect();
+                return {
+                    x: rect.left - parentRect.left,
+                    y: rect.top - parentRect.top,
+                    width: rect.width,
+                    height: rect.height
+                };
+            });
+
+            // Draw lines connecting the arrows to form a closed rectangle
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);  // Move to the top-left corner of the first arrow
+            ctx.lineTo(points[1].x + points[1].width, points[1].y);  // Draw to the top-right corner of the second arrow
+            ctx.lineTo(points[3].x + points[3].width, points[3].y + points[3].height);  // Draw to the bottom-right corner of the fourth arrow
+            ctx.lineTo(points[2].x, points[2].y + points[2].height);  // Draw to the bottom-left corner of the third arrow
+            ctx.closePath();  // Close the path to form a closed rectangle
+            ctx.stroke();  // Draw the lines
+        }
+
+
         saveButton.addEventListener('click', function () {
             const coordinates = arrows.map((arrow, index) => {
                 const rect = arrow.getBoundingClientRect();
@@ -355,129 +391,50 @@
                 return { index: index + 1, x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) };
             });
 
-            const imageWidth = Math.round(image.clientWidth);
-            const imageHeight = Math.round(image.clientHeight);
-
-            const messageText = coordinates.map(coord => `[[${coord.x}, ${coord.y}], [${coord.width}, ${coord.height}]]`).join(',');
-            const message = `/coords [${messageText}] Image: [${imageHeight},${imageWidth}]`;
-
-            overlay.style.display = 'block';
-            sendMessageToTelegram(message);
-        });
-
-        function sendMessageToTelegram(messageText) {
-            const telegramApiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
-            const params = {
-                chat_id: telegramChatId,
-                text: messageText,
-                reply_to_message_id: replyId
+            const payload = {
+                filename: filename,
+                replyId: replyId,
+                coordinates: coordinates
             };
 
-            fetch(telegramApiUrl, {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'save_coordinates.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        alert('Coordinates saved successfully');
+                    } else {
+                        alert('Failed to save coordinates');
+                    }
+                }
+            };
+            xhr.send(JSON.stringify(payload));
+
+            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(params)
+                body: JSON.stringify({
+                    chat_id: telegramChatId,
+                    text: `Coordinates saved: ${JSON.stringify(coordinates)}`
+                })
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.ok) {
-                        lastSentMessageId = data.result.message_id;
-                        overlay.textContent = 'Waiting ...';
-
-                        waitForTelegramResponse();
-                    } else {
-                        alert('Error sending coordinates: ' + data.description);
-                        overlay.style.display = 'none';
-                    }
+                    lastSentMessageId = data.result.message_id;
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error sending coordinates: ' + error.message);
-                    overlay.style.display = 'none';
-                });
-        }
+                .catch(error => console.error('Error sending message:', error));
+        });
 
-        function waitForTelegramResponse() {
-            const checkResponse = setInterval(() => {
-                fetch(`https://api.telegram.org/bot${telegramBotToken}/getUpdates`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.result && data.result.length > 0) {
-                            const reply = data.result.find(
-                                update => update.message && update.message.reply_to_message && update.message.reply_to_message.message_id === lastSentMessageId
-                            );
-                            if (reply) {
-                                overlay.style.display = 'none';
-                                clearInterval(checkResponse);
-                                displayTelegramResponse(reply);
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching updates from Telegram', error);
-                    });
-            }, 3000);
-        }
-
-        function displayTelegramResponse(reply) {
-            // Clear the page
-            document.body.innerHTML = '';
-
-            const responseContainer = document.createElement('div');
-            if (reply.message.photo) {
-                const photoFileId = reply.message.photo[reply.message.photo.length - 1].file_id;
-                const cap = reply.message.caption
-                if (cap) {
-                    const captionElement = document.createElement('p');
-                    captionElement.innerHTML = cap.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
-                    captionElement.style.fontSize = '13px'; // Set font size to 20px
-                    captionElement.style.fontWeight = 'bold'; // Set font weight to bold
-                    captionElement.style.textAlign = 'left'; // Align text to the left
-                    captionElement.style.paddingLeft = '10px';
-                    responseContainer.appendChild(captionElement);
-                }
-                fetch(`https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoFileId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const imageUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${data.result.file_path}`;
-                        const img = document.createElement('img');
-                        img.src = imageUrl;
-                        img.style.width = '100vw'; // Set width to 100% of the viewport's width
-                        img.alt = 'Telegram Photo';
-                        responseContainer.appendChild(img);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching photo from Telegram', error);
-                    });
-            } else if (reply.message.text) {
-                const text = document.createElement('p');
-                text.textContent = reply.message.text;
-                responseContainer.appendChild(text);
+        backButton.addEventListener('click', function () {
+            const confirmation = confirm('Are you sure you want to go back? Unsaved changes will be lost.');
+            if (confirmation) {
+                window.location.href = 'previous_page.html';
             }
-            document.body.appendChild(responseContainer);
+        });
 
-            // Add back button
-            const backButton = document.createElement('button');
-            backButton.innerText = 'Back';
-            backButton.style.fontSize = '24px';
-            backButton.style.padding = '20px 40px';
-            backButton.style.backgroundColor = '#4CAF50';
-            backButton.style.color = 'white';
-            backButton.style.border = 'none';
-            backButton.style.cursor = 'pointer';
-            backButton.style.marginTop = '20px';
-            backButton.style.display = 'block';
-            backButton.style.width = '50%';
-            backButton.style.textAlign = 'center';
-            backButton.addEventListener('click', goBack);
-            document.body.appendChild(backButton);
-        }
-
-        function goBack() {
-            window.location.href = 'scan.html';
-        }
     </script>
 </body>
 
