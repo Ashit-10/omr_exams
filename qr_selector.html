@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Box Selector</title>
+    <style>
+        #image-container {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        #image {
+            max-width: 100%;
+        }
+
+        .arrow {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            cursor: move;
+            background-color: transparent;
+        }
+
+        .arrow:before,
+        .arrow:after {
+            content: '';
+            position: absolute;
+            background-color: #00f;
+        }
+
+        /* Top-left arrow */
+        #arrow1:before {
+            width: 30px;
+            height: 10px;
+            top: 0;
+            left: 0;
+        }
+
+        #arrow1:after {
+            width: 5px;
+            height: 30px;
+            top: 0;
+            left: 0;
+        }
+
+        /* Top-right arrow */
+        #arrow2:before {
+            width: 30px;
+            height: 10px;
+            top: 0;
+            right: 0;
+        }
+
+        #arrow2:after {
+            width: 5px;
+            height: 30px;
+            top: 0;
+            right: 0;
+        }
+
+        /* Bottom-left arrow */
+        #arrow3:before {
+            width: 30px;
+            height: 10px;
+            bottom: 0;
+            left: 0;
+        }
+
+        #arrow3:after {
+            width: 5px;
+            height: 30px;
+            bottom: 0;
+            left: 0;
+        }
+
+        /* Bottom-right arrow */
+        #arrow4:before {
+            width: 30px;
+            height: 10px;
+            bottom: 0;
+            right: 0;
+        }
+
+        #arrow4:after {
+            width: 5px;
+            height: 30px;
+            bottom: 0;
+            right: 0;
+        }
+
+        @media (max-width: 600px) {
+            .arrow {
+                width: 15px;
+                height: 15px;
+            }
+
+            .arrow:before {
+                width: 10px !important;
+                height: 2px !important;
+            }
+
+            .arrow:after {
+                width: 2px !important;
+                height: 10px !important;
+            }
+        }
+
+        #coordinates {
+            margin-top: -40%;
+        }
+
+        #saveButton {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #saveButton:hover {
+            background-color: #45a049;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            line-height: 100vh;
+        }
+
+        #backButton {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        #backButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Select Coordinates on Image</h1>
+    <h4> (Drag each arraw to corner points of the QR code boxes)</h4>
+    <div id="image-container">
+        <img id="image" style="display: none;" alt="Uploaded Image">
+        <div class="arrow" id="arrow1" style="display: none;"></div>
+        <div class="arrow" id="arrow2" style="display: none;"></div>
+        <div class="arrow" id="arrow3" style="display: none;"></div>
+        <div class="arrow" id="arrow4" style="display: none;"></div>
+    </div>
+    <div id="coordinates">
+        <h2>Selected Coordinates:</h2>
+        <ul id="coordsList"></ul>
+        <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
+    </div>
+    <div id="overlay">Sending ...</div>
+    <button id="backButton" style="display: none;" onclick="goBack()">Back</button>
+
+
+    <script>
+        const imageContainer = document.getElementById('image-container');
+        const image = document.getElementById('image');
+        const coordsList = document.getElementById('coordsList');
+        const arrows = [
+            document.getElementById('arrow1'),
+            document.getElementById('arrow2'),
+            document.getElementById('arrow3'),
+            document.getElementById('arrow4')
+        ];
+        const saveButton = document.getElementById('saveButton');
+        const overlay = document.getElementById('overlay');
+        const backButton = document.getElementById('backButton');
+        const repliesContainer = document.getElementById('replies');
+
+        const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+        const telegramChatId = '-1001774957665';
+
+        let lastSentMessageId;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const filename = urlParams.get('filename');
+        const replyId = urlParams.get('replyid');
+
+        if (filename) {
+            image.src = filename;
+            image.style.display = 'inline';
+
+            image.onload = function () {
+                if (image.height > image.width) {
+                    image.style.transform = 'rotate(-90deg)';
+                    image.style.transformOrigin = '50% 25%';
+                    console.log(image.height, image.width);
+
+                    // Adjust dimensions for CSS rotation
+                    image.style.height = `${image.width}px`;
+                    // image.style.width = `${image.height}px`;
+
+                    imageContainer.style.maxHeight = `${image.width}px`;
+
+                    console.log(image.height, image.width);
+
+                }
+
+                const rect = image.getBoundingClientRect();
+                const offset = 30;
+                const boxSize = parseInt(getComputedStyle(arrows[0]).width);
+                arrows[0].style.left = `${offset}px`;
+                arrows[0].style.top = `${offset}px`;
+                arrows[1].style.left = `${rect.width - offset - boxSize}px`;
+                arrows[1].style.top = `${offset}px`;
+                arrows[2].style.left = `${offset}px`;
+                arrows[2].style.top = `${rect.height - offset - boxSize}px`;
+                arrows[3].style.left = `${rect.width - offset - boxSize}px`;
+                arrows[3].style.top = `${rect.height - offset - boxSize}px`;
+
+                arrows.forEach(arrow => arrow.style.display = 'block');
+                saveButton.style.display = 'block';
+                updateCoordsList();
+            };
+        }
+
+        arrows.forEach(arrow => {
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+
+            arrow.addEventListener('mousedown', function (event) {
+                isDragging = true;
+                startX = event.clientX;
+                startY = event.clientY;
+                initialLeft = parseInt(arrow.style.left || 0, 10);
+                initialTop = parseInt(arrow.style.top || 0, 10);
+                arrow.style.zIndex = 1000;
+                event.preventDefault();
+            });
+
+            document.addEventListener('mousemove', function (event) {
+                if (isDragging) {
+                    const dx = event.clientX - startX;
+                    const dy = event.clientY - startY;
+                    arrow.style.left = `${initialLeft + dx}px`;
+                    arrow.style.top = `${initialTop + dy}px`;
+                    updateCoordsList();
+                }
+            });
+
+            document.addEventListener('mouseup', function () {
+                if (isDragging) {
+                    isDragging = false;
+                    arrow.style.zIndex = 1;
+                    updateCoordsList();
+                }
+            });
+
+            arrow.addEventListener('touchstart', function (event) {
+                isDragging = true;
+                const touch = event.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                initialLeft = parseInt(arrow.style.left || 0, 10);
+                initialTop = parseInt(arrow.style.top || 0, 10);
+                arrow.style.zIndex = 1000;
+                event.preventDefault();
+            });
+
+            document.addEventListener('touchmove', function (event) {
+                if (isDragging) {
+                    const touch = event.touches[0];
+                    const dx = touch.clientX - startX;
+                    const dy = touch.clientY - startY;
+                    arrow.style.left = `${initialLeft + dx}px`;
+                    arrow.style.top = `${initialTop + dy}px`;
+                    updateCoordsList();
+                }
+            });
+
+            document.addEventListener('touchend', function () {
+                if (isDragging) {
+                    isDragging = false;
+                    arrow.style.zIndex = 1;
+                    updateCoordsList();
+                }
+            });
+        });
+
+        image.addEventListener('click', function (event) {
+            const rect = image.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+            let minDistance = Infinity;
+            let nearestArrow = null;
+
+            arrows.forEach(arrow => {
+                const arrowRect = arrow.getBoundingClientRect();
+                const arrowX = arrowRect.left - rect.left;
+                const arrowY = arrowRect.top - rect.top;
+                const distance = Math.sqrt(Math.pow(arrowX - clickX, 2) + Math.pow(arrowY - clickY, 2));
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestArrow = arrow;
+                }
+            });
+
+            if (nearestArrow) {
+                const boxSize = parseInt(getComputedStyle(nearestArrow).width);
+                nearestArrow.style.left = `${clickX - boxSize / 2}px`;
+                nearestArrow.style.top = `${clickY - boxSize / 2}px`;
+                updateCoordsList();
+            }
+        });
+
+        function updateCoordsList() {
+            coordsList.innerHTML = '';
+            arrows.forEach((arrow, index) => {
+                const rect = arrow.getBoundingClientRect();
+                const parentRect = image.getBoundingClientRect();
+                const x = rect.left - parentRect.left;
+                const y = rect.top - parentRect.top;
+                const width = rect.width;
+                const height = rect.height;
+                const li = document.createElement('li');
+                li.textContent = `Arrow ${index + 1}: [${Math.round(x)}, ${Math.round(y)}] - Width: ${Math.round(width)}, Height: ${Math.round(height)}`;
+                coordsList.appendChild(li);
+            });
+        }
+
+        saveButton.addEventListener('click', function () {
+            const coordinates = arrows.map((arrow, index) => {
+                const rect = arrow.getBoundingClientRect();
+                const parentRect = image.getBoundingClientRect();
+                const x = rect.left - parentRect.left;
+                const y = rect.top - parentRect.top;
+                const width = rect.width;
+                const height = rect.height;
+                return { index: index + 1, x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) };
+            });
+
+            const imageWidth = Math.round(image.clientWidth);
+            const imageHeight = Math.round(image.clientHeight);
+
+            const messageText = coordinates.map(coord => `[[${coord.x}, ${coord.y}], [${coord.width}, ${coord.height}]]`).join(',');
+            const message = `/coords [${messageText}] Image: [${imageHeight},${imageWidth}]`;
+
+            overlay.style.display = 'block';
+            sendMessageToTelegram(message);
+        });
+
+        function sendMessageToTelegram(messageText) {
+            const telegramApiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+            const params = {
+                chat_id: telegramChatId,
+                text: messageText,
+                reply_to_message_id: replyId
+            };
+
+            fetch(telegramApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        lastSentMessageId = data.result.message_id;
+                        overlay.textContent = 'Waiting ...';
+
+                        waitForTelegramResponse();
+                    } else {
+                        alert('Error sending coordinates: ' + data.description);
+                        overlay.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error sending coordinates: ' + error.message);
+                    overlay.style.display = 'none';
+                });
+        }
+
+        function waitForTelegramResponse() {
+            const checkResponse = setInterval(() => {
+                fetch(`https://api.telegram.org/bot${telegramBotToken}/getUpdates`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.result && data.result.length > 0) {
+                            const reply = data.result.find(
+                                update => update.message && update.message.reply_to_message && update.message.reply_to_message.message_id === lastSentMessageId
+                            );
+                            if (reply) {
+                                overlay.style.display = 'none';
+                                clearInterval(checkResponse);
+                                displayTelegramResponse(reply);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching updates from Telegram', error);
+                    });
+            }, 3000);
+        }
+
+        function displayTelegramResponse(reply) {
+            // Clear the page
+            document.body.innerHTML = '';
+
+            const responseContainer = document.createElement('div');
+            if (reply.message.photo) {
+                const photoFileId = reply.message.photo[reply.message.photo.length - 1].file_id;
+                const cap = reply.message.caption
+                if (cap) {
+                    const captionElement = document.createElement('p');
+                    captionElement.innerHTML = cap.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
+                    captionElement.style.fontSize = '13px'; // Set font size to 20px
+                    captionElement.style.fontWeight = 'bold'; // Set font weight to bold
+                    captionElement.style.textAlign = 'left'; // Align text to the left
+                    captionElement.style.paddingLeft = '10px';
+                    responseContainer.appendChild(captionElement);
+                }
+                fetch(`https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoFileId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const imageUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${data.result.file_path}`;
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.style.width = '100vw'; // Set width to 100% of the viewport's width
+                        img.alt = 'Telegram Photo';
+                        responseContainer.appendChild(img);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching photo from Telegram', error);
+                    });
+            } else if (reply.message.text) {
+                const text = document.createElement('p');
+                text.textContent = reply.message.text;
+                responseContainer.appendChild(text);
+            }
+            document.body.appendChild(responseContainer);
+
+            // Add back button
+            const backButton = document.createElement('button');
+            backButton.innerText = 'Back';
+            backButton.style.fontSize = '24px';
+            backButton.style.padding = '20px 40px';
+            backButton.style.backgroundColor = '#4CAF50';
+            backButton.style.color = 'white';
+            backButton.style.border = 'none';
+            backButton.style.cursor = 'pointer';
+            backButton.style.marginTop = '20px';
+            backButton.style.display = 'block';
+            backButton.style.width = '100%';
+            backButton.style.textAlign = 'center';
+            backButton.addEventListener('click', goBack);
+            document.body.appendChild(backButton);
+        }
+
+        function goBack() {
+            window.location.href = 'scan.html';
+        }
+    </script>
+</body>
+
+</html>
