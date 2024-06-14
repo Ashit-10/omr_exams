@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Dot Game</title>
     <style>
         body {
@@ -13,12 +13,16 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
+            overflow: hidden; /* Prevent scrolling */
+            touch-action: none; /* Prevent default touch actions */
         }
         #game {
             position: relative;
             display: grid;
             grid-template-columns: repeat(10, 30px);
             gap: 20px;
+            user-select: none; /* Prevent text selection */
+            transform-origin: top left; /* Fix zoom scaling origin */
         }
         .dot-container {
             width: 30px;
@@ -121,6 +125,7 @@
         });
 
         gameElement.addEventListener('touchstart', (e) => {
+            e.preventDefault();
             const dot = e.target.closest('.dot');
             if (dot) {
                 startSwipe(dot);
@@ -128,6 +133,7 @@
         });
 
         gameElement.addEventListener('touchend', (e) => {
+            e.preventDefault();
             const touch = e.changedTouches[0];
             const element = document.elementFromPoint(touch.clientX, touch.clientY);
             const dot = element.closest('.dot');
