@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dot Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        #game {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(10, 30px);
+            gap: 20px;
+        }
+        .dot-container {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #000;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .line {
+            position: absolute;
+            background-color: black;
+        }
+        .box {
+            position: absolute;
+            background-color: rgba(0, 0, 255, 0.3);
+        }
+        .player1 {
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+        .player2 {
+            background-color: rgba(0, 0, 255, 0.3);
+        }
+        .winner {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 10px 20px;
+            border: 2px solid #000;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game"></div>
+    <div class="winner" id="winner" style="display: none;"></div>
+    <script>
+        const gameElement = document.getElementById('game');
+        const winnerElement = document.getElementById('winner');
+        const dots = [];
+        const lines = [];
+        let currentPlayer = 1;
+        const playerScores = [0, 0];
+
+        // Initialize dots
+        for (let i = 0; i < 10; i++) {
+            dots.push([]);
+            for (let j = 0; j < 10; j++) {
+                const dotContainer = document.createElement('div');
+                dotContainer.classList.add('dot-container');
+
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                dot.dataset.row = i;
+                dot.dataset.col = j;
+                dotContainer.appendChild(dot);
+
+                gameElement.appendChild(dotContainer);
+                dots[i].push(dot);
+            }
+        }
+
+        // Variables to track swipe action
+        let isSwiping = false;
+        let startDot = null;
+
+        gameElement.addEventListener('mousedown', (e) => {
+            const dot = e.target.closest('.dot');
+            if (dot) {
+                isSwiping = true;
+                startDot = dot;
+            }
+        });
+
+        gameElement.addEventListener('mouseup', (e) => {
+            const dot = e.target.closest('.dot');
+            if (isSwiping && dot && startDot !== dot) {
+                drawLine(startDot, dot);
+                isSwiping = false;
+                startDot = null;
+            }
+        });
+
+        function drawLine(dot1, dot2) {
+            const row1 = parseInt(dot1.dataset.row);
+            const col1 = parseInt(dot1.dataset.col);
+            const row2 = parseInt(dot2.dataset.row);
+            const col2 = parseInt(dot2.dataset.col);
+
+            if ((Math.abs(row1 - row2) === 1 && col1 === col2) || (Math.abs(col1 - col2) === 1 && row1 === row2)) {
+                const line = document.createElement('div');
+                line.classList.add('line');
+                line.style.backgroundColor = currentPlayer === 1 ? 'blue' : 'red';
+
+                const startX = dot1.offsetLeft + dot1.offsetWidth / 2;
+                const startY = dot1.offsetTop + dot1.offsetHeight / 2;
+                const endX = dot2.offsetLeft + dot2.offsetWidth / 2;
+                const endY = dot2.offsetTop + dot2.offsetHeight / 2;
+
+                const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+                const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+
+                line.style.width = `${length}px`;
+                line.style.height = '5px';
+                line.style.top = `${startY - 2.5}px`;
+                line.style.left = `${startX}px`;
+                line.style.transform = `rotate(${angle}deg)`;
+                line.style.transformOrigin = '0 50%';
+
+                gameElement.appendChild(line);
+                lines.push({ dot1, dot2, line, player: currentPlayer });
+
+                if (!checkForBox(dot1, dot2)) {
+                    currentPlayer = 3 - currentPlayer; // Switch player
+                }
+            }
+        }
+
+        function checkForBox(dot1, dot2) {
+            const row1 = parseInt(dot1.dataset.row);
+            const col1 = parseInt(dot1.dataset.col);
+            const row2 = parseInt(dot2.dataset.row);
+            const col2 = parseInt(dot2.dataset.col);
+
+            let newBox = false;
+
+            if (row1 === row2) {
+                const row = row1;
+                const col = Math.min(col1, col2);
+
+                if (row > 0 && checkSquare(row - 1, col)) {
+                    markSquare(row - 1, col);
+                    newBox = true;
+                }
+                if (row < 9 && checkSquare(row, col)) {
+                    markSquare(row, col);
+                    newBox = true;
+                }
+            } else {
+                const row = Math.min(row1, row2);
+                const col = col1;
+
+                if (col > 0 && checkSquare(row, col - 1)) {
+                    markSquare(row, col - 1);
+                    newBox = true;
+                }
+                if (col < 9 && checkSquare(row, col)) {
+                    markSquare(row, col);
+                    newBox = true;
+                }
+            }
+
+            if (newBox) {
+                playerScores[currentPlayer - 1]++;
+                updateScores();
+                checkGameEnd();
+            }
+
+            return newBox;
+        }
+
+        function checkSquare(row, col) {
+            return lines.some(line => line.dot1.dataset.row == row && line.dot1.dataset.col == col && line.dot2.dataset.row == row + 1 && line.dot2.dataset.col == col) &&
+                   lines.some(line => line.dot1.dataset.row == row + 1 && line.dot1.dataset.col == col && line.dot2.dataset.row == row + 1 && line.dot2.dataset.col == col + 1) &&
+                   lines.some(line => line.dot1.dataset.row == row && line.dot1.dataset.col == col && line.dot2.dataset.row == row && line.dot2.dataset.col == col + 1) &&
+                   lines.some(line => line.dot1.dataset.row == row && line.dot1.dataset.col == col + 1 && line.dot2.dataset.row == row + 1 && line.dot2.dataset.col == col + 1);
+        }
+
+        function markSquare(row, col) {
+            const box = document.createElement('div');
+            box.classList.add('box');
+            box.classList.add(`player${currentPlayer}`);
+            box.style.top = `${dots[row][col].offsetTop}px`;
+            box.style.left = `${dots[row][col].offsetLeft}px`;
+            box.style.width = '30px';
+            box.style.height = '30px';
+            gameElement.appendChild(box);
+        }
+
+        function updateScores() {
+            console.log(`Player 1: ${playerScores[0]}, Player 2: ${playerScores[1]}`);
+        }
+
+        function checkGameEnd() {
+            if (lines.length === 180) {
+                let winner;
+                if (playerScores[0] > playerScores[1]) {
+                    winner = 'Player 1 wins!';
+                } else if (playerScores[1] > playerScores[0]) {
+                    winner = 'Player 2 wins!';
+                } else {
+                    winner = 'It\'s a draw!';
+                }
+                winnerElement.textContent = winner;
+                winnerElement.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
