@@ -356,6 +356,9 @@
             margin-left: 10px;
             /* Add some margin to separate the buttons */
         }
+         audio {
+            display: none;
+        }
     </style>
 
 </head>
@@ -373,7 +376,11 @@
     <div id="content" class="hidden"> -->
     <h1>OMR sheet evaluator
     </h1>
-
+<audio autoplay>
+        <source src="scan.caf" type="audio/x-caf">
+        Your browser does not support the audio element.
+    </audio>
+    
 
     <div id="cameraContainer">
         <div id="false-div"></div>
