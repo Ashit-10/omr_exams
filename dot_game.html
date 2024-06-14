@@ -93,20 +93,46 @@
         let isSwiping = false;
         let startDot = null;
 
+        function startSwipe(dot) {
+            isSwiping = true;
+            startDot = dot;
+        }
+
+        function endSwipe(dot) {
+            if (isSwiping && startDot && startDot !== dot) {
+                drawLine(startDot, dot);
+                isSwiping = false;
+                startDot = null;
+            }
+        }
+
         gameElement.addEventListener('mousedown', (e) => {
             const dot = e.target.closest('.dot');
             if (dot) {
-                isSwiping = true;
-                startDot = dot;
+                startSwipe(dot);
             }
         });
 
         gameElement.addEventListener('mouseup', (e) => {
             const dot = e.target.closest('.dot');
-            if (isSwiping && dot && startDot !== dot) {
-                drawLine(startDot, dot);
-                isSwiping = false;
-                startDot = null;
+            if (dot) {
+                endSwipe(dot);
+            }
+        });
+
+        gameElement.addEventListener('touchstart', (e) => {
+            const dot = e.target.closest('.dot');
+            if (dot) {
+                startSwipe(dot);
+            }
+        });
+
+        gameElement.addEventListener('touchend', (e) => {
+            const touch = e.changedTouches[0];
+            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+            const dot = element.closest('.dot');
+            if (dot) {
+                endSwipe(dot);
             }
         });
 
