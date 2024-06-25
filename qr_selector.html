@@ -427,7 +427,7 @@
                     if (data.ok) {
                         lastSentMessageId = data.result.message_id;
                         overlay.textContent = 'Waiting ...';
-                        fetchTelegramUpdates();
+                        // fetchTelegramUpdates();
                     } else {
                         alert('Error sending coordinates: ' + data.description);
                         overlay.style.display = 'none';
@@ -456,23 +456,28 @@
                         if (reply) {
                             const message = reply.message || reply.edited_message;
                             console.log(message.caption);
-                            if (message && message.message_id !== lastMessageId) {
-                                overlay.style.display = 'none';
-                                lastMessageId = message.message_id;
-                                displayTelegramResponse(message, lastMessageId);
-                            }
+
+                            // if (message && reply.edited_message) {
+                            //     overlay.style.display = 'none';
+                            //     lastMessageId = message.message_id;
+                            //     displayTelegramResponse(message, lastMessageId);
+                            // }
+                            // if (message && message.message_id !== lastMessageId) {
+                            //     overlay.style.display = 'none';
+                            lastMessageId = message.message_id;
+                            displayTelegramResponse(message, lastMessageId);
+
+
+
                         }
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching updates from Telegram', error);
-                })
-                .finally(() => {
-                    // Schedule the next call to fetchTelegramUpdates after 3 seconds
-                    setTimeout(fetchTelegramUpdates, 3000);
                 });
         }
 
+        setInterval(fetchTelegramUpdates, 3000);
 
         function displayTelegramResponse(message, current_id) {
             // Clear the page
@@ -489,16 +494,22 @@
                     captionElement.style.fontWeight = 'bold'; // Set font weight to bold
                     captionElement.style.textAlign = 'left'; // Align text to the left
                     captionElement.style.paddingLeft = '10px';
+
                     responseContainer.appendChild(captionElement);
+
+                    
                 }
                 if (cap.toLowerCase().includes("still save it ?")) {
                     // Create overlay button
                     const overlayButton = document.createElement('button');
                     overlayButton.innerText = 'Save';
+                    overlayButton.style.marginLeft = '45%';
 
                     // Add event listener to the button
                     overlayButton.addEventListener('click', async () => {
                         const replyToMessageId = current_id
+                        overlayButton.innerText = 'Saving ...';
+
                         await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
                             method: 'POST',
                             headers: {
@@ -514,7 +525,12 @@
                     });
 
                     responseContainer.appendChild(overlayButton);
+                    const br2 = document.createElement('br');
+                    responseContainer.appendChild(br2);
+                    const br3 = document.createElement('br');
+                    responseContainer.appendChild(br3);
                 }
+
                 fetch(`https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoFileId}`)
                     .then(response => response.json())
                     .then(data => {
@@ -524,14 +540,26 @@
                         img.style.width = '100vw'; // Set width to 100% of the viewport's width
                         img.alt = 'Telegram Photo';
                         responseContainer.appendChild(img);
+
+                        // Add back button
+                        const br1 = document.createElement('br');
+                        responseContainer.appendChild(br1);
+
+                        const backButton = document.createElement('button');
+                        backButton.innerText = 'Back';
+                        backButton.style.top = '15px';
+                        backButton.style.marginLeft = '45%';
+
+                        backButton.addEventListener('click', goBack);
+                        responseContainer.appendChild(backButton);
+
+                        document.body.appendChild(responseContainer);
+
+
                     })
                     .catch(error => {
                         console.error('Error fetching photo from Telegram', error);
                     });
-
-
-
-
 
             } else if (message.text) {
                 const text = document.createElement('p');
@@ -539,19 +567,7 @@
                 responseContainer.appendChild(text);
             }
 
-            // Add back button
-            const br1 = document.createElement('br');
-            responseContainer.appendChild(br1);
 
-            const backButton = document.createElement('button');
-            backButton.innerText = 'Back';
-            backButton.style.top = '15px';
-            backButton.addEventListener('click', goBack);
-            responseContainer.appendChild(backButton);
-
-            document.body.appendChild(responseContainer);
-
-            fetchTelegramUpdates();
 
         }
 
