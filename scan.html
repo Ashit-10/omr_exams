@@ -833,6 +833,9 @@
                         messageElement.appendChild(errorButton);
                     }
 
+                    const br1 = document.createElement('br');
+                    messageElement.appendChild(br1);
+
                     const backButton1 = document.createElement('button');
                     // Add back button in the middle of the device screen
                     backButton1.innerText = 'Back';
@@ -1055,7 +1058,7 @@
                             // Add back button in the middle of the device screen
                             backButton.innerText = 'Back';
                             backButton.style.position = 'absolute';
-                            backButton.style.top = '10%';
+                            backButton.style.top = '50%';
                             backButton.style.left = '50%';
                             backButton.style.transform = 'translate(-50%, -50%)';
                             backButton.addEventListener('click', function () {
