@@ -618,7 +618,15 @@
 
                 document.body.appendChild(overlayButton);
             }
-
+if (text.toLowerCase().includes("error")) {
+                        coordinates_reply_id = og_id;
+                        const errorButton = document.createElement('button');
+                        errorButton.innerText = 'Click here to select QR code manually';
+                        errorButton.addEventListener('click', function () {
+                            window.location.href = 'qr_selector.html?filename=' + encodeURIComponent(captured_photo) + '&&replyid=' + encodeURIComponent(coordinates_reply_id);
+                        });
+                        messageElement.appendChild(errorButton);
+                    }
             if (!isSending) {
                 loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
             }
@@ -889,7 +897,7 @@
                                     const caption = update.message.caption || '';
                                     displayDocument(document.file_id, caption);
                                 } else if (update.message.text) {
-                                    displayMessage(update.message.text, reply_msg_id);
+                                    displayMessage(update.message.text, reply_msg_id, current_id);
                                 } else if (update.message.sticker) {
                                     const document = update.message.sticker;
                                     const caption = '';
@@ -918,7 +926,7 @@
                                     const caption = update.edited_message.caption || '';
                                     displayDocument(document.file_id, caption);
                                 } else if (update.edited_message.text) {
-                                    displayMessage(update.edited_message.text);
+                                    displayMessage(update.edited_message.text, recent_id, current_id);
                                 } else if (update.edited_message.sticker) {
                                     const document = update.edited_message.sticker;
                                     const caption = '';
