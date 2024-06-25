@@ -708,6 +708,7 @@
                 const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
                 const data = await response.json();
                 if (data.ok) {
+                    backButton.style.display = 'none';
                     const filePath = data.result.file_path;
                     const photoUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
                     messagesDiv.innerHTML = ''; // Clear older messages
@@ -725,25 +726,10 @@
                         captionElement.style.paddingLeft = '10px';
                         messageElement.appendChild(captionElement);
 
-                        // Extract the roll number using a regular expression
-                        // var rollNumberMatch = caption.match(/Roll: (\d+)/);
-                        // var oldRollNumber = 0;
-                        // // Check if a match was found and extract the roll number
-                        // if (rollNumberMatch) {
-                        //     oldRollNumber = rollNumberMatch[1];
-                        // }
-
                         if (caption.toLowerCase().includes("still save it ?")) {
                             const overlayButton = document.createElement('button');
                             overlayButton.innerText = 'Save';
-                            overlayButton.style.left = '50%';
-                            overlayButton.style.padding = '10px 20px';
-                            overlayButton.style.fontSize = '18px';
-                            overlayButton.style.cursor = 'pointer';
-                            overlayButton.style.zIndex = '1000'; // Ensure the button is on top
-                            overlayButton.style.display = 'none';
-                            overlayButton.style.display = 'inline';
-
+                           
                             const savespinner = document.createElement('div');
                             savespinner.id = 'save-spinner';
                             savespinner.style.display = 'none'; // Initially hidden
@@ -776,6 +762,7 @@
                     const img = document.createElement('img');
                     img.src = photoUrl;
                     img.alt = 'Telegram Photo';
+                    img.style.marginTop = '20px';
                     img.style.width = '100vw'; // Set width to 100% of the viewport's width
                     messageElement.appendChild(img);
                     messagesDiv.appendChild(messageElement);
@@ -845,6 +832,27 @@
                         });
                         messageElement.appendChild(errorButton);
                     }
+
+                    const backButton1 = document.createElement('button');
+                    // Add back button in the middle of the device screen
+                    backButton1.innerText = 'Back';
+                    // backButton1.style.display = "block";
+                    // backButton1.marginLeft = "auto";
+                    // backButton1.marginRight = "auto";
+                    backButton1.marginTop = "10px";
+
+
+                    // backButton1.style.position = 'absolute';
+                    // backButton1.style.top = '10%';
+                    // backButton1.style.left = '50%';
+                    // backButton1.style.transform = 'translate(-50%, -50%)';
+
+                    backButton1.addEventListener('click', function () {
+                        location.reload();
+                    });
+                    messageElement.appendChild(backButton1);
+
+
                 }
             } catch (error) {
                 console.error('Error displaying photo:', error);
