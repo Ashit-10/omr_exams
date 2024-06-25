@@ -356,7 +356,8 @@
             margin-left: 10px;
             /* Add some margin to separate the buttons */
         }
-         audio {
+
+        audio {
             display: none;
         }
     </style>
@@ -376,11 +377,11 @@
     <div id="content" class="hidden"> -->
     <h1>OMR sheet evaluator
     </h1>
-<!-- <audio autoplay>
+    <!-- <audio autoplay>
         <source src="scan.mp3" type="audio/mp3">
         Your browser does not support the audio element.
     </audio> -->
-    
+
 
     <div id="cameraContainer">
         <div id="false-div"></div>
@@ -536,7 +537,7 @@
                         // Add back button in the middle of the device screen
                         backButton.innerText = 'Back';
                         backButton.style.position = 'absolute';
-                        backButton.style.top = '15%';
+                        backButton.style.top = '10%';
                         backButton.style.left = '90%';
                         backButton.style.transform = 'translate(-50%, -50%)';
                         backButton.addEventListener('click', function () {
@@ -618,15 +619,15 @@
 
                 document.body.appendChild(overlayButton);
             }
-if (text.toLowerCase().includes("error")) {
-                        coordinates_reply_id = og_id;
-                        const errorButton = document.createElement('button');
-                        errorButton.innerText = 'Click here to select QR code manually';
-                        errorButton.addEventListener('click', function () {
-                            window.location.href = 'qr_selector.html?filename=' + encodeURIComponent(captured_photo) + '&&replyid=' + encodeURIComponent(coordinates_reply_id);
-                        });
-                        messageElement.appendChild(errorButton);
-                    }
+            if (text.toLowerCase().includes("error")) {
+                coordinates_reply_id = og_id;
+                const errorButton = document.createElement('button');
+                errorButton.innerText = 'Click here to select QR code manually';
+                errorButton.addEventListener('click', function () {
+                    window.location.href = 'qr_selector.html?filename=' + encodeURIComponent(captured_photo) + '&&replyid=' + encodeURIComponent(coordinates_reply_id);
+                });
+                messageElement.appendChild(errorButton);
+            }
             if (!isSending) {
                 loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
             }
@@ -1046,7 +1047,7 @@ if (text.toLowerCase().includes("error")) {
                             // Add back button in the middle of the device screen
                             backButton.innerText = 'Back';
                             backButton.style.position = 'absolute';
-                            backButton.style.top = '15%';
+                            backButton.style.top = '10%';
                             backButton.style.left = '50%';
                             backButton.style.transform = 'translate(-50%, -50%)';
                             backButton.addEventListener('click', function () {
