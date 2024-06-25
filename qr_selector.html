@@ -126,7 +126,8 @@
             line-height: 100vh;
         }
 
-        #backButton, #saveButton {
+        #backButton,
+        #saveButton {
             margin-top: 20px;
             padding: 10px 20px;
             background-color: #45a049;
@@ -134,17 +135,18 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-left: auto; 
-            margin-right: auto; 
+            margin-left: auto;
+            margin-right: auto;
             display: flex;
             justify-content: center;
             font-size: 18px;
         }
 
-        #backButton:hover, #saveButton:hover {
+        #backButton:hover,
+        #saveButton:hover {
             background-color: #45a049;
         }
-        
+
         button {
             margin-top: 10px;
             padding: 10px 20px;
@@ -179,7 +181,7 @@
         <button id="saveButton" style="display: none;">Save Coordinates and Send to Telegram</button>
     </div>
     <div id="overlay">Sending ...</div>
-    
+
     <button id="backButton" onclick="goBack()">Back</button>
 
 
@@ -489,21 +491,6 @@
                     captionElement.style.paddingLeft = '10px';
                     responseContainer.appendChild(captionElement);
                 }
-                fetch(`https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoFileId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const imageUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${data.result.file_path}`;
-                        const img = document.createElement('img');
-                        img.src = imageUrl;
-                        img.style.width = '100vw'; // Set width to 100% of the viewport's width
-                        img.alt = 'Telegram Photo';
-                        responseContainer.appendChild(img);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching photo from Telegram', error);
-                    });
-
-
                 if (cap.toLowerCase().includes("still save it ?")) {
                     // Create overlay button
                     const overlayButton = document.createElement('button');
@@ -528,6 +515,22 @@
 
                     responseContainer.appendChild(overlayButton);
                 }
+                fetch(`https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoFileId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const imageUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${data.result.file_path}`;
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.style.width = '100vw'; // Set width to 100% of the viewport's width
+                        img.alt = 'Telegram Photo';
+                        responseContainer.appendChild(img);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching photo from Telegram', error);
+                    });
+
+
+
 
 
             } else if (message.text) {
