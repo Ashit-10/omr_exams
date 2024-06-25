@@ -146,10 +146,11 @@
             font-size: 18px;
             background-color: #4CAF50;
             color: white;
-            border: none;
+            border: 2px;
             cursor: pointer;
             display: block;
-            width: 100%;
+            width: 50%;
+            margin-left: 10%;
             text-align: center;
         }
 
@@ -231,6 +232,7 @@
 
                 arrows.forEach(arrow => arrow.style.display = 'block');
                 saveButton.style.display = 'block';
+                backButton.style.display = 'block';
                 updateCanvasSize();
                 updateCoordsList();
                 drawLines();
@@ -391,43 +393,121 @@
                 return { index: index + 1, x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) };
             });
 
-            const payload = {
-                filename: filename,
-                replyId: replyId,
-                coordinates: coordinates
+            const imageWidth = Math.round(image.clientWidth);
+            const imageHeight = Math.round(image.clientHeight);
+
+            const messageText = coordinates.map(coord => `[[${coord.x}, ${coord.y}], [${coord.width}, ${coord.height}]]`).join(',');
+            const message = `/coords [${messageText}] Image: [${imageWidth},${imageHeight}]`;
+
+            overlay.style.display = 'block';
+            sendMessageToTelegram(message);
+                 
+        });
+        function sendMessageToTelegram(messageText) {
+            const telegramApiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+            const params = {
+                chat_id: telegramChatId,
+                text: messageText,
+                reply_to_message_id: replyId
             };
 
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'save_coordinates.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        alert('Coordinates saved successfully');
-                    } else {
-                        alert('Failed to save coordinates');
-                    }
-                }
-            };
-            xhr.send(JSON.stringify(payload));
-
-            fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+            fetch(telegramApiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    chat_id: telegramChatId,
-                    text: `Coordinates saved: ${JSON.stringify(coordinates)}`
-                })
+                body: JSON.stringify(params)
             })
                 .then(response => response.json())
                 .then(data => {
-                    lastSentMessageId = data.result.message_id;
-                })
-                .catch(error => console.error('Error sending message:', error));
-        });
+                    if (data.ok) {
+                        lastSentMessageId = data.result.message_id;
+                        overlay.textContent = 'Waiting ...';
 
+                        waitForTelegramResponse();
+                    } else {
+                        alert('Error sending coordinates: ' + data.description);
+                        overlay.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error sending coordinates: ' + error.message);
+                    overlay.style.display = 'none';
+                });
+        }
+        function waitForTelegramResponse() {
+            const checkResponse = setInterval(() => {
+                fetch(`https://api.telegram.org/bot${telegramBotToken}/getUpdates`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.result && data.result.length > 0) {
+                            const reply = data.result.find(
+                                update => update.message && update.message.reply_to_message && update.message.reply_to_message.message_id === lastSentMessageId
+                            );
+                            if (reply) {
+                                overlay.style.display = 'none';
+                                clearInterval(checkResponse);
+                                displayTelegramResponse(reply);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching updates from Telegram', error);
+                    });
+            }, 3000);
+        }
+
+        function displayTelegramResponse(reply) {
+            // Clear the page
+            document.body.innerHTML = '';
+
+            const responseContainer = document.createElement('div');
+            if (reply.message.photo) {
+                const photoFileId = reply.message.photo[reply.message.photo.length - 1].file_id;
+                const cap = reply.message.caption
+                if (cap) {
+                    const captionElement = document.createElement('p');
+                    captionElement.innerHTML = cap.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
+                    captionElement.style.fontSize = '13px'; // Set font size to 20px
+                    captionElement.style.fontWeight = 'bold'; // Set font weight to bold
+                    captionElement.style.textAlign = 'left'; // Align text to the left
+                    captionElement.style.paddingLeft = '10px';
+                    responseContainer.appendChild(captionElement);
+                }
+                fetch(`https://api.telegram.org/bot${telegramBotToken}/getFile?file_id=${photoFileId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const imageUrl = `https://api.telegram.org/file/bot${telegramBotToken}/${data.result.file_path}`;
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.style.width = '100vw'; // Set width to 100% of the viewport's width
+                        img.alt = 'Telegram Photo';
+                        responseContainer.appendChild(img);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching photo from Telegram', error);
+                    });
+            } else if (reply.message.text) {
+                const text = document.createElement('p');
+                text.textContent = reply.message.text;
+                responseContainer.appendChild(text);
+            }
+            document.body.appendChild(responseContainer);
+
+            // Add back button
+            const backButton = document.createElement('button');
+            backButton.innerText = 'Back';
+            backButton.style.position = 'absolute';
+            backButton.style.left = '80%';
+            backButton.style.top = '5%';
+            backButton.style.transform = 'translate(-50%, -50%)';
+            backButton.addEventListener('click', goBack);
+            document.body.appendChild(backButton);
+        }
+        function goBack() {
+            window.location.href = 'scan.html';
+        }
         backButton.addEventListener('click', function () {
             const confirmation = confirm('Are you sure you want to go back? Unsaved changes will be lost.');
             if (confirmation) {
