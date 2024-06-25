@@ -397,7 +397,7 @@
             const imageHeight = Math.round(image.clientHeight);
 
             const messageText = coordinates.map(coord => `[[${coord.x}, ${coord.y}], [${coord.width}, ${coord.height}]]`).join(',');
-            const message = `/coords [${messageText}] Image: [${imageWidth},${imageHeight}]`;
+            const message = `/coords [${messageText}] Image: [${imageHeight},${imageWidth}]`;
 
             overlay.style.display = 'block';
             sendMessageToTelegram(message);
