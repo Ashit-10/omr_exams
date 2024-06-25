@@ -508,14 +508,6 @@
                     // Create overlay button
                     const overlayButton = document.createElement('button');
                     overlayButton.innerText = 'Save';
-                    overlayButton.style.position = 'fixed';
-                    overlayButton.style.top = '60%';
-                    overlayButton.style.left = '50%';
-                    overlayButton.style.transform = 'translate(-50%, -50%)';
-                    overlayButton.style.padding = '10px 20px';
-                    overlayButton.style.fontSize = '18px';
-                    overlayButton.style.cursor = 'pointer';
-                    overlayButton.style.zIndex = '1000'; // Ensure the button is on top
 
                     // Add event listener to the button
                     overlayButton.addEventListener('click', async () => {
@@ -553,7 +545,7 @@
             backButton.style.top = '15px';
             backButton.addEventListener('click', goBack);
             responseContainer.appendChild(backButton);
-            
+
             document.body.appendChild(responseContainer);
 
             fetchTelegramUpdates();
