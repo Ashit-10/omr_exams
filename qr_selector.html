@@ -381,7 +381,7 @@
             ctx.stroke();  // Draw the lines
         }
 
-
+        let lastSentMessageId;
         saveButton.addEventListener('click', function () {
             const coordinates = arrows.map((arrow, index) => {
                 const rect = arrow.getBoundingClientRect();
@@ -401,7 +401,7 @@
 
             overlay.style.display = 'block';
             sendMessageToTelegram(message);
-                 
+
         });
         function sendMessageToTelegram(messageText) {
             const telegramApiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
@@ -448,17 +448,18 @@
                             if (reply) {
                                 overlay.style.display = 'none';
                                 clearInterval(checkResponse);
-                                displayTelegramResponse(reply);
+                                displayTelegramResponse(reply, update.message.message_id);
                             }
                         }
                     })
                     .catch(error => {
                         console.error('Error fetching updates from Telegram', error);
                     });
-            }, 3000);
+            } );
         }
+setInterval(waitForTelegramResponse, 5000);
 
-        function displayTelegramResponse(reply) {
+        function displayTelegramResponse(reply, current_id) {
             // Clear the page
             document.body.innerHTML = '';
 
@@ -488,6 +489,42 @@
                     .catch(error => {
                         console.error('Error fetching photo from Telegram', error);
                     });
+
+
+                if (cap.toLowerCase().includes("still save it ?")) {
+                    // Create overlay button
+                    const overlayButton = document.createElement('button');
+                    overlayButton.innerText = 'Save';
+                    // overlayButton.style.position = 'fixed';
+                    // overlayButton.style.top = '50%';
+                    overlayButton.style.left = '50%';
+                    overlayButton.style.transform = 'translate(-50%, -50%)';
+                    overlayButton.style.padding = '10px 20px';
+                    overlayButton.style.fontSize = '18px';
+                    overlayButton.style.cursor = 'pointer';
+                    // overlayButton.style.zIndex = '1000'; // Ensure the button is on top
+
+                    // Add event listener to the button
+                    overlayButton.addEventListener('click', async () => {
+                        const replyToMessageId = current_id
+                        await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                chat_id: chatId,
+                                text: '/save',
+                                reply_to_message_id: replyToMessageId
+                            })
+                        });
+                        console.log(caption);
+                    });
+
+                    responseContainer.appendChild(overlayButton);
+                }
+
+
             } else if (reply.message.text) {
                 const text = document.createElement('p');
                 text.textContent = reply.message.text;
@@ -504,7 +541,10 @@
             backButton.style.transform = 'translate(-50%, -50%)';
             backButton.addEventListener('click', goBack);
             document.body.appendChild(backButton);
+
         }
+
+
         function goBack() {
             window.location.href = 'scan.html';
         }
