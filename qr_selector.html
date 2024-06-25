@@ -436,6 +436,10 @@
                     overlay.style.display = 'none';
                 });
         }
+
+
+        let lastMessageId = null; // To store the ID of the last displayed message
+
         function waitForTelegramResponse() {
             const checkResponse = setInterval(() => {
                 fetch(`https://api.telegram.org/bot${telegramBotToken}/getUpdates`)
@@ -443,12 +447,18 @@
                     .then(data => {
                         if (data.result && data.result.length > 0) {
                             const reply = data.result.find(
-                                update => update.message && update.message.reply_to_message && update.message.reply_to_message.message_id === lastSentMessageId
+                                update =>
+                                    (update.message && update.message.reply_to_message && update.message.reply_to_message.message_id === lastSentMessageId) ||
+                                    (update.edited_message && update.edited_message.reply_to_message && update.edited_message.reply_to_message.message_id === lastSentMessageId)
                             );
                             if (reply) {
-                                overlay.style.display = 'none';
-                                // clearInterval(checkResponse);
-                                displayTelegramResponse(reply, update.message.message_id);
+                                const message = reply.message || reply.edited_message;
+                                console.log(message.caption);
+                                if (message && message.message_id !== lastMessageId) {
+                                    overlay.style.display = 'none';
+                                    lastMessageId = message.message_id;
+                                    displayTelegramResponse(message, lastMessageId);
+                                }
                             }
                         }
                     })
@@ -457,16 +467,18 @@
                     });
             }, 3000);
         }
-// setInterval(waitForTelegramResponse, 5000);
 
-        function displayTelegramResponse(reply, current_id) {
+
+        // setInterval(waitForTelegramResponse, 5000);
+
+        function displayTelegramResponse(message, current_id) {
             // Clear the page
             document.body.innerHTML = '';
 
             const responseContainer = document.createElement('div');
-            if (reply.message.photo) {
-                const photoFileId = reply.message.photo[reply.message.photo.length - 1].file_id;
-                const cap = reply.message.caption
+            if (message.photo) {
+                const photoFileId = message.photo[message.photo.length - 1].file_id;
+                const cap = message.caption
                 if (cap) {
                     const captionElement = document.createElement('p');
                     captionElement.innerHTML = cap.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
@@ -495,39 +507,39 @@
                     // Create overlay button
                     const overlayButton = document.createElement('button');
                     overlayButton.innerText = 'Save';
-                    // overlayButton.style.position = 'fixed';
-                    // overlayButton.style.top = '50%';
+                    overlayButton.style.position = 'fixed';
+                    overlayButton.style.top = '60%';
                     overlayButton.style.left = '50%';
                     overlayButton.style.transform = 'translate(-50%, -50%)';
                     overlayButton.style.padding = '10px 20px';
                     overlayButton.style.fontSize = '18px';
                     overlayButton.style.cursor = 'pointer';
-                    // overlayButton.style.zIndex = '1000'; // Ensure the button is on top
+                    overlayButton.style.zIndex = '1000'; // Ensure the button is on top
 
                     // Add event listener to the button
                     overlayButton.addEventListener('click', async () => {
                         const replyToMessageId = current_id
-                        await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+                        await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                chat_id: chatId,
+                                chat_id: telegramChatId,
                                 text: '/save',
                                 reply_to_message_id: replyToMessageId
                             })
                         });
-                        console.log(caption);
+                        // console.log(caption);
                     });
 
                     responseContainer.appendChild(overlayButton);
                 }
 
 
-            } else if (reply.message.text) {
+            } else if (message.text) {
                 const text = document.createElement('p');
-                text.textContent = reply.message.text;
+                text.textContent = message.text;
                 responseContainer.appendChild(text);
             }
             document.body.appendChild(responseContainer);
