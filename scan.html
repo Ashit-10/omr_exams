@@ -537,8 +537,8 @@
                         // Add back button in the middle of the device screen
                         backButton.innerText = 'Back';
                         backButton.style.position = 'absolute';
-                        backButton.style.top = '10%';
-                        backButton.style.left = '90%';
+                        backButton.style.top = '50%';
+                        backButton.style.left = '50%';
                         backButton.style.transform = 'translate(-50%, -50%)';
                         backButton.addEventListener('click', function () {
                             location.reload();
@@ -558,6 +558,7 @@
 
         function displayMessage(text, current_id, og_id) {
             const messageElement = document.createElement('div');
+            backButton.style.display = 'none';
             messageElement.classList.add('message');
             messageElement.style.fontSize = '20px'; // Set font size to 20px
             messageElement.style.fontWeight = 'bold'; // Set font weight to bold
@@ -639,6 +640,7 @@
                 const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
                 const data = await response.json();
                 if (data.ok) {
+                    backButton.style.display = 'none';
                     const filePath = data.result.file_path;
                     const documentUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
                     messagesDiv.innerHTML = ''; // Clear older messages
@@ -839,16 +841,7 @@
                     const backButton1 = document.createElement('button');
                     // Add back button in the middle of the device screen
                     backButton1.innerText = 'Back';
-                    // backButton1.style.display = "block";
-                    // backButton1.marginLeft = "auto";
-                    // backButton1.marginRight = "auto";
-                    backButton1.marginTop = "10px";
-
-
-                    // backButton1.style.position = 'absolute';
-                    // backButton1.style.top = '10%';
-                    // backButton1.style.left = '50%';
-                    // backButton1.style.transform = 'translate(-50%, -50%)';
+                    backButton1.marginTop = "20px";
 
                     backButton1.addEventListener('click', function () {
                         location.reload();
