@@ -1,35 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Play Audio on User Interaction</title>
-<style>
-    /* Optional: Style for the button */
-    button {
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Square Contour Detection</title>
+    <style>
+        video, canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
+    <script>
+        let video = document.getElementById('video');
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
 
-<audio id="myAudio">
-    <source src="scan.mp3" type="audio/mpeg">
-    <source src="scan.wav" type="audio/wav">
-    Your browser does not support the audio element.
-</audio>
+        function startVideo() {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(err => {
+                    console.error("Error accessing the camera: " + err);
+                });
+        }
 
-<!-- Play button -->
-<button onclick="playAudio()">Play Audio</button>
+        function detectSquares() {
+            let src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
+            let dst = new cv.Mat();
+            let contours = new cv.MatVector();
+            let hierarchy = new cv.Mat();
 
-<script>
-function playAudio() {
-    var audio = document.getElementById('myAudio');
-    audio.play();
-}
-</script>
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            src.data.set(imageData.data);
 
+            cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY, 0);
+            cv.threshold(dst, dst, 100, 255, cv.THRESH_BINARY);
+            cv.findContours(dst, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+
+            for (let i = 0; i < contours.size(); ++i) {
+                let cnt = contours.get(i);
+                let approx = new cv.Mat();
+                cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+                if (approx.rows === 4) {
+                    let color = new cv.Scalar(0, 255, 0);
+                    cv.drawContours(src, contours, i, color, 2, cv.LINE_8, hierarchy, 0);
+                }
+                approx.delete();
+            }
+
+            cv.imshow('canvas', src);
+
+            src.delete();
+            dst.delete();
+            contours.delete();
+            hierarchy.delete();
+        }
+
+        video.addEventListener('play', () => {
+            const FPS = 30;
+            setInterval(detectSquares, 1000 / FPS);
+        });
+
+        startVideo();
+    </script>
 </body>
 </html>
