@@ -9,25 +9,35 @@
             display: block;
             margin: 0 auto;
         }
+        #warning {
+            text-align: center;
+            color: red;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
-    <video id="video" width="640" height="480" playsinline autoplay></video>
-    <canvas id="canvas" width="640" height="480"></canvas>
+    <video id="video" width="330" height="440" playsinline autoplay></video>
+    <canvas id="canvas" width="330" height="440"></canvas>
+    <div id="warning"></div>
     <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
     <script>
         let video = document.getElementById('video');
         let canvas = document.getElementById('canvas');
         let ctx = canvas.getContext('2d');
+        let warning = document.getElementById('warning');
+        let contourCount = 0;
 
         function startVideo() {
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: 330, height: 440 } })
                 .then(stream => {
                     video.srcObject = stream;
                     video.play();
                 })
                 .catch(err => {
                     console.error("Error accessing the camera: " + err);
+                    warning.textContent = "Error accessing the camera.";
                 });
         }
 
@@ -42,18 +52,35 @@
             src.data.set(imageData.data);
 
             cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY, 0);
-            cv.threshold(dst, dst, 100, 255, cv.THRESH_BINARY);
+            cv.threshold(dst, dst, 50, 255, cv.THRESH_BINARY);
             cv.findContours(dst, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
+            contourCount = 0;
             for (let i = 0; i < contours.size(); ++i) {
                 let cnt = contours.get(i);
                 let approx = new cv.Mat();
                 cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
-                if (approx.rows === 4) {
+                if (approx.rows === 4 && cv.contourArea(cnt) > 1000) {
+                    contourCount++;
                     let color = new cv.Scalar(0, 255, 0);
                     cv.drawContours(src, contours, i, color, 2, cv.LINE_8, hierarchy, 0);
+                    for (let j = 0; j < 4; j++) {
+                        let circleCenter = { x: approx.data32S[j * 2], y: approx.data32S[j * 2 + 1] };
+                        cv.circle(src, circleCenter, 5, color, -1);
+                    }
                 }
                 approx.delete();
+            }
+
+            if (contourCount < 4) {
+                warning.textContent = "Low light or no squares detected.";
+            } else {
+                warning.textContent = "";
+                if (contourCount === 4) {
+                    // Capture image
+                    let capturedImage = canvas.toDataURL("image/png");
+                    console.log("Image captured:", capturedImage);
+                }
             }
 
             cv.imshow('canvas', src);
