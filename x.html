@@ -8,18 +8,31 @@
         video, canvas {
             display: block;
             margin: 0 auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        canvas {
+            z-index: 1;
+        }
+        video {
+            z-index: 0;
         }
         #warning {
             text-align: center;
             color: red;
             font-size: 1.2em;
             margin-top: 10px;
+            position: relative;
+            top: 460px;
         }
     </style>
 </head>
 <body>
-    <video id="video" width="330" height="440" playsinline autoplay></video>
-    <canvas id="canvas" width="330" height="440"></canvas>
+    <div style="position:relative;width:330px;height:440px;margin: 0 auto;">
+        <video id="video" width="330" height="440" playsinline autoplay></video>
+        <canvas id="canvas" width="330" height="440"></canvas>
+    </div>
     <div id="warning"></div>
     <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
     <script>
@@ -43,7 +56,8 @@
 
         function detectSquares() {
             let src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
-            let dst = new cv.Mat();
+            let gray = new cv.Mat();
+            let edges = new cv.Mat();
             let contours = new cv.MatVector();
             let hierarchy = new cv.Mat();
 
@@ -51,9 +65,9 @@
             let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             src.data.set(imageData.data);
 
-            cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY, 0);
-            cv.threshold(dst, dst, 50, 255, cv.THRESH_BINARY);
-            cv.findContours(dst, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+            cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+            cv.Canny(gray, edges, 50, 150, 3, false);
+            cv.findContours(edges, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
             contourCount = 0;
             for (let i = 0; i < contours.size(); ++i) {
@@ -86,7 +100,8 @@
             cv.imshow('canvas', src);
 
             src.delete();
-            dst.delete();
+            gray.delete();
+            edges.delete();
             contours.delete();
             hierarchy.delete();
         }
