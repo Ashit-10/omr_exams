@@ -33,6 +33,7 @@
         <button onclick="addEvent()">Add Event</button>
         <button onclick="sortEvents()">Sort by Year</button>
         <button onclick="printEvents()">Print</button>
+        <button onclick="clearEvents()">Clear Events</button>
     </div>
     <table id="eventsTable">
         <thead>
@@ -45,13 +46,14 @@
         </tbody>
     </table>
     <script>
-        let events = [];
+        let events = JSON.parse(localStorage.getItem('events')) || [];
 
         function addEvent() {
             const year = document.getElementById('year').value;
             const event = document.getElementById('event').value;
             if (year && event) {
                 events.push({ year: parseInt(year), event: event });
+                saveEvents();
                 displayEvents();
                 document.getElementById('year').value = '';
                 document.getElementById('event').value = '';
@@ -60,6 +62,7 @@
 
         function sortEvents() {
             events.sort((a, b) => a.year - b.year);
+            saveEvents();
             displayEvents();
         }
 
@@ -78,9 +81,22 @@
             });
         }
 
+        function saveEvents() {
+            localStorage.setItem('events', JSON.stringify(events));
+        }
+
+        function clearEvents() {
+            localStorage.removeItem('events');
+            events = [];
+            displayEvents();
+        }
+
         function printEvents() {
             window.print();
         }
+
+        // Initial display of events on page load
+        displayEvents();
     </script>
 </body>
 </html>
