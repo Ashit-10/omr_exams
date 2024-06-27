@@ -23,12 +23,14 @@
     "22": "Lija",
     "23": "Rama",
     "24": "Pintu",
-    "25": "Epsita swain",
+    "25": "Epsita",
     "26": "Sujata roul",
     "27": "Chittaranjan",
     "28": "Aditya prasad",
     "29": "Chhandita",
     "30": "Nisikanta",
     "31": "Samira",
-    "32": "Gayatri"
+    "32": "Gayatri",
+    "33": "Subhadra",
+    "34": "Raja"
 }
