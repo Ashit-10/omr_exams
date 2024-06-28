@@ -93,9 +93,6 @@
         }
     </style>
     <script>
-        // Initialize eruda first
-        eruda.init();
-
         document.addEventListener('DOMContentLoaded', (event) => {
             const userInput = [];
             let entryCount = 1;
@@ -132,10 +129,8 @@
                 return urlParams.get(name);
             }
 
-            let filename = getQueryParameter('filename');
-            if (!filename || !isValidURL(filename)) {
-                showFilenameInput();
-            } else {
+            const filename = getQueryParameter('filename');
+            if (filename) {
                 document.getElementById('filenameDisplay').textContent = filename;
                 fetch(filename)
                     .then(response => {
@@ -149,49 +144,34 @@
                     })
                     .catch(error => {
                         console.error('Error loading JSON file:', error);
-                        displayAllQuestions(); // Display all questions if fetch fails
                     });
-            }
+            } else {
+                document.getElementById('filenameDisplay').textContent = "New OMR Sheet";
+                document.body.style.display = 'block'; // Display the body
 
-            function isValidURL(url) {
-                // Basic check for URL validity, you may enhance this based on your requirements
-                return /^https?:\/\/.+/.test(url);
-            }
+                // Generate 50 question boxes
+                for (let i = 1; i <= 50; i++) {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    questionDiv.innerHTML = `<span>Question ${i}:</span>`;
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options';
 
-            function showFilenameInput() {
-                const filenameInput = document.createElement('input');
-                filenameInput.type = 'text';
-                filenameInput.placeholder = 'Enter filename';
-                filenameInput.id = 'filenameInput';
-                const filenameButton = document.createElement('button');
-                filenameButton.textContent = 'Set Filename';
-                filenameButton.addEventListener('click', () => {
-                    filename = filenameInput.value.trim();
-                    if (filename && isValidURL(filename)) {
-                        document.getElementById('filenameDisplay').textContent = filename;
-                        fetch(filename)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                processJSON(data);
-                            })
-                            .catch(error => {
-                                console.error('Error loading JSON file:', error);
-                                displayAllQuestions(); // Display all questions if fetch fails
-                            });
-                    } else {
-                        alert('Please enter a valid URL as filename.');
-                    }
-                });
+                    ['A', 'B', 'C', 'D'].forEach((option) => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'option';
+                        optionDiv.innerHTML = `
+                            <span>${option}</span>
+                            <input type="checkbox" name="question${i}" value="${option}">
+                        `;
+                        optionsDiv.appendChild(optionDiv);
+                    });
 
-                const filenameContainer = document.querySelector('.filename-container');
-                filenameContainer.innerHTML = ''; // Clear existing content
-                filenameContainer.appendChild(filenameInput);
-                filenameContainer.appendChild(filenameButton);
+                    questionDiv.appendChild(optionsDiv);
+                    questionContainer.appendChild(questionDiv);
+                }
+                addNewQuestion();
+                updateQuestionColors();
             }
 
             function processJSON(data) {
@@ -206,37 +186,50 @@
 
             function displayQuestions() {
                 questionContainer.innerHTML = '';
-                for (let i = 1; i <= 50; i++) {
-                    displayQuestion(i);
-                }
+                userInput.forEach((options, index) => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    questionDiv.innerHTML = `<span>Question ${index + 1}:</span>`;
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options';
+
+                    ['A', 'B', 'C', 'D'].forEach((option) => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'option';
+                        optionDiv.innerHTML = `
+                            <span>${option}</span>
+                            <input type="checkbox" name="question${index + 1}" value="${option}" ${options.includes(option) ? 'checked' : ''}>
+                        `;
+                        optionsDiv.appendChild(optionDiv);
+                    });
+
+                    questionDiv.appendChild(optionsDiv);
+                    questionContainer.appendChild(questionDiv);
+                });
                 addNewQuestion();
                 updateQuestionColors();
             }
 
-            function displayQuestion(index) {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.innerHTML = `<span>Question ${index}:</span>`;
-                const optionsDiv = document.createElement('div');
-                optionsDiv.className = 'options';
-
-                ['A', 'B', 'C', 'D'].forEach((option) => {
-                    const optionDiv = document.createElement('div');
-                    optionDiv.className = 'option';
-                    optionDiv.innerHTML = `
-                        <span>${option}</span>
-                        <input type="checkbox" name="question${index}" value="${option}">
-                    `;
-                    optionsDiv.appendChild(optionDiv);
-                });
-
-                questionDiv.appendChild(optionsDiv);
-                questionContainer.appendChild(questionDiv);
-            }
-
             function addNewQuestion() {
                 for (let i = entryCount; i <= 50; i++) {
-                    displayQuestion(i);
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    questionDiv.innerHTML = `<span>Question ${i}:</span>`;
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options';
+
+                    ['A', 'B', 'C', 'D'].forEach((option) => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'option';
+                        optionDiv.innerHTML = `
+                            <span>${option}</span>
+                            <input type="checkbox" name="question${i}" value="${option}">
+                        `;
+                        optionsDiv.appendChild(optionDiv);
+                    });
+
+                    questionDiv.appendChild(optionsDiv);
+                    questionContainer.appendChild(questionDiv);
                 }
             }
 
@@ -340,33 +333,5 @@
     <div id="loadingOverlay">
         <div id="loadingSpinner"></div>
     </div>
-
-    <script>
-        // Function to display all 50 questions when filename is provided but invalid or missing URL
-        function displayAllQuestions() {
-            const questionContainer = document.getElementById('questionContainer');
-            questionContainer.innerHTML = '';
-            for (let i = 1; i <= 50; i++) {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.innerHTML = `<span>Question ${i}:</span>`;
-                const optionsDiv = document.createElement('div');
-                optionsDiv.className = 'options';
-
-                ['A', 'B', 'C', 'D'].forEach((option) => {
-                    const optionDiv = document.createElement('div');
-                    optionDiv.className = 'option';
-                    optionDiv.innerHTML = `
-                        <span>${option}</span>
-                        <input type="checkbox" name="question${i}" value="${option}">
-                    `;
-                    optionsDiv.appendChild(optionDiv);
-                });
-
-                questionDiv.appendChild(optionsDiv);
-                questionContainer.appendChild(questionDiv);
-            }
-        }
-    </script>
 </body>
 </html>
