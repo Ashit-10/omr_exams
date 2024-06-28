@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMR Sheet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .options {
+            display: flex;
+            gap: 20px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+        }
+        .option input {
+            margin-right: 5px;
+        }
+        .submit-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>OMR Sheet</h1>
+
+<form id="omr-form">
+    <!-- Generate 50 questions dynamically -->
+    <div id="questions-container"></div>
+    
+    <button type="button" class="submit-btn" onclick="submitAnswers()">Submit</button>
+</form>
+
+<script>
+    const BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN';
+    const CHAT_ID = 'YOUR_CHAT_ID';
+
+    const questionsContainer = document.getElementById('questions-container');
+
+    // Generate 50 questions
+    for (let i = 1; i <= 50; i++) {
+        const questionDiv = document.createElement('div');
+        questionDiv.classList.add('question');
+        questionDiv.innerHTML = `
+            <p>Question ${i}</p>
+            <div class="options">
+                <label class="option">
+                    <input type="radio" name="question${i}" value="a"> A
+                </label>
+                <label class="option">
+                    <input type="radio" name="question${i}" value="b"> B
+                </label>
+                <label class="option">
+                    <input type="radio" name="question${i}" value="c"> C
+                </label>
+                <label class="option">
+                    <input type="radio" name="question${i}" value="d"> D
+                </label>
+            </div>
+        `;
+        questionsContainer.appendChild(questionDiv);
+    }
+
+    function submitAnswers() {
+        const form = document.getElementById('omr-form');
+        const formData = new FormData(form);
+        const answers = {};
+
+        for (let pair of formData.entries()) {
+            answers[pair[0]] = pair[1];
+        }
+
+        const jsonData = JSON.stringify(answers);
+        console.log(jsonData);
+
+        const message = `<b>OMR Sheet Answers:</b>\n<pre>${jsonData}</pre>`;
+        
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        const payload = {
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: 'HTML'
+        };
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
+                alert('Answers submitted successfully!');
+            } else {
+                alert('Failed to submit answers: ' + data.description);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while submitting the answers.');
+        });
+    }
+</script>
+
+</body>
+</html>
