@@ -334,7 +334,13 @@
             questionContainer.addEventListener('change', updateQuestionColors);
             saveButton.addEventListener('click', saveData);
 
-            document.getElementById('loadFileButton').addEventListener('click', loadLocalFile);
+            // Attach loadLocalFile function to a button click event
+            const loadFileButton = document.getElementById('loadFileButton');
+            if (loadFileButton) {
+                loadFileButton.addEventListener('click', loadLocalFile);
+            } else {
+                console.warn('Element with id "loadFileButton" not found.');
+            }
         });
     </script>
 </head>
@@ -344,6 +350,7 @@
     </div>
     <div id="questionContainer"></div>
     <button id="saveButton">Save</button>
+    <button id="loadFileButton">Load Local File</button>
     <div id="loadingOverlay">
         <div id="loadingSpinner"></div>
     </div>
