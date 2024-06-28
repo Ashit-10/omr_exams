@@ -8,9 +8,17 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f0f2f5;
         }
         .question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
+            padding: 10px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .options {
             display: flex;
@@ -21,18 +29,22 @@
             align-items: center;
         }
         .option input {
-            margin-right: 5px;
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
         }
         .submit-btn {
             margin-top: 20px;
             padding: 10px 20px;
-            background-color: #007BFF;
+            background-color: #28a745;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .submit-btn:hover {
-            background-color: #0056b3;
+            background-color: #218838;
         }
     </style>
 </head>
@@ -61,16 +73,16 @@
             <p>Question ${i}</p>
             <div class="options">
                 <label class="option">
-                    <input type="radio" name="question${i}" value="a"> A
+                    <input type="checkbox" name="question${i}" value="a"> A
                 </label>
                 <label class="option">
-                    <input type="radio" name="question${i}" value="b"> B
+                    <input type="checkbox" name="question${i}" value="b"> B
                 </label>
                 <label class="option">
-                    <input type="radio" name="question${i}" value="c"> C
+                    <input type="checkbox" name="question${i}" value="c"> C
                 </label>
                 <label class="option">
-                    <input type="radio" name="question${i}" value="d"> D
+                    <input type="checkbox" name="question${i}" value="d"> D
                 </label>
             </div>
         `;
@@ -83,10 +95,13 @@
         const answers = {};
 
         for (let pair of formData.entries()) {
-            answers[pair[0]] = pair[1];
+            if (!answers[pair[0]]) {
+                answers[pair[0]] = [];
+            }
+            answers[pair[0]].push(pair[1]);
         }
 
-        const jsonData = JSON.stringify(answers);
+        const jsonData = JSON.stringify(answers, null, 2);
         console.log(jsonData);
 
         const message = `<b>OMR Sheet Answers:</b>\n<pre>${jsonData}</pre>`;
