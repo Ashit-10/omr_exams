@@ -8,27 +8,27 @@
         body {
             font-family: Arial, sans-serif;
         }
+        .filename-container {
+            text-align: center;
+            margin: 20px 0;
+        }
         .question {
             margin: 20px 0;
             padding: 10px;
-            border-radius: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
             display: flex;
             align-items: center;
-            background-color: #f0f0f0;
-            transition: background-color 0.3s;
+            justify-content: space-between;
         }
-        .question.lightgreen {
-            background-color: lightgreen;
+        .question.green {
+            background-color: #d4edda;
         }
-        .question.lightblue {
-            background-color: lightblue;
+        .question.blue {
+            background-color: #d1ecf1;
         }
-        .question.lightred {
-            background-color: lightcoral;
-        }
-        .question span {
-            flex-shrink: 0;
-            margin-right: 10px;
+        .question.red {
+            background-color: #f8d7da;
         }
         .options {
             display: flex;
@@ -38,12 +38,12 @@
             display: flex;
             align-items: center;
         }
-        .option input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-        }
         .option label {
             margin-left: 5px;
+        }
+        .option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
         }
         #saveButton {
             display: block;
@@ -80,18 +80,6 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-        .filename-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .filename-container label {
-            margin-right: 10px;
-        }
-        .filename-container input {
-            flex-grow: 1;
-            box-sizing: border-box;
         }
     </style>
     <script>
@@ -133,7 +121,7 @@
 
             const filename = getQueryParameter('filename');
             if (filename) {
-                document.getElementById('filename').value = filename;
+                document.getElementById('filenameDisplay').textContent = filename;
                 fetch(filename)
                     .then(response => {
                         if (!response.ok) {
@@ -188,39 +176,42 @@
             }
 
             function addNewQuestion() {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.innerHTML = `<span>Question ${entryCount}:</span>`;
-                const optionsDiv = document.createElement('div');
-                optionsDiv.className = 'options';
+                for (let i = entryCount; i <= 50; i++) {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    questionDiv.innerHTML = `<span>Question ${i}:</span>`;
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options';
 
-                ['A', 'B', 'C', 'D'].forEach((option) => {
-                    const optionDiv = document.createElement('div');
-                    optionDiv.className = 'option';
-                    optionDiv.innerHTML = `
-                        <input type="checkbox" name="question${entryCount}" value="${option}">
-                        <label>${option}</label>
-                    `;
-                    optionsDiv.appendChild(optionDiv);
-                });
+                    ['A', 'B', 'C', 'D'].forEach((option) => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'option';
+                        optionDiv.innerHTML = `
+                            <input type="checkbox" name="question${i}" value="${option}">
+                            <label>${option}</label>
+                        `;
+                        optionsDiv.appendChild(optionDiv);
+                    });
 
-                questionDiv.appendChild(optionsDiv);
-                questionContainer.appendChild(questionDiv);
+                    questionDiv.appendChild(optionsDiv);
+                    questionContainer.appendChild(questionDiv);
+                }
             }
 
             function updateQuestionColors() {
                 const questions = document.querySelectorAll('.question');
-                questions.forEach((question, index) => {
-                    const selectedOptions = question.querySelectorAll('input[type="checkbox"]:checked');
+                questions.forEach(question => {
+                    const checkboxes = question.querySelectorAll('input[type="checkbox"]');
+                    const selectedOptions = Array.from(checkboxes).filter(checkbox => checkbox.checked);
                     if (selectedOptions.length === 1) {
-                        question.classList.add('lightgreen');
-                        question.classList.remove('lightblue', 'lightred');
+                        question.classList.add('green');
+                        question.classList.remove('blue', 'red');
                     } else if (selectedOptions.length > 1) {
-                        question.classList.add('lightblue');
-                        question.classList.remove('lightgreen', 'lightred');
+                        question.classList.add('blue');
+                        question.classList.remove('green', 'red');
                     } else {
-                        question.classList.add('lightred');
-                        question.classList.remove('lightgreen', 'lightblue');
+                        question.classList.add('red');
+                        question.classList.remove('green', 'blue');
                     }
                 });
             }
@@ -228,17 +219,28 @@
             async function saveData(e) {
                 e.preventDefault();
 
-                userInput.length = 0; // Clear the array
                 const questions = document.querySelectorAll('.question');
-                questions.forEach((question, index) => {
-                    const selectedOptions = question.querySelectorAll('input[type="checkbox"]:checked');
-                    const options = Array.from(selectedOptions).map(option => option.value);
-                    userInput.push(options);
-                });
+                let lastSelectedIndex = -1;
 
-                if (userInput.length === 0) {
-                    alert('Please select at least one option (A, B, C, or D) for each question.');
-                    return;
+                userInput.length = 0; // Clear the array
+
+                for (let i = 0; i < questions.length; i++) {
+                    const question = questions[i];
+                    const selectedOptions = Array.from(question.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.value);
+                    if (selectedOptions.length > 0) {
+                        lastSelectedIndex = i;
+                    }
+                    if (selectedOptions.length > 0 || i <= lastSelectedIndex) {
+                        userInput.push(selectedOptions);
+                    }
+                }
+
+                // Check for unselected questions in between
+                for (let i = 0; i < lastSelectedIndex; i++) {
+                    if (userInput[i].length === 0) {
+                        alert(`Please select at least one option for Question ${i + 1}.`);
+                        return;
+                    }
                 }
 
                 const jsonOutput = {};
@@ -246,7 +248,6 @@
                     jsonOutput[index + 1] = entry;
                 });
 
-                const filename = document.getElementById('filename').value;
                 const jsonString = JSON.stringify(jsonOutput, null, 2);
                 const blob = new Blob([jsonString], { type: 'application/json' });
                 const file = new File([blob], `${filename}.json`, { type: 'application/json' });
@@ -275,22 +276,22 @@
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Error sending file.');
+                    alert('An error occurred while sending the file.');
                 } finally {
                     loadingOverlay.style.display = 'none'; // Hide loading overlay
                 }
             }
 
+            questionContainer.addEventListener('change', updateQuestionColors);
             saveButton.addEventListener('click', saveData);
 
-            questionContainer.addEventListener('change', updateQuestionColors);
+            document.getElementById('loadFileButton').addEventListener('click', loadLocalFile);
         });
     </script>
 </head>
 <body>
     <div class="filename-container">
-        <label for="filename">Filename:</label>
-        <input type="text" id="filename" name="filename" readonly size="50">
+        <span id="filenameDisplay"></span>
     </div>
     <div id="questionContainer"></div>
     <button id="saveButton">Save</button>
