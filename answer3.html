@@ -149,6 +149,7 @@
                     })
                     .catch(error => {
                         console.error('Error loading JSON file:', error);
+                        displayAllQuestions(); // Display all questions if fetch fails
                     });
             }
 
@@ -166,12 +167,24 @@
                 filenameButton.textContent = 'Set Filename';
                 filenameButton.addEventListener('click', () => {
                     filename = filenameInput.value.trim();
-                    if (filename) {
+                    if (filename && isValidURL(filename)) {
                         document.getElementById('filenameDisplay').textContent = filename;
-                        // Assuming it's a new filename, proceed to display all 50 questions
-                        displayAllQuestions();
+                        fetch(filename)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                processJSON(data);
+                            })
+                            .catch(error => {
+                                console.error('Error loading JSON file:', error);
+                                displayAllQuestions(); // Display all questions if fetch fails
+                            });
                     } else {
-                        alert('Please enter a valid filename.');
+                        alert('Please enter a valid URL as filename.');
                     }
                 });
 
@@ -191,7 +204,7 @@
                 displayQuestions();
             }
 
-            function displayAllQuestions() {
+            function displayQuestions() {
                 questionContainer.innerHTML = '';
                 for (let i = 1; i <= 50; i++) {
                     displayQuestion(i);
@@ -327,5 +340,33 @@
     <div id="loadingOverlay">
         <div id="loadingSpinner"></div>
     </div>
+
+    <script>
+        // Function to display all 50 questions when filename is provided but invalid or missing URL
+        function displayAllQuestions() {
+            const questionContainer = document.getElementById('questionContainer');
+            questionContainer.innerHTML = '';
+            for (let i = 1; i <= 50; i++) {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `<span>Question ${i}:</span>`;
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+
+                ['A', 'B', 'C', 'D'].forEach((option) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    optionDiv.innerHTML = `
+                        <span>${option}</span>
+                        <input type="checkbox" name="question${i}" value="${option}">
+                    `;
+                    optionsDiv.appendChild(optionDiv);
+                });
+
+                questionDiv.appendChild(optionsDiv);
+                questionContainer.appendChild(questionDiv);
+            }
+        }
+    </script>
 </body>
 </html>
