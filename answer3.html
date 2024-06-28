@@ -92,32 +92,14 @@
             100% { transform: rotate(360deg); }
         }
     </style>
-</head>
-<body>
-    <div class="filename-container">
-        <span id="filenameDisplay"></span>
-        <input type="text" id="newFilename" placeholder="Enter a new filename" style="display: none;">
-    </div>
-
-    <div id="questionContainer">
-        <!-- Questions will be dynamically generated here -->
-    </div>
-
-    <button id="saveButton">Save</button>
-    
-    <div id="loadingOverlay">
-        <div id="loadingSpinner"></div>
-    </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const userInput = [];
-            const entryCount = 50; // Total number of questions to display
+            let entryCount = 1;
 
             const questionContainer = document.getElementById('questionContainer');
             const saveButton = document.getElementById('saveButton');
             const loadingOverlay = document.getElementById('loadingOverlay');
-            const newFilenameInput = document.getElementById('newFilename');
 
             function loadLocalFile() {
                 const input = document.createElement('input');
@@ -148,65 +130,144 @@
             }
 
             let filename = getQueryParameter('filename');
-            if (!filename) {
-                // If filename parameter is not provided or invalid, show the input field for new filename
-                newFilenameInput.style.display = 'block';
-                saveButton.disabled = true; // Disable save button until a valid filename is entered
+            if (!filename || !isValidURL(filename)) {
+                showFilenameInput();
+            } else {
+                document.getElementById('filenameDisplay').textContent = filename;
+                fetch(filename)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        processJSON(data);
+                    })
+                    .catch(error => {
+                        console.error('Error loading JSON file:', error);
+                    });
+            }
 
-                saveButton.addEventListener('click', () => {
-                    filename = newFilenameInput.value.trim();
+            function isValidURL(url) {
+                // Basic check for URL validity, you may enhance this based on your requirements
+                return /^https?:\/\/.+/.test(url);
+            }
+
+            function showFilenameInput() {
+                const filenameInput = document.createElement('input');
+                filenameInput.type = 'text';
+                filenameInput.placeholder = 'Enter filename';
+                filenameInput.id = 'filenameInput';
+                const filenameButton = document.createElement('button');
+                filenameButton.textContent = 'Set Filename';
+                filenameButton.addEventListener('click', () => {
+                    filename = filenameInput.value.trim();
                     if (filename) {
-                        // Hide filename input and start loading process
-                        newFilenameInput.style.display = 'none';
-                        saveButton.disabled = false;
                         document.getElementById('filenameDisplay').textContent = filename;
-                        displayQuestions();
+                        // Assuming it's a new filename, proceed to display all 50 questions
+                        displayAllQuestions();
                     } else {
                         alert('Please enter a valid filename.');
                     }
                 });
-            } else {
-                // If filename parameter is provided, display it and load questions
-                document.getElementById('filenameDisplay').textContent = filename;
+
+                const filenameContainer = document.querySelector('.filename-container');
+                filenameContainer.innerHTML = ''; // Clear existing content
+                filenameContainer.appendChild(filenameInput);
+                filenameContainer.appendChild(filenameButton);
+            }
+
+            function processJSON(data) {
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        userInput.push(data[key]);
+                        entryCount = Math.max(entryCount, parseInt(key) + 1);
+                    }
+                }
                 displayQuestions();
             }
 
-            function displayQuestions() {
+            function displayAllQuestions() {
                 questionContainer.innerHTML = '';
-                for (let i = 1; i <= entryCount; i++) {
-                    const questionDiv = document.createElement('div');
-                    questionDiv.className = 'question';
-                    questionDiv.innerHTML = `<span>Question ${i}:</span>`;
-                    const optionsDiv = document.createElement('div');
-                    optionsDiv.className = 'options';
-
-                    ['A', 'B', 'C', 'D'].forEach((option) => {
-                        const optionDiv = document.createElement('div');
-                        optionDiv.className = 'option';
-                        optionDiv.innerHTML = `
-                            <span>${option}</span>
-                            <input type="checkbox" name="question${i}" value="${option}">
-                        `;
-                        optionsDiv.appendChild(optionDiv);
-                    });
-
-                    questionDiv.appendChild(optionsDiv);
-                    questionContainer.appendChild(questionDiv);
+                for (let i = 1; i <= 50; i++) {
+                    displayQuestion(i);
                 }
+                addNewQuestion();
+                updateQuestionColors();
+            }
+
+            function displayQuestion(index) {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `<span>Question ${index}:</span>`;
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+
+                ['A', 'B', 'C', 'D'].forEach((option) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    optionDiv.innerHTML = `
+                        <span>${option}</span>
+                        <input type="checkbox" name="question${index}" value="${option}">
+                    `;
+                    optionsDiv.appendChild(optionDiv);
+                });
+
+                questionDiv.appendChild(optionsDiv);
+                questionContainer.appendChild(questionDiv);
+            }
+
+            function addNewQuestion() {
+                for (let i = entryCount; i <= 50; i++) {
+                    displayQuestion(i);
+                }
+            }
+
+            function updateQuestionColors() {
+                const questions = document.querySelectorAll('.question');
+                questions.forEach(question => {
+                    const checkboxes = question.querySelectorAll('input[type="checkbox"]');
+                    const selectedOptions = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+                    if (selectedOptions.length === 1) {
+                        question.classList.add('green');
+                        question.classList.remove('blue', 'red');
+                    } else if (selectedOptions.length > 1) {
+                        question.classList.add('blue');
+                        question.classList.remove('green', 'red');
+                    } else {
+                        question.classList.add('red');
+                        question.classList.remove('green', 'blue');
+                    }
+                });
             }
 
             async function saveData(e) {
                 e.preventDefault();
 
                 const questions = document.querySelectorAll('.question');
+                let lastSelectedIndex = -1;
 
                 userInput.length = 0; // Clear the array
 
-                questions.forEach((question, index) => {
-                    const checkboxes = question.querySelectorAll('input[type="checkbox"]:checked');
-                    const selectedOptions = Array.from(checkboxes).map(input => input.value);
-                    userInput.push(selectedOptions);
-                });
+                for (let i = 0; i < questions.length; i++) {
+                    const question = questions[i];
+                    const selectedOptions = Array.from(question.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.value);
+                    if (selectedOptions.length > 0) {
+                        lastSelectedIndex = i;
+                    }
+                    if (selectedOptions.length > 0 || i <= lastSelectedIndex) {
+                        userInput.push(selectedOptions);
+                    }
+                }
+
+                // Check for unselected questions in between
+                for (let i = 0; i < lastSelectedIndex; i++) {
+                    if (userInput[i].length === 0) {
+                        alert(`Please select at least one option for Question ${i + 1}.`);
+                        return;
+                    }
+                }
 
                 const jsonOutput = {};
                 userInput.forEach((entry, index) => {
@@ -217,7 +278,6 @@
                 const blob = new Blob([jsonString], { type: 'application/json' });
                 const file = new File([blob], `${filename}.json`, { type: 'application/json' });
 
-                // Replace with your Telegram chat ID and bot token
                 const chatId = "-1001774957665"; // Replace with your Telegram chat ID
                 const token = "1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0"; // Replace with your bot token
 
@@ -248,9 +308,21 @@
                 }
             }
 
+            questionContainer.addEventListener('change', updateQuestionColors);
             saveButton.addEventListener('click', saveData);
+
             document.getElementById('loadFileButton').addEventListener('click', loadLocalFile);
         });
     </script>
+</head>
+<body>
+    <div class="filename-container">
+        <span id="filenameDisplay"></span>
+    </div>
+    <div id="questionContainer"></div>
+    <button id="saveButton">Save</button>
+    <div id="loadingOverlay">
+        <div id="loadingSpinner"></div>
+    </div>
 </body>
 </html>
