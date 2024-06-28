@@ -144,8 +144,14 @@
                     })
                     .catch(error => {
                         console.error('Error loading JSON file:', error);
+                        // Display new OMR sheet interface when filename is invalid
+                        displayNewOMRSheet();
                     });
             } else {
+                displayNewOMRSheet();
+            }
+
+            function displayNewOMRSheet() {
                 document.getElementById('filenameDisplay').textContent = "New OMR Sheet";
                 document.body.style.display = 'block'; // Display the body
 
