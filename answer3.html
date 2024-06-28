@@ -100,6 +100,7 @@
             const questionContainer = document.getElementById('questionContainer');
             const saveButton = document.getElementById('saveButton');
             const loadingOverlay = document.getElementById('loadingOverlay');
+            const filenameDisplay = document.getElementById('filenameDisplay');
 
             function loadLocalFile() {
                 const input = document.createElement('input');
@@ -130,8 +131,9 @@
             }
 
             const filename = getQueryParameter('filename');
+            filenameDisplay.textContent = filename || "New OMR Sheet"; // Display filename or default text
+
             if (filename) {
-                document.getElementById('filenameDisplay').textContent = filename;
                 fetch(filename)
                     .then(response => {
                         if (!response.ok) {
@@ -152,7 +154,6 @@
             }
 
             function displayNewOMRSheet() {
-                document.getElementById('filenameDisplay').textContent = "New OMR Sheet";
                 document.body.style.display = 'block'; // Display the body
 
                 // Generate 50 question boxes
