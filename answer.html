@@ -7,9 +7,6 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #ffefba, #ffffff);
-            color: #333;
-            padding: 20px;
         }
         .question {
             margin: 20px 0;
@@ -17,39 +14,33 @@
             align-items: center;
         }
         .question span {
-            margin-right: 20px;
-            font-weight: bold;
+            flex-shrink: 0;
+            margin-right: 10px;
         }
         .options {
             display: flex;
-            gap: 20px;
+            gap: 10px;
         }
         .option {
             display: flex;
             align-items: center;
         }
+        .option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
         .option label {
             margin-left: 5px;
-            font-weight: bold;
-            color: #4744f7;
-        }
-        .option input[type="checkbox"] {
-            transform: scale(1.5);
-            margin: 0 10px;
         }
         #saveButton {
             display: block;
             padding: 10px 20px;
             background-color: #4744f7;
             color: #fff;
-            border: none;
             border-radius: 5px;
-            margin: 20px auto;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #saveButton:hover {
-            background-color: #3733c9;
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
         }
         #loadingOverlay {
             display: none;
@@ -58,7 +49,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.7);
             z-index: 9999;
         }
         #loadingSpinner {
@@ -66,23 +57,16 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            color: #4744f7;
         }
     </style>
     <script>
@@ -174,10 +158,7 @@
                     questionDiv.appendChild(optionsDiv);
                     questionContainer.appendChild(questionDiv);
                 });
-
-                if (entryCount <= 50) {
-                    addNewQuestion();
-                }
+                addNewQuestion();
             }
 
             function addNewQuestion() {
@@ -207,11 +188,9 @@
                 userInput.length = 0; // Clear the array
                 const questions = document.querySelectorAll('.question');
                 questions.forEach((question, index) => {
-                    const selectedOptions = [];
-                    question.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                        selectedOptions.push(checkbox.value);
-                    });
-                    userInput.push(selectedOptions);
+                    const selectedOptions = question.querySelectorAll('input[type="checkbox"]:checked');
+                    const options = Array.from(selectedOptions).map(option => option.value);
+                    userInput.push(options);
                 });
 
                 if (userInput.length === 0) {
@@ -264,13 +243,10 @@
     </script>
 </head>
 <body>
-    <div class="header">
-        <h1>OMR Sheet</h1>
-        <form onsubmit="saveData(event)">
-            <label for="filename">Filename:</label>
-            <input type="text" id="filename" name="filename" readonly size="50"><br><br>
-        </form>
-    </div>
+    <form onsubmit="saveData(event)">
+        <label for="filename">Filename:</label>
+        <input type="text" id="filename" name="filename" readonly size="50"><br><br>
+    </form>
     <div id="questionContainer"></div>
     <button id="saveButton">Save</button>
     <div id="loadingOverlay">
