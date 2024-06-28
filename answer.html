@@ -7,215 +7,243 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f0f2f5;
         }
         .question {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #ffffff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
         }
         .options {
             display: flex;
-            gap: 20px;
+            gap: 10px;
         }
         .option {
             display: flex;
             align-items: center;
         }
-        .option input {
-            margin-right: 10px;
-            width: 20px;
-            height: 20px;
+        .option label {
+            margin-left: 5px;
         }
-        .submit-btn {
-            margin-top: 20px;
+        #saveButton {
+            display: block;
             padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            border: none;
+            background-color: #4744f7;
+            color: #fff;
             border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .submit-btn:hover {
-            background-color: #218838;
-        }
-        .unanswered {
-            color: #dc3545; /* Light red */
-        }
-        .answered {
-            color: #28a745; /* Light green */
-        }
-        #loading-screen {
+        #loadingOverlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.8);
-            justify-content: center;
-            align-items: center;
-            font-size: 2em;
-            color: #28a745;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+        }
+        #loadingSpinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const userInput = [];
+            let entryCount = 1;
+
+            const questionContainer = document.getElementById('questionContainer');
+            const saveButton = document.getElementById('saveButton');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            function loadLocalFile() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.txt';
+
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.readAsText(file);
+                    reader.onload = () => {
+                        const data = reader.result;
+                        try {
+                            const jsonData = JSON.parse(data);
+                            processJSON(jsonData);
+                        } catch (error) {
+                            alert('Error parsing JSON data from the selected file.');
+                        }
+                    };
+                };
+
+                input.click();
+            }
+
+            function getQueryParameter(name) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+
+            const filename = getQueryParameter('filename');
+            if (filename) {
+                document.getElementById('filename').value = filename;
+                fetch(filename)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        processJSON(data);
+                    })
+                    .catch(error => {
+                        console.error('Error loading JSON file:', error);
+                    });
+            } else {
+                document.body.style.display = 'none';
+            }
+
+            function processJSON(data) {
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        userInput.push(data[key]);
+                        entryCount = Math.max(entryCount, parseInt(key) + 1);
+                    }
+                }
+                displayQuestions();
+            }
+
+            function displayQuestions() {
+                questionContainer.innerHTML = '';
+                userInput.forEach((options, index) => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    questionDiv.innerHTML = `<span>Question ${index + 1}:</span>`;
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options';
+
+                    ['A', 'B', 'C', 'D'].forEach((option) => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'option';
+                        optionDiv.innerHTML = `
+                            <input type="radio" name="question${index + 1}" value="${option}" ${options.includes(option) ? 'checked' : ''}>
+                            <label>${option}</label>
+                        `;
+                        optionsDiv.appendChild(optionDiv);
+                    });
+
+                    questionDiv.appendChild(optionsDiv);
+                    questionContainer.appendChild(questionDiv);
+                });
+                addNewQuestion();
+            }
+
+            function addNewQuestion() {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `<span>Question ${entryCount}:</span>`;
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+
+                ['A', 'B', 'C', 'D'].forEach((option) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    optionDiv.innerHTML = `
+                        <input type="radio" name="question${entryCount}" value="${option}">
+                        <label>${option}</label>
+                    `;
+                    optionsDiv.appendChild(optionDiv);
+                });
+
+                questionDiv.appendChild(optionsDiv);
+                questionContainer.appendChild(questionDiv);
+            }
+
+            async function saveData(e) {
+                e.preventDefault();
+
+                userInput.length = 0; // Clear the array
+                const questions = document.querySelectorAll('.question');
+                questions.forEach((question, index) => {
+                    const selectedOption = question.querySelector('input[type="radio"]:checked');
+                    if (selectedOption) {
+                        userInput.push([selectedOption.value]);
+                    } else {
+                        userInput.push([]);
+                    }
+                });
+
+                if (userInput.length === 0) {
+                    alert('Please select at least one option (A, B, C, or D) for each question.');
+                    return;
+                }
+
+                const jsonOutput = {};
+                userInput.forEach((entry, index) => {
+                    jsonOutput[index + 1] = entry;
+                });
+
+                const filename = document.getElementById('filename').value;
+                const jsonString = JSON.stringify(jsonOutput, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const file = new File([blob], `${filename}.json`, { type: 'application/json' });
+
+                const chatId = "-1001774957665"; // Replace with your Telegram chat ID
+                const token = "1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0"; // Replace with your bot token
+
+                const url = `https://api.telegram.org/bot${token}/sendDocument`;
+
+                const formData = new FormData();
+                formData.append('chat_id', chatId);
+                formData.append('document', file);
+
+                loadingOverlay.style.display = 'block'; // Show loading overlay
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        alert('File sent successfully!');
+                    } else {
+                        alert('Failed to send file.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error sending file.');
+                } finally {
+                    loadingOverlay.style.display = 'none'; // Hide loading overlay
+                }
+            }
+
+            saveButton.addEventListener('click', saveData);
+        });
+    </script>
 </head>
 <body>
-
-<div id="loading-screen">Loading...</div>
-
-<h1 id="filename-display">OMR Sheet</h1>
-
-<form id="omr-form">
-    <!-- Generate 50 questions dynamically -->
-    <div id="questions-container"></div>
-    
-    <button type="button" class="submit-btn" onclick="submitAnswers()">Submit</button>
-</form>
-
-<script>
-    const BOT_TOKEN = '-1001774957665';
-    const CHAT_ID = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
-    const urlParams = new URLSearchParams(window.location.search);
-    const filename = urlParams.get('filename');
-
-    document.getElementById('filename-display').innerText = filename ? `OMR Sheet - ${filename}` : 'OMR Sheet';
-
-    const questionsContainer = document.getElementById('questions-container');
-
-    // Generate 50 questions
-    for (let i = 1; i <= 50; i++) {
-        const questionDiv = document.createElement('div');
-        questionDiv.classList.add('question');
-        questionDiv.id = `question-${i}`;
-        questionDiv.innerHTML = `
-            <p id="question-text-${i}">Question ${i}</p>
-            <div class="options">
-                <label class="option">
-                    <input type="checkbox" name="question${i}" value="a"> A
-                </label>
-                <label class="option">
-                    <input type="checkbox" name="question${i}" value="b"> B
-                </label>
-                <label class="option">
-                    <input type="checkbox" name="question${i}" value="c"> C
-                </label>
-                <label class="option">
-                    <input type="checkbox" name="question${i}" value="d"> D
-                </label>
-            </div>
-        `;
-        questionsContainer.appendChild(questionDiv);
-    }
-
-    // Function to update question status
-    function updateQuestionStatus(questionNumber) {
-        const questionDiv = document.getElementById(`question-${questionNumber}`);
-        const checkboxes = questionDiv.querySelectorAll('input[type="checkbox"]');
-        let answered = false;
-
-        checkboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                answered = true;
-            }
-        });
-
-        const questionText = document.getElementById(`question-text-${questionNumber}`);
-        if (answered) {
-            questionDiv.classList.remove('unanswered');
-            questionDiv.classList.add('answered');
-        } else {
-            questionDiv.classList.remove('answered');
-            questionDiv.classList.add('unanswered');
-        }
-    }
-
-    function submitAnswers() {
-        const form = document.getElementById('omr-form');
-        const formData = new FormData(form);
-        const answers = {};
-
-        for (let pair of formData.entries()) {
-            const questionNumber = pair[0].replace('question', '');
-            if (!answers[questionNumber]) {
-                answers[questionNumber] = [];
-            }
-            answers[questionNumber].push(pair[1]);
-        }
-
-        const jsonData = JSON.stringify(answers, null, 2);
-        console.log(jsonData);
-
-        const textFile = new Blob([jsonData], {type: 'text/plain'});
-        const formDataToSend = new FormData();
-        formDataToSend.append('chat_id', CHAT_ID);
-        formDataToSend.append('document', textFile, filename);
-
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`;
-
-        // Show loading screen
-        document.getElementById('loading-screen').style.display = 'flex';
-
-        fetch(url, {
-            method: 'POST',
-            body: formDataToSend
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Hide loading screen
-            document.getElementById('loading-screen').style.display = 'none';
-
-            if (data.ok) {
-                alert('Answers submitted successfully!');
-            } else {
-                alert('Failed to submit answers: ' + data.description);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-
-            // Hide loading screen
-            document.getElementById('loading-screen').style.display = 'none';
-
-            alert('An error occurred while submitting the answers.');
-        });
-    }
-
-    // Function to load JSON data from a file and populate the form
-    function loadJSONData(filename) {
-        fetch(filename)
-            .then(response => response.json())
-            .then(data => {
-                for (const [question, options] of Object.entries(data)) {
-                    const questionNumber = parseInt(question);
-                    const questionDiv = document.getElementById(`question-${questionNumber}`);
-                    const checkboxes = questionDiv.querySelectorAll('input[type="checkbox"]');
-                    
-                    checkboxes.forEach(checkbox => {
-                        if (options.includes(checkbox.value)) {
-                            checkbox.checked = true;
-                        }
-                    });
-                    updateQuestionStatus(questionNumber);
-                }
-            })
-            .catch(error => {
-                console.error('Error loading JSON data:', error);
-            });
-    }
-
-    // Load JSON data if filename is provided in URL
-    if (filename) {
-        loadJSONData(filename);
-    }
-</script>
-
+    <form onsubmit="saveData(event)">
+        <label for="filename">Filename:</label>
+        <input type="text" id="filename" name="filename" readonly size="50"><br><br>
+    </form>
+    <div id="questionContainer"></div>
+    <button id="saveButton">Save</button>
+    <div id="loadingOverlay">
+        <div id="loadingSpinner"></div>
+    </div>
 </body>
 </html>
