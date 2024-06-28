@@ -46,11 +46,17 @@
         .submit-btn:hover {
             background-color: #218838;
         }
+        .unanswered {
+            color: #dc3545; /* Light red */
+        }
+        .answered {
+            color: #28a745; /* Light green */
+        }
     </style>
 </head>
 <body>
 
-<h1>OMR Sheet</h1>
+<h1 id="filename-display">OMR Sheet</h1>
 
 <form id="omr-form">
     <!-- Generate 50 questions dynamically -->
@@ -60,8 +66,12 @@
 </form>
 
 <script>
-    const BOT_TOKEN = '-1001774957665';
-    const CHAT_ID = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+    const BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN';
+    const CHAT_ID = 'YOUR_CHAT_ID';
+    const urlParams = new URLSearchParams(window.location.search);
+    const filename = urlParams.get('filename');
+
+    document.getElementById('filename-display').innerText = filename ? `OMR Sheet - ${filename}` : 'OMR Sheet';
 
     const questionsContainer = document.getElementById('questions-container');
 
@@ -69,24 +79,46 @@
     for (let i = 1; i <= 50; i++) {
         const questionDiv = document.createElement('div');
         questionDiv.classList.add('question');
+        questionDiv.id = `question-${i}`;
         questionDiv.innerHTML = `
-            <p>Question ${i}</p>
+            <p id="question-text-${i}">Question ${i}</p>
             <div class="options">
                 <label class="option">
-                    <input type="checkbox" name="question${i}" value="a"> A
+                    <input type="checkbox" name="question${i}" value="a" onchange="updateQuestionStatus(${i})"> A
                 </label>
                 <label class="option">
-                    <input type="checkbox" name="question${i}" value="b"> B
+                    <input type="checkbox" name="question${i}" value="b" onchange="updateQuestionStatus(${i})"> B
                 </label>
                 <label class="option">
-                    <input type="checkbox" name="question${i}" value="c"> C
+                    <input type="checkbox" name="question${i}" value="c" onchange="updateQuestionStatus(${i})"> C
                 </label>
                 <label class="option">
-                    <input type="checkbox" name="question${i}" value="d"> D
+                    <input type="checkbox" name="question${i}" value="d" onchange="updateQuestionStatus(${i})"> D
                 </label>
             </div>
         `;
         questionsContainer.appendChild(questionDiv);
+    }
+
+    function updateQuestionStatus(questionNumber) {
+        const questionDiv = document.getElementById(`question-${questionNumber}`);
+        const checkboxes = questionDiv.querySelectorAll('input[type="checkbox"]');
+        let answered = false;
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                answered = true;
+            }
+        });
+
+        const questionText = document.getElementById(`question-text-${questionNumber}`);
+        if (answered) {
+            questionDiv.classList.remove('unanswered');
+            questionDiv.classList.add('answered');
+        } else {
+            questionDiv.classList.remove('answered');
+            questionDiv.classList.add('unanswered');
+        }
     }
 
     function submitAnswers() {
@@ -95,10 +127,11 @@
         const answers = {};
 
         for (let pair of formData.entries()) {
-            if (!answers[pair[0]]) {
-                answers[pair[0]] = [];
+            const questionNumber = pair[0].replace('question', '');
+            if (!answers[questionNumber]) {
+                answers[questionNumber] = [];
             }
-            answers[pair[0]].push(pair[1]);
+            answers[questionNumber].push(pair[1]);
         }
 
         const jsonData = JSON.stringify(answers, null, 2);
@@ -132,6 +165,34 @@
             console.error('Error:', error);
             alert('An error occurred while submitting the answers.');
         });
+    }
+
+    // Function to load JSON data from a file and populate the form
+    function loadJSONData(filename) {
+        fetch(filename)
+            .then(response => response.json())
+            .then(data => {
+                for (const [question, options] of Object.entries(data)) {
+                    const questionNumber = parseInt(question);
+                    const questionDiv = document.getElementById(`question-${questionNumber}`);
+                    const checkboxes = questionDiv.querySelectorAll('input[type="checkbox"]');
+                    
+                    checkboxes.forEach(checkbox => {
+                        if (options.includes(checkbox.value)) {
+                            checkbox.checked = true;
+                            updateQuestionStatus(questionNumber);
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading JSON data:', error);
+            });
+    }
+
+    // Load JSON data if filename is provided in URL
+    if (filename) {
+        loadJSONData(filename);
     }
 </script>
 
