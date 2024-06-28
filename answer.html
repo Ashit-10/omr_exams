@@ -10,8 +10,21 @@
         }
         .question {
             margin: 20px 0;
+            padding: 10px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
+            background-color: #f0f0f0;
+            transition: background-color 0.3s;
+        }
+        .question.lightgreen {
+            background-color: lightgreen;
+        }
+        .question.lightblue {
+            background-color: lightblue;
+        }
+        .question.lightred {
+            background-color: lightcoral;
         }
         .question span {
             flex-shrink: 0;
@@ -67,6 +80,18 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        .filename-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .filename-container label {
+            margin-right: 10px;
+        }
+        .filename-container input {
+            flex-grow: 1;
+            box-sizing: border-box;
         }
     </style>
     <script>
@@ -159,6 +184,7 @@
                     questionContainer.appendChild(questionDiv);
                 });
                 addNewQuestion();
+                updateQuestionColors();
             }
 
             function addNewQuestion() {
@@ -180,6 +206,23 @@
 
                 questionDiv.appendChild(optionsDiv);
                 questionContainer.appendChild(questionDiv);
+            }
+
+            function updateQuestionColors() {
+                const questions = document.querySelectorAll('.question');
+                questions.forEach((question, index) => {
+                    const selectedOptions = question.querySelectorAll('input[type="checkbox"]:checked');
+                    if (selectedOptions.length === 1) {
+                        question.classList.add('lightgreen');
+                        question.classList.remove('lightblue', 'lightred');
+                    } else if (selectedOptions.length > 1) {
+                        question.classList.add('lightblue');
+                        question.classList.remove('lightgreen', 'lightred');
+                    } else {
+                        question.classList.add('lightred');
+                        question.classList.remove('lightgreen', 'lightblue');
+                    }
+                });
             }
 
             async function saveData(e) {
@@ -239,14 +282,16 @@
             }
 
             saveButton.addEventListener('click', saveData);
+
+            questionContainer.addEventListener('change', updateQuestionColors);
         });
     </script>
 </head>
 <body>
-    <form onsubmit="saveData(event)">
+    <div class="filename-container">
         <label for="filename">Filename:</label>
-        <input type="text" id="filename" name="filename" readonly size="50"><br><br>
-    </form>
+        <input type="text" id="filename" name="filename" readonly size="50">
+    </div>
     <div id="questionContainer"></div>
     <button id="saveButton">Save</button>
     <div id="loadingOverlay">
