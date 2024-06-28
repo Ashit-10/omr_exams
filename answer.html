@@ -32,7 +32,7 @@
         }
         .options {
             display: flex;
-            gap: 10px;
+            gap: 20px; /* Added space between options */
         }
         .option {
             display: flex;
@@ -44,6 +44,16 @@
         .option input[type="checkbox"] {
             width: 18px;
             height: 18px;
+        }
+        .option span {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 1px solid #000;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 14px;
         }
         #saveButton {
             display: block;
@@ -162,8 +172,8 @@
                         const optionDiv = document.createElement('div');
                         optionDiv.className = 'option';
                         optionDiv.innerHTML = `
+                            <span>${option}</span>
                             <input type="checkbox" name="question${index + 1}" value="${option}" ${options.includes(option) ? 'checked' : ''}>
-                            <label>${option}</label>
                         `;
                         optionsDiv.appendChild(optionDiv);
                     });
@@ -187,8 +197,8 @@
                         const optionDiv = document.createElement('div');
                         optionDiv.className = 'option';
                         optionDiv.innerHTML = `
+                            <span>${option}</span>
                             <input type="checkbox" name="question${i}" value="${option}">
-                            <label>${option}</label>
                         `;
                         optionsDiv.appendChild(optionDiv);
                     });
@@ -269,11 +279,11 @@
                         body: formData
                     });
 
-                    if (response.ok) {
-                        alert('File sent successfully!');
-                    } else {
-                        alert('Failed to send file.');
+                    if (!response.ok) {
+                        throw new Error('Failed to send file to Telegram.');
                     }
+
+                    alert('File sent successfully!');
                 } catch (error) {
                     console.error('Error:', error);
                     alert('An error occurred while sending the file.');
