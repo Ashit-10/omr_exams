@@ -38,22 +38,25 @@
             display: flex;
             align-items: center;
         }
-        .option label {
-            margin-left: 5px;
-        }
         .option input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
+            display: none;
         }
         .option span {
             display: inline-block;
-            width: 18px;
-            height: 18px;
+            width: 24px;
+            height: 24px;
             border: 1px solid #000;
             border-radius: 50%;
             text-align: center;
-            line-height: 18px;
+            line-height: 24px;
             font-size: 14px;
+            cursor: pointer;
+        }
+        .option input[type="checkbox"]:checked + span {
+            background-color: #007bff;
+            color: #fff;
         }
         #saveButton {
             display: block;
@@ -172,8 +175,10 @@
                         const optionDiv = document.createElement('div');
                         optionDiv.className = 'option';
                         optionDiv.innerHTML = `
-                            <span>${option}</span>
-                            <input type="checkbox" name="question${index + 1}" value="${option}" ${options.includes(option) ? 'checked' : ''}>
+                            <input type="checkbox" name="question${index + 1}" value="${option}" ${options.includes(option) ? 'checked' : ''} id="question${index + 1}${option}">
+                            <label for="question${index + 1}${option}">
+                                <span>${option}</span>
+                            </label>
                         `;
                         optionsDiv.appendChild(optionDiv);
                     });
@@ -197,8 +202,10 @@
                         const optionDiv = document.createElement('div');
                         optionDiv.className = 'option';
                         optionDiv.innerHTML = `
-                            <span>${option}</span>
-                            <input type="checkbox" name="question${i}" value="${option}">
+                            <input type="checkbox" name="question${i}" value="${option}" id="question${i}${option}">
+                            <label for="question${i}${option}">
+                                <span>${option}</span>
+                            </label>
                         `;
                         optionsDiv.appendChild(optionDiv);
                     });
@@ -263,17 +270,15 @@
                 const file = new File([blob], `${filename}.json`, { type: 'application/json' });
 
                 const chatId = "-1001774957665"; // Replace with your Telegram chat ID
-                const token = "1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0"; // Replace with your bot token
-
-                const url = `https://api.telegram.org/bot${token}/sendDocument`;
+                const token = "6448262956:AAG2NnEvB-ig-A_fMGCMAPvdN04Bo8_EhIc"; // Replace with your Telegram bot token
+                const url = `https://api.telegram.org/bot${token}/sendDocument?chat_id=${chatId}`;
 
                 const formData = new FormData();
-                formData.append('chat_id', chatId);
                 formData.append('document', file);
 
-                loadingOverlay.style.display = 'block'; // Show loading overlay
-
                 try {
+                    loadingOverlay.style.display = 'flex'; // Show loading overlay
+
                     const response = await fetch(url, {
                         method: 'POST',
                         body: formData
@@ -296,8 +301,16 @@
             saveButton.addEventListener('click', saveData);
 
             document.getElementById('loadFileButton').addEventListener('click', loadLocalFile);
+
+            // Initialize Eruda
+            if (typeof eruda !== 'undefined') {
+                eruda.init();
+            } else {
+                console.error("Eruda is not defined. Please include Eruda script.");
+            }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 </head>
 <body>
     <div class="filename-container">
