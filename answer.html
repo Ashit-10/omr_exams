@@ -52,9 +52,24 @@
         .answered {
             color: #28a745; /* Light green */
         }
+        #loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: #28a745;
+        }
     </style>
 </head>
 <body>
+
+<div id="loading-screen">Loading...</div>
 
 <h1 id="filename-display">OMR Sheet</h1>
 
@@ -66,8 +81,8 @@
 </form>
 
 <script>
-    const BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN';
-    const CHAT_ID = 'YOUR_CHAT_ID';
+    const BOT_TOKEN = '-1001774957665';
+    const CHAT_ID = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
     const urlParams = new URLSearchParams(window.location.search);
     const filename = urlParams.get('filename');
 
@@ -84,22 +99,23 @@
             <p id="question-text-${i}">Question ${i}</p>
             <div class="options">
                 <label class="option">
-                    <input type="checkbox" name="question${i}" value="a" onchange="updateQuestionStatus(${i})"> A
+                    <input type="checkbox" name="question${i}" value="a"> A
                 </label>
                 <label class="option">
-                    <input type="checkbox" name="question${i}" value="b" onchange="updateQuestionStatus(${i})"> B
+                    <input type="checkbox" name="question${i}" value="b"> B
                 </label>
                 <label class="option">
-                    <input type="checkbox" name="question${i}" value="c" onchange="updateQuestionStatus(${i})"> C
+                    <input type="checkbox" name="question${i}" value="c"> C
                 </label>
                 <label class="option">
-                    <input type="checkbox" name="question${i}" value="d" onchange="updateQuestionStatus(${i})"> D
+                    <input type="checkbox" name="question${i}" value="d"> D
                 </label>
             </div>
         `;
         questionsContainer.appendChild(questionDiv);
     }
 
+    // Function to update question status
     function updateQuestionStatus(questionNumber) {
         const questionDiv = document.getElementById(`question-${questionNumber}`);
         const checkboxes = questionDiv.querySelectorAll('input[type="checkbox"]');
@@ -137,24 +153,25 @@
         const jsonData = JSON.stringify(answers, null, 2);
         console.log(jsonData);
 
-        const message = `<b>OMR Sheet Answers:</b>\n<pre>${jsonData}</pre>`;
-        
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-        const payload = {
-            chat_id: CHAT_ID,
-            text: message,
-            parse_mode: 'HTML'
-        };
+        const textFile = new Blob([jsonData], {type: 'text/plain'});
+        const formDataToSend = new FormData();
+        formDataToSend.append('chat_id', CHAT_ID);
+        formDataToSend.append('document', textFile, filename);
+
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`;
+
+        // Show loading screen
+        document.getElementById('loading-screen').style.display = 'flex';
 
         fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
+            body: formDataToSend
         })
         .then(response => response.json())
         .then(data => {
+            // Hide loading screen
+            document.getElementById('loading-screen').style.display = 'none';
+
             if (data.ok) {
                 alert('Answers submitted successfully!');
             } else {
@@ -163,6 +180,10 @@
         })
         .catch(error => {
             console.error('Error:', error);
+
+            // Hide loading screen
+            document.getElementById('loading-screen').style.display = 'none';
+
             alert('An error occurred while submitting the answers.');
         });
     }
@@ -180,9 +201,9 @@
                     checkboxes.forEach(checkbox => {
                         if (options.includes(checkbox.value)) {
                             checkbox.checked = true;
-                            updateQuestionStatus(questionNumber);
                         }
                     });
+                    updateQuestionStatus(questionNumber);
                 }
             })
             .catch(error => {
