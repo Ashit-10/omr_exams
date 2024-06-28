@@ -7,13 +7,22 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #ffefba, #ffffff);
+            color: #333;
+            padding: 20px;
         }
         .question {
             margin: 20px 0;
+            display: flex;
+            align-items: center;
+        }
+        .question span {
+            margin-right: 20px;
+            font-weight: bold;
         }
         .options {
             display: flex;
-            gap: 10px;
+            gap: 20px;
         }
         .option {
             display: flex;
@@ -21,16 +30,26 @@
         }
         .option label {
             margin-left: 5px;
+            font-weight: bold;
+            color: #4744f7;
+        }
+        .option input[type="checkbox"] {
+            transform: scale(1.5);
+            margin: 0 10px;
         }
         #saveButton {
             display: block;
             padding: 10px 20px;
             background-color: #4744f7;
             color: #fff;
+            border: none;
             border-radius: 5px;
-            margin-top: 10px;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 20px auto;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #saveButton:hover {
+            background-color: #3733c9;
         }
         #loadingOverlay {
             display: none;
@@ -39,7 +58,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.7);
+            background-color: rgba(255, 255, 255, 0.8);
             z-index: 9999;
         }
         #loadingSpinner {
@@ -47,16 +66,23 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
+            width: 40px;
+            height: 40px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #4744f7;
         }
     </style>
     <script>
@@ -139,7 +165,7 @@
                         const optionDiv = document.createElement('div');
                         optionDiv.className = 'option';
                         optionDiv.innerHTML = `
-                            <input type="radio" name="question${index + 1}" value="${option}" ${options.includes(option) ? 'checked' : ''}>
+                            <input type="checkbox" name="question${index + 1}" value="${option}" ${options.includes(option) ? 'checked' : ''}>
                             <label>${option}</label>
                         `;
                         optionsDiv.appendChild(optionDiv);
@@ -148,7 +174,10 @@
                     questionDiv.appendChild(optionsDiv);
                     questionContainer.appendChild(questionDiv);
                 });
-                addNewQuestion();
+
+                if (entryCount <= 50) {
+                    addNewQuestion();
+                }
             }
 
             function addNewQuestion() {
@@ -162,7 +191,7 @@
                     const optionDiv = document.createElement('div');
                     optionDiv.className = 'option';
                     optionDiv.innerHTML = `
-                        <input type="radio" name="question${entryCount}" value="${option}">
+                        <input type="checkbox" name="question${entryCount}" value="${option}">
                         <label>${option}</label>
                     `;
                     optionsDiv.appendChild(optionDiv);
@@ -178,12 +207,11 @@
                 userInput.length = 0; // Clear the array
                 const questions = document.querySelectorAll('.question');
                 questions.forEach((question, index) => {
-                    const selectedOption = question.querySelector('input[type="radio"]:checked');
-                    if (selectedOption) {
-                        userInput.push([selectedOption.value]);
-                    } else {
-                        userInput.push([]);
-                    }
+                    const selectedOptions = [];
+                    question.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                        selectedOptions.push(checkbox.value);
+                    });
+                    userInput.push(selectedOptions);
                 });
 
                 if (userInput.length === 0) {
@@ -236,10 +264,13 @@
     </script>
 </head>
 <body>
-    <form onsubmit="saveData(event)">
-        <label for="filename">Filename:</label>
-        <input type="text" id="filename" name="filename" readonly size="50"><br><br>
-    </form>
+    <div class="header">
+        <h1>OMR Sheet</h1>
+        <form onsubmit="saveData(event)">
+            <label for="filename">Filename:</label>
+            <input type="text" id="filename" name="filename" readonly size="50"><br><br>
+        </form>
+    </div>
     <div id="questionContainer"></div>
     <button id="saveButton">Save</button>
     <div id="loadingOverlay">
