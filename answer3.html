@@ -96,7 +96,7 @@
 <body>
     <div class="filename-container">
         <span id="filenameDisplay"></span>
-        <input type="text" id="newFilename" placeholder="Enter a new filename">
+        <input type="text" id="newFilename" placeholder="Enter a new filename" style="display: none;">
     </div>
 
     <div id="questionContainer">
@@ -149,8 +149,8 @@
 
             let filename = getQueryParameter('filename');
             if (!filename) {
-                // If filename parameter is not provided or invalid, prompt the user for a new filename
-                newFilenameInput.style.display = 'block'; // Show the input field for new filename
+                // If filename parameter is not provided or invalid, show the input field for new filename
+                newFilenameInput.style.display = 'block';
                 saveButton.disabled = true; // Disable save button until a valid filename is entered
 
                 saveButton.addEventListener('click', () => {
@@ -166,6 +166,7 @@
                     }
                 });
             } else {
+                // If filename parameter is provided, display it and load questions
                 document.getElementById('filenameDisplay').textContent = filename;
                 displayQuestions();
             }
