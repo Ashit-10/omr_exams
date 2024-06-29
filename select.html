@@ -297,7 +297,7 @@
                         examFolder = parsedData.examFolder;
                     }
 
-                    document.getElementById('examFolder').value = examFolder;
+                    (document.getElementById('examFolder').value).toLowerCase() = examFolder;
 
                     autoSaveOn = parsedData.autoSave === 'On';
                     document.getElementById('autoSaveToggle').checked = autoSaveOn;
@@ -328,7 +328,7 @@
 
         // Function to update links based on exam folder value
         function updateLinks() {
-            const examFolderValue = document.getElementById('examFolder').value;
+            const examFolderValue = (document.getElementById('examFolder').value).toLowerCase();
             var tuitionValue = tuition.toUpperCase();
             if (examFolderValue) {
                 const cls = examFolderValue.split('_')[0];
