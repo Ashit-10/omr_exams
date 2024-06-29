@@ -7,13 +7,14 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: block; /* Ensure body is displayed */
         }
         .filename-container {
             text-align: center;
             margin: 20px 0;
         }
         .filename-container h5 {
-            font-size: 1rem; /* Adjust font size for smaller heading */
+            font-size: 1rem; /* Adjusted font size for smaller heading */
         }
         .question {
             margin: 20px 0;
@@ -25,7 +26,7 @@
             justify-content: space-between;
         }
         .question.green {
-            background-color: #d4edda; /* Light green */
+            background-color: #c3e6cb; /* Light green */
         }
         .question.blue {
             background-color: #d1ecf1; /* Light blue */
@@ -71,6 +72,21 @@
         .action-button:hover {
             background-color: #3030a6; /* Darker blue */
         }
+        .copy-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            padding: 8px 15px; /* Adjusted padding for smaller button */
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000; /* Ensure button is above other content */
+        }
+        .copy-button:hover {
+            background-color: #333;
+        }
         #loadingOverlay {
             display: none;
             position: fixed;
@@ -97,20 +113,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .copy-button {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            padding: 8px 15px; /* Adjusted padding for smaller button */
-            background-color: #555;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .copy-button:hover {
-            background-color: #333;
-        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
@@ -119,7 +121,11 @@
 
             const questionContainer = document.getElementById('questionContainer');
             const saveButton = document.getElementById('saveButton');
-            const copyButton = document.getElementById('copyButton');
+            const copyButton = document.createElement('button'); // Create copy button
+            copyButton.textContent = 'Copy JSON Data';
+            copyButton.className = 'copy-button';
+            document.body.appendChild(copyButton); // Append copy button to body
+
             const loadingOverlay = document.getElementById('loadingOverlay');
             const filenameDisplay = document.getElementById('filenameDisplay');
 
@@ -280,16 +286,18 @@
                     loadingOverlay.style.display = 'block';
                     const handle = await window.showSaveFilePicker(pickerOpts);
                     const writableStream = await handle.createWritable();
-                    await writableStream.write(file);
+                    await writableStream.write(blob);
                     await writableStream.close();
-                } catch (err) {
-                    console.error('Error during save:', err);
+                    alert('File saved successfully!');
+                } catch (error) {
+                    console.error('Error during save:', error);
+                    alert('Error saving file.');
                 } finally {
                     loadingOverlay.style.display = 'none';
                 }
             }
 
-            function copyJSONData() {
+            async function copyJSONData() {
                 const jsonOutput = {};
                 userInput.forEach((entry, index) => {
                     if (entry.length > 0) {
@@ -298,22 +306,16 @@
                 });
 
                 const jsonString = JSON.stringify(jsonOutput, null, 2);
-                navigator.clipboard.writeText(jsonString)
-                    .then(() => {
-                        alert('JSON data copied to clipboard!');
-                    })
-                    .catch(err => {
-                        console.error('Error copying JSON data:', err);
-                        alert('Failed to copy JSON data to clipboard.');
-                    });
+                try {
+                    await navigator.clipboard.writeText(jsonString);
+                    alert('JSON data copied to clipboard!');
+                } catch (err) {
+                    console.error('Error copying JSON data:', err);
+                    alert('Failed to copy JSON data to clipboard.');
+                }
             }
 
-            const copyButton = document.createElement('button');
-            copyButton.textContent = 'Copy JSON Data';
-            copyButton.className = 'copy-button';
             copyButton.addEventListener('click', copyJSONData);
-            document.body.appendChild(copyButton);
-
             saveButton.addEventListener('click', saveData);
             questionContainer.addEventListener('change', updateQuestionColors);
         });
