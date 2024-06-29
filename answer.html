@@ -92,7 +92,6 @@
 <body>
     <h1>Control Panel</h1>
 
-
     <div class="option">
         <h4>Auto Save:</h4>
         <label class="toggle-switch">
@@ -187,23 +186,27 @@
             document.getElementById('compressionSize').value = '150';
 
             // Initialize exam folder input if exam_folder parameter is present
-            examFolder = getExamFolderFromURL();
-            document.getElementById('examFolder').value = examFolder;
+            const urlExamFolder = getExamFolderFromURL();
 
-            // Fetch data from GitHub file
             fetch('https://raw.githubusercontent.com/Ashit-10/omr_exams/main/data.txt')
                 .then(response => response.text())
                 .then(data => {
-                    // Parse the fetched data assuming it's in JSON format
                     const parsedData = JSON.parse(data);
 
-                    // Update the form fields with the fetched data
+                    if (urlExamFolder) {
+                        examFolder = urlExamFolder;
+                    } else {
+                        examFolder = parsedData.examFolder;
+                    }
+
+                    document.getElementById('examFolder').value = examFolder;
+
+                    // Update other form fields with fetched data
                     autoSaveOn = parsedData.autoSave === 'On';
                     compressionOn = parsedData.compression === 'On';
                     document.getElementById('autoSaveToggle').checked = autoSaveOn;
                     document.getElementById('compressionToggle').checked = compressionOn;
                     document.getElementById('compressionSize').value = parsedData.compressionSize.split(' ')[0];
-                    document.getElementById('examFolder').value = parsedData.examFolder;
                     signature = parsedData.signature.toLowerCase();
                     document.querySelector(`input[name="signature"][value="${signature}"]`).checked = true;
                     tuition = parsedData.tuition.toLowerCase();
