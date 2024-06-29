@@ -1,6 +1,6 @@
 {
     "autoSave": "On",
-    "compression": "On",
+    "compression": "Off",
     "compressionSize": "150 KB",
     "examFolder": "some_folder",
     "signature": "ashit",
