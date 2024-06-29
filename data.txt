@@ -1,0 +1,1 @@
+{"autoSave":"On","compression":"On","compressionSize":"200KB","examFolder":"akbffjw/fdjkjw","signature":"Ashit","tuition":"MVM"}
