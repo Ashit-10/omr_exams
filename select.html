@@ -12,7 +12,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* height: 100vh; */
             margin: 0;
             padding: 0px;
         }
@@ -20,8 +19,8 @@
         .container {
             background-color: #f4f4f4; /* Light gray background */
             border-radius: 20px;
-            box-shadow: 10px 10px 20px #c9c9c9, 
-                        -10px -10px 20px #ffffff; /* Neomorphic shadow */
+            box-shadow: 10px 10px 20px #c9c9c9,
+                -10px -10px 20px #ffffff; /* Neomorphic shadow */
             padding: 15px;
             width: 100%;
             max-width: 100%;
@@ -38,8 +37,8 @@
             padding: 15px;
             background: linear-gradient(145deg, #e0e0e0, #ffffff); /* Gradient background */
             border-radius: 12px;
-            box-shadow: 6px 6px 12px #b0b0b0, 
-                        -6px -6px 12px #ffffff; /* Neomorphic shadow */
+            box-shadow: 6px 6px 12px #b0b0b0,
+                -6px -6px 12px #ffffff; /* Neomorphic shadow */
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -86,15 +85,15 @@
             background-color: white;
             transition: .4s;
             border-radius: 50%;
-            box-shadow: 2px 2px 5px #b0b0b0, 
-                        -2px -2px 5px #ffffff; /* Neomorphic shadow */
+            box-shadow: 2px 2px 5px #b0b0b0,
+                -2px -2px 5px #ffffff; /* Neomorphic shadow */
         }
 
-        input:checked + .slider {
+        input:checked+ .slider {
             background-color: #4CAF50; /* Green slider when checked */
         }
 
-        input:checked + .slider:before {
+        input:checked+ .slider:before {
             transform: translateX(22px);
         }
 
@@ -110,8 +109,8 @@
             padding: 12px;
             background: linear-gradient(145deg, #e0e0e0, #ffffff); /* Gradient background */
             border-radius: 12px;
-            box-shadow: 6px 6px 12px #b0b0b0, 
-                        -6px -6px 12px #ffffff; /* Neomorphic shadow */
+            box-shadow: 6px 6px 12px #b0b0b0,
+                -6px -6px 12px #ffffff; /* Neomorphic shadow */
             transition: background-color 0.3s ease;
             cursor: pointer;
         }
@@ -133,13 +132,38 @@
             border-radius: 12px;
             display: block;
             margin: 20px auto 0;
-            box-shadow: 6px 6px 12px #b0b0b0, 
-                        -6px -6px 12px #ffffff; /* Neomorphic shadow */
+            box-shadow: 6px 6px 12px #b0b0b0,
+                -6px -6px 12px #ffffff; /* Neomorphic shadow */
             transition: background 0.3s ease;
         }
 
         button:hover {
             background: linear-gradient(145deg, #0b7dda, #2196F3); /* Darker blue gradient button on hover */
+        }
+
+        .links-container {
+            display: none;
+            flex-direction: row;
+            justify-content: center;
+            margin-top: -15px;
+            margin-bottom: 15px;
+        }
+
+        .link-button {
+            padding: 10px 15px;
+            background: linear-gradient(145deg, #ffffff, #e0e0e0); /* Gradient background */
+            border-radius: 12px;
+            text-decoration: none;
+            color: #2196F3; /* Blue text */
+            box-shadow: 6px 6px 12px #b0b0b0,
+                -6px -6px 12px #ffffff; /* Neomorphic shadow */
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .link-button:hover {
+            background: linear-gradient(145deg, #e0e0e0, #ffffff); /* Hover gradient background */
+            box-shadow: 2px 2px 6px #b0b0b0,
+                -2px -2px 6px #ffffff; /* Hover neomorphic shadow */
         }
     </style>
 </head>
@@ -151,7 +175,7 @@
         <div class="option">
             <h4>Auto Save:</h4>
             <label class="toggle-switch">
-                <input type="checkbox" id="autoSaveToggle" onclick="toggleAutoSave()" checked>
+                <input type="checkbox" id="autoSaveToggle" onclick="toggleAutoSave()">
                 <span class="slider"></span>
             </label>
         </div>
@@ -159,7 +183,7 @@
         <div class="option">
             <h4>Compression:</h4>
             <label class="toggle-switch">
-                <input type="checkbox" id="compressionToggle" onclick="toggleCompression()" checked>
+                <input type="checkbox" id="compressionToggle" onclick="toggleCompression()">
                 <span class="slider"></span>
             </label>
         </div>
@@ -168,43 +192,52 @@
             <h4>Compression Size:</h4>
             <select id="compressionSize">
                 <option value="100">100 KB</option>
-                <option value="150" selected>150 KB</option>
+                <option value="150">150 KB</option>
                 <option value="200">200 KB</option>
             </select>
         </div>
 
         <div class="option">
             <h4>Exam Folder:</h4>
-            <input type="text" id="examFolder" placeholder="Enter exam folder name">
+            <input type="text" id="examFolder" placeholder="Enter exam folder name" oninput="updateLinks()">
+        </div>
+
+        <div class="links-container" id="linksContainer">
+            <a id="link1" href="#" target="_blank" class="link-button">Answer Key</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a id="link2" href="#" target="_blank" class="link-button">Students List</a>
         </div>
 
         <div class="option">
             <h4>Signature:</h4>
             <div class="radio-group">
-                <label class="radio-label" style="background-color: #FFEB3B;"> <!-- Yellow -->
-                    <input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked>
+                <label class="radio-label" style="background-color: #FFEB3B;">
+                    <!-- Yellow -->
+                    <input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')">
                     Ashit
                 </label>
-                <label class="radio-label" style="background-color: #9C27B0;"> <!-- Purple -->
+                <label class="radio-label" style="background-color: #9C27B0;">
+                    <!-- Purple -->
                     <input type="radio" name="signature" value="rupa" onclick="setSignature('rupa')">
                     Rupa
                 </label>
-                <label class="radio-label" style="background-color: #FF9800;"> <!-- Orange -->
+                <label class="radio-label" style="background-color: #FF9800;">
+                    <!-- Orange -->
                     <input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')">
                     Lakhia bhai
                 </label>
-                
             </div>
         </div>
 
         <div class="option">
             <h4>Tuition:</h4>
             <div class="radio-group">
-                <label class="radio-label" style="background-color: #4CAF50;"> <!-- Green -->
-                    <input type="radio" name="tuition" value="mvm" onclick="setTuition('mvm')" checked>
+                <label class="radio-label" style="background-color: #4CAF50;">
+                    <!-- Green -->
+                    <input type="radio" name="tuition" value="mvm" onclick="setTuition('mvm')">
                     MVM
                 </label>
-                <label class="radio-label" style="background-color: #2196F3;"> <!-- Blue -->
+                <label class="radio-label" style="background-color: #2196F3;">
+                    <!-- Blue -->
                     <input type="radio" name="tuition" value="wsc" onclick="setTuition('wsc')">
                     WSC
                 </label>
@@ -218,43 +251,38 @@
         let autoSaveOn = true;
         let compressionOn = true;
         let examFolder = '';
-        let signature = 'ashit'; // Default to Ashit
-        let tuition = 'mvm'; // Default to mvm
+        let signature = 'ashit';
+        let tuition = 'mvm';
 
-        // Function to toggle auto save option
+        // Function to toggle auto-save option
         function toggleAutoSave() {
-            autoSaveOn = document.getElementById('autoSaveToggle').checked;
+            autoSaveOn = !autoSaveOn;
         }
 
         // Function to toggle compression option
         function toggleCompression() {
-            compressionOn = document.getElementById('compressionToggle').checked;
+            compressionOn = !compressionOn;
         }
 
-        // Function to set the selected signature
+        // Function to set signature
         function setSignature(value) {
             signature = value;
         }
 
-        // Function to set the selected tuition
+        // Function to set tuition
         function setTuition(value) {
             tuition = value;
+            updateLinks(); // Update links when tuition changes
         }
 
-        // Function to extract exam folder from URL query parameters
+        // Function to get exam folder from URL
         function getExamFolderFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('exam_folder') || '';
+            const params = new URLSearchParams(window.location.search);
+            return params.get('exam_folder');
         }
-
-        // Function to initialize the form with default values
+        const urlExamFolder = getExamFolderFromURL()
+        // Function to initialize form with default values
         function initializeForm() {
-            // Initialize compression size dropdown
-            document.getElementById('compressionSize').value = '150';
-
-            // Initialize exam folder input if exam_folder parameter is present
-            const urlExamFolder = getExamFolderFromURL();
-
             fetch('https://raw.githubusercontent.com/Ashit-10/omr_exams/main/data.txt')
                 .then(response => response.text())
                 .then(data => {
@@ -268,17 +296,53 @@
 
                     document.getElementById('examFolder').value = examFolder;
 
-                    // Update other fields if needed
+                    autoSaveOn = parsedData.autoSave === 'On';
+                    document.getElementById('autoSaveToggle').checked = autoSaveOn;
+
+                    compressionOn = parsedData.compression === 'On';
+                    document.getElementById('compressionToggle').checked = compressionOn;
+
+                    document.getElementById('compressionSize').value = parsedData.compressionSize.replace(' KB', '');
+
+                    // examFolder = parsedData.examFolder;
+                    // document.getElementById('examFolder').value = examFolder;
+
+                    signature = parsedData.signature.toLowerCase();
+                    document.querySelector(`input[name="signature"][value="${signature}"]`).checked = true;
+
+                    tuition = parsedData.tuition.toLowerCase();
+                    document.querySelector(`input[name="tuition"][value="${tuition}"]`).checked = true;
+
+                    updateLinks(); // Update links after initializing form
                 })
                 .catch(error => {
                     console.error('Error fetching exam folder data:', error);
-                    examFolder = urlExamFolder;
-                    document.getElementById('examFolder').value = examFolder;
                 });
         }
 
         // Call initializeForm on page load
         initializeForm();
+
+        // Function to update links based on exam folder value
+        function updateLinks() {
+            const examFolderValue = document.getElementById('examFolder').value;
+            var tuitionValue = tuition.toUpperCase();
+            if (examFolderValue) {
+                const cls = examFolderValue.split('_')[0];
+                if (tuitionValue === "MVM") {
+                    tuitionValue = '2024';
+                }
+                const link1 = `https://ashit-10.github.io/omr_exams/answer_file.html?filename=${tuitionValue}/${cls}/${examFolderValue}/${examFolderValue}_ans_key.txt`;
+                const link2 = `https://ashit-10.github.io/omr_exams/names.html?filename=${tuitionValue}/${cls}/${cls}_rolls.txt`;
+                document.getElementById('link1').href = link1;
+                document.getElementById('link1').textContent = 'Answer Key';
+                document.getElementById('link2').href = link2;
+                document.getElementById('link2').textContent = 'Students List';
+                document.getElementById('linksContainer').style.display = 'flex';
+            } else {
+                document.getElementById('linksContainer').style.display = 'none';
+            }
+        }
 
         // Function to send message to Telegram
         const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
@@ -324,10 +388,12 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log('Message sent to Telegram:', data);
+                    alert('Data saved successfully! Go to telegram and press "confirm"');
                     // Reset button text after successful sending
                     saveButton.textContent = 'Save';
                 })
                 .catch(error => {
+                    console.error('Error saving data:', error);
                     console.error('Error sending message to Telegram:', error);
                     // Reset button text on error
                     saveButton.textContent = 'Save';
