@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .option {
+            margin-bottom: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Control Panel</h1>
+
+    <div class="option">
+        <label><input type="checkbox" id="compression"> Compression</label>
+    </div>
+    <div class="option">
+        <label><input type="radio" name="tuition" value="wsc" checked> WSC</label>
+        <label><input type="radio" name="tuition" value="mac"> Mac</label>
+    </div>
+    <div class="option">
+        <label><input type="radio" name="signature" value="rupa" checked> Rupa</label>
+        <label><input type="radio" name="signature" value="lakhia"> Lakhia</label>
+        <label><input type="radio" name="signature" value="ashit"> Ashit</label>
+    </div>
+    <div class="option">
+        <label><input type="checkbox" id="autoSave"> Auto Save</label>
+    </div>
+    <div class="option">
+        <input type="text" id="examFolder" placeholder="Exam Folder">
+    </div>
+    <button onclick="sendMessage()">Send Message to Telegram</button>
+
+    <script>
+        function sendMessage() {
+            const compression = document.getElementById('compression').checked ? 'Compression: On' : 'Compression: Off';
+            const tuition = document.querySelector('input[name="tuition"]:checked').value;
+            const signature = document.querySelector('input[name="signature"]:checked').value;
+            const autoSave = document.getElementById('autoSave').checked ? 'Auto Save: On' : 'Auto Save: Off';
+            const examFolder = document.getElementById('examFolder').value;
+
+            const message = `
+                Compression: ${compression}
+                Tuition: ${tuition}
+                Signature: ${signature}
+                ${autoSave}
+                Exam Folder: ${examFolder}
+            `;
+
+            alert('Sending message to Telegram:\n\n' + message);
+            // Replace alert with actual code to send message to Telegram via backend (not included in HTML)
+        }
+    </script>
+</body>
+</html>
