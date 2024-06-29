@@ -297,7 +297,7 @@
                         examFolder = parsedData.examFolder;
                     }
 
-                    (document.getElementById('examFolder').value).toLowerCase() = examFolder;
+                    document.getElementById('examFolder').value = examFolder.toLowerCase();
 
                     autoSaveOn = parsedData.autoSave === 'On';
                     document.getElementById('autoSaveToggle').checked = autoSaveOn;
