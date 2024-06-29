@@ -101,6 +101,7 @@
         }
     </style>
     <script>
+        // Eruda initialization moved to the end of the body to ensure other scripts are loaded first
         document.addEventListener('DOMContentLoaded', (event) => {
             const userInput = [];
             let entryCount = 1;
@@ -296,9 +297,16 @@
                     });
             }
 
-            saveButton.addEventListener('click', saveData);
+            const copyButton = document.getElementById('copyButton');
+            const saveButton = document.getElementById('saveButton');
             copyButton.addEventListener('click', copyJSONData);
+            saveButton.addEventListener('click', saveData);
             questionContainer.addEventListener('change', updateQuestionColors);
+        });
+
+        // Eruda initialization
+        document.addEventListener('DOMContentLoaded', function () {
+            eruda.init();
         });
     </script>
 </head>
@@ -307,7 +315,7 @@
         <div id="loadingSpinner"></div>
     </div>
     <div class="filename-container">
-        <h5 id="filenameDisplay"></h5>
+        <h2 id="filenameDisplay"></h2>
     </div>
     <div id="questionContainer"></div>
     <button id="saveButton" class="action-button">Save</button>
