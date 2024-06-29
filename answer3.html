@@ -58,7 +58,8 @@
             line-height: 18px;
             font-size: 14px;
         }
-        #saveButton {
+        #saveButton,
+        #copyButton {
             display: block;
             padding: 10px 20px;
             background-color: #4744f7; /* Dark blue */
@@ -70,7 +71,8 @@
             cursor: pointer;
             border: none;
         }
-        #saveButton:hover {
+        #saveButton:hover,
+        #copyButton:hover {
             background-color: #3030a6; /* Darker blue */
         }
         #loadingOverlay {
@@ -107,6 +109,7 @@
 
             const questionContainer = document.getElementById('questionContainer');
             const saveButton = document.getElementById('saveButton');
+            const copyButton = document.getElementById('copyButton');
             const loadingOverlay = document.getElementById('loadingOverlay');
             const filenameDisplay = document.getElementById('filenameDisplay');
 
@@ -281,8 +284,10 @@
                     const pickerOpts = {
                         types: [
                             {
-                                description: 'JSON Files',
-                                accept: { 'application/json': ['.json'] },
+                                description: 'JSON files',
+                                accept: {
+                                    'application/json': ['.json'],
+                                },
                                 excludeAcceptAllOption: true,
                                 suggestedName: filename,
                             },
@@ -301,7 +306,27 @@
                 }
             }
 
+            function copyJSONData() {
+                const jsonOutput = {};
+                userInput.forEach((entry, index) => {
+                    if (entry.length > 0) {
+                        jsonOutput[index + 1] = entry;
+                    }
+                });
+
+                const jsonString = JSON.stringify(jsonOutput, null, 2);
+                navigator.clipboard.writeText(jsonString)
+                    .then(() => {
+                        alert('JSON data copied to clipboard!');
+                    })
+                    .catch(err => {
+                        console.error('Error copying JSON data:', err);
+                        alert('Failed to copy JSON data to clipboard.');
+                    });
+            }
+
             saveButton.addEventListener('click', saveData);
+            copyButton.addEventListener('click', copyJSONData);
             questionContainer.addEventListener('change', updateQuestionColors);
         });
     </script>
@@ -311,9 +336,10 @@
         <div id="loadingSpinner"></div>
     </div>
     <div class="filename-container">
-        <h4 id="filenameDisplay"></h4>
+        <h6 id="filenameDisplay"></h6>
     </div>
     <div id="questionContainer"></div>
     <button id="saveButton">Save</button>
+    <button id="copyButton">Copy JSON Data</button>
 </body>
 </html>
