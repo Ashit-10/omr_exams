@@ -12,8 +12,8 @@
             text-align: center;
             margin: 20px 0;
         }
-        .filename-container h2 {
-            font-size: 1.5rem; /* Adjust font size for mobile */
+        .filename-container h5 {
+            font-size: 1rem; /* Adjust font size for smaller heading */
         }
         .question {
             margin: 20px 0;
@@ -60,13 +60,11 @@
         }
         .action-button {
             display: block;
-            padding: 10px 20px;
+            padding: 15px 30px; /* Increased padding for larger button */
             background-color: #4744f7; /* Dark blue */
             color: #fff;
             border-radius: 5px;
             margin-top: 10px;
-            margin-left: auto;
-            margin-right: auto;
             cursor: pointer;
             border: none;
         }
@@ -99,9 +97,22 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 8px 15px; /* Adjusted padding for smaller button */
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .copy-button:hover {
+            background-color: #333;
+        }
     </style>
     <script>
-        // Eruda initialization moved to the end of the body to ensure other scripts are loaded first
         document.addEventListener('DOMContentLoaded', (event) => {
             const userInput = [];
             let entryCount = 1;
@@ -297,16 +308,14 @@
                     });
             }
 
-            const copyButton = document.getElementById('copyButton');
-            const saveButton = document.getElementById('saveButton');
+            const copyButton = document.createElement('button');
+            copyButton.textContent = 'Copy JSON Data';
+            copyButton.className = 'copy-button';
             copyButton.addEventListener('click', copyJSONData);
+            document.body.appendChild(copyButton);
+
             saveButton.addEventListener('click', saveData);
             questionContainer.addEventListener('change', updateQuestionColors);
-        });
-
-        // Eruda initialization
-        document.addEventListener('DOMContentLoaded', function () {
-            eruda.init();
         });
     </script>
 </head>
@@ -315,10 +324,9 @@
         <div id="loadingSpinner"></div>
     </div>
     <div class="filename-container">
-        <h2 id="filenameDisplay"></h2>
+        <h5 id="filenameDisplay"></h5>
     </div>
     <div id="questionContainer"></div>
     <button id="saveButton" class="action-button">Save</button>
-    <button id="copyButton" class="action-button">Copy JSON Data</button>
 </body>
 </html>
