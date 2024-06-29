@@ -90,10 +90,11 @@
 <body>
     <h1>Control Panel</h1>
 
+
     <div class="option">
         <h4>Auto Save:</h4>
         <label class="toggle-switch">
-            <input type="checkbox" id="autoSaveToggle" onclick="toggleAutoSave()">
+            <input type="checkbox" id="autoSaveToggle" onclick="toggleAutoSave()" checked>
             <span class="slider"></span>
         </label>
     </div>
@@ -101,9 +102,18 @@
     <div class="option">
         <h4>Compression:</h4>
         <label class="toggle-switch">
-            <input type="checkbox" id="compressionToggle" onclick="toggleCompression()">
+            <input type="checkbox" id="compressionToggle" onclick="toggleCompression()" checked>
             <span class="slider"></span>
         </label>
+    </div>
+    
+    <div class="option">
+        <h4>Compression Size:</h4>
+        <select id="compressionSize">
+            <option value="100">100 KB</option>
+            <option value="150" selected>150 KB</option>
+            <option value="200">200 KB</option>
+        </select>
     </div>
 
     <div class="option">
@@ -114,7 +124,7 @@
     <div class="option">
         <h4>Signature:</h4>
         <div class="checkbox-label">
-            <label><input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')"> Ashit</label>
+            <label><input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked> Ashit</label>
         </div>
         <div class="checkbox-label">
             <label><input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')"> Lakhia</label>
@@ -127,49 +137,87 @@
     <div class="option">
         <h4>Tuition:</h4>
         <div class="checkbox-label">
-            <label><input type="radio" name="tuition" value="mac" onclick="setTuition('mac')"> Mac</label>
+            <label><input type="radio" name="tuition" value="mac" onclick="setTuition('mac')" checked> Mac</label>
         </div>
         <div class="checkbox-label">
             <label><input type="radio" name="tuition" value="wsc" onclick="setTuition('wsc')"> WSC</label>
         </div>
     </div>
-<br><br>
+
     <button onclick="sendMessage()">Save</button>
-<br>
+
     <script>
-        let autoSaveOn = false;
-        let compressionOn = false;
+        let autoSaveOn = true;
+        let compressionOn = true;
         let examFolder = '';
         let signature = 'ashit'; // Default to Ashit
         let tuition = 'mac'; // Default to Mac
 
+        // Function to toggle auto save option
         function toggleAutoSave() {
             autoSaveOn = document.getElementById('autoSaveToggle').checked;
         }
 
+        // Function to toggle compression option
         function toggleCompression() {
             compressionOn = document.getElementById('compressionToggle').checked;
         }
 
+        // Function to set the selected signature
         function setSignature(value) {
             signature = value;
         }
 
+        // Function to set the selected tuition
         function setTuition(value) {
             tuition = value;
         }
 
-        function sendMessage() {
-            const message = `
-                Auto Save: ${autoSaveOn ? 'On' : 'Off'}
-                Compression: ${compressionOn ? 'On' : 'Off'}
-                Exam Folder: ${examFolder}
-                Signature: ${signature.charAt(0).toUpperCase() + signature.slice(1)}
-                Tuition: ${tuition.toUpperCase()}
-            `;
+        // Function to extract exam folder from URL query parameters
+        function getExamFolderFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('exam_folder') || '';
+        }
 
-            alert('Sending message to Telegram:\n\n' + message);
-            // Replace alert with actual code to send message to Telegram via backend (not included in HTML)
+        // Function to initialize the form with default values
+        function initializeForm() {
+            // Initialize compression size dropdown
+            document.getElementById('compressionSize').value = '150';
+
+            // Initialize exam folder input if exam_folder parameter is present
+            examFolder = getExamFolderFromURL();
+            document.getElementById('examFolder').value = examFolder;
+        }
+
+        // Call initializeForm on page load
+        initializeForm();
+
+        // Function to send message to Telegram
+        function sendMessage() {
+            // Update exam folder value from input
+            examFolder = document.getElementById('examFolder').value;
+
+            // Get selected compression size
+            const compressionSize = document.getElementById('compressionSize').value;
+
+            // Prepare JSON data
+            const data = {
+                autoSave: autoSaveOn ? 'On' : 'Off',
+                compression: compressionOn ? 'On' : 'Off',
+                compressionSize: `${compressionSize} KB`,
+                examFolder: examFolder,
+                signature: signature.charAt(0).toUpperCase() + signature.slice(1),
+                tuition: tuition.toUpperCase()
+            };
+
+            // Convert data to JSON format
+            const jsonData = JSON.stringify(data);
+
+            // For demonstration, alert the JSON data (replace with actual API call)
+            alert('Sending message to Telegram:\n\n' + jsonData);
+
+            // Reset exam folder field after saving
+            // document.getElementById('examFolder').value = '';
         }
     </script>
 </body>
