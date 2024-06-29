@@ -1,1 +1,8 @@
-{"autoSave":"On","compression":"On","compressionSize":"200KB","examFolder":"akbffjw/fdjkjw","signature":"Ashit","tuition":"MVM"}
+{
+    "autoSave": "On",
+    "compression": "On",
+    "compressionSize": "150 KB",
+    "examFolder": "some_folder",
+    "signature": "ashit",
+    "tuition": "mvm"
+}
