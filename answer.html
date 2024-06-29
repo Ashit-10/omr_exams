@@ -22,13 +22,13 @@
             justify-content: space-between;
         }
         .question.green {
-            background-color: #d4edda;
+            background-color: #c8e6c9; /* Light green */
         }
         .question.blue {
-            background-color: #d1ecf1;
+            background-color: #bbdefb; /* Light blue */
         }
         .question.red {
-            background-color: #f8d7da;
+            background-color: #ffcdd2; /* Light red */
         }
         .options {
             display: flex;
@@ -58,12 +58,17 @@
         #saveButton {
             display: block;
             padding: 10px 20px;
-            background-color: #4744f7;
+            background-color: #008cba; /* Bright blue */
             color: #fff;
             border-radius: 5px;
             margin-top: 10px;
             margin-left: auto;
             margin-right: auto;
+            cursor: pointer;
+            border: none;
+        }
+        #saveButton:hover {
+            background-color: #005f5f; /* Darker blue on hover */
         }
         #loadingOverlay {
             display: none;
@@ -100,29 +105,7 @@
             const questionContainer = document.getElementById('questionContainer');
             const saveButton = document.getElementById('saveButton');
             const loadingOverlay = document.getElementById('loadingOverlay');
-
-            function loadLocalFile() {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.txt';
-
-                input.onchange = (e) => {
-                    const file = e.target.files[0];
-                    const reader = new FileReader();
-                    reader.readAsText(file);
-                    reader.onload = () => {
-                        const data = reader.result;
-                        try {
-                            const jsonData = JSON.parse(data);
-                            processJSON(jsonData);
-                        } catch (error) {
-                            alert('Error parsing JSON data from the selected file.');
-                        }
-                    };
-                };
-
-                input.click();
-            }
+            const filenameDisplay = document.getElementById('filenameDisplay');
 
             function getQueryParameter(name) {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -130,8 +113,9 @@
             }
 
             const filename = getQueryParameter('filename');
+            filenameDisplay.textContent = filename || "New OMR Sheet"; // Display filename or default text
+
             if (filename) {
-                document.getElementById('filenameDisplay').textContent = filename;
                 fetch(filename)
                     .then(response => {
                         if (!response.ok) {
@@ -144,9 +128,37 @@
                     })
                     .catch(error => {
                         console.error('Error loading JSON file:', error);
+                        // Display new OMR sheet interface when filename is invalid
+                        displayNewOMRSheet();
                     });
             } else {
-                document.body.style.display = 'none';
+                displayNewOMRSheet();
+            }
+
+            function displayNewOMRSheet() {
+                // Generate 50 question boxes
+                questionContainer.innerHTML = '';
+                for (let i = 1; i <= 50; i++) {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    questionDiv.innerHTML = `<span>Question ${i}:</span>`;
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options';
+
+                    ['A', 'B', 'C', 'D'].forEach((option) => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'option';
+                        optionDiv.innerHTML = `
+                            <span>${option}</span>
+                            <input type="checkbox" name="question${i}" value="${option}">
+                        `;
+                        optionsDiv.appendChild(optionDiv);
+                    });
+
+                    questionDiv.appendChild(optionsDiv);
+                    questionContainer.appendChild(questionDiv);
+                }
+                updateQuestionColors();
             }
 
             function processJSON(data) {
@@ -295,11 +307,12 @@
             questionContainer.addEventListener('change', updateQuestionColors);
             saveButton.addEventListener('click', saveData);
 
-            document.getElementById('loadFileButton').addEventListener('click', loadLocalFile);
+            // Ensure body is displayed
+            document.body.style.display = 'block';
         });
     </script>
 </head>
-<body>
+<body style="display: none;">
     <div class="filename-container">
         <span id="filenameDisplay"></span>
     </div>
@@ -308,5 +321,9 @@
     <div id="loadingOverlay">
         <div id="loadingSpinner"></div>
     </div>
+
+    <script>
+        document.body.style.display = 'block'; // Ensure body is displayed
+    </script>
 </body>
 </html>
