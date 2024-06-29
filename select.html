@@ -9,22 +9,32 @@
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
+            background-color: #f0f0f0;
         }
 
         .option {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .option h4 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
         }
 
         .toggle-switch {
             position: relative;
             display: inline-block;
             width: 50px;
-            /* Reduced width */
             height: 28px;
-            /* Reduced height */
         }
 
         .toggle-switch input {
@@ -43,20 +53,15 @@
             background-color: #ccc;
             transition: .4s;
             border-radius: 28px;
-            /* Adjusted border-radius */
         }
 
         .slider:before {
             position: absolute;
             content: "";
             height: 22px;
-            /* Reduced height */
             width: 22px;
-            /* Reduced width */
             left: 3px;
-            /* Adjusted position */
             bottom: 3px;
-            /* Adjusted position */
             background-color: white;
             transition: .4s;
             border-radius: 50%;
@@ -68,17 +73,11 @@
 
         input:checked+.slider:before {
             transform: translateX(22px);
-            /* Adjusted movement */
         }
 
         .checkbox-label {
             display: inline-block;
             margin-right: 10px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
         }
 
         button {
@@ -87,8 +86,9 @@
             color: white;
             border: none;
             cursor: pointer;
-            margin-left: 45%;
             border-radius: 5px;
+            display: block;
+            margin: 0 auto;
         }
 
         button:hover {
@@ -99,7 +99,6 @@
 
 <body>
     <h1>Control Panel</h1>
-
 
     <div class="option">
         <h4>Auto Save:</h4>
@@ -134,8 +133,7 @@
     <div class="option">
         <h4>Signature:</h4>
         <div class="checkbox-label">
-            <label><input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked>
-                Ashit</label>
+            <label><input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked> Ashit</label>
         </div>
         <div class="checkbox-label">
             <label><input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')"> Lakhia</label>
@@ -196,14 +194,40 @@
             document.getElementById('compressionSize').value = '150';
 
             // Initialize exam folder input if exam_folder parameter is present
-            examFolder = getExamFolderFromURL();
-            document.getElementById('examFolder').value = examFolder;
+            const urlExamFolder = getExamFolderFromURL();
+
+            fetch('https://raw.githubusercontent.com/Ashit-10/omr_exams/main/data.txt')
+                .then(response => response.text())
+                .then(data => {
+                    const parsedData = JSON.parse(data);
+
+                    if (urlExamFolder) {
+                        examFolder = urlExamFolder;
+                    } else {
+                        examFolder = parsedData.examFolder;
+                    }
+
+                    document.getElementById('examFolder').value = examFolder;
+
+                    // Update other form fields with fetched data
+                    autoSaveOn = parsedData.autoSave === 'On';
+                    compressionOn = parsedData.compression === 'On';
+                    document.getElementById('autoSaveToggle').checked = autoSaveOn;
+                    document.getElementById('compressionToggle').checked = compressionOn;
+                    document.getElementById('compressionSize').value = parsedData.compressionSize.split(' ')[0];
+                    signature = parsedData.signature.toLowerCase();
+                    document.querySelector(`input[name="signature"][value="${signature}"]`).checked = true;
+                    tuition = parsedData.tuition.toLowerCase();
+                    document.querySelector(`input[name="tuition"][value="${tuition}"]`).checked = true;
+                })
+                .catch(error => {
+                    console.error('Error fetching data from GitHub:', error);
+                });
         }
 
         // Call initializeForm on page load
         initializeForm();
 
-        // Function to send message to Telegram
         // Function to send message to Telegram
         const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001774957665';
@@ -247,27 +271,19 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.ok) {
-                        // overlay.textContent = 'Waiting ...';
-                        // fetchTelegramUpdates();
-                        alert('Success !, Go to telegram and press "confirm" button');
+                        alert('Success! Go to telegram and press "confirm" button');
                         saveButton.textContent = 'Save';
-
-
                     } else {
                         alert('Error in saving data: ' + data.description);
                         saveButton.textContent = 'Save';
-
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     alert('Error in saving data: ' + error.message);
                     saveButton.textContent = 'Save';
-
                 });
-            
         }
-
     </script>
 </body>
 
