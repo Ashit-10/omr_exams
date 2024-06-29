@@ -40,6 +40,7 @@
         .option {
             display: flex;
             align-items: center;
+            position: relative; /* Ensure relative positioning for absolute particles */
         }
         .option label {
             margin-left: 5px;
@@ -47,7 +48,6 @@
         .option input[type="checkbox"] {
             width: 18px;
             height: 18px;
-            display: none; /* Hide default checkbox */
         }
         .option span {
             display: inline-block;
@@ -58,21 +58,6 @@
             text-align: center;
             line-height: 18px;
             font-size: 14px;
-            cursor: pointer;
-        }
-        .option input[type="checkbox"]:checked + span {
-            animation: scaleEffect 0.3s ease;
-        }
-        @keyframes scaleEffect {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-            100% {
-                transform: scale(1);
-            }
         }
         .action-button {
             display: block;
@@ -92,14 +77,15 @@
         .copy-button {
             position: fixed;
             top: 10px;
-            right: 5px; /* Adjusted to right */
-            padding: 2px 10px; /* Adjusted padding */
+            right: 5px; /* Adjusted to right side */
+            padding: 2px 2px;
             background-color: #555;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             z-index: 1000;
+            transition: background-color 0.3s ease;
         }
         .copy-button:hover {
             background-color: #333;
@@ -130,7 +116,23 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Animation for dust particles */
+        @keyframes dust {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
     </style>
+</head>
+<body>
+    <div id="loadingOverlay">
+        <div id="loadingSpinner"></div>
+    </div>
+    <div class="filename-container">
+        <h5 id="filenameDisplay"></h5>
+    </div>
+    <div id="questionContainer"></div>
+    <button id="saveButton" class="action-button">Save</button>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const userInput = [];
@@ -215,7 +217,9 @@
                     optionDiv.innerHTML = `
                         <span>${option}</span>
                         <input type="checkbox" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
+                        <span class="particle"></span> <!-- Particle element -->
                     `;
+                    optionDiv.addEventListener('click', animateParticles); // Event listener for animation
                     optionsDiv.appendChild(optionDiv);
                 });
 
@@ -304,8 +308,8 @@
             }
 
             async function sendToTelegram(jsonData, fileName) {
-                const token = 'YOUR_TELEGRAM_BOT_TOKEN'; // Replace with your Telegram bot token
-                const chatId = 'YOUR_TELEGRAM_CHAT_ID'; // Replace with your Telegram chat ID
+                const token = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0'; // Replace with your Telegram bot token
+                const chatId = '-1001774957665'; // Replace with your Telegram chat ID
 
                 const formData = new FormData();
                 formData.append('chat_id', chatId);
@@ -335,21 +339,19 @@
                 }
             }
 
+            function animateParticles(event) {
+                const particle = event.currentTarget.querySelector('.particle');
+                particle.style.animation = 'none'; // Reset animation
+                setTimeout(() => {
+                    particle.style.animation = 'dust 0.5s forwards'; // Apply animation on click
+                }, 10); // Delay to allow resetting animation
+            }
+
             // Event listeners
             copyButton.addEventListener('click', copyJSONData);
             saveButton.addEventListener('click', saveData);
             questionContainer.addEventListener('change', updateQuestionColors);
         });
     </script>
-</head>
-<body>
-    <div id="loadingOverlay">
-        <div id="loadingSpinner"></div>
-    </div>
-    <div class="filename-container">
-        <h5 id="filenameDisplay"></h5>
-    </div>
-    <div id="questionContainer"></div>
-    <button id="saveButton" class="action-button">Save</button>
 </body>
 </html>
