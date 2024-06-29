@@ -58,8 +58,7 @@
             line-height: 18px;
             font-size: 14px;
         }
-        #saveButton,
-        #copyButton {
+        .action-button {
             display: block;
             padding: 10px 20px;
             background-color: #4744f7; /* Dark blue */
@@ -71,8 +70,7 @@
             cursor: pointer;
             border: none;
         }
-        #saveButton:hover,
-        #copyButton:hover {
+        .action-button:hover {
             background-color: #3030a6; /* Darker blue */
         }
         #loadingOverlay {
@@ -145,23 +143,7 @@
                 // Generate 50 question boxes
                 questionContainer.innerHTML = '';
                 for (let i = 1; i <= 50; i++) {
-                    const questionDiv = document.createElement('div');
-                    questionDiv.className = 'question';
-                    questionDiv.innerHTML = `<span>Question ${i}:</span>`;
-                    const optionsDiv = document.createElement('div');
-                    optionsDiv.className = 'options';
-
-                    ['A', 'B', 'C', 'D'].forEach((option) => {
-                        const optionDiv = document.createElement('div');
-                        optionDiv.className = 'option';
-                        optionDiv.innerHTML = `
-                            <span>${option}</span>
-                            <input type="checkbox" name="question${i}" value="${option}">
-                        `;
-                        optionsDiv.appendChild(optionDiv);
-                    });
-
-                    questionDiv.appendChild(optionsDiv);
+                    const questionDiv = createQuestionElement(i);
                     questionContainer.appendChild(questionDiv);
                 }
                 updateQuestionColors();
@@ -180,48 +162,37 @@
             function displayQuestions() {
                 questionContainer.innerHTML = '';
                 userInput.forEach((options, index) => {
-                    const questionDiv = document.createElement('div');
-                    questionDiv.className = 'question';
-                    questionDiv.innerHTML = `<span>Question ${index + 1}:</span>`;
-                    const optionsDiv = document.createElement('div');
-                    optionsDiv.className = 'options';
-
-                    ['A', 'B', 'C', 'D'].forEach((option) => {
-                        const optionDiv = document.createElement('div');
-                        optionDiv.className = 'option';
-                        optionDiv.innerHTML = `
-                            <span>${option}</span>
-                            <input type="checkbox" name="question${index + 1}" value="${option}" ${options.includes(option) ? 'checked' : ''}>
-                        `;
-                        optionsDiv.appendChild(optionDiv);
-                    });
-
-                    questionDiv.appendChild(optionsDiv);
+                    const questionDiv = createQuestionElement(index + 1, options);
                     questionContainer.appendChild(questionDiv);
                 });
                 addNewQuestion();
                 updateQuestionColors();
             }
 
+            function createQuestionElement(index, selectedOptions = []) {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `<span>Question ${index}:</span>`;
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+
+                ['A', 'B', 'C', 'D'].forEach((option) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    optionDiv.innerHTML = `
+                        <span>${option}</span>
+                        <input type="checkbox" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
+                    `;
+                    optionsDiv.appendChild(optionDiv);
+                });
+
+                questionDiv.appendChild(optionsDiv);
+                return questionDiv;
+            }
+
             function addNewQuestion() {
                 for (let i = entryCount; i <= 50; i++) {
-                    const questionDiv = document.createElement('div');
-                    questionDiv.className = 'question';
-                    questionDiv.innerHTML = `<span>Question ${i}:</span>`;
-                    const optionsDiv = document.createElement('div');
-                    optionsDiv.className = 'options';
-
-                    ['A', 'B', 'C', 'D'].forEach((option) => {
-                        const optionDiv = document.createElement('div');
-                        optionDiv.className = 'option';
-                        optionDiv.innerHTML = `
-                            <span>${option}</span>
-                            <input type="checkbox" name="question${i}" value="${option}">
-                        `;
-                        optionsDiv.appendChild(optionDiv);
-                    });
-
-                    questionDiv.appendChild(optionsDiv);
+                    const questionDiv = createQuestionElement(i);
                     questionContainer.appendChild(questionDiv);
                 }
             }
@@ -336,10 +307,10 @@
         <div id="loadingSpinner"></div>
     </div>
     <div class="filename-container">
-        <h6 id="filenameDisplay"></h6>
+        <h5 id="filenameDisplay"></h5>
     </div>
     <div id="questionContainer"></div>
-    <button id="saveButton">Save</button>
-    <button id="copyButton">Copy JSON Data</button>
+    <button id="saveButton" class="action-button">Save</button>
+    <button id="copyButton" class="action-button">Copy JSON Data</button>
 </body>
 </html>
