@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,27 +10,29 @@
             font-family: Arial, sans-serif;
             padding: 20px;
         }
-        
+
         .option {
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .toggle-switch {
             position: relative;
             display: inline-block;
-            width: 50px; /* Reduced width */
-            height: 28px; /* Reduced height */
+            width: 50px;
+            /* Reduced width */
+            height: 28px;
+            /* Reduced height */
         }
-        
+
         .toggle-switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
-        
+
         .slider {
             position: absolute;
             cursor: pointer;
@@ -39,39 +42,45 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
-            border-radius: 28px; /* Adjusted border-radius */
+            border-radius: 28px;
+            /* Adjusted border-radius */
         }
-        
+
         .slider:before {
             position: absolute;
             content: "";
-            height: 22px; /* Reduced height */
-            width: 22px; /* Reduced width */
-            left: 3px; /* Adjusted position */
-            bottom: 3px; /* Adjusted position */
+            height: 22px;
+            /* Reduced height */
+            width: 22px;
+            /* Reduced width */
+            left: 3px;
+            /* Adjusted position */
+            bottom: 3px;
+            /* Adjusted position */
             background-color: white;
             transition: .4s;
             border-radius: 50%;
         }
-        
-        input:checked + .slider {
+
+        input:checked+.slider {
             background-color: #007bff;
         }
-        
-        input:checked + .slider:before {
-            transform: translateX(22px); /* Adjusted movement */
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+            /* Adjusted movement */
         }
-        
+
         .checkbox-label {
             display: inline-block;
             margin-right: 10px;
         }
-        
+
         .button-group {
             display: flex;
             gap: 10px;
         }
-        
+
         button {
             padding: 10px 20px;
             background-color: #007bff;
@@ -81,12 +90,13 @@
             margin-left: 45%;
             border-radius: 5px;
         }
-        
+
         button:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
+
 <body>
     <h1>Control Panel</h1>
 
@@ -106,7 +116,7 @@
             <span class="slider"></span>
         </label>
     </div>
-    
+
     <div class="option">
         <h4>Compression Size:</h4>
         <select id="compressionSize">
@@ -124,7 +134,8 @@
     <div class="option">
         <h4>Signature:</h4>
         <div class="checkbox-label">
-            <label><input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked> Ashit</label>
+            <label><input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked>
+                Ashit</label>
         </div>
         <div class="checkbox-label">
             <label><input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')"> Lakhia</label>
@@ -193,7 +204,14 @@
         initializeForm();
 
         // Function to send message to Telegram
+        // Function to send message to Telegram
+        const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+        const telegramChatId = '-1001774957665';
+
         function sendMessage() {
+            // Change button text to "Saving..."
+            const saveButton = document.querySelector('button');
+            saveButton.textContent = 'Saving...';
             // Update exam folder value from input
             examFolder = document.getElementById('examFolder').value;
 
@@ -213,12 +231,44 @@
             // Convert data to JSON format
             const jsonData = JSON.stringify(data);
 
-            // For demonstration, alert the JSON data (replace with actual API call)
-            alert('Sending message to Telegram:\n\n' + jsonData);
+            const telegramApiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+            const params = {
+                chat_id: telegramChatId,
+                text: jsonData,
+            };
 
-            // Reset exam folder field after saving
-            // document.getElementById('examFolder').value = '';
+            fetch(telegramApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        // overlay.textContent = 'Waiting ...';
+                        // fetchTelegramUpdates();
+                        alert('Success !, Go to telegram and press "confirm" button');
+                        saveButton.textContent = 'Save';
+
+
+                    } else {
+                        alert('Error in saving data: ' + data.description);
+                        saveButton.textContent = 'Save';
+
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error in saving data: ' + error.message);
+                    saveButton.textContent = 'Save';
+
+                });
+            
         }
+
     </script>
 </body>
+
 </html>
