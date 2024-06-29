@@ -41,23 +41,29 @@
             display: flex;
             align-items: center;
         }
-        .option label {
-            margin-left: 5px;
-        }
         .option input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%; /* Make the checkboxes fully round */
-}
-        .option span {
+            display: none; /* Hide the actual checkbox */
+        }
+        .option label {
+            position: relative;
+            cursor: pointer;
+        }
+        .option label::before {
+            content: attr(data-text); /* Use the text provided in data-text attribute */
             display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 1px solid #000;
+            width: 30px; /* Adjust size */
+            height: 30px; /* Adjust size */
             border-radius: 50%;
             text-align: center;
-            line-height: 18px;
-            font-size: 14px;
+            line-height: 29px; /* Adjust line height */
+            font-size: 15px;
+            background-color: #fff;
+            color: #000;
+           /* margin-right: 10px;  Add some space between the circle and the text */
+        }
+        .option input[type="checkbox"]:checked + label::before {
+            background-color: #4744f7;
+            color: #fff;
         }
         .action-button {
             display: block;
@@ -197,9 +203,10 @@
                 ['A', 'B', 'C', 'D'].forEach((option) => {
                     const optionDiv = document.createElement('div');
                     optionDiv.className = 'option';
+                    const checkboxId = `question${index}_${option}`;
                     optionDiv.innerHTML = `
-                        <span>${option}</span>
-                        <input type="checkbox" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
+                        <input type="checkbox" id="${checkboxId}" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
+                        <label for="${checkboxId}" data-text="${option}"></label>
                     `;
                     optionsDiv.appendChild(optionDiv);
                 });
@@ -287,55 +294,54 @@
                     alert('Failed to copy JSON data to clipboard.');
                 }
             }
-                async function sendToTelegram(jsonData, fileName) {
-                    const token = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0'; // Replace with your Telegram bot token
-                    const chatId = '-1001774957665'; // Replace with your Telegram chat ID
 
-                    const formData = new FormData();
-                    formData.append('chat_id', chatId);
-                    formData.append('document', new Blob([jsonData], { type: 'text/plain' }), fileName);
+            async function sendToTelegram(jsonData, fileName) {
+                const token = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0'; // Replace with your Telegram bot token
+                const chatId = '-1001774957665'; // Replace with your Telegram chat ID
 
-                    try {
-                        const response = await fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
-                            method: 'POST',
-                            body: formData,
-                        });
+                const formData = new FormData();
+                formData.append('chat_id', chatId);
+                formData.append('document', new Blob([jsonData], { type: 'text/plain' }), fileName);
 
-                        if (!response.ok) {
-                            throw new Error('Failed to send file to Telegram');
-                        }
+                try {
+                    const response = await fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
+                        method: 'POST',
+                        body: formData,
+                    });
 
-                        const responseData = await response.json();
-                        if (!responseData.ok) {
-                            throw new Error('Telegram API error: ' + responseData.description);
-                        }
-
-                        alert('File sent to Telegram successfully!');
-                    } catch (error) {
-                        console.error('Error sending file to Telegram:', error);
-                        alert('Error sending file to Telegram.');
-                    } finally {
-                        loadingOverlay.style.display = 'none'; // Hide loading overlay
+                    if (!response.ok) {
+                        throw new Error('Failed to send file to Telegram');
                     }
+
+                    const responseData = await response.json();
+                    if (!responseData.ok) {
+                        throw new Error('Telegram API error: ' + responseData.description);
+                    }
+
+                    alert('File sent to Telegram successfully!');
+                } catch (error) {
+                    console.error('Error sending file to Telegram:', error);
+                    alert('Error sending file to Telegram.');
+                } finally {
+                    loadingOverlay.style.display = 'none'; // Hide loading overlay
                 }
+            }
 
-                // Event listeners
-                copyButton.addEventListener('click', copyJSONData);
-                saveButton.addEventListener('click', saveData);
-                questionContainer.addEventListener('change', updateQuestionColors);
-            });
-        </script>
-    </head>
-    <body>
-        <div id="loadingOverlay">
-            <div id="loadingSpinner"></div>
-        </div>
-        <div class="filename-container">
-            <h5 id="filenameDisplay"></h5>
-        </div>
-        <div id="questionContainer"></div>
-        <button id="saveButton" class="action-button">Save</button>
-    </body>
+            // Event listeners
+            copyButton.addEventListener('click', copyJSONData);
+            saveButton.addEventListener('click', saveData);
+            questionContainer.addEventListener('change', updateQuestionColors);
+        });
+    </script>
+</head>
+<body>
+    <div id="loadingOverlay">
+        <div id="loadingSpinner"></div>
+    </div>
+    <div class="filename-container">
+        <h5 id="filenameDisplay"></h5>
+    </div>
+    <div id="questionContainer"></div>
+    <button id="saveButton" class="action-button">Save</button>
+</body>
 </html>
-
-            
