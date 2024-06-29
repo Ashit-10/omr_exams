@@ -22,13 +22,13 @@
             justify-content: space-between;
         }
         .question.green {
-            background-color: #c8e6c9; /* Light green */
+            background-color: #90EE90; /* Light green */
         }
         .question.blue {
-            background-color: #bbdefb; /* Light blue */
+            background-color: #87CEFA; /* Light blue */
         }
         .question.red {
-            background-color: #ffcdd2; /* Light red */
+            background-color: #FFB6C1; /* Light red */
         }
         .options {
             display: flex;
@@ -58,7 +58,7 @@
         #saveButton {
             display: block;
             padding: 10px 20px;
-            background-color: #008cba; /* Bright blue */
+            background-color: #FF6347; /* Tomato */
             color: #fff;
             border-radius: 5px;
             margin-top: 10px;
@@ -68,7 +68,7 @@
             border: none;
         }
         #saveButton:hover {
-            background-color: #005f5f; /* Darker blue on hover */
+            background-color: #FF4500; /* Darker tomato */
         }
         #loadingOverlay {
             display: none;
@@ -164,7 +164,7 @@
             function processJSON(data) {
                 for (const key in data) {
                     if (data.hasOwnProperty(key)) {
-                        userInput.push(data[key]);
+                        userInput[parseInt(key) - 1] = data[key];
                         entryCount = Math.max(entryCount, parseInt(key) + 1);
                     }
                 }
@@ -252,13 +252,11 @@
                     if (selectedOptions.length > 0) {
                         lastSelectedIndex = i;
                     }
-                    if (selectedOptions.length > 0 || i <= lastSelectedIndex) {
-                        userInput.push(selectedOptions);
-                    }
+                    userInput[i] = selectedOptions;
                 }
 
                 // Check for unselected questions in between
-                for (let i = 0; i < lastSelectedIndex; i++) {
+                for (let i = 0; i <= lastSelectedIndex; i++) {
                     if (userInput[i].length === 0) {
                         alert(`Please select at least one option for Question ${i + 1}.`);
                         return;
@@ -267,63 +265,52 @@
 
                 const jsonOutput = {};
                 userInput.forEach((entry, index) => {
-                    jsonOutput[index + 1] = entry;
+                    if (entry.length > 0) {
+                        jsonOutput[index + 1] = entry;
+                    }
                 });
 
                 const jsonString = JSON.stringify(jsonOutput, null, 2);
                 const blob = new Blob([jsonString], { type: 'application/json' });
                 const file = new File([blob], `${filename}.json`, { type: 'application/json' });
 
-                const chatId = "-1001774957665"; // Replace with your Telegram chat ID
-                const token = "1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0"; // Replace with your bot token
-
-                const url = `https://api.telegram.org/bot${token}/sendDocument`;
-
-                const formData = new FormData();
-                formData.append('chat_id', chatId);
-                formData.append('document', file);
-
-                loadingOverlay.style.display = 'block'; // Show loading overlay
-
                 try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        body: formData
-                    });
+                    const pickerOpts = {
+                        types: [
+                            {
+                                description: 'JSON Files',
+                                accept: { 'application/json': ['.json'] },
+                            },
+                        ],
+                        excludeAcceptAllOption: true,
+                        suggestedName: filename,
+                    };
 
-                    if (!response.ok) {
-                        throw new Error('Failed to send file to Telegram.');
-                    }
-
-                    alert('File sent successfully!');
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('An error occurred while sending the file.');
+                    loadingOverlay.style.display = 'block';
+                    const handle = await window.showSaveFilePicker(pickerOpts);
+                    const writableStream = await handle.createWritable();
+                    await writableStream.write(file);
+                    await writableStream.close();
+                } catch (err) {
+                    console.error('Error during save:', err);
                 } finally {
-                    loadingOverlay.style.display = 'none'; // Hide loading overlay
+                    loadingOverlay.style.display = 'none';
                 }
             }
 
-            questionContainer.addEventListener('change', updateQuestionColors);
             saveButton.addEventListener('click', saveData);
-
-            // Ensure body is displayed
-            document.body.style.display = 'block';
+            questionContainer.addEventListener('change', updateQuestionColors);
         });
     </script>
 </head>
-<body style="display: none;">
-    <div class="filename-container">
-        <span id="filenameDisplay"></span>
-    </div>
-    <div id="questionContainer"></div>
-    <button id="saveButton">Save</button>
+<body>
     <div id="loadingOverlay">
         <div id="loadingSpinner"></div>
     </div>
-
-    <script>
-        document.body.style.display = 'block'; // Ensure body is displayed
-    </script>
+    <div class="filename-container">
+        <h1 id="filenameDisplay"></h1>
+    </div>
+    <div id="questionContainer"></div>
+    <button id="saveButton">Save</button>
 </body>
 </html>
