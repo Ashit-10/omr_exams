@@ -7,14 +7,13 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: block; /* Ensure body is displayed */
         }
         .filename-container {
             text-align: center;
             margin: 20px 0;
         }
         .filename-container h5 {
-            font-size: 1rem; /* Adjusted font size for smaller heading */
+            font-size: 1rem;
         }
         .question {
             margin: 20px 0;
@@ -26,17 +25,17 @@
             justify-content: space-between;
         }
         .question.green {
-            background-color: #c3e6cb; /* Light green */
+            background-color: #c3e6cb;
         }
         .question.blue {
-            background-color: #d1ecf1; /* Light blue */
+            background-color: #d1ecf1;
         }
         .question.red {
-            background-color: #f8d7da; /* Light red */
+            background-color: #f8d7da;
         }
         .options {
             display: flex;
-            gap: 20px; /* Added space between options */
+            gap: 20px;
         }
         .option {
             display: flex;
@@ -61,8 +60,8 @@
         }
         .action-button {
             display: block;
-            padding: 15px 30px; /* Increased padding for larger button */
-            background-color: #4744f7; /* Dark blue */
+            padding: 15px 30px;
+            background-color: #4744f7;
             color: #fff;
             border-radius: 5px;
             margin-top: 10px;
@@ -70,19 +69,19 @@
             border: none;
         }
         .action-button:hover {
-            background-color: #3030a6; /* Darker blue */
+            background-color: #3030a6;
         }
         .copy-button {
             position: fixed;
             top: 10px;
             left: 10px;
-            padding: 8px 15px; /* Adjusted padding for smaller button */
+            padding: 8px 15px;
             background-color: #555;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            z-index: 1000; /* Ensure button is above other content */
+            z-index: 1000;
         }
         .copy-button:hover {
             background-color: #333;
@@ -150,7 +149,6 @@
                     })
                     .catch(error => {
                         console.error('Error loading JSON file:', error);
-                        // Display new OMR sheet interface when filename is invalid
                         displayNewOMRSheet();
                     });
             } else {
@@ -158,7 +156,6 @@
             }
 
             function displayNewOMRSheet() {
-                // Generate 50 question boxes
                 questionContainer.innerHTML = '';
                 for (let i = 1; i <= 50; i++) {
                     const questionDiv = createQuestionElement(i);
@@ -239,7 +236,7 @@
                 const questions = document.querySelectorAll('.question');
                 let lastSelectedIndex = -1;
 
-                userInput.length = 0; // Clear the array
+                userInput.length = 0;
 
                 for (let i = 0; i < questions.length; i++) {
                     const question = questions[i];
@@ -250,7 +247,6 @@
                     userInput[i] = selectedOptions;
                 }
 
-                // Check for unselected questions in between
                 for (let i = 0; i <= lastSelectedIndex; i++) {
                     if (userInput[i].length === 0) {
                         alert(`Please select at least one option for Question ${i + 1}.`);
@@ -267,33 +263,45 @@
 
                 const jsonString = JSON.stringify(jsonOutput, null, 2);
                 const blob = new Blob([jsonString], { type: 'application/json' });
-                const file = new File([blob], `${filename}.json`, { type: 'application/json' });
 
-                try {
-                    const pickerOpts = {
-                        types: [
-                            {
-                                description: 'JSON files',
-                                accept: {
-                                    'application/json': ['.json'],
+                if (window.showSaveFilePicker) {
+                    try {
+                        const pickerOpts = {
+                            types: [
+                                {
+                                    description: 'JSON files',
+                                    accept: {
+                                        'application/json': ['.json'],
+                                    },
+                                    excludeAcceptAllOption: true,
+                                    suggestedName: filename,
                                 },
-                                excludeAcceptAllOption: true,
-                                suggestedName: filename,
-                            },
-                        ],
-                    };
+                            ],
+                        };
 
-                    loadingOverlay.style.display = 'block';
-                    const handle = await window.showSaveFilePicker(pickerOpts);
-                    const writableStream = await handle.createWritable();
-                    await writableStream.write(blob);
-                    await writableStream.close();
-                    alert('File saved successfully!');
-                } catch (error) {
-                    console.error('Error during save:', error);
-                    alert('Error saving file.');
-                } finally {
-                    loadingOverlay.style.display = 'none';
+                        loadingOverlay.style.display = 'block';
+                        const handle = await window.showSaveFilePicker(pickerOpts);
+                        const writableStream = await handle.createWritable();
+                        await writableStream.write(blob);
+                        await writableStream.close();
+                        alert('File saved successfully!');
+                    } catch (error) {
+                        console.error('Error during save:', error);
+                        alert('Error saving file.');
+                    } finally {
+                        loadingOverlay.style.display = 'none';
+                    }
+                } else {
+                    try {
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(blob);
+                        a.download = filename || 'OMR_Sheet.json';
+                        a.click();
+                        alert('File saved successfully!');
+                    } catch (error) {
+                        console.error('Error during save:', error);
+                        alert('Error saving file.');
+                    }
                 }
             }
 
