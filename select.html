@@ -12,9 +12,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            /* height: 100vh; */
             margin: 0;
-            padding: 20px;
+            padding: 0px;
         }
 
         .container {
@@ -22,8 +22,8 @@
             border-radius: 20px;
             box-shadow: 10px 10px 20px #c9c9c9, 
                         -10px -10px 20px #ffffff; /* Neomorphic shadow */
-            padding: 20px;
-            width: 300px;
+            padding: 15px;
+            width: 100%;
             max-width: 100%;
         }
 
@@ -185,14 +185,15 @@
                     <input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked>
                     Ashit
                 </label>
-                <label class="radio-label" style="background-color: #FF9800;"> <!-- Orange -->
-                    <input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')">
-                    Lakhia
-                </label>
                 <label class="radio-label" style="background-color: #9C27B0;"> <!-- Purple -->
                     <input type="radio" name="signature" value="rupa" onclick="setSignature('rupa')">
                     Rupa
                 </label>
+                <label class="radio-label" style="background-color: #FF9800;"> <!-- Orange -->
+                    <input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')">
+                    Lakhia bhai
+                </label>
+                
             </div>
         </div>
 
@@ -282,7 +283,7 @@
         // Function to send message to Telegram
         const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
         const telegramChatId = '-1001774957665';
-        
+
         function sendMessage() {
             // Change button text to "Saving..."
             const saveButton = document.querySelector('button');
