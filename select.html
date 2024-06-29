@@ -14,6 +14,11 @@
             margin-bottom: 10px;
         }
         
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        
         button {
             padding: 10px 20px;
             background-color: #007bff;
@@ -31,38 +36,93 @@
     <h1>Control Panel</h1>
 
     <div class="option">
-        <label><input type="checkbox" id="compression"> Compression</label>
+        <h3>Compression:</h3>
+        <div class="button-group">
+            <button id="compressionOn" onclick="setCompression(true)">On</button>
+            <button id="compressionOff" onclick="setCompression(false)">Off</button>
+        </div>
     </div>
+
     <div class="option">
-        <label><input type="radio" name="tuition" value="wsc" checked> WSC</label>
-        <label><input type="radio" name="tuition" value="mac"> Mac</label>
+        <h3>Tuition:</h3>
+        <div class="button-group">
+            <button id="tuitionWsc" onclick="setTuition('wsc')">WSC</button>
+            <button id="tuitionMac" onclick="setTuition('mac')">Mac</button>
+        </div>
     </div>
+
     <div class="option">
-        <label><input type="radio" name="signature" value="rupa" checked> Rupa</label>
-        <label><input type="radio" name="signature" value="lakhia"> Lakhia</label>
-        <label><input type="radio" name="signature" value="ashit"> Ashit</label>
+        <h3>Signature:</h3>
+        <div class="button-group">
+            <button id="signatureRupa" onclick="setSignature('rupa')">Rupa</button>
+            <button id="signatureLakhia" onclick="setSignature('lakhia')">Lakhia</button>
+            <button id="signatureAshit" onclick="setSignature('ashit')">Ashit</button>
+        </div>
     </div>
+
     <div class="option">
-        <label><input type="checkbox" id="autoSave"> Auto Save</label>
+        <h3>Auto Save:</h3>
+        <div class="button-group">
+            <button id="autoSaveOn" onclick="setAutoSave(true)">On</button>
+            <button id="autoSaveOff" onclick="setAutoSave(false)">Off</button>
+        </div>
     </div>
+
     <div class="option">
-        <input type="text" id="examFolder" placeholder="Exam Folder">
+        <h3>Exam Folder:</h3>
+        <input type="text" id="examFolder" placeholder="Enter exam folder name">
     </div>
+
     <button onclick="sendMessage()">Send Message to Telegram</button>
 
     <script>
-        function sendMessage() {
-            const compression = document.getElementById('compression').checked ? 'Compression: On' : 'Compression: Off';
-            const tuition = document.querySelector('input[name="tuition"]:checked').value;
-            const signature = document.querySelector('input[name="signature"]:checked').value;
-            const autoSave = document.getElementById('autoSave').checked ? 'Auto Save: On' : 'Auto Save: Off';
-            const examFolder = document.getElementById('examFolder').value;
+        let compressionOn = false;
+        let tuition = 'wsc';
+        let signature = 'rupa';
+        let autoSaveOn = false;
+        let examFolder = '';
 
+        function setCompression(value) {
+            compressionOn = value;
+            updateButtonStyles('compression');
+        }
+
+        function setTuition(value) {
+            tuition = value;
+            updateButtonStyles('tuition');
+        }
+
+        function setSignature(value) {
+            signature = value;
+            updateButtonStyles('signature');
+        }
+
+        function setAutoSave(value) {
+            autoSaveOn = value;
+            updateButtonStyles('autoSave');
+        }
+
+        function updateButtonStyles(group) {
+            const groups = ['compression', 'tuition', 'signature', 'autoSave'];
+            groups.forEach(g => {
+                document.getElementById(`${g}On`).style.backgroundColor = g === group && eval(`${g}On`) ? '#0056b3' : '#007bff';
+                document.getElementById(`${g}Off`).style.backgroundColor = g === group && !eval(`${g}On`) ? '#0056b3' : '#007bff';
+                document.getElementById(`${g}Wsc`).style.backgroundColor = g === group && tuition === 'wsc' ? '#0056b3' : '#007bff';
+                document.getElementById(`${g}Mac`).style.backgroundColor = g === group && tuition === 'mac' ? '#0056b3' : '#007bff';
+                document.getElementById(`${g}Rupa`).style.backgroundColor = g === group && signature === 'rupa' ? '#0056b3' : '#007bff';
+                document.getElementById(`${g}Lakhia`).style.backgroundColor = g === group && signature === 'lakhia' ? '#0056b3' : '#007bff';
+                document.getElementById(`${g}Ashit`).style.backgroundColor = g === group && signature === 'ashit' ? '#0056b3' : '#007bff';
+                document.getElementById(`${g}On`).innerText = g === group && eval(`${g}On`) ? 'On ✓' : 'On';
+                document.getElementById(`${g}Off`).innerText = g === group && !eval(`${g}On`) ? 'Off ✓' : 'Off';
+            });
+        }
+
+        function sendMessage() {
             const message = `
-                Compression: ${compression}
-                Tuition: ${tuition}
-                Signature: ${signature}
-                ${autoSave}
+                Compression: ${compressionOn ? 'On' : 'Off'}
+                Tuition: ${tuition.toUpperCase()}
+                Signature: ${signature.charAt(0).toUpperCase() + signature.slice(1)}
+                Auto Save: ${autoSaveOn ? 'On' : 'Off'}
                 Exam Folder: ${examFolder}
             `;
 
