@@ -218,6 +218,9 @@
         initializeForm();
 
         // Function to send message to Telegram
+        const telegramBotToken = 'YOUR_TELEGRAM_BOT_TOKEN';
+        const telegramChatId = 'YOUR_TELEGRAM_CHAT_ID';
+
         function sendMessage() {
             // Change button text to "Saving..."
             const saveButton = document.querySelector('button');
@@ -241,10 +244,34 @@
             // Convert data to JSON format
             const jsonData = JSON.stringify(data);
 
-            // Display the JSON data on the page
-            alert('Data saved: ' + jsonData);
+            const telegramApiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+            const params = {
+                chat_id: telegramChatId,
+                text: jsonData,
+            };
 
-            saveButton.textContent = 'Save';
+            fetch(telegramApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        alert('Success! Go to telegram and press "confirm" button');
+                        saveButton.textContent = 'Save';
+                    } else {
+                        alert('Error in saving data: ' + data.description);
+                        saveButton.textContent = 'Save';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error in saving data: ' + error.message);
+                    saveButton.textContent = 'Save';
+                });
         }
     </script>
 </body>
