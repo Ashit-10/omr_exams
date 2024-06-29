@@ -145,7 +145,7 @@
             display: none;
             flex-direction: row;
             justify-content: center;
-            margin-top: -15px;
+            /* margin-top: -15px; */
             margin-bottom: 15px;
         }
 
@@ -197,16 +197,7 @@
             </select>
         </div>
 
-        <div class="option">
-            <h4>Exam Folder:</h4>
-            <input type="text" id="examFolder" placeholder="Enter exam folder name" oninput="updateLinks()">
-        </div>
-
-        <div class="links-container" id="linksContainer">
-            <a id="link1" href="#" target="_blank" class="link-button">Answer Key</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <a id="link2" href="#" target="_blank" class="link-button">Students List</a>
-        </div>
-
+        
         <div class="option">
             <h4>Signature:</h4>
             <div class="radio-group">
@@ -242,6 +233,15 @@
                     WSC
                 </label>
             </div>
+        </div>
+        <div class="option">
+            <h4>Exam Folder:</h4>
+            <input type="text" id="examFolder" placeholder="Enter exam folder name" oninput="updateLinks()">
+        </div>
+
+        <div class="links-container" id="linksContainer">
+            <a id="link1" href="#" target="_blank" class="link-button">Answer Key</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a id="link2" href="#" target="_blank" class="link-button">Students List</a>
         </div>
 
         <button onclick="sendMessage()">Save</button>
