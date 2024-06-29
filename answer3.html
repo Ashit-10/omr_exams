@@ -47,6 +47,7 @@
         .option label {
             position: relative;
             cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition effect */
         }
         .option label::before {
             content: attr(data-text); /* Use the text provided in data-text attribute */
@@ -55,13 +56,12 @@
             height: 30px; /* Adjust size */
             border-radius: 50%;
             text-align: center;
-            line-height: 29px; /* Adjust line height */
+            line-height: 30px; /* Adjust line height */
             font-size: 15px;
             background-color: #fff;
             color: #000;
-           /* margin-right: 10px;  Add some space between the circle and the text */
         }
-        .option input[type="checkbox"]:checked + label::before {
+        .option label.checked::before {
             background-color: #4744f7;
             color: #fff;
         }
@@ -208,6 +208,16 @@
                         <input type="checkbox" id="${checkboxId}" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
                         <label for="${checkboxId}" data-text="${option}"></label>
                     `;
+                    const label = optionDiv.querySelector('label');
+                    const checkbox = optionDiv.querySelector('input[type="checkbox"]');
+                    checkbox.addEventListener('change', () => {
+                        if (checkbox.checked) {
+                            label.classList.add('checked');
+                        } else {
+                            label.classList.remove('checked');
+                        }
+                        updateQuestionColors();
+                    });
                     optionsDiv.appendChild(optionDiv);
                 });
 
@@ -296,8 +306,8 @@
             }
 
             async function sendToTelegram(jsonData, fileName) {
-                const token = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0'; // Replace with your Telegram bot token
-                const chatId = '-1001774957665'; // Replace with your Telegram chat ID
+                const token = 'YOUR_TELEGRAM_BOT_TOKEN'; // Replace with your Telegram bot token
+                const chatId = 'YOUR_TELEGRAM_CHAT_ID'; // Replace with your Telegram chat ID
 
                 const formData = new FormData();
                 formData.append('chat_id', chatId);
