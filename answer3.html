@@ -12,7 +12,7 @@
             text-align: center;
             margin: 20px 0;
         }
-        .filename-container h1 {
+        .filename-container h2 {
             font-size: 1.5rem; /* Adjust font size for mobile */
         }
         .question {
@@ -283,10 +283,10 @@
                             {
                                 description: 'JSON Files',
                                 accept: { 'application/json': ['.json'] },
+                                excludeAcceptAllOption: true,
+                                suggestedName: filename,
                             },
                         ],
-                        excludeAcceptAllOption: true,
-                        suggestedName: filename,
                     };
 
                     loadingOverlay.style.display = 'block';
@@ -311,7 +311,7 @@
         <div id="loadingSpinner"></div>
     </div>
     <div class="filename-container">
-        <h2 id="filenameDisplay"></h2>
+        <h4 id="filenameDisplay"></h4>
     </div>
     <div id="questionContainer"></div>
     <button id="saveButton">Save</button>
