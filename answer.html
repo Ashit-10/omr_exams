@@ -11,15 +11,34 @@
             padding: 20px;
             background-color: #f4f4f4; /* Light gray background */
             color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #f4f4f4; /* Light gray background */
+            border-radius: 20px;
+            box-shadow: 10px 10px 20px #c9c9c9, 
+                        -10px -10px 20px #ffffff; /* Neomorphic shadow */
+            padding: 20px;
+            width: 300px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #555; /* Darker gray text */
         }
 
         .option {
             margin-bottom: 20px;
             padding: 15px;
-            background-color: #ffffff; /* White background */
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(145deg, #e0e0e0, #ffffff); /* Gradient background */
+            border-radius: 12px;
+            box-shadow: 6px 6px 12px #b0b0b0, 
+                        -6px -6px 12px #ffffff; /* Neomorphic shadow */
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -66,6 +85,8 @@
             background-color: white;
             transition: .4s;
             border-radius: 50%;
+            box-shadow: 2px 2px 5px #b0b0b0, 
+                        -2px -2px 5px #ffffff; /* Neomorphic shadow */
         }
 
         input:checked + .slider {
@@ -79,14 +100,17 @@
         .radio-group {
             display: flex;
             flex-direction: column;
+            gap: 10px;
         }
 
         .radio-label {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px;
+            background: linear-gradient(145deg, #e0e0e0, #ffffff); /* Gradient background */
+            border-radius: 12px;
+            box-shadow: 6px 6px 12px #b0b0b0, 
+                        -6px -6px 12px #ffffff; /* Neomorphic shadow */
             transition: background-color 0.3s ease;
             cursor: pointer;
         }
@@ -100,89 +124,93 @@
         }
 
         button {
-            padding: 10px 20px;
-            background-color: #2196F3; /* Blue button */
+            padding: 12px;
+            background: linear-gradient(145deg, #2196F3, #0b7dda); /* Blue gradient button */
             color: white;
             border: none;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 12px;
             display: block;
-            margin: 0 auto;
-            transition: background-color 0.3s ease;
+            margin: 20px auto 0;
+            box-shadow: 6px 6px 12px #b0b0b0, 
+                        -6px -6px 12px #ffffff; /* Neomorphic shadow */
+            transition: background 0.3s ease;
         }
 
         button:hover {
-            background-color: #0b7dda; /* Darker blue button on hover */
+            background: linear-gradient(145deg, #0b7dda, #2196F3); /* Darker blue gradient button on hover */
         }
     </style>
 </head>
 
 <body>
-    <h1 style="text-align: center;">Control Panel</h1>
+    <div class="container">
+        <h1>Control Panel</h1>
 
-    <div class="option">
-        <h4>Auto Save:</h4>
-        <label class="toggle-switch">
-            <input type="checkbox" id="autoSaveToggle" onclick="toggleAutoSave()" checked>
-            <span class="slider"></span>
-        </label>
-    </div>
-
-    <div class="option">
-        <h4>Compression:</h4>
-        <label class="toggle-switch">
-            <input type="checkbox" id="compressionToggle" onclick="toggleCompression()" checked>
-            <span class="slider"></span>
-        </label>
-    </div>
-
-    <div class="option">
-        <h4>Compression Size:</h4>
-        <select id="compressionSize">
-            <option value="100">100 KB</option>
-            <option value="150" selected>150 KB</option>
-            <option value="200">200 KB</option>
-        </select>
-    </div>
-
-    <div class="option">
-        <h4>Exam Folder:</h4>
-        <input type="text" id="examFolder" placeholder="Enter exam folder name">
-    </div>
-
-    <div class="option">
-        <h4>Signature:</h4>
-        <div class="radio-group">
-            <label class="radio-label" style="background-color: #FFEB3B;"> <!-- Yellow -->
-                <input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked>
-                Ashit
-            </label>
-            <label class="radio-label" style="background-color: #FF9800;"> <!-- Orange -->
-                <input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')">
-                Lakhia
-            </label>
-            <label class="radio-label" style="background-color: #9C27B0;"> <!-- Purple -->
-                <input type="radio" name="signature" value="rupa" onclick="setSignature('rupa')">
-                Rupa
+        <div class="option">
+            <h4>Auto Save:</h4>
+            <label class="toggle-switch">
+                <input type="checkbox" id="autoSaveToggle" onclick="toggleAutoSave()" checked>
+                <span class="slider"></span>
             </label>
         </div>
-    </div>
 
-    <div class="option">
-        <h4>Tuition:</h4>
-        <div class="radio-group">
-            <label class="radio-label" style="background-color: #4CAF50;"> <!-- Green -->
-                <input type="radio" name="tuition" value="mvm" onclick="setTuition('mvm')" checked>
-                MVM
-            </label>
-            <label class="radio-label" style="background-color: #2196F3;"> <!-- Blue -->
-                <input type="radio" name="tuition" value="wsc" onclick="setTuition('wsc')">
-                WSC
+        <div class="option">
+            <h4>Compression:</h4>
+            <label class="toggle-switch">
+                <input type="checkbox" id="compressionToggle" onclick="toggleCompression()" checked>
+                <span class="slider"></span>
             </label>
         </div>
-    </div>
 
-    <button onclick="sendMessage()">Save</button>
+        <div class="option">
+            <h4>Compression Size:</h4>
+            <select id="compressionSize">
+                <option value="100">100 KB</option>
+                <option value="150" selected>150 KB</option>
+                <option value="200">200 KB</option>
+            </select>
+        </div>
+
+        <div class="option">
+            <h4>Exam Folder:</h4>
+            <input type="text" id="examFolder" placeholder="Enter exam folder name">
+        </div>
+
+        <div class="option">
+            <h4>Signature:</h4>
+            <div class="radio-group">
+                <label class="radio-label" style="background-color: #FFEB3B;"> <!-- Yellow -->
+                    <input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked>
+                    Ashit
+                </label>
+                <label class="radio-label" style="background-color: #FF9800;"> <!-- Orange -->
+                    <input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')">
+                    Lakhia
+                </label>
+                <label class="radio-label" style="background-color: #9C27B0;"> <!-- Purple -->
+                    <input type="radio" name="signature" value="rupa" onclick="setSignature('rupa')">
+                    Rupa
+                </label>
+            </div>
+        </div>
+
+        <div class="option">
+            <h4>Tuition:</h4>
+            <div class="radio-group">
+                <label class="radio-label" style="background-color: #4CAF50;"> <!-- Green -->
+                    <input type="radio" name="tuition" value="mvm" onclick="setTuition('mvm')" checked>
+                    MVM
+                </label>
+                <label class="radio-label" style="background-color: #2196F3;"> <!-- Blue -->
+                    <input type="radio" name="tuition" value="wsc" onclick="setTuition('wsc')">
+                    WSC
+                </label>
+            </div>
+        </div>
+
+        <button onclick="sendMessage()">Save</button>
+    </div>
 
     <script>
         let autoSaveOn = true;
@@ -238,19 +266,12 @@
 
                     document.getElementById('examFolder').value = examFolder;
 
-                    // Update other form fields with fetched data
-                    autoSaveOn = parsedData.autoSave === 'On';
-                    compressionOn = parsedData.compression === 'On';
-                    document.getElementById('autoSaveToggle').checked = autoSaveOn;
-                    document.getElementById('compressionToggle').checked = compressionOn;
-                    document.getElementById('compressionSize').value = parsedData.compressionSize.split(' ')[0];
-                    signature = parsedData.signature.toLowerCase();
-                    document.querySelector(`input[name="signature"][value="${signature}"]`).checked = true;
-                    tuition = parsedData.tuition.toLowerCase();
-                    document.querySelector(`input[name="tuition"][value="${tuition}"]`).checked = true;
+                    // Update other fields if needed
                 })
                 .catch(error => {
-                    console.error('Error fetching data from GitHub:', error);
+                    console.error('Error fetching exam folder data:', error);
+                    examFolder = urlExamFolder;
+                    document.getElementById('examFolder').value = examFolder;
                 });
         }
 
@@ -265,6 +286,7 @@
             // Change button text to "Saving..."
             const saveButton = document.querySelector('button');
             saveButton.textContent = 'Saving...';
+
             // Update exam folder value from input
             examFolder = document.getElementById('examFolder').value;
 
