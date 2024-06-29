@@ -46,15 +46,11 @@
         }
         .option label {
             position: relative;
-            padding-left: 30px;
             cursor: pointer;
         }
         .option label::before {
             content: attr(data-text); /* Use the text provided in data-text attribute */
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
+            display: inline-block;
             width: 30px; /* Adjust size */
             height: 30px; /* Adjust size */
             border: 2px solid #000; /* Adjust border width */
@@ -64,6 +60,7 @@
             font-size: 14px;
             background-color: #fff;
             color: #000;
+            margin-right: 10px; /* Add some space between the circle and the text */
         }
         .option input[type="checkbox"]:checked + label::before {
             background-color: #4744f7;
@@ -207,9 +204,10 @@
                 ['A', 'B', 'C', 'D'].forEach((option) => {
                     const optionDiv = document.createElement('div');
                     optionDiv.className = 'option';
+                    const checkboxId = `question${index}_${option}`;
                     optionDiv.innerHTML = `
-                        <input type="checkbox" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
-                        <label data-text="${option}"></label>
+                        <input type="checkbox" id="${checkboxId}" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
+                        <label for="${checkboxId}" data-text="${option}"></label>
                     `;
                     optionsDiv.appendChild(optionDiv);
                 });
