@@ -109,29 +109,6 @@
             const loadingOverlay = document.getElementById('loadingOverlay');
             const filenameDisplay = document.getElementById('filenameDisplay');
 
-            function loadLocalFile() {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.txt';
-
-                input.onchange = (e) => {
-                    const file = e.target.files[0];
-                    const reader = new FileReader();
-                    reader.readAsText(file);
-                    reader.onload = () => {
-                        const data = reader.result;
-                        try {
-                            const jsonData = JSON.parse(data);
-                            processJSON(jsonData);
-                        } catch (error) {
-                            alert('Error parsing JSON data from the selected file.');
-                        }
-                    };
-                };
-
-                input.click();
-            }
-
             function getQueryParameter(name) {
                 const urlParams = new URLSearchParams(window.location.search);
                 return urlParams.get(name);
@@ -161,9 +138,8 @@
             }
 
             function displayNewOMRSheet() {
-                document.body.style.display = 'block'; // Display the body
-
                 // Generate 50 question boxes
+                questionContainer.innerHTML = '';
                 for (let i = 1; i <= 50; i++) {
                     const questionDiv = document.createElement('div');
                     questionDiv.className = 'question';
@@ -184,7 +160,6 @@
                     questionDiv.appendChild(optionsDiv);
                     questionContainer.appendChild(questionDiv);
                 }
-                addNewQuestion();
                 updateQuestionColors();
             }
 
@@ -334,13 +309,8 @@
             questionContainer.addEventListener('change', updateQuestionColors);
             saveButton.addEventListener('click', saveData);
 
-            // Attach loadLocalFile function to a button click event
-            const loadFileButton = document.getElementById('loadFileButton');
-            if (loadFileButton) {
-                loadFileButton.addEventListener('click', loadLocalFile);
-            } else {
-                console.warn('Element with id "loadFileButton" not found.');
-            }
+            // Ensure body is displayed
+            document.body.style.display = 'block';
         });
     </script>
 </head>
@@ -350,7 +320,6 @@
     </div>
     <div id="questionContainer"></div>
     <button id="saveButton">Save</button>
-    <button id="loadFileButton">Load Local File</button>
     <div id="loadingOverlay">
         <div id="loadingSpinner"></div>
     </div>
