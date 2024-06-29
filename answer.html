@@ -9,14 +9,14 @@
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
-            background-color: #f0f0f0;
+            background-color: #f4f4f4; /* Light gray background */
             color: #333;
         }
 
         .option {
             margin-bottom: 20px;
             padding: 15px;
-            background-color: #ffffff;
+            background-color: #ffffff; /* White background */
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -28,7 +28,7 @@
         .option h4 {
             margin: 0;
             font-size: 16px;
-            color: #333;
+            color: #555; /* Darker gray text */
         }
 
         .toggle-switch {
@@ -51,7 +51,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background-color: #ccc; /* Light gray slider background */
             transition: .4s;
             border-radius: 28px;
         }
@@ -68,11 +68,11 @@
             border-radius: 50%;
         }
 
-        input:checked+.slider {
-            background-color: #4CAF50; /* Green */
+        input:checked + .slider {
+            background-color: #4CAF50; /* Green slider when checked */
         }
 
-        input:checked+.slider:before {
+        input:checked + .slider:before {
             transform: translateX(22px);
         }
 
@@ -88,10 +88,11 @@
             padding: 10px;
             border-radius: 8px;
             transition: background-color 0.3s ease;
+            cursor: pointer;
         }
 
         .radio-label:hover {
-            background-color: #f0f0f0;
+            background-color: #e0e0e0; /* Lighter gray background on hover */
         }
 
         .radio-label input {
@@ -100,7 +101,7 @@
 
         button {
             padding: 10px 20px;
-            background-color: #2196F3; /* Blue */
+            background-color: #2196F3; /* Blue button */
             color: white;
             border: none;
             cursor: pointer;
@@ -111,7 +112,7 @@
         }
 
         button:hover {
-            background-color: #0b7dda; /* Darker Blue */
+            background-color: #0b7dda; /* Darker blue button on hover */
         }
     </style>
 </head>
@@ -152,15 +153,15 @@
     <div class="option">
         <h4>Signature:</h4>
         <div class="radio-group">
-            <label class="radio-label" style="background-color: #FFC107;"> <!-- Yellow -->
+            <label class="radio-label" style="background-color: #FFEB3B;"> <!-- Yellow -->
                 <input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked>
                 Ashit
             </label>
-            <label class="radio-label" style="background-color: #FF5722;"> <!-- Deep Orange -->
+            <label class="radio-label" style="background-color: #FF9800;"> <!-- Orange -->
                 <input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')">
                 Lakhia
             </label>
-            <label class="radio-label" style="background-color: #673AB7;"> <!-- Deep Purple -->
+            <label class="radio-label" style="background-color: #9C27B0;"> <!-- Purple -->
                 <input type="radio" name="signature" value="rupa" onclick="setSignature('rupa')">
                 Rupa
             </label>
