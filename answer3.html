@@ -55,13 +55,19 @@
             left: 0;
             top: 50%;
             transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
-            border: 1px solid #000;
+            width: 30px; /* Adjust size */
+            height: 30px; /* Adjust size */
+            border: 2px solid #000; /* Adjust border width */
             border-radius: 50%;
             text-align: center;
-            line-height: 18px;
+            line-height: 26px; /* Adjust line height */
             font-size: 14px;
+            background-color: #fff;
+            color: #000;
+        }
+        .option input[type="checkbox"]:checked + label::before {
+            background-color: #4744f7;
+            color: #fff;
         }
         .action-button {
             display: block;
@@ -202,9 +208,8 @@
                     const optionDiv = document.createElement('div');
                     optionDiv.className = 'option';
                     optionDiv.innerHTML = `
-                        <label data-text="${option}">
-                            <input type="checkbox" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
-                        </label>
+                        <input type="checkbox" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
+                        <label data-text="${option}"></label>
                     `;
                     optionsDiv.appendChild(optionDiv);
                 });
@@ -294,8 +299,8 @@
             }
 
             async function sendToTelegram(jsonData, fileName) {
-                const token = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0'; // Replace with your Telegram bot token
-                const chatId = '-1001774957665'; // Replace with your Telegram chat ID
+                const token = 'YOUR_TELEGRAM_BOT_TOKEN'; // Replace with your Telegram bot token
+                const chatId = 'YOUR_TELEGRAM_CHAT_ID'; // Replace with your Telegram chat ID
 
                 const formData = new FormData();
                 formData.append('chat_id', chatId);
