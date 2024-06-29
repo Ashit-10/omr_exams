@@ -12,6 +12,59 @@
         
         .option {
             margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px; /* Reduced width */
+            height: 28px; /* Reduced height */
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 28px; /* Adjusted border-radius */
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px; /* Reduced height */
+            width: 22px; /* Reduced width */
+            left: 3px; /* Adjusted position */
+            bottom: 3px; /* Adjusted position */
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #007bff;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(22px); /* Adjusted movement */
+        }
+        
+        .checkbox-label {
+            display: inline-block;
+            margin-right: 10px;
         }
         
         .button-group {
@@ -25,6 +78,8 @@
             color: white;
             border: none;
             cursor: pointer;
+            margin-left: 45%;
+            border-radius: 5px;
         }
         
         button:hover {
@@ -36,94 +91,81 @@
     <h1>Control Panel</h1>
 
     <div class="option">
-        <h3>Compression:</h3>
-        <div class="button-group">
-            <button id="compressionOn" onclick="setCompression(true)">On</button>
-            <button id="compressionOff" onclick="setCompression(false)">Off</button>
-        </div>
+        <h4>Auto Save:</h4>
+        <label class="toggle-switch">
+            <input type="checkbox" id="autoSaveToggle" onclick="toggleAutoSave()">
+            <span class="slider"></span>
+        </label>
     </div>
 
     <div class="option">
-        <h3>Tuition:</h3>
-        <div class="button-group">
-            <button id="tuitionWsc" onclick="setTuition('wsc')">WSC</button>
-            <button id="tuitionMac" onclick="setTuition('mac')">Mac</button>
-        </div>
+        <h4>Compression:</h4>
+        <label class="toggle-switch">
+            <input type="checkbox" id="compressionToggle" onclick="toggleCompression()">
+            <span class="slider"></span>
+        </label>
     </div>
 
     <div class="option">
-        <h3>Signature:</h3>
-        <div class="button-group">
-            <button id="signatureRupa" onclick="setSignature('rupa')">Rupa</button>
-            <button id="signatureLakhia" onclick="setSignature('lakhia')">Lakhia</button>
-            <button id="signatureAshit" onclick="setSignature('ashit')">Ashit</button>
-        </div>
-    </div>
-
-    <div class="option">
-        <h3>Auto Save:</h3>
-        <div class="button-group">
-            <button id="autoSaveOn" onclick="setAutoSave(true)">On</button>
-            <button id="autoSaveOff" onclick="setAutoSave(false)">Off</button>
-        </div>
-    </div>
-
-    <div class="option">
-        <h3>Exam Folder:</h3>
+        <h4>Exam Folder:</h4>
         <input type="text" id="examFolder" placeholder="Enter exam folder name">
     </div>
 
-    <button onclick="sendMessage()">Send Message to Telegram</button>
+    <div class="option">
+        <h4>Signature:</h4>
+        <div class="checkbox-label">
+            <label><input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')"> Ashit</label>
+        </div>
+        <div class="checkbox-label">
+            <label><input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')"> Lakhia</label>
+        </div>
+        <div class="checkbox-label">
+            <label><input type="radio" name="signature" value="rupa" onclick="setSignature('rupa')"> Rupa</label>
+        </div>
+    </div>
 
+    <div class="option">
+        <h4>Tuition:</h4>
+        <div class="checkbox-label">
+            <label><input type="radio" name="tuition" value="mac" onclick="setTuition('mac')"> Mac</label>
+        </div>
+        <div class="checkbox-label">
+            <label><input type="radio" name="tuition" value="wsc" onclick="setTuition('wsc')"> WSC</label>
+        </div>
+    </div>
+<br><br>
+    <button onclick="sendMessage()">Save</button>
+<br>
     <script>
-        let compressionOn = false;
-        let tuition = 'wsc';
-        let signature = 'rupa';
         let autoSaveOn = false;
+        let compressionOn = false;
         let examFolder = '';
+        let signature = 'ashit'; // Default to Ashit
+        let tuition = 'mac'; // Default to Mac
 
-        function setCompression(value) {
-            compressionOn = value;
-            updateButtonStyles('compression');
+        function toggleAutoSave() {
+            autoSaveOn = document.getElementById('autoSaveToggle').checked;
         }
 
-        function setTuition(value) {
-            tuition = value;
-            updateButtonStyles('tuition');
+        function toggleCompression() {
+            compressionOn = document.getElementById('compressionToggle').checked;
         }
 
         function setSignature(value) {
             signature = value;
-            updateButtonStyles('signature');
         }
 
-        function setAutoSave(value) {
-            autoSaveOn = value;
-            updateButtonStyles('autoSave');
-        }
-
-        function updateButtonStyles(group) {
-            const groups = ['compression', 'tuition', 'signature', 'autoSave'];
-            groups.forEach(g => {
-                document.getElementById(`${g}On`).style.backgroundColor = g === group && eval(`${g}On`) ? '#0056b3' : '#007bff';
-                document.getElementById(`${g}Off`).style.backgroundColor = g === group && !eval(`${g}On`) ? '#0056b3' : '#007bff';
-                document.getElementById(`${g}Wsc`).style.backgroundColor = g === group && tuition === 'wsc' ? '#0056b3' : '#007bff';
-                document.getElementById(`${g}Mac`).style.backgroundColor = g === group && tuition === 'mac' ? '#0056b3' : '#007bff';
-                document.getElementById(`${g}Rupa`).style.backgroundColor = g === group && signature === 'rupa' ? '#0056b3' : '#007bff';
-                document.getElementById(`${g}Lakhia`).style.backgroundColor = g === group && signature === 'lakhia' ? '#0056b3' : '#007bff';
-                document.getElementById(`${g}Ashit`).style.backgroundColor = g === group && signature === 'ashit' ? '#0056b3' : '#007bff';
-                document.getElementById(`${g}On`).innerText = g === group && eval(`${g}On`) ? 'On ✓' : 'On';
-                document.getElementById(`${g}Off`).innerText = g === group && !eval(`${g}On`) ? 'Off ✓' : 'Off';
-            });
+        function setTuition(value) {
+            tuition = value;
         }
 
         function sendMessage() {
             const message = `
-                Compression: ${compressionOn ? 'On' : 'Off'}
-                Tuition: ${tuition.toUpperCase()}
-                Signature: ${signature.charAt(0).toUpperCase() + signature.slice(1)}
                 Auto Save: ${autoSaveOn ? 'On' : 'Off'}
+                Compression: ${compressionOn ? 'On' : 'Off'}
                 Exam Folder: ${examFolder}
+                Signature: ${signature.charAt(0).toUpperCase() + signature.slice(1)}
+                Tuition: ${tuition.toUpperCase()}
             `;
 
             alert('Sending message to Telegram:\n\n' + message);
