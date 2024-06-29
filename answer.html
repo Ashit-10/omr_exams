@@ -16,7 +16,7 @@
         .option {
             margin-bottom: 20px;
             padding: 15px;
-            background-color: white;
+            background-color: #ffffff;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -69,7 +69,7 @@
         }
 
         input:checked+.slider {
-            background-color: #007bff;
+            background-color: #4CAF50; /* Green */
         }
 
         input:checked+.slider:before {
@@ -85,6 +85,13 @@
             display: flex;
             align-items: center;
             margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .radio-label:hover {
+            background-color: #f0f0f0;
         }
 
         .radio-label input {
@@ -93,7 +100,7 @@
 
         button {
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: #2196F3; /* Blue */
             color: white;
             border: none;
             cursor: pointer;
@@ -104,32 +111,7 @@
         }
 
         button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Adding colors to the options */
-        .option:nth-child(odd) {
-            background-color: #e6f7ff;
-        }
-
-        .option:nth-child(even) {
-            background-color: #fff0f6;
-        }
-
-        /* Styling for the radio buttons */
-        .radio-label {
-            padding: 8px 12px;
-            border-radius: 5px;
-            margin: 5px 0;
-            transition: background-color 0.3s ease;
-        }
-
-        .radio-label:hover {
-            background-color: #f0f0f0;
-        }
-
-        .radio-label input {
-            margin-right: 8px;
+            background-color: #0b7dda; /* Darker Blue */
         }
     </style>
 </head>
@@ -170,15 +152,15 @@
     <div class="option">
         <h4>Signature:</h4>
         <div class="radio-group">
-            <label class="radio-label" style="background-color: #d4edda;">
+            <label class="radio-label" style="background-color: #FFC107;"> <!-- Yellow -->
                 <input type="radio" name="signature" value="ashit" onclick="setSignature('ashit')" checked>
                 Ashit
             </label>
-            <label class="radio-label" style="background-color: #f8d7da;">
+            <label class="radio-label" style="background-color: #FF5722;"> <!-- Deep Orange -->
                 <input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')">
                 Lakhia
             </label>
-            <label class="radio-label" style="background-color: #cce5ff;">
+            <label class="radio-label" style="background-color: #673AB7;"> <!-- Deep Purple -->
                 <input type="radio" name="signature" value="rupa" onclick="setSignature('rupa')">
                 Rupa
             </label>
@@ -188,11 +170,11 @@
     <div class="option">
         <h4>Tuition:</h4>
         <div class="radio-group">
-            <label class="radio-label" style="background-color: #d4edda;">
+            <label class="radio-label" style="background-color: #4CAF50;"> <!-- Green -->
                 <input type="radio" name="tuition" value="mvm" onclick="setTuition('mvm')" checked>
                 MVM
             </label>
-            <label class="radio-label" style="background-color: #f8d7da;">
+            <label class="radio-label" style="background-color: #2196F3;"> <!-- Blue -->
                 <input type="radio" name="tuition" value="wsc" onclick="setTuition('wsc')">
                 WSC
             </label>
