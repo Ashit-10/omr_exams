@@ -4,5 +4,5 @@
     "compressionSize": "150 KB",
     "examFolder": "some_folder",
     "signature": "ashit",
-    "tuition": "mvm"
+    "tuition": "wsc"
 }
