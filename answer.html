@@ -61,13 +61,13 @@
         }
         .video-overlay {
             position: absolute;
-            top: -50px; /* Adjust this value to position the video properly */
+            top: -50px; /* Adjust as needed */
             left: 0;
             display: none;
             z-index: 10;
         }
         .video-element {
-            width: 50px; /* Adjust video size as needed */
+            width: 100px; /* Adjust video size as needed */
             height: auto;
         }
         .action-button {
@@ -221,7 +221,7 @@
                         <span>${option}</span>
                         <input type="checkbox" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
                         <div class="video-overlay">
-                            <video src="video.mkv" class="video-element"></video>
+                            <video src="video.mp4" class="video-element"></video>
                         </div>
                     `;
                     optionsDiv.appendChild(optionDiv);
@@ -312,8 +312,8 @@
             }
 
             async function sendToTelegram(jsonData, fileName) {
-                const token = 'YOUR_TELEGRAM_BOT_TOKEN';
-                const chatId = 'YOUR_TELEGRAM_CHAT_ID';
+                const token = 'YOUR_TELEGRAM_BOT_TOKEN'; // Replace with your Telegram bot token
+                const chatId = 'YOUR_TELEGRAM_CHAT_ID'; // Replace with your Telegram chat ID
 
                 const formData = new FormData();
                 formData.append('chat_id', chatId);
@@ -351,13 +351,20 @@
                 if (event.target.type === 'checkbox') {
                     const isChecked = event.target.checked;
                     const optionDiv = event.target.parentElement;
-                    const videoOverlay = optionDiv.querySelector('.video-overlay');
+                    const video = optionDiv.querySelector('.video-element');
 
                     if (isChecked) {
+                        const videoOverlay = optionDiv.querySelector('.video-overlay');
+                        video.currentTime = 0; // Reset video to start
+                        video.play();
                         videoOverlay.style.display = 'block';
+
                         setTimeout(() => {
+                            video.pause();
                             videoOverlay.style.display = 'none';
                         }, 3000); // Hide video overlay after 3 seconds
+                    } else {
+                        video.pause();
                     }
                 }
             });
