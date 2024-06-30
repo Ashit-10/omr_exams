@@ -22,17 +22,18 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
+            max-width: 600px;
         }
         #upload {
             margin-bottom: 20px;
         }
         #image-container {
             position: relative;
-            max-width: 90%;
-            margin-bottom: 20px;
+            width: 100%;
         }
         #uploaded-image {
-            max-width: 100%;
+            width: 100%;
             display: none;
         }
         .corner {
@@ -42,15 +43,30 @@
             border-radius: 50%;
             position: absolute;
             cursor: pointer;
-        }
-        #transformed-image {
-            max-width: 100%;
             display: none;
+        }
+        #buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
         button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #transformed-image {
+            width: 100%;
+            margin-top: 20px;
+            display: none;
         }
     </style>
 </head>
@@ -65,7 +81,10 @@
             <div class="corner" id="corner-3"></div>
             <div class="corner" id="corner-4"></div>
         </div>
-        <button id="transform-button">Transform Image</button>
+        <div id="buttons">
+            <button id="transform-button">Transform Image</button>
+            <button id="download-button" style="display: none;">Download Image</button>
+        </div>
         <canvas id="canvas" style="display: none;"></canvas>
         <img id="transformed-image" src="" alt="Transformed Image">
     </div>
@@ -77,6 +96,7 @@
         const canvas = document.getElementById('canvas');
         const context = canvas.getContext('2d');
         const transformedImage = document.getElementById('transformed-image');
+        const downloadButton = document.getElementById('download-button');
         let selectedCorner = null;
         let originalWidth, originalHeight;
 
@@ -158,14 +178,23 @@
             cv.imshow('canvas', dst);
             cv.cvtColor(dst, dst, cv.COLOR_RGBA2GRAY, 0);
             cv.adaptiveThreshold(dst, dst, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2);
+
             transformedImage.src = canvas.toDataURL();
             transformedImage.style.display = 'block';
+            downloadButton.style.display = 'block';
 
             src.delete();
             dst.delete();
             srcTri.delete();
             dstTri.delete();
             M.delete();
+        });
+
+        downloadButton.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = transformedImage.src;
+            link.download = 'transformed-image.png';
+            link.click();
         });
     </script>
 
