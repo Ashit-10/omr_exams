@@ -1,8 +1,8 @@
 {
-      "autoSave": "On",
-      "compression": "On",
-      "compressionSize": "150 KB",
+      "autoSave": "Off",
+      "compression": "Off",
+      "compressionSize": "100 KB",
       "examFolder": "class-10_science_2",
-      "signature": "Rupa",
+      "signature": "Ashit",
       "tuition": "MVM"
 }
