@@ -100,6 +100,8 @@
 
     <script>
         const upload = document.getElementById('upload');
+        const imageContainer = document.getElementById('image-container');
+        const imageFrame = document.getElementById('image-frame');
         const image = document.getElementById('uploaded-image');
         const corners = [...document.getElementsByClassName('corner')];
         const canvas = document.getElementById('canvas');
@@ -159,7 +161,7 @@
         });
 
         document.getElementById('transform-button').addEventListener('click', () => {
-            const rect = image.getBoundingClientRect();
+            const rect = imageContainer.getBoundingClientRect();
             const points = corners.map(corner => {
                 const x = parseFloat(corner.style.left) / 100 * rect.width;
                 const y = parseFloat(corner.style.top) / 100 * rect.height;
@@ -203,21 +205,21 @@
             link.click();
         });
 
-        document.getElementById('image-frame').addEventListener('mousedown', (e) => {
+        imageFrame.addEventListener('mousedown', (e) => {
             if (e.target.id === 'image-frame') {
                 selectedCorner = null;
                 e.preventDefault();
             }
         });
 
-        document.getElementById('image-frame').addEventListener('touchstart', (e) => {
+        imageFrame.addEventListener('touchstart', (e) => {
             if (e.target.id === 'image-frame') {
                 selectedCorner = null;
                 e.preventDefault();
             }
         });
 
-        document.getElementById('image-frame').addEventListener('touchmove', (e) => {
+        imageFrame.addEventListener('touchmove', (e) => {
             if (selectedCorner) {
                 const touch = e.touches[0];
                 const rect = image.getBoundingClientRect();
@@ -231,7 +233,7 @@
             }
         });
 
-        document.getElementById('image-frame').addEventListener('touchend', () => {
+        imageFrame.addEventListener('touchend', () => {
             selectedCorner = null;
         });
     </script>
