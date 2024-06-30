@@ -13,6 +13,7 @@
             margin: 0;
             padding: 20px;
             background-color: #f0f0f0;
+            overflow: hidden;
         }
         h1 {
             color: #333;
@@ -31,6 +32,8 @@
         #image-container {
             position: relative;
             width: 100%;
+            border: 2px dashed #007bff;
+            border-radius: 10px;
         }
         #uploaded-image {
             width: 100%;
@@ -39,11 +42,14 @@
         .corner {
             width: 20px;
             height: 20px;
-            background-color: red;
+            background-color: blue;
             border-radius: 50%;
             position: absolute;
             cursor: pointer;
             display: none;
+            border: 2px solid white;
+            transform: translate(-50%, -50%);
+            z-index: 10;
         }
         #buttons {
             display: flex;
@@ -110,14 +116,14 @@
                 image.onload = () => {
                     originalWidth = image.width;
                     originalHeight = image.height;
-                    corners[0].style.left = '0px';
-                    corners[0].style.top = '0px';
-                    corners[1].style.left = `${originalWidth - 20}px`;
-                    corners[1].style.top = '0px';
-                    corners[2].style.left = '0px';
-                    corners[2].style.top = `${originalHeight - 20}px`;
-                    corners[3].style.left = `${originalWidth - 20}px`;
-                    corners[3].style.top = `${originalHeight - 20}px`;
+                    corners[0].style.left = '0%';
+                    corners[0].style.top = '0%';
+                    corners[1].style.left = '100%';
+                    corners[1].style.top = '0%';
+                    corners[2].style.left = '0%';
+                    corners[2].style.top = '100%';
+                    corners[3].style.left = '100%';
+                    corners[3].style.top = '100%';
                     corners.forEach(corner => corner.style.display = 'block');
                 };
             };
@@ -126,36 +132,36 @@
         });
 
         corners.forEach(corner => {
-            corner.addEventListener('mousedown', (e) => {
+            corner.addEventListener('touchstart', (e) => {
                 selectedCorner = e.target;
+                e.preventDefault();
             });
         });
 
-        document.addEventListener('mousemove', (e) => {
+        document.addEventListener('touchmove', (e) => {
             if (selectedCorner) {
+                const touch = e.touches[0];
                 const rect = image.getBoundingClientRect();
-                let x = e.clientX - rect.left - 10;
-                let y = e.clientY - rect.top - 10;
-                if (x < 0) x = 0;
-                if (y < 0) y = 0;
-                if (x > rect.width - 20) x = rect.width - 20;
-                if (y > rect.height - 20) y = rect.height - 20;
-                selectedCorner.style.left = `${x}px`;
-                selectedCorner.style.top = `${y}px`;
+                let x = touch.clientX - rect.left;
+                let y = touch.clientY - rect.top;
+                x = Math.max(0, Math.min(x, rect.width));
+                y = Math.max(0, Math.min(y, rect.height));
+                selectedCorner.style.left = `${(x / rect.width) * 100}%`;
+                selectedCorner.style.top = `${(y / rect.height) * 100}%`;
+                e.preventDefault();
             }
         });
 
-        document.addEventListener('mouseup', () => {
+        document.addEventListener('touchend', () => {
             selectedCorner = null;
         });
 
         document.getElementById('transform-button').addEventListener('click', () => {
             const rect = image.getBoundingClientRect();
             const points = corners.map(corner => {
-                return [
-                    parseInt(corner.style.left) + 10,
-                    parseInt(corner.style.top) + 10
-                ];
+                const x = parseFloat(corner.style.left) / 100 * rect.width;
+                const y = parseFloat(corner.style.top) / 100 * rect.height;
+                return [x, y];
             });
 
             canvas.width = originalWidth;
@@ -174,12 +180,9 @@
             const dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [].concat(...destPoints));
             const M = cv.getPerspectiveTransform(srcTri, dstTri);
 
-            cv.warpPerspective(src, dst, M, new cv.Size(originalWidth, originalHeight));
+            cv.warpPerspective(src, dst, M, new cv.Size(originalWidth, originalHeight), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
             cv.imshow('canvas', dst);
-            cv.cvtColor(dst, dst, cv.COLOR_RGBA2GRAY, 0);
-            cv.adaptiveThreshold(dst, dst, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2);
-
-            transformedImage.src = canvas.toDataURL();
+            transformedImage.src = canvas.toDataURL('image/png');
             transformedImage.style.display = 'block';
             downloadButton.style.display = 'block';
 
