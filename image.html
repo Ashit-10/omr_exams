@@ -13,7 +13,7 @@
             margin: 0;
             padding: 20px;
             background-color: #f0f0f0;
-            overflow: hidden;
+            overflow: auto;
         }
         h1 {
             color: #333;
@@ -132,10 +132,83 @@
         });
 
         corners.forEach(corner => {
-            corner.addEventListener('touchstart', (e) => {
+            corner.addEventListener('mousedown', (e) => {
                 selectedCorner = e.target;
                 e.preventDefault();
             });
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (selectedCorner) {
+                const rect = image.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+                x = Math.max(0, Math.min(x, rect.width));
+                y = Math.max(0, Math.min(y, rect.height));
+                selectedCorner.style.left = `${(x / rect.width) * 100}%`;
+                selectedCorner.style.top = `${(y / rect.height) * 100}%`;
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            selectedCorner = null;
+        });
+
+        document.getElementById('transform-button').addEventListener('click', () => {
+            const rect = image.getBoundingClientRect();
+            const points = corners.map(corner => {
+                const x = parseFloat(corner.style.left) / 100 * rect.width;
+                const y = parseFloat(corner.style.top) / 100 * rect.height;
+                return [x, y];
+            });
+
+            const enhancedWidth = originalWidth * 2;
+            const enhancedHeight = originalHeight * 2;
+            canvas.width = enhancedWidth;
+            canvas.height = enhancedHeight;
+
+            const destPoints = [
+                [0, 0],
+                [enhancedWidth, 0],
+                [0, enhancedHeight],
+                [enhancedWidth, enhancedHeight]
+            ];
+
+            const src = cv.imread(image);
+            const dst = new cv.Mat();
+            const srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [].concat(...points));
+            const dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [].concat(...destPoints));
+            const M = cv.getPerspectiveTransform(srcTri, dstTri);
+
+            cv.warpPerspective(src, dst, M, new cv.Size(enhancedWidth, enhancedHeight), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
+            cv.cvtColor(dst, dst, cv.COLOR_RGBA2GRAY, 0);
+            cv.adaptiveThreshold(dst, dst, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2);
+            cv.imshow('canvas', dst);
+
+            transformedImage.src = canvas.toDataURL('image/png');
+            transformedImage.style.display = 'block';
+            downloadButton.style.display = 'block';
+
+            src.delete();
+            dst.delete();
+            srcTri.delete();
+            dstTri.delete();
+            M.delete();
+        });
+
+        downloadButton.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = transformedImage.src;
+            link.download = 'transformed-image.png';
+            link.click();
+        });
+
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.classList.contains('corner')) {
+                selectedCorner = e.target;
+                e.preventDefault();
+            }
         });
 
         document.addEventListener('touchmove', (e) => {
@@ -154,50 +227,6 @@
 
         document.addEventListener('touchend', () => {
             selectedCorner = null;
-        });
-
-        document.getElementById('transform-button').addEventListener('click', () => {
-            const rect = image.getBoundingClientRect();
-            const points = corners.map(corner => {
-                const x = parseFloat(corner.style.left) / 100 * rect.width;
-                const y = parseFloat(corner.style.top) / 100 * rect.height;
-                return [x, y];
-            });
-
-            canvas.width = originalWidth;
-            canvas.height = originalHeight;
-
-            const destPoints = [
-                [0, 0],
-                [originalWidth, 0],
-                [0, originalHeight],
-                [originalWidth, originalHeight]
-            ];
-
-            const src = cv.imread(image);
-            const dst = new cv.Mat();
-            const srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [].concat(...points));
-            const dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [].concat(...destPoints));
-            const M = cv.getPerspectiveTransform(srcTri, dstTri);
-
-            cv.warpPerspective(src, dst, M, new cv.Size(originalWidth, originalHeight), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
-            cv.imshow('canvas', dst);
-            transformedImage.src = canvas.toDataURL('image/png');
-            transformedImage.style.display = 'block';
-            downloadButton.style.display = 'block';
-
-            src.delete();
-            dst.delete();
-            srcTri.delete();
-            dstTri.delete();
-            M.delete();
-        });
-
-        downloadButton.addEventListener('click', () => {
-            const link = document.createElement('a');
-            link.href = transformedImage.src;
-            link.download = 'transformed-image.png';
-            link.click();
         });
     </script>
 
