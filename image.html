@@ -34,6 +34,7 @@
             width: 100%;
             border: 2px dashed #007bff;
             border-radius: 10px;
+            overflow: hidden; /* Ensure image doesn't overflow container */
         }
         #uploaded-image {
             width: 100%;
@@ -81,7 +82,9 @@
         <h1>Image Perspective Transformation</h1>
         <input type="file" id="upload" accept="image/*">
         <div id="image-container">
-            <img id="uploaded-image" src="" alt="Upload an image">
+            <div id="image-frame">
+                <img id="uploaded-image" src="" alt="Upload an image">
+            </div>
             <div class="corner" id="corner-1"></div>
             <div class="corner" id="corner-2"></div>
             <div class="corner" id="corner-3"></div>
@@ -163,16 +166,14 @@
                 return [x, y];
             });
 
-            const enhancedWidth = originalWidth * 2;
-            const enhancedHeight = originalHeight * 2;
-            canvas.width = enhancedWidth;
-            canvas.height = enhancedHeight;
+            canvas.width = originalWidth;
+            canvas.height = originalHeight;
 
             const destPoints = [
                 [0, 0],
-                [enhancedWidth, 0],
-                [0, enhancedHeight],
-                [enhancedWidth, enhancedHeight]
+                [originalWidth, 0],
+                [0, originalHeight],
+                [originalWidth, originalHeight]
             ];
 
             const src = cv.imread(image);
@@ -181,11 +182,9 @@
             const dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [].concat(...destPoints));
             const M = cv.getPerspectiveTransform(srcTri, dstTri);
 
-            cv.warpPerspective(src, dst, M, new cv.Size(enhancedWidth, enhancedHeight), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
-            cv.cvtColor(dst, dst, cv.COLOR_RGBA2GRAY, 0);
-            cv.adaptiveThreshold(dst, dst, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2);
-            cv.imshow('canvas', dst);
+            cv.warpPerspective(src, dst, M, new cv.Size(originalWidth, originalHeight), cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
 
+            cv.imshow('canvas', dst);
             transformedImage.src = canvas.toDataURL('image/png');
             transformedImage.style.display = 'block';
             downloadButton.style.display = 'block';
@@ -204,14 +203,21 @@
             link.click();
         });
 
-        document.addEventListener('touchstart', (e) => {
-            if (e.target.classList.contains('corner')) {
-                selectedCorner = e.target;
+        document.getElementById('image-frame').addEventListener('mousedown', (e) => {
+            if (e.target.id === 'image-frame') {
+                selectedCorner = null;
                 e.preventDefault();
             }
         });
 
-        document.addEventListener('touchmove', (e) => {
+        document.getElementById('image-frame').addEventListener('touchstart', (e) => {
+            if (e.target.id === 'image-frame') {
+                selectedCorner = null;
+                e.preventDefault();
+            }
+        });
+
+        document.getElementById('image-frame').addEventListener('touchmove', (e) => {
             if (selectedCorner) {
                 const touch = e.touches[0];
                 const rect = image.getBoundingClientRect();
@@ -225,7 +231,7 @@
             }
         });
 
-        document.addEventListener('touchend', () => {
+        document.getElementById('image-frame').addEventListener('touchend', () => {
             selectedCorner = null;
         });
     </script>
