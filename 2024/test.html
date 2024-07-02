@@ -24,7 +24,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            fetch('/list-files')
+            fetch('./class-10/files.json')
                 .then(response => response.json())
                 .then(files => {
                     const container = document.getElementById('buttonContainer');
@@ -32,7 +32,7 @@
                         const button = document.createElement('button');
                         button.textContent = file;
                         button.addEventListener('click', () => {
-                            window.location.href = `/class-10/${file}`;
+                            window.location.href = `./class-10/${file}`;
                         });
                         container.appendChild(button);
                     });
