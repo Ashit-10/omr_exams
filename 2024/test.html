@@ -57,8 +57,10 @@
                     const container = document.getElementById('buttonContainer');
                     files.forEach(file => {
                         const button = document.createElement('button');
-                        
-                        button.textContent = file.split(".html")[0];
+                        var fname = file.split(".html")[0]
+                        var sub = fname.split("_")[1]
+                        var test = `[Test-${fname.split("_")[2]}]`
+                        button.textContent = `${sub} ${test}`;
                         button.addEventListener('click', () => {
                             window.location.href = `./class-10/${file}`;
                         });
