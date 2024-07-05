@@ -33,7 +33,7 @@
             margin: 10px 0;
         }
 
-        input {
+        select {
             padding: 10px;
             border: none;
             border-radius: 5px;
@@ -78,15 +78,32 @@
         <h1>Age Calculator</h1>
         <div class="input-group">
             <label for="birth-year">Year of Birth:</label><br>
-            <input type="number" id="birth-year" placeholder="Enter year">
+            <select id="birth-year">
+                <!-- Years will be populated by JavaScript -->
+            </select>
         </div>
         <div class="input-group">
             <label for="birth-month">Month of Birth:</label><br>
-            <input type="number" id="birth-month" placeholder="Enter month">
+            <select id="birth-month" onchange="populateDays()">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
         </div>
         <div class="input-group">
             <label for="birth-day">Day of Birth:</label><br>
-            <input type="number" id="birth-day" placeholder="Enter day">
+            <select id="birth-day">
+                <!-- Days will be populated by JavaScript -->
+            </select>
         </div>
         <button onclick="calculateAge()">Calculate Age</button>
         <div class="result" id="result"></div>
@@ -103,6 +120,40 @@
 
         setInterval(updateClock, 1000);
         updateClock();
+
+        // Populate year dropdown
+        const currentYear = new Date().getFullYear();
+        const startYear = 1900;
+        const yearSelect = document.getElementById('birth-year');
+        for (let year = currentYear; year >= startYear; year--) {
+            let option = document.createElement('option');
+            option.value = year;
+            option.text = year;
+            yearSelect.add(option);
+        }
+
+        // Populate day dropdown based on selected month
+        function populateDays() {
+            const monthSelect = document.getElementById('birth-month');
+            const daySelect = document.getElementById('birth-day');
+            const selectedYear = document.getElementById('birth-year').value;
+            const selectedMonth = monthSelect.value;
+
+            // Clear previous options
+            daySelect.innerHTML = '';
+
+            // Get number of days in the selected month and year
+            const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                let option = document.createElement('option');
+                option.value = day;
+                option.text = day;
+                daySelect.add(option);
+            }
+        }
+
+        // Initialize days dropdown on page load
+        populateDays();
 
         function calculateAge() {
             const birthYear = document.getElementById('birth-year').value;
