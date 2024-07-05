@@ -92,11 +92,7 @@
             top: 20px;
             right: 20px;
             cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .menu:hover {
-            transform: rotate(90deg);
+            z-index: 1;
         }
 
         .menu-bar {
@@ -107,16 +103,26 @@
             transition: all 0.3s ease-in-out;
         }
 
-        .menu:hover .menu-bar:nth-child(1) {
-            transform: translateY(9px) rotate(45deg);
+        .menu-bar:nth-child(1) {
+            transform-origin: top left;
         }
 
-        .menu:hover .menu-bar:nth-child(2) {
+        .menu-bar:nth-child(3) {
+            transform-origin: bottom left;
+        }
+
+        .menu.open .menu-bar:nth-child(1) {
+            transform: rotate(45deg);
+            top: 10px;
+        }
+
+        .menu.open .menu-bar:nth-child(2) {
             opacity: 0;
         }
 
-        .menu:hover .menu-bar:nth-child(3) {
-            transform: translateY(-9px) rotate(-45deg);
+        .menu.open .menu-bar:nth-child(3) {
+            transform: rotate(-45deg);
+            top: -10px;
         }
 
         .drop-div-bar {
@@ -133,6 +139,7 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 0;
         }
 
         .dropdown-content a {
@@ -186,16 +193,23 @@
     <script>
         function toggleDropdown() {
             var dropdown = document.getElementById("dropdown");
+            var menu = document.querySelector('.menu');
             if (dropdown.style.display === "block") {
                 dropdown.style.display = "none";
+                menu.classList.remove('open');
             } else {
                 dropdown.style.display = "block";
+                menu.classList.add('open');
             }
         }
 
         function toggleDropdownBody() {
             var dropdown = document.getElementById("dropdown");
-            dropdown.style.display = "none";
+            var menu = document.querySelector('.menu');
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+                menu.classList.remove('open');
+            }
         }
 
         function changeColor(color1, color2) {
