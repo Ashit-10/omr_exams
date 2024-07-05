@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMR Exam Results</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #8EC5FC, #E0C3FC);
+            color: #333;
+            transition: background 0.5s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .next-page-button {
+            background: linear-gradient(135deg, #FF8A65, #FF5722);
+            color: #fff;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .next-page-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .floating-objects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-objects span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            animation: float 15s linear infinite;
+            bottom: -150px;
+            border-radius: 50%;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .floating-objects span:nth-child(odd) {
+            background: rgba(255, 255, 255, 0.4);
+            animation-duration: 10s;
+        }
+
+        .floating-objects span:nth-child(even) {
+            background: rgba(255, 255, 255, 0.6);
+            animation-duration: 12s;
+        }
+
+        .menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .menu-bar {
+            width: 30px;
+            height: 3px;
+            background-color: #444;
+            margin: 6px 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .menu-bar:nth-child(1) {
+            transform-origin: top left;
+        }
+
+        .menu-bar:nth-child(3) {
+            transform-origin: bottom left;
+        }
+
+        .menu.open .menu-bar:nth-child(1) {
+            transform: rotate(45deg);
+            top: 10px;
+        }
+
+        .menu.open .menu-bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu.open .menu-bar:nth-child(3) {
+            transform: rotate(-45deg);
+            top: -10px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #FF8A65;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 0;
+            transition: max-height 0.3s ease;
+            max-height: 0;
+        }
+
+        .menu.open .dropdown-content {
+            display: block;
+            max-height: 500px;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            width: 200px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #FF7043;
+        }
+
+        .dropdown-content .drop-div-bar {
+            height: 1px;
+            background-color: white;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="menu" onclick="toggleDropdown()">
+        <div class="menu-bar"></div>
+        <div class="menu-bar"></div>
+        <div class="menu-bar"></div>
+        <div id="dropdown" class="dropdown-content">
+            <a href="select.html">Settings</a>
+            <div class="drop-div-bar"></div>
+            <a href="age_calculater.html">Age Calculator</a>
+            <div class="drop-div-bar"></div>
+            <a href="scan2.html">Auto Scan OMR Sheet</a>
+            <div class="drop-div-bar"></div>
+            <a href="names.html">JSON Roll Data</a>
+            <div class="drop-div-bar"></div>
+            <a href="scan.html">Scan OMR Sheet</a>
+        </div>
+    </div>
+    <div class="container" onclick="toggleDropdownBody()">
+        <h1>OMR Exam Results</h1>
+        <button id="nextbutton1" class="next-page-button" onclick="location.href='mvm.html'">MVM, Ankurabandha</button>
+        <button id="nextbutton2" class="next-page-button" onclick="location.href='wsc.html'">WSC, Siko</button>
+    </div>
+    <div class="floating-objects">
+        <span style="left: 10%; animation-delay: 0s;"></span>
+        <span style="left: 20%; animation-delay: 2s;"></span>
+        <span style="left: 30%; animation-delay: 4s;"></span>
+        <span style="left: 40%; animation-delay: 6s;"></span>
+        <span style="left: 50%; animation-delay: 8s;"></span>
+        <span style="left: 60%; animation-delay: 10s;"></span>
+        <span style="left: 70%; animation-delay: 12s;"></span>
+        <span style="left: 80%; animation-delay: 14s;"></span>
+        <span style="left: 90%; animation-delay: 16s;"></span>
+    </div>
+    <script>
+        function toggleDropdown() {
+            var dropdown = document.getElementById("dropdown");
+            var menu = document.querySelector('.menu');
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+                menu.classList.remove('open');
+            } else {
+                dropdown.style.display = "block";
+                menu.classList.add('open');
+            }
+        }
+
+        function toggleDropdownBody() {
+            var dropdown = document.getElementById("dropdown");
+            var menu = document.querySelector('.menu');
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+                menu.classList.remove('open');
+            }
+        }
+    </script>
+</body>
+
+</html>
