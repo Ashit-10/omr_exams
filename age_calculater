@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin: 10px 0;
+        }
+
+        input {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 50%;
+            margin-top: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #00c9ff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #007acc;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Age Calculator</h1>
+        <div class="input-group">
+            <label for="birth-year">Year of Birth:</label><br>
+            <input type="number" id="birth-year" placeholder="Enter year">
+        </div>
+        <div class="input-group">
+            <label for="birth-month">Month of Birth:</label><br>
+            <input type="number" id="birth-month" placeholder="Enter month">
+        </div>
+        <div class="input-group">
+            <label for="birth-day">Day of Birth:</label><br>
+            <input type="number" id="birth-day" placeholder="Enter day">
+        </div>
+        <button onclick="calculateAge()">Calculate Age</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculateAge() {
+            const birthYear = document.getElementById('birth-year').value;
+            const birthMonth = document.getElementById('birth-month').value;
+            const birthDay = document.getElementById('birth-day').value;
+
+            if (!birthYear || !birthMonth || !birthDay) {
+                document.getElementById('result').innerText = "Please enter all the fields.";
+                return;
+            }
+
+            const today = new Date();
+            const birthDate = new Date(birthYear, birthMonth - 1, birthDay);
+
+            let ageYears = today.getFullYear() - birthDate.getFullYear();
+            let ageMonths = today.getMonth() - birthDate.getMonth();
+            let ageDays = today.getDate() - birthDate.getDate();
+
+            if (ageDays < 0) {
+                ageMonths--;
+                ageDays += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+
+            if (ageMonths < 0) {
+                ageYears--;
+                ageMonths += 12;
+            }
+
+            document.getElementById('result').innerText = `You are ${ageYears} years, ${ageMonths} months, and ${ageDays} days old.`;
+        }
+    </script>
+</body>
+</html>
