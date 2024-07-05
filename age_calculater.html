@@ -80,12 +80,14 @@
         <div class="input-group">
             <label for="birth-year">Year of Birth:</label><br>
             <select id="birth-year">
+                <option value="" disabled selected>Select Year</option>
                 <!-- Years will be populated by JavaScript -->
             </select>
         </div>
         <div class="input-group">
             <label for="birth-month">Month of Birth:</label><br>
             <select id="birth-month" onchange="populateDays()">
+                <option value="" disabled selected>Select Month</option>
                 <option value="1">January (01)</option>
                 <option value="2">February (02)</option>
                 <option value="3">March (03)</option>
@@ -103,6 +105,7 @@
         <div class="input-group">
             <label for="birth-day">Day of Birth:</label><br>
             <select id="birth-day">
+                <option value="" disabled selected>Select Day</option>
                 <!-- Days will be populated by JavaScript -->
             </select>
         </div>
@@ -141,7 +144,7 @@
             const selectedMonth = monthSelect.value;
 
             // Clear previous options
-            daySelect.innerHTML = '';
+            daySelect.innerHTML = '<option value="" disabled selected>Select Day</option>';
 
             // Get number of days in the selected month and year
             const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
@@ -153,16 +156,13 @@
             }
         }
 
-        // Initialize days dropdown on page load
-        populateDays();
-
         function calculateAge() {
             const birthYear = document.getElementById('birth-year').value;
             const birthMonth = document.getElementById('birth-month').value;
             const birthDay = document.getElementById('birth-day').value;
 
             if (!birthYear || !birthMonth || !birthDay) {
-                document.getElementById('result').innerText = "Please enter all the fields.";
+                document.getElementById('result').innerText = "Please select year, month, and day of birth.";
                 return;
             }
 
@@ -189,10 +189,13 @@
                 nextBirthday.setFullYear(today.getFullYear() + 1);
             }
 
-            const nextBirthdayMonth = nextBirthday.toLocaleString('default', { month: 'long' });
-            const nextBirthdayDay = nextBirthday.getDate();
+            const timeLeft = nextBirthday - today;
+            const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hoursLeft = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const secondsLeft = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-            document.getElementById('result').innerText = `You are ${ageYears} years, ${ageMonths} months, and ${ageDays} days old. Your next birthday is on ${nextBirthdayMonth} ${nextBirthdayDay}.`;
+            document.getElementById('result').innerText = `You are ${ageYears} years, ${ageMonths} months, and ${ageDays} days old. Your next birthday is in ${daysLeft} days, ${hoursLeft} hours, ${minutesLeft} minutes, and ${secondsLeft} seconds.`;
         }
     </script>
 </body>
