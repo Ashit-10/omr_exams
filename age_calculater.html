@@ -34,11 +34,12 @@
         }
 
         select {
-            padding: 10px;
+            padding: 15px;
             border: none;
             border-radius: 5px;
-            width: 50%;
+            width: 70%;
             margin-top: 5px;
+            font-size: 16px;
         }
 
         button {
@@ -85,18 +86,18 @@
         <div class="input-group">
             <label for="birth-month">Month of Birth:</label><br>
             <select id="birth-month" onchange="populateDays()">
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
+                <option value="1">January (01)</option>
+                <option value="2">February (02)</option>
+                <option value="3">March (03)</option>
+                <option value="4">April (04)</option>
+                <option value="5">May (05)</option>
+                <option value="6">June (06)</option>
+                <option value="7">July (07)</option>
+                <option value="8">August (08)</option>
+                <option value="9">September (09)</option>
+                <option value="10">October (10)</option>
+                <option value="11">November (11)</option>
+                <option value="12">December (12)</option>
             </select>
         </div>
         <div class="input-group">
@@ -182,7 +183,16 @@
                 ageMonths += 12;
             }
 
-            document.getElementById('result').innerText = `You are ${ageYears} years, ${ageMonths} months, and ${ageDays} days old.`;
+            // Calculate next birthday
+            let nextBirthday = new Date(today.getFullYear(), birthMonth - 1, birthDay);
+            if (today > nextBirthday) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+
+            const nextBirthdayMonth = nextBirthday.toLocaleString('default', { month: 'long' });
+            const nextBirthdayDay = nextBirthday.getDate();
+
+            document.getElementById('result').innerText = `You are ${ageYears} years, ${ageMonths} months, and ${ageDays} days old. Your next birthday is on ${nextBirthdayMonth} ${nextBirthdayDay}.`;
         }
     </script>
 </body>
