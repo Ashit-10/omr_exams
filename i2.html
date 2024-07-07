@@ -6,51 +6,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OMR Exam Results</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
         body {
             margin: 0;
-            font-family: 'Rubik', sans-serif;
-            background: #f0f4f8;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            background: #e0e5ec;
+            color: #333;
+            transition: background 0.5s;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            justify-content: flex-start;
             height: 100vh;
-            overflow: auto;
-            padding: 20px;
         }
 
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-top: 40px;
+            text-align: center;
+            position: relative;
         }
 
         h1 {
-            font-size: 2.5em;
+            font-size: 3em;
+            margin-bottom: 0.5em;
             color: #333;
-            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .next-page-button {
-            background-color: #ffffff;
+            background: #e0e5ec;
+            box-shadow: 5px 5px 10px #bebebe, -5px -5px 10px #fff;
             color: #333;
-            padding: 20px 40px;
+            padding: 15px 30px;
             border: none;
-            border-radius: 20px;
+            border-radius: 50px;
             font-size: 1.2em;
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
             margin: 10px 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
         }
 
         .next-page-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+            box-shadow: 5px 5px 15px #bebebe, -5px -5px 15px #fff;
+        }
+
+        .next-page-button:before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,0,0,0.5), rgba(0,255,0,0.5), rgba(0,0,255,0.5), rgba(255,255,0,0.5));
+            animation: moveGlow 4s linear infinite;
+            z-index: -1;
+            border-radius: 50px;
+        }
+
+        @keyframes moveGlow {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            50% {
+                transform: translate(0%, 0%) scale(1);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+        }
+
+        .floating-objects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .floating-objects span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            animation: float 15s linear infinite;
+            bottom: -150px;
+            border-radius: 50%;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .floating-objects span:nth-child(odd) {
+            background: rgba(255, 255, 255, 0.4);
+            animation-duration: 10s;
+        }
+
+        .floating-objects span:nth-child(even) {
+            background: rgba(255, 255, 255, 0.6);
+            animation-duration: 12s;
         }
 
         .menu {
@@ -59,13 +131,15 @@
             right: 20px;
             cursor: pointer;
             z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .menu-bar {
-            width: 35px;
-            height: 5px;
+            width: 30px;
+            height: 3px;
             background-color: #333;
-            margin: 6px 0;
             transition: all 0.3s ease-in-out;
         }
 
@@ -79,7 +153,6 @@
 
         .menu.open .menu-bar:nth-child(1) {
             transform: rotate(45deg);
-            top: 10px;
         }
 
         .menu.open .menu-bar:nth-child(2) {
@@ -88,7 +161,6 @@
 
         .menu.open .menu-bar:nth-child(3) {
             transform: rotate(-45deg);
-            top: -10px;
         }
 
         .dropdown-content {
@@ -96,55 +168,39 @@
             position: absolute;
             right: 0;
             top: 50px;
-            background-color: #ffffff;
-            border-radius: 20px;
+            background: #e0e5ec;
+            box-shadow: 5px 5px 10px #bebebe, -5px -5px 10px #fff;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             z-index: 0;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .menu.open .dropdown-content {
+            display: block;
+            max-height: 500px;
+            opacity: 1;
         }
 
         .dropdown-content a {
             color: #333;
-            padding: 15px 20px;
+            padding: 12px 16px;
+            width: 200px;
             text-decoration: none;
             display: block;
             transition: background-color 0.3s;
         }
 
         .dropdown-content a:hover {
-            background-color: #f0f0f0;
+            background-color: #d1d9e6;
         }
 
-        .widget-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .widget {
-            background-color: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            flex: 1;
-            min-width: 200px;
-            max-width: 250px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .widget:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .widget img {
-            width: 100%;
-            border-radius: 20px;
+        .dropdown-content .drop-div-bar {
+            height: 1px;
+            background-color: #d1d9e6;
+            margin: 0;
         }
     </style>
 </head>
@@ -156,9 +212,13 @@
         <div class="menu-bar"></div>
         <div id="dropdown" class="dropdown-content">
             <a href="select.html">Settings</a>
-            <a href="age_calculater.html">Age calculator</a>
-            <a href="scan2.html">Auto scan OMR Sheet</a>
+            <div class="drop-div-bar"></div>
+            <a href="age_calculater.html">Age Calculator</a>
+            <div class="drop-div-bar"></div>
+            <a href="scan2.html">Auto Scan OMR Sheet</a>
+            <div class="drop-div-bar"></div>
             <a href="names.html">JSON Roll Data</a>
+            <div class="drop-div-bar"></div>
             <a href="scan.html">Scan OMR Sheet</a>
         </div>
     </div>
@@ -167,30 +227,38 @@
         <button id="nextbutton1" class="next-page-button" onclick="location.href='mvm.html'">MVM, Ankurabandha</button>
         <button id="nextbutton2" class="next-page-button" onclick="location.href='wsc.html'">WSC, Siko</button>
     </div>
-    <div class="widget-container">
-        <div class="widget"><img src="https://via.placeholder.com/200x150.png?text=Widget+1" alt="Widget 1"></div>
-        <div class="widget"><img src="https://via.placeholder.com/200x150.png?text=Widget+2" alt="Widget 2"></div>
-        <div class="widget"><img src="https://via.placeholder.com/200x150.png?text=Widget+3" alt="Widget 3"></div>
-        <div class="widget"><img src="https://via.placeholder.com/200x150.png?text=Widget+4" alt="Widget 4"></div>
+    <div class="floating-objects">
+        <span style="left: 10%; animation-delay: 0s;"></span>
+        <span style="left: 20%; animation-delay: 2s;"></span>
+        <span style="left: 30%; animation-delay: 4s;"></span>
+        <span style="left: 40%; animation-delay: 6s;"></span>
+        <span style="left: 50%; animation-delay: 8s;"></span>
+        <span style="left: 60%; animation-delay: 10s;"></span>
+        <span style="left: 70%; animation-delay: 12s;"></span>
+        <span style="left: 80%; animation-delay: 14s;"></span>
+        <span style="left: 90%; animation-delay: 16s;"></span>
     </div>
     <script>
         function toggleDropdown() {
             var dropdown = document.getElementById("dropdown");
             var menu = document.querySelector('.menu');
-            if (dropdown.style.display === "block") {
-                dropdown.style.display = "none";
-                menu.classList.remove('open');
-            } else {
-                dropdown.style.display = "block";
+            if (dropdown.style.maxHeight === "0px" || dropdown.style.maxHeight === "") {
+                dropdown.style.maxHeight = "500px";
+                dropdown.style.opacity = "1";
                 menu.classList.add('open');
+            } else {
+                dropdown.style.maxHeight = "0px";
+                dropdown.style.opacity = "0";
+                menu.classList.remove('open');
             }
         }
 
         function toggleDropdownBody() {
             var dropdown = document.getElementById("dropdown");
             var menu = document.querySelector('.menu');
-            if (dropdown.style.display === "block") {
-                dropdown.style.display = "none";
+            if (dropdown.style.maxHeight === "500px") {
+                dropdown.style.maxHeight = "0px";
+                dropdown.style.opacity = "0";
                 menu.classList.remove('open');
             }
         }
