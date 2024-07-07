@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMR Exam Results</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(135deg, #f8b400, #ff416c);
+            color: white;
+            transition: background 0.5s;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 0.5em;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .next-page-button {
+            background-color: #FFFFFF;
+            color: #FF6F61;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 0;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .next-page-button:hover {
+            background-color: #FFCCBC;
+            transform: translateY(-3px);
+        }
+
+        .floating-objects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-objects img {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            opacity: 0.8;
+            animation: float 15s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-1000px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .menu-bar {
+            width: 30px;
+            height: 3px;
+            background-color: white;
+            margin: 6px 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .menu-bar:nth-child(1) {
+            transform-origin: top left;
+        }
+
+        .menu-bar:nth-child(3) {
+            transform-origin: bottom left;
+        }
+
+        .menu.open .menu-bar:nth-child(1) {
+            transform: rotate(45deg);
+            top: 10px;
+        }
+
+        .menu.open .menu-bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu.open .menu-bar:nth-child(3) {
+            transform: rotate(-45deg);
+            top: -10px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #FF6F61;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 0;
+        }
+
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            width: 180px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #DE4313;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="menu" onclick="toggleDropdown()">
+        <div class="menu-bar"></div>
+        <div class="menu-bar"></div>
+        <div class="menu-bar"></div>
+        <div id="dropdown" class="dropdown-content">
+            <a href="select.html">Settings</a>
+            <a href="age_calculater.html">Age calculator</a>
+            <a href="scan2.html">Auto scan OMR Sheet</a>
+            <a href="names.html">JSON Roll Data</a>
+            <a href="scan.html">Scan OMR Sheet</a>
+        </div>
+    </div>
+    <div class="container" onclick="toggleDropdownBody()">
+        <h1>OMR Exam Results</h1>
+        <button id="nextbutton1" class="next-page-button" onclick="location.href='mvm.html'">MVM, Ankurabandha</button>
+        <button id="nextbutton2" class="next-page-button" onclick="location.href='wsc.html'">WSC, Siko</button>
+    </div>
+    <div class="floating-objects">
+        <img src="https://via.placeholder.com/50" style="left: 10%; animation-delay: 0s;">
+        <img src="https://via.placeholder.com/50" style="left: 20%; animation-delay: 2s;">
+        <img src="https://via.placeholder.com/50" style="left: 30%; animation-delay: 4s;">
+        <img src="https://via.placeholder.com/50" style="left: 40%; animation-delay: 6s;">
+        <img src="https://via.placeholder.com/50" style="left: 50%; animation-delay: 8s;">
+        <img src="https://via.placeholder.com/50" style="left: 60%; animation-delay: 10s;">
+        <img src="https://via.placeholder.com/50" style="left: 70%; animation-delay: 12s;">
+        <img src="https://via.placeholder.com/50" style="left: 80%; animation-delay: 14s;">
+        <img src="https://via.placeholder.com/50" style="left: 90%; animation-delay: 16s;">
+    </div>
+    <script>
+        function toggleDropdown() {
+            var dropdown = document.getElementById("dropdown");
+            var menu = document.querySelector('.menu');
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+                menu.classList.remove('open');
+            } else {
+                dropdown.style.display = "block";
+                menu.classList.add('open');
+            }
+        }
+
+        function toggleDropdownBody() {
+            var dropdown = document.getElementById("dropdown");
+            var menu = document.querySelector('.menu');
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+                menu.classList.remove('open');
+            }
+        }
+
+        function changeColor(color1, color2) {
+            document.body.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
+            var dropdownContent = document.getElementById("dropdown");
+            dropdownContent.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
+            var nextPageButton1 = document.getElementById("nextbutton1");
+            nextPageButton1.style.color = `${color1}`;
+            var nextPageButton2 = document.getElementById("nextbutton2");
+            nextPageButton2.style.color = `${color1}`;
+        }
+
+        // Array of color pairs
+        const colors = [
+            ['#FF6F61', '#4814a8'],
+            ['#108513', '#3d2b8d'],
+            ['#0d8df5', '#f50d0d'],
+            ['#FFC107', '#ff0707'],
+            ['#d216f3', '#1cec09'],
+            ['#FF9800', '#0011ff'],
+            ['#ff00bf', '#EF6C00'],
+            ['#f32424', '#0f0bf8']
+        ];
+        let currentColorIndex = 0;
+
+        // Function to cycle through colors
+        function cycleColors() {
+            const [color1, color2] = colors[currentColorIndex];
+            changeColor(color1, color2);
+            currentColorIndex = (currentColorIndex + 1) % colors.length;
+        }
+
+        // Start cycling colors every 5 seconds
+        setInterval(cycleColors, 3000);
+    </script>
+</body>
+
+</html>
