@@ -2,7 +2,7 @@
       "autoSave": "On",
       "compression": "On",
       "compressionSize": "150 KB",
-      "examFolder": "class-11_haja_1",
-      "signature": "Ashit",
+      "examFolder": "class-10_science_3",
+      "signature": "Rupa",
       "tuition": "MVM"
 }
