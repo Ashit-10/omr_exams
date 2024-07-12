@@ -3,121 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historical Events</title>
+    <title>PDF Viewer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
         }
-        input, button {
-            margin: 5px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .button-container {
             margin-top: 20px;
         }
-        th, td {
-            border: 1px solid black;
-            padding: 10px;
-            text-align: left;
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
         }
-        @media print {
-            body > div, button {
-                display: none;
-            }
-            table {
-                display: block;
-            }
+        .btn:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>Historical Events</h1>
-    <div>
-        <label for="year">Year:</label>
-        <input type="number" id="year" required>
-        <label for="event">Event:</label>
-        <input type="text" id="event" required>
-        <button onclick="addEvent()">Add Event</button>
-        <button onclick="sortEvents()">Sort by Year</button>
-        <button onclick="printEvents()">Print</button>
-        <button onclick="clearEvents()">Clear Events</button>
+    <h1>PDF Viewer</h1>
+    <div class="button-container">
+        <button class="btn" onclick="viewPDF()">View Online</button>
+        <button class="btn" onclick="downloadPDF()">Download</button>
     </div>
-    <table id="eventsTable">
-        <thead>
-            <tr>
-                <th>Year</th>
-                <th>Event</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+
     <script>
-        let events = JSON.parse(localStorage.getItem('events')) || [];
-
-        function addEvent() {
-            const year = document.getElementById('year').value;
-            const event = document.getElementById('event').value;
-            if (year && event) {
-                events.push({ year: parseInt(year), event: event });
-                saveEvents();
-                displayEvents();
-                document.getElementById('year').value = '';
-                document.getElementById('event').value = '';
-            }
+        function viewPDF() {
+            window.open('Images/history.pdf', '_blank');
         }
 
-        function sortEvents() {
-            events.sort((a, b) => a.year - b.year);
-            saveEvents();
-            displayEvents();
+        function downloadPDF() {
+            window.location.href = 'Images/history.pdf';
         }
-
-        function displayEvents() {
-            const tbody = document.getElementById('eventsTable').querySelector('tbody');
-            tbody.innerHTML = '';
-            events.forEach((e) => {
-                const row = document.createElement('tr');
-                const yearCell = document.createElement('td');
-                yearCell.textContent = e.year;
-                const eventCell = document.createElement('td');
-                eventCell.textContent = e.event;
-                row.appendChild(yearCell);
-                row.appendChild(eventCell);
-                tbody.appendChild(row);
-            });
-        }
-
-        function saveEvents() {
-            localStorage.setItem('events', JSON.stringify(events));
-        }
-
-        function clearEvents() {
-            localStorage.removeItem('events');
-            events = [];
-            displayEvents();
-        }
-
-        function printEvents() {
-            window.print();
-        }
-
-        // Initial display of events on page load
-        displayEvents();
     </script>
 </body>
 </html>
