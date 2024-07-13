@@ -25,8 +25,8 @@
     <video id="video" playsinline autoplay></video>
     <canvas id="canvas"></canvas>
 
-    <script async src="https://docs.opencv.org/4.x/opencv.js"></script>
-    <script>
+    <script src="https://docs.opencv.org/4.x/opencv.js" type="text/javascript" async></script>
+    <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
             const video = document.getElementById('video');
             const canvas = document.getElementById('canvas');
@@ -46,53 +46,66 @@
                 })
                 .catch(err => console.error('Error accessing media devices.', err));
 
-            video.addEventListener('play', () => {
-                const cap = new cv.VideoCapture(video);
-                
-                const processFrame = () => {
-                    let src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
-                    let dst = new cv.Mat();
-                    cap.read(src);
-                    cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY);
-                    cv.threshold(dst, dst, 120, 255, cv.THRESH_BINARY);
-                    let contours = new cv.MatVector();
-                    let hierarchy = new cv.Mat();
-                    cv.findContours(dst, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+            // Wait for OpenCV to be ready
+            const onOpenCvReady = () => {
+                video.addEventListener('play', () => {
+                    const cap = new cv.VideoCapture(video);
+                    
+                    const processFrame = () => {
+                        let src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
+                        let dst = new cv.Mat();
+                        cap.read(src);
+                        cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY);
+                        cv.threshold(dst, dst, 120, 255, cv.THRESH_BINARY);
+                        let contours = new cv.MatVector();
+                        let hierarchy = new cv.Mat();
+                        cv.findContours(dst, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
 
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    context.lineWidth = 3;
-                    context.strokeStyle = 'green';
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        context.lineWidth = 3;
+                        context.strokeStyle = 'green';
 
-                    for (let i = 0; i < contours.size(); ++i) {
-                        const contour = contours.get(i);
-                        const approx = new cv.Mat();
-                        cv.approxPolyDP(contour, approx, 0.04 * cv.arcLength(contour, true), true);
-                        
-                        if (approx.rows === 4) {
-                            const points = [];
-                            for (let j = 0; j < 4; ++j) {
-                                points.push({ x: approx.data32S[j*2], y: approx.data32S[j*2 + 1] });
+                        for (let i = 0; i < contours.size(); ++i) {
+                            const contour = contours.get(i);
+                            const approx = new cv.Mat();
+                            cv.approxPolyDP(contour, approx, 0.04 * cv.arcLength(contour, true), true);
+                            
+                            if (approx.rows === 4) {
+                                const points = [];
+                                for (let j = 0; j < 4; ++j) {
+                                    points.push({ x: approx.data32S[j*2], y: approx.data32S[j*2 + 1] });
+                                }
+                                context.beginPath();
+                                context.moveTo(points[0].x, points[0].y);
+                                points.forEach(point => context.lineTo(point.x, point.y));
+                                context.closePath();
+                                context.stroke();
                             }
-                            context.beginPath();
-                            context.moveTo(points[0].x, points[0].y);
-                            points.forEach(point => context.lineTo(point.x, point.y));
-                            context.closePath();
-                            context.stroke();
+                            approx.delete();
+                            contour.delete();
                         }
-                        approx.delete();
-                        contour.delete();
-                    }
 
-                    src.delete();
-                    dst.delete();
-                    contours.delete();
-                    hierarchy.delete();
+                        src.delete();
+                        dst.delete();
+                        contours.delete();
+                        hierarchy.delete();
+
+                        requestAnimationFrame(processFrame);
+                    };
 
                     requestAnimationFrame(processFrame);
-                };
+                });
+            };
 
-                requestAnimationFrame(processFrame);
-            });
+            // Check if OpenCV is loaded
+            const checkOpenCvLoaded = () => {
+                if (cv && cv.VideoCapture) {
+                    onOpenCvReady();
+                } else {
+                    setTimeout(checkOpenCvLoaded, 100);
+                }
+            };
+            checkOpenCvLoaded();
         });
     </script>
 </body>
