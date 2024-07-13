@@ -22,10 +22,18 @@
     </style>
 </head>
 <body>
-    <video id="video" playsinline autoplay></video>
+    <video id="video" autoplay></video>
     <canvas id="canvas"></canvas>
 
+    <!-- Eruda script for debugging -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+        eruda.init();
+    </script>
+
+    <!-- OpenCV.js script -->
     <script src="https://docs.opencv.org/4.x/opencv.js" type="text/javascript" async></script>
+
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
             const video = document.getElementById('video');
