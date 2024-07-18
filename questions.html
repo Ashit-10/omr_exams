@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shuffle Questions and Options</title>
+    <title>Shuffle Questions</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,7 +26,7 @@
     </style>
 </head>
 <body>
-    <h1>Shuffle Questions and Options</h1>
+    <h1>Shuffle Questions</h1>
     <textarea id="inputText" placeholder="Paste your questions here..."></textarea>
     <button onclick="shuffleQuestions()">Shuffle and Display</button>
     <button onclick="copyToClipboard()">Copy to Clipboard</button>
@@ -35,39 +35,31 @@
     <script>
         function shuffleQuestions() {
             const inputText = document.getElementById('inputText').value;
-            const questions = extractQuestionsAndOptions(inputText);
+            const questions = extractQuestions(inputText);
             const shuffledQuestions = shuffleArray(questions);
             const formattedQuestions = formatQuestions(shuffledQuestions);
             document.getElementById('shuffledQuestions').innerText = formattedQuestions;
         }
 
-        function extractQuestionsAndOptions(text) {
+        function extractQuestions(text) {
+            const questionPattern = /^\d+\.\s|\d+\s\./;
             const lines = text.split('\n');
             const questions = [];
-            let currentQuestion = null;
+            let currentQuestion = '';
 
             lines.forEach(line => {
-                const questionMatch = line.match(/^\d+\.\s/);
-                const optionMatch = line.match(/^[A-D]\.\s/);
-
-                if (questionMatch) {
+                if (questionPattern.test(line)) {
                     if (currentQuestion) {
-                        questions.push(currentQuestion);
+                        questions.push(currentQuestion.trim());
                     }
-                    currentQuestion = { question: line, options: [] };
-                } else if (optionMatch) {
-                    if (currentQuestion) {
-                        currentQuestion.options.push(line);
-                    }
+                    currentQuestion = line;
                 } else {
-                    if (currentQuestion && currentQuestion.options.length > 0) {
-                        currentQuestion.options[currentQuestion.options.length - 1] += ' ' + line;
-                    }
+                    currentQuestion += '\n' + line;
                 }
             });
 
             if (currentQuestion) {
-                questions.push(currentQuestion);
+                questions.push(currentQuestion.trim());
             }
 
             return questions;
@@ -84,12 +76,11 @@
         function formatQuestions(questions) {
             let formattedQuestions = [];
             questions.forEach((q, index) => {
-                formattedQuestions.push(`${index + 1}. ${q.question.split('. ')[1]}`);
-                q.options.forEach(option => {
-                    formattedQuestions.push(option);
-                });
+                const questionNumber = q.match(/^\d+/)[0];
+                const newNumber = index + 1;
+                formattedQuestions.push(q.replace(/^\d+/, newNumber));
             });
-            return formattedQuestions.join('\n');
+            return formattedQuestions.join('\n\n');
         }
 
         function copyToClipboard() {
