@@ -42,20 +42,20 @@
         }
 
         function extractQuestionsAndOptions(text) {
-            const questionPattern = /^\d+\.\s/;
-            const optionPattern = /^[A-D]\.\s/;
-
             const lines = text.split('\n');
             const questions = [];
             let currentQuestion = null;
 
-            for (let line of lines) {
-                if (questionPattern.test(line)) {
+            lines.forEach(line => {
+                const questionMatch = line.match(/^\d+\.\s/);
+                const optionMatch = line.match(/^[A-D]\.\s/);
+
+                if (questionMatch) {
                     if (currentQuestion) {
                         questions.push(currentQuestion);
                     }
                     currentQuestion = { question: line, options: [] };
-                } else if (optionPattern.test(line)) {
+                } else if (optionMatch) {
                     if (currentQuestion) {
                         currentQuestion.options.push(line);
                     }
@@ -64,7 +64,7 @@
                         currentQuestion.options[currentQuestion.options.length - 1] += ' ' + line;
                     }
                 }
-            }
+            });
 
             if (currentQuestion) {
                 questions.push(currentQuestion);
