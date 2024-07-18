@@ -23,11 +23,20 @@
             padding: 10px;
             margin-top: 10px;
         }
+        label {
+            margin-top: 10px;
+            display: block;
+        }
+        input[type="number"] {
+            width: 50px;
+        }
     </style>
 </head>
 <body>
     <h1>Shuffle Questions</h1>
     <textarea id="inputText" placeholder="Paste your questions here..."></textarea>
+    <label for="numQuestions">Number of Questions:</label>
+    <input type="number" id="numQuestions" min="1" value="5">
     <button onclick="shuffleQuestions()">Shuffle and Display</button>
     <button onclick="copyToClipboard()">Copy to Clipboard</button>
     <div id="shuffledQuestions" class="shuffled"></div>
@@ -35,8 +44,10 @@
     <script>
         function shuffleQuestions() {
             const inputText = document.getElementById('inputText').value;
+            const numQuestions = parseInt(document.getElementById('numQuestions').value, 10);
             const questions = extractQuestions(inputText);
-            const shuffledQuestions = shuffleArray(questions);
+            const filteredQuestions = questions.filter(q => q.length >= 10);
+            const shuffledQuestions = shuffleArray(filteredQuestions).slice(0, numQuestions); // Limit to specified number
             const formattedQuestions = formatQuestions(shuffledQuestions);
             document.getElementById('shuffledQuestions').innerText = formattedQuestions;
         }
@@ -78,7 +89,7 @@
             questions.forEach((q, index) => {
                 formattedQuestions.push(`${index + 1}. ${q.replace(/^\d+\.\s|\d+\s\./, '')}`);
             });
-            return formattedQuestions.join('\n\n');
+            return formattedQuestions.join('\n');
         }
 
         function copyToClipboard() {
