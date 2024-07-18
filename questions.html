@@ -42,21 +42,26 @@
 
         function shuffleQuestions() {
             const input = document.getElementById('questions').value.trim();
-            const questions = input.split('\n\n');
-            let shuffledQuestions = [];
+            const questionBlocks = input.split('\n\n');
+            let questionsWithOptions = [];
 
-            questions.forEach(question => {
-                let parts = question.split('\n');
-                let questionText = parts[0];
-                let options = parts.slice(1);
-                shuffleArray(options);
-
-                let shuffledQuestion = questionText + '\n' + options.join('\n');
-                shuffledQuestions.push(shuffledQuestion);
+            // Split each question block into question and options
+            questionBlocks.forEach(block => {
+                const lines = block.split('\n');
+                const question = lines[0];
+                const options = lines.slice(1);
+                questionsWithOptions.push({ question, options });
             });
 
-            shuffleArray(shuffledQuestions);
-            document.getElementById('shuffledOutput').innerText = shuffledQuestions.join('\n\n');
+            // Shuffle the options within each question
+            questionsWithOptions.forEach(q => shuffleArray(q.options));
+
+            // Shuffle the questions
+            shuffleArray(questionsWithOptions);
+
+            // Prepare the shuffled output
+            const shuffledQuestions = questionsWithOptions.map(q => q.question + '\n' + q.options.join('\n')).join('\n\n');
+            document.getElementById('shuffledOutput').innerText = shuffledQuestions;
         }
 
         function downloadShuffledQuestions() {
@@ -72,4 +77,3 @@
     </script>
 </body>
 </html>
-
