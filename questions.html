@@ -76,9 +76,7 @@
         function formatQuestions(questions) {
             let formattedQuestions = [];
             questions.forEach((q, index) => {
-                const questionNumber = q.match(/^\d+/)[0];
-                const newNumber = index + 1;
-                formattedQuestions.push(q.replace(/^\d+/, newNumber));
+                formattedQuestions.push(`${index + 1}. ${q.replace(/^\d+\.\s|\d+\s\./, '')}`);
             });
             return formattedQuestions.join('\n\n');
         }
