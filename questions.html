@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shuffle Questions</title>
+    <title>Shuffle Questions and Options</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,68 +11,94 @@
         }
         textarea {
             width: 100%;
-            height: 300px;
+            height: 150px;
+            margin-bottom: 10px;
         }
         button {
-            display: block;
-            margin: 20px 0;
+            margin-top: 10px;
         }
-        .output {
+        .shuffled {
             white-space: pre-wrap;
-            background: #f4f4f4;
+            border: 1px solid #ccc;
             padding: 10px;
-            border: 1px solid #ddd;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <h1>Shuffle Questions and Options</h1>
-    <textarea id="questions" placeholder="Paste your questions here..."></textarea>
-    <button onclick="shuffleQuestions()">Shuffle Questions</button>
-    <div class="output" id="shuffledOutput"></div>
-    <button onclick="downloadShuffledQuestions()">Download Shuffled Questions</button>
+    <textarea id="inputText" placeholder="Paste your questions here..."></textarea>
+    <button onclick="shuffleQuestions()">Shuffle and Display</button>
+    <button onclick="copyToClipboard()">Copy to Clipboard</button>
+    <div id="shuffledQuestions" class="shuffled"></div>
 
     <script>
+        function shuffleQuestions() {
+            const inputText = document.getElementById('inputText').value;
+            const questions = extractQuestionsAndOptions(inputText);
+            const shuffledQuestions = shuffleArray(questions);
+            const formattedQuestions = formatQuestions(shuffledQuestions);
+            document.getElementById('shuffledQuestions').innerText = formattedQuestions;
+        }
+
+        function extractQuestionsAndOptions(text) {
+            const questionPattern = /^\d+\.\s/;
+            const optionPattern = /^[A-D]\.\s/;
+
+            const lines = text.split('\n');
+            const questions = [];
+            let currentQuestion = null;
+
+            for (let line of lines) {
+                if (questionPattern.test(line)) {
+                    if (currentQuestion) {
+                        questions.push(currentQuestion);
+                    }
+                    currentQuestion = { question: line, options: [] };
+                } else if (optionPattern.test(line)) {
+                    if (currentQuestion) {
+                        currentQuestion.options.push(line);
+                    }
+                } else {
+                    if (currentQuestion && currentQuestion.options.length > 0) {
+                        currentQuestion.options[currentQuestion.options.length - 1] += ' ' + line;
+                    }
+                }
+            }
+
+            if (currentQuestion) {
+                questions.push(currentQuestion);
+            }
+
+            return questions;
+        }
+
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
+            return array;
         }
 
-        function shuffleQuestions() {
-            const input = document.getElementById('questions').value.trim();
-            const questionBlocks = input.split('\n\n');
-            let questionsWithOptions = [];
-
-            // Split each question block into question and options
-            questionBlocks.forEach(block => {
-                const lines = block.split('\n');
-                const question = lines[0];
-                const options = lines.slice(1);
-                questionsWithOptions.push({ question, options });
+        function formatQuestions(questions) {
+            let formattedQuestions = [];
+            questions.forEach((q, index) => {
+                formattedQuestions.push(`${index + 1}. ${q.question.split('. ')[1]}`);
+                q.options.forEach(option => {
+                    formattedQuestions.push(option);
+                });
             });
-
-            // Shuffle the options within each question
-            questionsWithOptions.forEach(q => shuffleArray(q.options));
-
-            // Shuffle the questions
-            shuffleArray(questionsWithOptions);
-
-            // Prepare the shuffled output
-            const shuffledQuestions = questionsWithOptions.map(q => q.question + '\n' + q.options.join('\n')).join('\n\n');
-            document.getElementById('shuffledOutput').innerText = shuffledQuestions;
+            return formattedQuestions.join('\n');
         }
 
-        function downloadShuffledQuestions() {
-            const shuffledQuestions = document.getElementById('shuffledOutput').innerText;
-            const blob = new Blob([shuffledQuestions], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'shuffled_questions.txt';
-            a.click();
-            URL.revokeObjectURL(url);
+        function copyToClipboard() {
+            const shuffledQuestions = document.getElementById('shuffledQuestions').innerText;
+            navigator.clipboard.writeText(shuffledQuestions).then(() => {
+                alert('Shuffled questions copied to clipboard!');
+            }, (err) => {
+                console.error('Could not copy text: ', err);
+            });
         }
     </script>
 </body>
