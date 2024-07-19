@@ -2,7 +2,7 @@
       "autoSave": "On",
       "compression": "On",
       "compressionSize": "150 KB",
-      "examFolder": "class-10_science_3",
+      "examFolder": "class-10_science_4",
       "signature": "Rupa",
       "tuition": "MVM"
 }
