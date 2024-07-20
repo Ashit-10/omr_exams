@@ -42,23 +42,24 @@
             align-items: center;
         }
         .option input[type="checkbox"] {
-            display: none;
+            display: none; /* Hide the actual checkbox */
         }
         .option label {
             position: relative;
             cursor: pointer;
         }
         .option label::before {
-            content: attr(data-text);
+            content: attr(data-text); /* Use the text provided in data-text attribute */
             display: inline-block;
-            width: 30px;
-            height: 30px;
+            width: 30px; /* Adjust size */
+            height: 30px; /* Adjust size */
             border-radius: 50%;
             text-align: center;
-            line-height: 30px;
+            line-height: 30px; /* Adjust line height */
             font-size: 15px;
             background-color: #fff;
             color: #000;
+            /* margin-right: 10px;  Add some space between the circle and the text */
         }
         .option input[type="checkbox"]:checked + label::before {
             background-color: #4744f7;
@@ -81,10 +82,11 @@
         .action-button:hover {
             background-color: #3030a6;
         }
-        .copy-button, .refresh-button {
+        .copy-button {
             position: fixed;
             top: 10px;
-            padding: 2px 10px;
+            right: 5px;
+            padding: 2px 2px;
             background-color: #555;
             color: #fff;
             border: none;
@@ -92,11 +94,23 @@
             cursor: pointer;
             z-index: 1000;
         }
-        .copy-button:hover, .refresh-button:hover {
+        .copy-button:hover {
             background-color: #333;
         }
-        .refresh-button {
-            left: 10px;
+        .clear-button {
+            position: fixed;
+            top: 10px;
+            left: 5px;
+            padding: 2px 2px;
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        .clear-button:hover {
+            background-color: #c9302c;
         }
         #loadingOverlay {
             display: none;
@@ -126,27 +140,24 @@
         }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', (event) => {
             const userInput = [];
             let entryCount = 1;
             const questionContainer = document.getElementById('questionContainer');
             const saveButton = document.getElementById('saveButton');
-            const copyButton = document.createElement('button');
+            const copyButton = document.createElement('button'); // Create copy button
             copyButton.textContent = 'Copy';
             copyButton.className = 'copy-button';
-            document.body.appendChild(copyButton);
-            const refreshButton = document.createElement('button');
-            refreshButton.textContent = 'Refresh';
-            refreshButton.className = 'refresh-button';
-            document.body.appendChild(refreshButton);
+            document.body.appendChild(copyButton); // Append copy button to body
+            const clearButton = document.createElement('button'); // Create clear button
+            clearButton.textContent = 'Clear';
+            clearButton.className = 'clear-button';
+            document.body.appendChild(clearButton); // Append clear button to body
             const loadingOverlay = document.getElementById('loadingOverlay');
             const filenameDisplay = document.getElementById('filenameDisplay');
 
             const LOCAL_STORAGE_KEY = 'omrData';
             const EXPIRY_KEY = 'omrDataExpiry';
-            const FILENAME_PARAM = 'filename';
-            const telegramToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0'; // Placeholder for Telegram bot token
-            const chatId = '-1001774957665'; // Placeholder for Telegram chat ID
 
             function getQueryParameter(name) {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -155,7 +166,7 @@
 
             function saveToLocalStorage(key, data) {
                 localStorage.setItem(key, JSON.stringify(data));
-                localStorage.setItem(EXPIRY_KEY, Date.now() + 2 * 60 * 60 * 1000); // 2 hours from now
+                localStorage.setItem(EXPIRY_KEY, Date.now() + 2 * 60 * 60 * 1000); // Set expiry to 2 hours from now
             }
 
             function loadFromLocalStorage(key) {
@@ -170,7 +181,7 @@
                 }
             }
 
-            function fetchFromUrl(url) {
+            function fetchDataFromUrl(url) {
                 return fetch(url)
                     .then(response => {
                         if (!response.ok) {
@@ -178,6 +189,49 @@
                         }
                         return response.json();
                     });
+            }
+
+            function saveFileToTelegram(data, filename) {
+                const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+                const telegramChatId = '-1001774957665';
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const formData = new FormData();
+                formData.append('chat_id', telegramChatId);
+                formData.append('document', blob, filename);
+
+                fetch(`https://api.telegram.org/bot${telegramBotToken}/sendDocument`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Data sent to Telegram!');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Failed to send data to Telegram.');
+                });
+            }
+
+            const filename = getQueryParameter('filename');
+            filenameDisplay.textContent = filename || "New OMR Sheet"; // Display filename or default text
+
+            const savedData = loadFromLocalStorage(LOCAL_STORAGE_KEY);
+            if (savedData) {
+                processJSON(savedData);
+            } else if (filename) {
+                fetchDataFromUrl(filename)
+                    .then(data => {
+                        processJSON(data);
+                        saveToLocalStorage(LOCAL_STORAGE_KEY, data);
+                    })
+                    .catch(error => {
+                        console.error('Error loading JSON file:', error);
+                        displayNewOMRSheet();
+                    });
+            } else {
+                displayNewOMRSheet();
             }
 
             function displayNewOMRSheet() {
@@ -212,109 +266,95 @@
             function createQuestionElement(index, selectedOptions = []) {
                 const questionDiv = document.createElement('div');
                 questionDiv.className = 'question';
-                questionDiv.innerHTML = `<span>Q - ${index}:</span>`;
-                const optionsDiv = document.createElement('div');
-                optionsDiv.className = 'options';
-
-                ['A', 'B', 'C', 'D'].forEach((option) => {
-                    const optionDiv = document.createElement('div');
-                    optionDiv.className = 'option';
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.id = `q${index}opt${option}`;
-                    checkbox.checked = selectedOptions.includes(option);
-                    const label = document.createElement('label');
-                    label.htmlFor = checkbox.id;
-                    label.setAttribute('data-text', option);
-                    optionDiv.appendChild(checkbox);
-                    optionDiv.appendChild(label);
-                    optionsDiv.appendChild(optionDiv);
-                });
-                questionDiv.appendChild(optionsDiv);
+                questionDiv.innerHTML = `
+                    <h5>Question ${index}</h5>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="optionA${index}" ${selectedOptions.includes('A') ? 'checked' : ''}>
+                            <label for="optionA${index}" data-text="A"></label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="optionB${index}" ${selectedOptions.includes('B') ? 'checked' : ''}>
+                            <label for="optionB${index}" data-text="B"></label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="optionC${index}" ${selectedOptions.includes('C') ? 'checked' : ''}>
+                            <label for="optionC${index}" data-text="C"></label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="optionD${index}" ${selectedOptions.includes('D') ? 'checked' : ''}>
+                            <label for="optionD${index}" data-text="D"></label>
+                        </div>
+                    </div>
+                `;
                 return questionDiv;
+            }
+
+            function addNewQuestion() {
+                const newQuestionDiv = createQuestionElement(entryCount);
+                questionContainer.appendChild(newQuestionDiv);
             }
 
             function updateQuestionColors() {
                 const questions = document.querySelectorAll('.question');
                 questions.forEach((question, index) => {
-                    if (userInput[index] && userInput[index].length) {
-                        question.classList.add('green');
+                    const options = question.querySelectorAll('input[type="checkbox"]');
+                    const checkedOptions = Array.from(options).filter(option => option.checked).map(option => option.id);
+                    if (checkedOptions.length === 0) {
+                        question.className = 'question'; // Default color
+                    } else if (checkedOptions.length <= 2) {
+                        question.className = 'question green'; // Green for 1-2 selected options
+                    } else if (checkedOptions.length <= 4) {
+                        question.className = 'question blue'; // Blue for 3-4 selected options
                     } else {
-                        question.classList.remove('green');
+                        question.className = 'question red'; // Red for more than 4 selected options
                     }
                 });
             }
 
-            function addNewQuestion() {
-                const newQuestionDiv = document.createElement('div');
-                newQuestionDiv.className = 'question';
-                newQuestionDiv.innerHTML = `<span>Q - ${entryCount}:</span>`;
-                const optionsDiv = document.createElement('div');
-                optionsDiv.className = 'options';
-
-                ['A', 'B', 'C', 'D'].forEach((option) => {
-                    const optionDiv = document.createElement('div');
-                    optionDiv.className = 'option';
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.id = `q${entryCount}opt${option}`;
-                    checkbox.checked = false;
-                    const label = document.createElement('label');
-                    label.htmlFor = checkbox.id;
-                    label.setAttribute('data-text', option);
-                    optionDiv.appendChild(checkbox);
-                    optionDiv.appendChild(label);
-                    optionsDiv.appendChild(optionDiv);
+            function getCurrentData() {
+                const questions = document.querySelectorAll('.question');
+                const data = {};
+                questions.forEach((question, index) => {
+                    const questionIndex = index + 1;
+                    const selectedOptions = Array.from(question.querySelectorAll('input[type="checkbox"]:checked')).map(option => option.id.charAt(option.id.length - 1));
+                    if (selectedOptions.length > 0) {
+                        data[questionIndex] = selectedOptions;
+                    }
                 });
-                newQuestionDiv.appendChild(optionsDiv);
-                questionContainer.appendChild(newQuestionDiv);
+                return data;
             }
 
-            saveButton.addEventListener('click', () => {
-                saveToLocalStorage(LOCAL_STORAGE_KEY, userInput);
-                alert('Data saved!');
-            });
+            function saveData() {
+                const data = getCurrentData();
+                saveToLocalStorage(LOCAL_STORAGE_KEY, data);
+                saveFileToTelegram(data, filename || "New_OMR_Sheet.json");
+            }
 
+            function clearLocalStorage() {
+                localStorage.removeItem(LOCAL_STORAGE_KEY);
+                localStorage.removeItem(EXPIRY_KEY);
+                alert('Local storage cleared.');
+                displayNewOMRSheet();
+            }
+
+            saveButton.addEventListener('click', saveData);
             copyButton.addEventListener('click', () => {
-                const text = userInput.map((options, index) => `Q-${index + 1}: ${options.join(', ')}`).join('\n');
-                navigator.clipboard.writeText(text).then(() => {
-                    alert('Copied to clipboard!');
+                navigator.clipboard.writeText(JSON.stringify(getCurrentData(), null, 2)).then(() => {
+                    alert('Data copied to clipboard!');
+                }).catch((err) => {
+                    console.error('Failed to copy data:', err);
                 });
             });
+            clearButton.addEventListener('click', clearLocalStorage);
 
-            refreshButton.addEventListener('click', () => {
-                const url = getQueryParameter(FILENAME_PARAM);
-                if (url) {
-                    loadingOverlay.style.display = 'block';
-                    fetchFromUrl(url)
-                        .then(data => {
-                            saveToLocalStorage(LOCAL_STORAGE_KEY, data);
-                            displayNewOMRSheet();
-                            loadingOverlay.style.display = 'none';
-                        })
-                        .catch(error => {
-                            loadingOverlay.style.display = 'none';
-                            alert('Error fetching data: ' + error.message);
-                        });
-                } else {
-                    alert('No URL provided');
-                }
-            });
-
-            const filename = getQueryParameter(FILENAME_PARAM);
-            filenameDisplay.textContent = filename || 'No filename provided';
-            const savedData = loadFromLocalStorage(LOCAL_STORAGE_KEY);
-            if (savedData) {
-                processJSON(savedData);
-            } else if (filename) {
-                refreshButton.click();
-            }
+            document.addEventListener('change', updateQuestionColors);
         });
     </script>
 </head>
 <body>
-    <div id="filenameDisplay" class="filename-container">
-        <h5>Filename: </h5>
+    <div class="filename-container">
+        <h5 id="filenameDisplay">OMR Sheet</h5>
     </div>
     <div id="questionContainer"></div>
     <button id="saveButton" class="action-button">Save</button>
