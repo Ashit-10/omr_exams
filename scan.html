@@ -260,7 +260,7 @@
             position: absolute;
             width: 50%;
             height: 100%;
-/*             filter: blur(10px); */
+            /*             filter: blur(10px); */
             left: 0;
             top: 0;
             z-index: -1;
@@ -271,7 +271,7 @@
             position: absolute;
             width: 50%;
             height: 100%;
-/*             filter: blur(10px); */
+            /*             filter: blur(10px); */
             right: 0;
             top: 0;
             z-index: -1;
@@ -332,7 +332,7 @@
 
         /* Style the input field */
         #rollNumberInput {
-            width: calc(100% - 44px);
+            width: 60%;
             /* Adjust width to fit next to buttons */
             padding: 10px;
             margin-bottom: 10px;
@@ -359,6 +359,28 @@
 
         audio {
             display: none;
+        }
+
+        #myForm {
+            display: inline-flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #chek {
+            width: 30px;
+            height: 30px;
+        }
+
+        #chek2 {
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+        }
+        .checkbox-label {
+            margin-right: 15px;
+            font-size: 20px;
+            vertical-align: middle;
         }
     </style>
 
@@ -398,27 +420,30 @@
     <div id="remove1">
         <!-- <button onclick="toggleFlashlight()">Toggle Flashlight</button> -->
 
-        
+
         <!-- Add flashlight button -->
         <button id="flashlightButton">Flashlight</button>
         <button id="capture-btn">Capture</button>
 
         <button id="reloadbtn">Cancel</button>
-        
-        <!-- Add the input field next to the capture and cancel buttons -->
-        <input type="text" id="rollNumberInput" placeholder="Enter Roll No (Optional)  ">
-        <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
-        
+
+
         <div class="loader1" id="loader1"></div>
         <br>
 
         <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
+
+        <form id="myForm">
+            <!-- Add the input field next to the capture and cancel buttons -->
+            <input type="text" id="rollNumberInput" placeholder="Roll No (Optional)  ">
+            <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
+            Image is darker <input id="chek" type="checkbox" name="option" value="shadow">
+        </form>
     </div>
 
     <div id="remove2">
-        <h5>Or select file from below
-        </h5>
-    
+        <!-- <h5>Or select file from below</h5> -->
+
         <input type="file" id="fileInput">
         <button onclick="sendImage()">Check Result</button>
         <div class="loader" id="loader"></div>
@@ -431,9 +456,11 @@
     </div>
     <!--  </div> -->
     <br><br><br><br>
-<br><br><br><br>
+    <br><br><br><br>
 
     <script>
+        var isCheckboxChecked = document.getElementById('chek').checked;
+        console.log(isCheckboxChecked);
 
         const Fwidth2 = 180;
         const Fheight2 = 440;
@@ -492,7 +519,12 @@
 
                 // Append caption to FormData
                 var caption = document.getElementById('rollNumberInput').value;
-                formData.append('caption', caption);
+                var is_shadow = document.getElementById('chek').checked;
+                if (is_shadow) {
+                    formData.append('caption', caption + ' dark');
+                } else {
+                    formData.append('caption', caption);
+                }
 
                 const loaderOverlay = document.getElementById('loaderOverlay');
                 loaderOverlay.style.display = 'flex'; // Display loader overlay
@@ -734,7 +766,7 @@
                         if (caption.toLowerCase().includes("still save it ?")) {
                             const overlayButton = document.createElement('button');
                             overlayButton.innerText = 'Save';
-                           
+
                             const savespinner = document.createElement('div');
                             savespinner.id = 'save-spinner';
                             savespinner.style.display = 'none'; // Initially hidden
@@ -791,19 +823,48 @@
                     updateButton.style.width = '60%';
                     updateButton.style.display = 'none';
                     updateButton.style.display = 'inline';
+                    // Create the checkbox input element
+                    const checkbox2 = document.createElement('input');
+                    checkbox2.type = 'checkbox';
+                    checkbox2.id = 'chek2';
+
+                    // Create a label for the checkbox
+                    const label = document.createElement('label');
+                    label.className = 'checkbox-label'; // Add a class for styling
+                    label.htmlFor = 'chek2';
+                    label.textContent = 'Image is darker';
+
+                    let up_roll_data;
+                    up_roll_data = rollNumber;
+
+                    if (old_caption && old_caption.includes("dark")) {
+                        checkbox2.checked = true;
+                    } else {
+                        checkbox2.checked = false;
+                    }
+
                     updateButton.addEventListener('click', async () => {
                         const rollNumber = rollInput.value;
                         if (rollNumber && rollNumber <= 99 && rollNumber > 0) {
                             updateButton.innerText = 'Updating...'; // Change button text
-                            if (rollNumber == old_caption) {
+                            if (old_caption && old_caption.includes(rollNumber)) {
                                 alert('Please enter a new roll number, different from old roll number!');
                                 updateButton.innerText = 'Update Roll No'; // Change button text
 
                             } else {
                                 updateButton.disabled = true; // Disable button
                                 // const replyToMessageId = current_id;
+
+                                var darkcap = document.getElementById('chek2').checked;
+                                console.log(darkcap, 'darkcap');
+                                if (darkcap) {
+                                    up_roll_data = rollNumber + ' dark';
+                                } else {
+                                    up_roll_data = rollNumber;
+                                }
+
                                 console.log(og_id);
-                                console.log(rollNumber);
+                                console.log(up_roll_data);
                                 await fetch(`${TELEGRAM_API_URL}/editMessageCaption`, {
                                     method: 'POST',
                                     headers: {
@@ -812,7 +873,7 @@
                                     body: JSON.stringify({
                                         chat_id: chatId,
                                         message_id: og_id,
-                                        caption: rollNumber
+                                        caption: up_roll_data
                                     })
                                 });
                             }
@@ -824,6 +885,10 @@
                     rollInputContainer.appendChild(rollInput);
                     rollInputContainer.appendChild(updateButton);
                     messageElement.appendChild(rollInputContainer);
+                    messageElement.appendChild(label);
+                    messageElement.appendChild(checkbox2);
+                    const br2 = document.createElement('br');
+                    messageElement.appendChild(br2);
 
                     if (!isSending) {
                         loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
@@ -1007,7 +1072,12 @@
 
                     // Append caption to FormData
                     var caption = document.getElementById('rollNumberInput').value;
-                    formData1.append('caption', caption);
+                    var is_shadow = document.getElementById('chek').checked;
+                    if (is_shadow) {
+                        formData1.append('caption', caption + ' dark');
+                    } else {
+                        formData1.append('caption', caption);
+                    }
 
                     const loaderOverlay = document.getElementById('loaderOverlay');
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
