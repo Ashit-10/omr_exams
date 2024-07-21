@@ -1002,6 +1002,8 @@
             setTimeout(function () {
                 var video = document.getElementById('video');
                 var canvas = document.createElement('canvas');
+                console.log(video.height);
+                console.log(video.width);
                 canvas.width = newHeight;
                 canvas.height = newWidth;
                 var context = canvas.getContext('2d');
