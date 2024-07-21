@@ -8,7 +8,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4; /* Light gray background */
+            background-color: #f4f4f4;
+            /* Light gray background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,10 +18,12 @@
         }
 
         .container {
-            background-color: #f4f4f4; /* Light gray background */
+            background-color: #f4f4f4;
+            /* Light gray background */
             border-radius: 20px;
             box-shadow: 10px 10px 20px #c9c9c9,
-                -10px -10px 20px #ffffff; /* Neomorphic shadow */
+                -10px -10px 20px #ffffff;
+            /* Neomorphic shadow */
             padding: 15px;
             width: 100%;
             max-width: 100%;
@@ -29,16 +32,19 @@
         h1 {
             text-align: center;
             margin-bottom: 20px;
-            color: #555; /* Darker gray text */
+            color: #555;
+            /* Darker gray text */
         }
 
         .option {
             margin-bottom: 20px;
             padding: 15px;
-            background: linear-gradient(145deg, #e0e0e0, #ffffff); /* Gradient background */
+            background: linear-gradient(145deg, #e0e0e0, #ffffff);
+            /* Gradient background */
             border-radius: 12px;
             box-shadow: 6px 6px 12px #b0b0b0,
-                -6px -6px 12px #ffffff; /* Neomorphic shadow */
+                -6px -6px 12px #ffffff;
+            /* Neomorphic shadow */
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -47,7 +53,8 @@
         .option h4 {
             margin: 0;
             font-size: 16px;
-            color: #555; /* Darker gray text */
+            color: #555;
+            /* Darker gray text */
         }
 
         .toggle-switch {
@@ -70,7 +77,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc; /* Light gray slider background */
+            background-color: #ccc;
+            /* Light gray slider background */
             transition: .4s;
             border-radius: 28px;
         }
@@ -86,14 +94,16 @@
             transition: .4s;
             border-radius: 50%;
             box-shadow: 2px 2px 5px #b0b0b0,
-                -2px -2px 5px #ffffff; /* Neomorphic shadow */
+                -2px -2px 5px #ffffff;
+            /* Neomorphic shadow */
         }
 
-        input:checked+ .slider {
-            background-color: #4CAF50; /* Green slider when checked */
+        input:checked+.slider {
+            background-color: #4CAF50;
+            /* Green slider when checked */
         }
 
-        input:checked+ .slider:before {
+        input:checked+.slider:before {
             transform: translateX(22px);
         }
 
@@ -107,16 +117,19 @@
             display: flex;
             align-items: center;
             padding: 12px;
-            background: linear-gradient(145deg, #e0e0e0, #ffffff); /* Gradient background */
+            background: linear-gradient(145deg, #e0e0e0, #ffffff);
+            /* Gradient background */
             border-radius: 12px;
             box-shadow: 6px 6px 12px #b0b0b0,
-                -6px -6px 12px #ffffff; /* Neomorphic shadow */
+                -6px -6px 12px #ffffff;
+            /* Neomorphic shadow */
             transition: background-color 0.3s ease;
             cursor: pointer;
         }
 
         .radio-label:hover {
-            background-color: #e0e0e0; /* Lighter gray background on hover */
+            background-color: #e0e0e0;
+            /* Lighter gray background on hover */
         }
 
         .radio-label input {
@@ -125,7 +138,8 @@
 
         button {
             padding: 12px;
-            background: linear-gradient(145deg, #2196F3, #0b7dda); /* Blue gradient button */
+            background: linear-gradient(145deg, #2196F3, #0b7dda);
+            /* Blue gradient button */
             color: white;
             border: none;
             cursor: pointer;
@@ -133,12 +147,14 @@
             display: block;
             margin: 20px auto 0;
             box-shadow: 6px 6px 12px #b0b0b0,
-                -6px -6px 12px #ffffff; /* Neomorphic shadow */
+                -6px -6px 12px #ffffff;
+            /* Neomorphic shadow */
             transition: background 0.3s ease;
         }
 
         button:hover {
-            background: linear-gradient(145deg, #0b7dda, #2196F3); /* Darker blue gradient button on hover */
+            background: linear-gradient(145deg, #0b7dda, #2196F3);
+            /* Darker blue gradient button on hover */
         }
 
         .links-container {
@@ -151,22 +167,28 @@
 
         .link-button {
             padding: 10px 15px;
-            background: linear-gradient(145deg, #ffffff, #e0e0e0); /* Gradient background */
+            background: linear-gradient(145deg, #ffffff, #e0e0e0);
+            /* Gradient background */
             border-radius: 12px;
             text-decoration: none;
-            color: #2196F3; /* Blue text */
+            color: #2196F3;
+            /* Blue text */
             box-shadow: 6px 6px 12px #b0b0b0,
-                -6px -6px 12px #ffffff; /* Neomorphic shadow */
+                -6px -6px 12px #ffffff;
+            /* Neomorphic shadow */
             transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .link-button:hover {
-            background: linear-gradient(145deg, #e0e0e0, #ffffff); /* Hover gradient background */
+            background: linear-gradient(145deg, #e0e0e0, #ffffff);
+            /* Hover gradient background */
             box-shadow: 2px 2px 6px #b0b0b0,
-                -2px -2px 6px #ffffff; /* Hover neomorphic shadow */
+                -2px -2px 6px #ffffff;
+            /* Hover neomorphic shadow */
         }
+
         #examFolder {
-         border-radius: 10px;   
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -179,6 +201,14 @@
             <h4>Auto Save:</h4>
             <label class="toggle-switch">
                 <input type="checkbox" id="autoSaveToggle" onclick="toggleAutoSave()">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="option">
+            <h4>Allow Partial Marks:</h4>
+            <label class="toggle-switch">
+                <input type="checkbox" id="partialMarksToggle" onclick="togglePartialMarks()">
                 <span class="slider"></span>
             </label>
         </div>
@@ -200,7 +230,6 @@
             </select>
         </div>
 
-        
         <div class="option">
             <h4>Signature:</h4>
             <div class="radio-group">
@@ -243,16 +272,36 @@
         </div>
 
         <div class="links-container" id="linksContainer">
-            <a id="link1" href="#" target="_blank" class="link-button">Answer Key</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <a id="link2" href="#" target="_blank" class="link-button">Students List</a>
+            <a id="link1" href="#" target="_blank" class="link-button">Answer Key</a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a id="link2" href="#" target="_blank" class="link-button">Student List</a>
         </div>
 
-        <button onclick="sendMessage()">Save</button>
+        <button onclick="sendMessage()">Submit</button>
     </div>
 
     <script>
+        // Function to toggle auto save
+        function toggleAutoSave() {
+            const autoSaveToggle = document.getElementById("autoSaveToggle").checked;
+            console.log("Auto Save:", autoSaveToggle);
+        }
+
+        // Function to toggle allow partial marks
+        function togglePartialMarks() {
+            const partialMarksToggle = document.getElementById("partialMarksToggle").checked;
+            console.log("Allow Partial Marks:", partialMarksToggle);
+        }
+
+        // Function to toggle compression
+        function toggleCompression() {
+            const compressionToggle = document.getElementById("compressionToggle").checked;
+            console.log("Compression:", compressionToggle);
+        }
+
         let autoSaveOn = true;
         let compressionOn = true;
+        let allowPartialMarks = false; // New variable for Allow Partial Marks
         let examFolder = '';
         let signature = 'ashit';
         let tuition = 'mvm';
@@ -265,6 +314,11 @@
         // Function to toggle compression option
         function toggleCompression() {
             compressionOn = !compressionOn;
+        }
+
+        // Function to toggle allow partial marks option
+        function togglePartialMarks() {
+            allowPartialMarks = !allowPartialMarks;
         }
 
         // Function to set signature
@@ -283,7 +337,9 @@
             const params = new URLSearchParams(window.location.search);
             return params.get('exam_folder');
         }
-        const urlExamFolder = getExamFolderFromURL()
+
+        const urlExamFolder = getExamFolderFromURL();
+
         // Function to initialize form with default values
         function initializeForm() {
             fetch('https://raw.githubusercontent.com/Ashit-10/omr_exams/main/data.txt')
@@ -305,10 +361,10 @@
                     compressionOn = parsedData.compression === 'On';
                     document.getElementById('compressionToggle').checked = compressionOn;
 
-                    document.getElementById('compressionSize').value = parsedData.compressionSize.replace(' KB', '');
+                    allowPartialMarks = parsedData.allowPartialMarks === 'On';
+                    document.getElementById('partialMarksToggle').checked = allowPartialMarks;
 
-                    // examFolder = parsedData.examFolder;
-                    // document.getElementById('examFolder').value = examFolder;
+                    document.getElementById('compressionSize').value = parsedData.compressionSize.replace(' KB', '');
 
                     signature = parsedData.signature.toLowerCase();
                     document.querySelector(`input[name="signature"][value="${signature}"]`).checked = true;
@@ -335,8 +391,8 @@
                 if (tuitionValue === "MVM") {
                     tuitionValue = '2024';
                 }
-                const link1 = `https://ashit-10.github.io/omr_exams/answer_file.html?filename=${tuitionValue}/${cls}/${examFolderValue}/${examFolderValue}_ans_key.txt`;
-                const link2 = `https://ashit-10.github.io/omr_exams/names.html?filename=${tuitionValue}/${cls}/${cls}_rolls.txt`;
+                const link1 = `https://ashit.xyz/answer_file.html?filename=${tuitionValue}/${cls}/${examFolderValue}/${examFolderValue}_ans_key.txt`;
+                const link2 = `https://ashit.xyz/names.html?filename=${tuitionValue}/${cls}/${cls}_rolls.txt`;
                 document.getElementById('link1').href = link1;
                 document.getElementById('link1').textContent = 'Answer Key';
                 document.getElementById('link2').href = link2;
@@ -366,6 +422,7 @@
             const data = {
                 autoSave: autoSaveOn ? 'On' : 'Off',
                 compression: compressionOn ? 'On' : 'Off',
+                allowPartialMarks: allowPartialMarks ? 'On' : 'Off',
                 compressionSize: `${compressionSize} KB`,
                 examFolder: examFolder,
                 signature: signature.charAt(0).toUpperCase() + signature.slice(1),
@@ -402,6 +459,7 @@
                     saveButton.textContent = 'Save';
                 });
         }
+
     </script>
 </body>
 
