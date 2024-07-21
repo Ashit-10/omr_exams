@@ -77,20 +77,12 @@
 
         video {
             width: calc(100% - 10px);
-            /* Subtract 10px for margin (5px on each side) */
-            height: 80vh;
+            height: 70vh;
             margin: 0 5px;
-            /* Add 5px margin on left and right */
             object-fit: cover;
-            /* Ensure the video covers the entire area */
             border: 2px solid #ccc;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
-        /* .cameraContainer {
-            position: relative;
-            overflow: hidden;
-        } */
 
         h1 {
             margin-bottom: 20px;
@@ -304,6 +296,7 @@
             margin-right: 10px;
             /* Add margin to separate buttons */
         }
+        
 
         .warning {
             color: red;
@@ -421,11 +414,6 @@
         var isCheckboxChecked = document.getElementById('chek').checked;
         console.log(isCheckboxChecked);
 
-        const Fwidth2 = 180;
-        const Fheight2 = 440;
-
-        const Fwidth = Fwidth2 * 4;
-        const Fheight = Fheight2 * 4;
 
         // Function to remove animation from overlay boxes
         function stopSparkling() {
