@@ -1,6 +1,7 @@
 {
       "autoSave": "On",
       "compression": "Off",
+      "allowPartialMarks": "On",
       "compressionSize": "150 KB",
       "examFolder": "class-10_science_4",
       "signature": "Rupa",
