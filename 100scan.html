@@ -79,6 +79,7 @@
             width: calc(100% - 40px);
             height: 70vh;
             margin: 0 20px;
+            margin-top: -20px;
             object-fit: cover;
             border: 2px solid #ccc;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -326,14 +327,8 @@
         #chek2 {
             width: 30px;
             height: 30px;
-            vertical-align: middle;
         }
 
-        .checkbox-label {
-            margin-right: 15px;
-            font-size: 20px;
-            vertical-align: middle;
-        }
         .controls {
             width: calc(100% - 30px);
             margin: 0 20px;
@@ -775,7 +770,6 @@
 
                     // Create a label for the checkbox
                     const label = document.createElement('label');
-                    label.className = 'checkbox-label'; // Add a class for styling
                     label.htmlFor = 'chek2';
                     label.textContent = 'Image is darker';
 
