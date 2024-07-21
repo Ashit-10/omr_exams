@@ -62,9 +62,16 @@
         }
 
 
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #f0f0f0;
         }
 
         h1 {
@@ -250,25 +257,23 @@
         }
 
         .cameraContainer:before {
-          /*  content: "";  
-            position: absolute; */
-            width: 100vw;
+          width: calc(100% - 10px); /* Subtract 10px for margin */
             height: 80vh;
-            filter: blur(10px);
-            left: 0;
-            top: 0;
-            z-index: -1;
+            margin: 5px; /* Add 5px margin on all sides */
+            object-fit: cover; /* Ensure the video covers the entire area */
+            border: 2px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        
         }
 
         .cameraContainer:after {
-         /*   content: "";
-            position: absolute;  */
-            width: 100vw;
+      width: calc(100% - 10px); /* Subtract 10px for margin */
             height: 80vh;
-            filter: blur(10px);
-            right: 0;
-            top: 0;
-            z-index: -1;
+            margin: 5px; /* Add 5px margin on all sides */
+            object-fit: cover; /* Ensure the video covers the entire area */
+            border: 2px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        
         }
 
         /* Add this style for the loader */
