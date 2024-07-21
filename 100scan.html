@@ -340,8 +340,9 @@
             width: calc(100% - 30px);
             margin: 0 20px;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
     </style>
 
@@ -755,6 +756,8 @@
                     // Add input field and button for updating roll number
                     const rollInputContainer = document.createElement('div');
                     rollInputContainer.style.marginTop = '10px';
+                    const checkContainer = document.createElement('div');
+                    checkContainer.style.marginTop = '10px';
 
                     const rollInput = document.createElement('input');
                     rollInput.type = 'number';
@@ -833,8 +836,9 @@
                     rollInputContainer.appendChild(rollInput);
                     rollInputContainer.appendChild(updateButton);
                     messageElement.appendChild(rollInputContainer);
-                    messageElement.appendChild(label);
-                    messageElement.appendChild(checkbox2);
+                    checkContainer.appendChild(label);
+                    checkContainer.appendChild(checkbox2);
+                    messageElement.appendChild(checkContainer)
                     const br2 = document.createElement('br');
                     messageElement.appendChild(br2);
 
@@ -990,7 +994,7 @@
         startCamera();
 
         const newWidth = 1280;
-        const newHeight = 720;
+        const newHeight = 640;
 
         function captureImage(delay) {
             setTimeout(function () {
