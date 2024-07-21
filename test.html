@@ -17,9 +17,12 @@
             background-color: #f0f0f0;
         }
         video {
-            width: 100%;
+            width: calc(100% - 10px); /* Subtract 10px for margin */
             height: 80vh;
+            margin: 5px; /* Add 5px margin on all sides */
             object-fit: cover; /* Ensure the video covers the entire area */
+            border: 2px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         canvas {
             display: none;
@@ -40,7 +43,7 @@
     </style>
 </head>
 <body>
-    <video id="video" playsinline autoplay></video>
+    <video id="video" autoplay></video>
     <button id="capture">Capture Image</button>
     <canvas id="canvas"></canvas>
     <script>
