@@ -704,14 +704,14 @@
 
                     if (caption) {
                         const captionElement = document.createElement('p');
-                        const styledText = caption.replace(/(Correct: )(\d+)/g, '$1<span style="font-size: 40px; font-weight: bold;">$2</span>');
+                        const styledText = caption.replace(/(Correct: )(\d+)/g, '$1<span style="font-size: 40px;">$2</span>');
                         captionElement.innerHTML = styledText.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
                         captionElement.style.fontSize = '13px'; // Set font size to 20px
                         captionElement.style.fontWeight = 'bold'; // Set font weight to bold
                         captionElement.style.textAlign = 'left'; // Align text to the left
                         captionElement.style.paddingLeft = '10px';
+                        captionElement.style.whiteSpace = 'nowrap';
                         messageElement.appendChild(captionElement);
-
                         if (caption.toLowerCase().includes("still save it ?")) {
                             const overlayButton = document.createElement('button');
                             overlayButton.innerText = 'Save';
