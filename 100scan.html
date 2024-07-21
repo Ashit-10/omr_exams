@@ -76,7 +76,7 @@
         }
 
         video {
-            width: calc(100% - 10px);
+            width: calc(100% - 20px);
             height: 70vh;
             margin: 0 5px;
             object-fit: cover;
@@ -296,7 +296,7 @@
             margin-right: 10px;
             /* Add margin to separate buttons */
         }
-        
+
 
         .warning {
             color: red;
@@ -334,6 +334,13 @@
             font-size: 20px;
             vertical-align: middle;
         }
+        .controls {
+            width: calc(100% - 30px);
+            margin: 0 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 
 </head>
@@ -361,29 +368,19 @@
         <div id="false-div"></div>
         <video id="video" playsinline autoplay></video>
         <div id="overlayText">Put the qr codes inside the box</div> <!-- Text over -->
-
         <div id="overlayBox"></div>
         <div id="overlayBox2"></div>
         <div id="overlayBox3"></div>
         <div id="overlayBox4"></div>
         <div id="overlayBox1"></div> <!-- Empty square -->
     </div>
-
+<div class="controls">
     <div id="remove1">
-        <!-- <button onclick="toggleFlashlight()">Toggle Flashlight</button> -->
-
-
-        <!-- Add flashlight button -->
         <button id="flashlightButton">Flashlight</button>
         <button id="capture-btn">Capture</button>
-
         <button id="reloadbtn">Cancel</button>
-
-
         <div class="loader1" id="loader1"></div>
         <br>
-
-        <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
 
         <form id="myForm">
             <!-- Add the input field next to the capture and cancel buttons -->
@@ -394,7 +391,6 @@
     </div>
 
     <div id="remove2">
-        <!-- <h5>Or select file from below</h5> -->
 
         <input type="file" id="fileInput">
         <button onclick="sendImage()">Check Result</button>
@@ -406,7 +402,7 @@
             </div>
         </div>
     </div>
-    <!--  </div> -->
+     </div>
     <br><br><br><br>
     <br><br><br><br>
 
