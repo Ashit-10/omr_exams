@@ -9,23 +9,21 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
         }
         video {
-            width: 80%;
-            max-width: 600px;
+            width: 100%;
             border: 2px solid #ccc;
-            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         canvas {
             display: none;
         }
         button {
-            margin-top: 20px;
+            margin-top: 10px;
             padding: 10px 20px;
             font-size: 16px;
             background-color: #007BFF;
@@ -49,6 +47,7 @@
         const captureButton = document.getElementById('capture');
         const constraints = {
             video: {
+                facingMode: { exact: "environment" }, // Use back camera
                 width: { ideal: 1280 },
                 height: { ideal: 720 }
             }
