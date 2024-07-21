@@ -1002,31 +1002,24 @@
         function captureImage(delay) {
             setTimeout(function () {
                 var video = document.getElementById('video');
-                var canvas = document.createElement('canvas'); 
-                canvas.width = video.clientWidth;
-                canvas.height = video.clientHeight;
+                var canvas = document.createElement('canvas');
+                var displayedWidth = video.clientWidth;
+                var displayedHeight = video.clientHeight;
 
-                var context = canvas.getContext('2d');
+                // Set canvas size to match the displayed dimensions
+                canvas.width = displayedWidth;
+                canvas.height = displayedHeight;
 
                 video.pause(); // Pause the video stream
                 stopSparkling();
 
-                // Get the scaling factor between the intrinsic video dimensions and the displayed dimensions
-                var scaleX = video.videoWidth / video.clientWidth;
-                var scaleY = video.videoHeight / video.clientHeight;
+                // Calculate the scale factor to map the displayed dimensions to the actual video dimensions
+                var scaleX = video.videoWidth / displayedWidth;
+                var scaleY = video.videoHeight / displayedHeight;
 
-                // Get coordinates of the box relative to the video frame
-                const boxRect = overlayBox.getBoundingClientRect();
-                const videoRect = video.getBoundingClientRect();
+                // Draw the visible portion of the video on the canvas
+                context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, displayedWidth, displayedHeight);
 
-                // Calculate the visible area in the video element in terms of the intrinsic dimensions
-                const startX = (boxRect.left - videoRect.left) * scaleX;
-                const startY = (boxRect.top - videoRect.top) * scaleY;
-                const width = boxRect.width * scaleX;
-                const height = boxRect.height * scaleY;
-
-                // Draw the visible area of the video onto the canvas
-                context.drawImage(video, startX, startY, width, height, 0, 0, canvas.width, canvas.height);
 
 
                 //             console.log(video.videoHeight);   480
