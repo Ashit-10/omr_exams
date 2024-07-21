@@ -3,7 +3,7 @@
       "compression": "Off",
       "allowPartialMarks": "On",
       "compressionSize": "150 KB",
-      "examFolder": "class-10_science_4",
+      "examFolder": "class-9_mathematics_1",
       "signature": "Rupa",
       "tuition": "MVM"
 }
