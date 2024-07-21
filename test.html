@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Capture</title>
+    <title>Video Capture</title>
     <style>
         body {
             display: flex;
@@ -15,18 +15,23 @@
             background-color: #f0f0f0;
         }
         video {
-            max-width: 100%;
+            width: 80%;
+            max-width: 600px;
             border: 2px solid #ccc;
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        canvas {
+            display: none;
         }
         button {
             margin-top: 20px;
             padding: 10px 20px;
             font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            background-color: #007bff;
+            background-color: #007BFF;
             color: white;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
         }
         button:hover {
@@ -36,37 +41,47 @@
 </head>
 <body>
     <video id="video" playsinline autoplay></video>
-    <button id="capture">Capture</button>
-    <canvas id="canvas" style="display: none;"></canvas>
+    <button id="capture">Capture Image</button>
+    <canvas id="canvas"></canvas>
     <script>
-        // Get elements
         const video = document.getElementById('video');
-        const captureButton = document.getElementById('capture');
         const canvas = document.getElementById('canvas');
-        const context = canvas.getContext('2d');
+        const captureButton = document.getElementById('capture');
+        const constraints = {
+            video: {
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
+        };
 
-        // Access the device camera and stream to the video element
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-            .then((stream) => {
+        async function startVideo() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
                 video.srcObject = stream;
-            })
-            .catch((err) => {
-                console.error("Error accessing camera: ", err);
-            });
+            } catch (error) {
+                console.error('Error accessing camera: ', error);
+            }
+        }
 
-        // Capture the image on button click
         captureButton.addEventListener('click', () => {
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const image = canvas.toDataURL('image/png');
-
-            // Create a link element to download the image
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = 'captured_image.png';
-            link.click();
+            const imageUrl = canvas.toDataURL('image/png');
+            downloadImage(imageUrl);
         });
+
+        function downloadImage(dataUrl) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = 'captured-image.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        startVideo();
     </script>
 </body>
 </html>
