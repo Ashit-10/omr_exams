@@ -62,7 +62,8 @@
         }
 
 
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             width: 100%;
@@ -73,6 +74,23 @@
             justify-content: flex-start;
             background-color: #f0f0f0;
         }
+
+        video {
+            width: calc(100% - 10px);
+            /* Subtract 10px for margin (5px on each side) */
+            height: 80vh;
+            margin: 0 5px;
+            /* Add 5px margin on left and right */
+            object-fit: cover;
+            /* Ensure the video covers the entire area */
+            border: 2px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* .cameraContainer {
+            position: relative;
+            overflow: hidden;
+        } */
 
         h1 {
             margin-bottom: 20px;
@@ -199,46 +217,6 @@
 
         /* Keyframe animation for sparkling effect */
         @keyframes sparkle {
-            0% {
-                border-color: rgba(245, 248, 245, 1);
-            }
-
-            10% {
-                border-color: rgba(1, 20, 4, 1);
-            }
-
-            20% {
-                border-color: rgba(151, 129, 1, 1);
-            }
-
-            30% {
-                border-color: rgba(248, 5, 167, 1);
-            }
-
-            40% {
-                border-color: rgba(42, 4, 179, 1);
-            }
-
-            50% {
-                border-color: rgba(2, 143, 89, 1);
-            }
-
-            60% {
-                border-color: rgba(5, 199, 47, 1);
-            }
-
-            70% {
-                border-color: rgba(153, 240, 14, 1);
-            }
-
-            80% {
-                border-color: rgba(230, 10, 94, 1);
-            }
-
-            90% {
-                border-color: rgba(248, 6, 6, 1);
-            }
-
             100% {
                 border-color: rgba(35, 228, 67, 1);
             }
@@ -256,25 +234,6 @@
             border-color: green !important;
         }
 
-        .cameraContainer:before {
-          width: calc(100% - 10px); /* Subtract 10px for margin */
-            height: 80vh;
-            margin: 5px; /* Add 5px margin on all sides */
-            object-fit: cover; /* Ensure the video covers the entire area */
-            border: 2px solid #ccc;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        
-        }
-
-        .cameraContainer:after {
-      width: calc(100% - 10px); /* Subtract 10px for margin */
-            height: 80vh;
-            margin: 5px; /* Add 5px margin on all sides */
-            object-fit: cover; /* Ensure the video covers the entire area */
-            border: 2px solid #ccc;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        
-        }
 
         /* Add this style for the loader */
         .loader-overlay {
@@ -331,7 +290,7 @@
 
         /* Style the input field */
         #rollNumberInput {
-            width: calc(100% - 44px);
+            width: 60%;
             /* Adjust width to fit next to buttons */
             padding: 10px;
             margin-bottom: 10px;
@@ -358,6 +317,29 @@
 
         audio {
             display: none;
+        }
+
+        #myForm {
+            display: inline-flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #chek {
+            width: 30px;
+            height: 30px;
+        }
+
+        #chek2 {
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+        }
+
+        .checkbox-label {
+            margin-right: 15px;
+            font-size: 20px;
+            vertical-align: middle;
         }
     </style>
 
@@ -387,34 +369,40 @@
         <video id="video" playsinline autoplay></video>
         <div id="overlayText">Put the qr codes inside the box</div> <!-- Text over -->
 
-       <div id="overlayBox"></div>
+        <div id="overlayBox"></div>
         <div id="overlayBox2"></div>
         <div id="overlayBox3"></div>
         <div id="overlayBox4"></div>
-        <div id="overlayBox1"></div> <!--  Empty square -->
+        <div id="overlayBox1"></div> <!-- Empty square -->
     </div>
-    <br>
+
     <div id="remove1">
         <!-- <button onclick="toggleFlashlight()">Toggle Flashlight</button> -->
 
-        <!-- Add the input field next to the capture and cancel buttons -->
-        <input type="text" id="rollNumberInput" placeholder="Enter Roll No (Optional)  ">
-        <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
+
         <!-- Add flashlight button -->
         <button id="flashlightButton">Flashlight</button>
         <button id="capture-btn">Capture</button>
 
         <button id="reloadbtn">Cancel</button>
+
+
         <div class="loader1" id="loader1"></div>
-        <br><br>
+        <br>
 
         <!-- <canvas id="canvas" width="350" height="450"></canvas> -->
+
+        <form id="myForm">
+            <!-- Add the input field next to the capture and cancel buttons -->
+            <input type="text" id="rollNumberInput" placeholder="Roll No (Optional)  ">
+            <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
+            Image is darker <input id="chek" type="checkbox" name="option" value="shadow">
+        </form>
     </div>
 
     <div id="remove2">
-        <h5>Or select file from below
-        </h5>
-        <br>
+        <!-- <h5>Or select file from below</h5> -->
+
         <input type="file" id="fileInput">
         <button onclick="sendImage()">Check Result</button>
         <div class="loader" id="loader"></div>
@@ -427,9 +415,11 @@
     </div>
     <!--  </div> -->
     <br><br><br><br>
-
+    <br><br><br><br>
 
     <script>
+        var isCheckboxChecked = document.getElementById('chek').checked;
+        console.log(isCheckboxChecked);
 
         const Fwidth2 = 180;
         const Fheight2 = 440;
@@ -488,7 +478,12 @@
 
                 // Append caption to FormData
                 var caption = document.getElementById('rollNumberInput').value;
-                formData.append('caption', caption);
+                var is_shadow = document.getElementById('chek').checked;
+                if (is_shadow) {
+                    formData.append('caption', caption + ' dark');
+                } else {
+                    formData.append('caption', caption);
+                }
 
                 const loaderOverlay = document.getElementById('loaderOverlay');
                 loaderOverlay.style.display = 'flex'; // Display loader overlay
@@ -720,7 +715,8 @@
 
                     if (caption) {
                         const captionElement = document.createElement('p');
-                        captionElement.innerHTML = caption.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
+                        const styledText = caption.replace(/(Correct: )(\d+)/g, '$1<span style="font-size: 40px; font-weight: bold;">$2</span>');
+                        captionElement.innerHTML = styledText.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
                         captionElement.style.fontSize = '13px'; // Set font size to 20px
                         captionElement.style.fontWeight = 'bold'; // Set font weight to bold
                         captionElement.style.textAlign = 'left'; // Align text to the left
@@ -730,7 +726,7 @@
                         if (caption.toLowerCase().includes("still save it ?")) {
                             const overlayButton = document.createElement('button');
                             overlayButton.innerText = 'Save';
-                           
+
                             const savespinner = document.createElement('div');
                             savespinner.id = 'save-spinner';
                             savespinner.style.display = 'none'; // Initially hidden
@@ -787,19 +783,48 @@
                     updateButton.style.width = '60%';
                     updateButton.style.display = 'none';
                     updateButton.style.display = 'inline';
+                    // Create the checkbox input element
+                    const checkbox2 = document.createElement('input');
+                    checkbox2.type = 'checkbox';
+                    checkbox2.id = 'chek2';
+
+                    // Create a label for the checkbox
+                    const label = document.createElement('label');
+                    label.className = 'checkbox-label'; // Add a class for styling
+                    label.htmlFor = 'chek2';
+                    label.textContent = 'Image is darker';
+
+                    let up_roll_data;
+                    up_roll_data = rollNumber;
+
+                    if (old_caption && old_caption.includes("dark")) {
+                        checkbox2.checked = true;
+                    } else {
+                        checkbox2.checked = false;
+                    }
+
                     updateButton.addEventListener('click', async () => {
                         const rollNumber = rollInput.value;
                         if (rollNumber && rollNumber <= 99 && rollNumber > 0) {
                             updateButton.innerText = 'Updating...'; // Change button text
-                            if (rollNumber == old_caption) {
+                            if (old_caption && old_caption.includes(rollNumber)) {
                                 alert('Please enter a new roll number, different from old roll number!');
                                 updateButton.innerText = 'Update Roll No'; // Change button text
 
                             } else {
                                 updateButton.disabled = true; // Disable button
                                 // const replyToMessageId = current_id;
+
+                                var darkcap = document.getElementById('chek2').checked;
+                                console.log(darkcap, 'darkcap');
+                                if (darkcap) {
+                                    up_roll_data = rollNumber + ' dark';
+                                } else {
+                                    up_roll_data = rollNumber;
+                                }
+
                                 console.log(og_id);
-                                console.log(rollNumber);
+                                console.log(up_roll_data);
                                 await fetch(`${TELEGRAM_API_URL}/editMessageCaption`, {
                                     method: 'POST',
                                     headers: {
@@ -808,7 +833,7 @@
                                     body: JSON.stringify({
                                         chat_id: chatId,
                                         message_id: og_id,
-                                        caption: rollNumber
+                                        caption: up_roll_data
                                     })
                                 });
                             }
@@ -820,6 +845,10 @@
                     rollInputContainer.appendChild(rollInput);
                     rollInputContainer.appendChild(updateButton);
                     messageElement.appendChild(rollInputContainer);
+                    messageElement.appendChild(label);
+                    messageElement.appendChild(checkbox2);
+                    const br2 = document.createElement('br');
+                    messageElement.appendChild(br2);
 
                     if (!isSending) {
                         loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
@@ -1003,7 +1032,12 @@
 
                     // Append caption to FormData
                     var caption = document.getElementById('rollNumberInput').value;
-                    formData1.append('caption', caption);
+                    var is_shadow = document.getElementById('chek').checked;
+                    if (is_shadow) {
+                        formData1.append('caption', caption + ' dark');
+                    } else {
+                        formData1.append('caption', caption);
+                    }
 
                     const loaderOverlay = document.getElementById('loaderOverlay');
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
