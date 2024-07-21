@@ -336,6 +336,7 @@
             flex-direction: column;
             align-items: center;
         }
+
         .controls2 {
             width: calc(100% - 30px);
             margin: 0 20px;
@@ -377,36 +378,36 @@
         <div id="overlayBox4"></div>
         <div id="overlayBox1"></div> <!-- Empty square -->
     </div>
-<div class="controls">
-    <div id="remove1">
-        <button id="flashlightButton">Flashlight</button>
-        <button id="capture-btn">Capture</button>
-        <button id="reloadbtn">Cancel</button>
-        <div class="loader1" id="loader1"></div>
-        <br>
+    <div class="controls">
+        <div id="remove1">
+            <button id="flashlightButton">Flashlight</button>
+            <button id="capture-btn">Capture</button>
+            <button id="reloadbtn">Cancel</button>
+            <div class="loader1" id="loader1"></div>
+            <br>
 
-        <form id="myForm">
-            <!-- Add the input field next to the capture and cancel buttons -->
-            <input type="text" id="rollNumberInput" placeholder="Roll No (Optional)  ">
-            <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
-            Image is darker <input id="chek" type="checkbox" name="option" value="shadow">
-        </form>
-    </div>
+            <form id="myForm">
+                <!-- Add the input field next to the capture and cancel buttons -->
+                <input type="text" id="rollNumberInput" placeholder="Roll No (Optional)  ">
+                <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
+                Image is darker <input id="chek" type="checkbox" name="option" value="shadow">
+            </form>
+        </div>
 
-    <div id="remove2">
+        <div id="remove2">
 
-        <input type="file" id="fileInput">
-        <br> 
-        <button class="controls" onclick="sendImage()">Check Result</button>
-        <div class="loader" id="loader"></div>
-        <!-- Add loader overlay -->
-        <div class="loader-overlay" id="loaderOverlay" style="display: none;">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+            <input type="file" id="fileInput">
+            <br>
+            <button class="controls" onclick="sendImage()">Check Result</button>
+            <div class="loader" id="loader"></div>
+            <!-- Add loader overlay -->
+            <div class="loader-overlay" id="loaderOverlay" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
         </div>
     </div>
-     </div>
     <br><br><br><br>
     <br><br><br><br>
 
@@ -1001,21 +1002,48 @@
         function captureImage(delay) {
             setTimeout(function () {
                 var video = document.getElementById('video');
-                var canvas = document.createElement('canvas');
-    //             console.log(video.videoHeight);   480
-    // console.log(video.videoWidth);   640
-                canvas.height = video.videoHeight; 
-                canvas.width = video.videoWidth;
+                var canvas = document.createElement('canvas'); 
+                canvas.width = video.clientWidth;
+                canvas.height = video.clientHeight;
+
                 var context = canvas.getContext('2d');
-                // context.translate(canvas.height, 0);
-                // context.rotate(-Math.PI / 2);
+
                 video.pause(); // Pause the video stream
                 stopSparkling();
+
+                // Get the scaling factor between the intrinsic video dimensions and the displayed dimensions
+                var scaleX = video.videoWidth / video.clientWidth;
+                var scaleY = video.videoHeight / video.clientHeight;
+
                 // Get coordinates of the box relative to the video frame
                 const boxRect = overlayBox.getBoundingClientRect();
                 const videoRect = video.getBoundingClientRect();
 
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                // Calculate the visible area in the video element in terms of the intrinsic dimensions
+                const startX = (boxRect.left - videoRect.left) * scaleX;
+                const startY = (boxRect.top - videoRect.top) * scaleY;
+                const width = boxRect.width * scaleX;
+                const height = boxRect.height * scaleY;
+
+                // Draw the visible area of the video onto the canvas
+                context.drawImage(video, startX, startY, width, height, 0, 0, canvas.width, canvas.height);
+
+
+                //             console.log(video.videoHeight);   480
+                //             console.log(video.videoWidth);   640
+                // canvas.height = video.videoHeight; 
+                // canvas.width = video.videoWidth;
+                // var context = canvas.getContext('2d');
+                // // context.translate(canvas.height, 0);
+                // // context.rotate(-Math.PI / 2);
+                // video.pause(); // Pause the video stream
+                // stopSparkling();
+                // // Get coordinates of the box relative to the video frame
+                // const boxRect = overlayBox.getBoundingClientRect();
+                // const videoRect = video.getBoundingClientRect();
+
+                // context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
                 stopCamera();
