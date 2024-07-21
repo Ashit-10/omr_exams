@@ -1,101 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera and Flashlight Access</title>
+    <title>Class - 9</title>
     <style>
         body {
+            font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            /* justify-content: center; */
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background: #e0e0e0; /* Light grey background */
         }
-
-        video {
-            width: 100%;
-            max-width: 600px;
-            border: 1px solid #ccc;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-
-        #status {
-            margin-top: 10px;
-            font-size: 14px;
+        h1 {
             color: #333;
+            font-size: 3em;
+            margin-bottom: 20px; /* Moves the heading up */
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 30px;
+            text-align: center;
+            text-decoration: none;
+            transition: box-shadow 0.3s, transform 0.3s;
+            box-shadow: 8px 8px 16px #bebebe, -8px -8px 16px #ffffff; /* Neomorphic shadow */
+            margin-bottom: 20px; /* Adjust the position of the button */
+        }
+        .btn:hover {
+            box-shadow: 8px 8px 20px #bebebe, -8px -8px 20px #ffffff;
+            transform: translateY(-3px);
+        }
+        .btn:active {
+            box-shadow: inset 8px 8px 16px #bebebe, inset -8px -8px 16px #ffffff;
+            transform: translateY(1px);
         }
     </style>
 </head>
-
 <body>
-    <video id="video" autoplay playsinline></video>
-    <button id="flashlight-on">Turn On Flashlight</button>
-    <button id="flashlight-off">Turn Off Flashlight</button>
-    <p id="status"></p>
-    <script>
-        let videoTrack;
-        let isFlashlightOn = false;
-
-        async function startCamera() {
-            const constraints = {
-                video: {
-                    facingMode: { exact: "environment" } // Use the back camera
-                }
-            };
-
-            try {
-                // Request access to the user's back camera
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                const videoElement = document.getElementById('video');
-                videoElement.srcObject = stream;
-
-                // Get the video track to control the flashlight
-                videoTrack = stream.getVideoTracks()[0];
-
-                // Add event listeners to the buttons
-                const onButton = document.getElementById('flashlight-on');
-                const offButton = document.getElementById('flashlight-off');
-                onButton.addEventListener('click', () => toggleFlashlight(true));
-                offButton.addEventListener('click', () => toggleFlashlight(false));
-
-                document.getElementById('status').innerText = 'Camera started successfully.';
-            } catch (error) {
-                document.getElementById('status').innerText = 'Error accessing camera: ' + error.message;
-                console.error('Error accessing camera or flashlight:', error);
-            }
-        }
-
-        async function toggleFlashlight(state) {
-            try {
-                // Check if the state is different from the current state
-                if (state !== isFlashlightOn) {
-                    // Apply constraints to toggle the flashlight state
-                    const constraints = { advanced: [{ torch: state }] };
-                    await videoTrack.applyConstraints(constraints);
-                    isFlashlightOn = state;
-                    document.getElementById('status').innerText = `Flashlight ${state ? 'on' : 'off'}`;
-                    console.log(`Flashlight ${state ? 'on' : 'off'}`);
-                } else {
-                    console.log(`Flashlight is already ${state ? 'on' : 'off'}`);
-                }
-            } catch (error) {
-                document.getElementById('status').innerText = 'Error toggling flashlight: ' + error.message;
-                console.error('Error toggling flashlight:', error);
-            }
-        }
-        // Start the camera when the page loads
-        startCamera();
-    </script>
+    <h1>Exams list</h1>
+    <a href="class-10/class-10_english_1.html" class="btn">Math (20.07.2024)</a><br>
+    
+    
 </body>
-
 </html>
