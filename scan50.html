@@ -973,7 +973,7 @@
             }
         }
 
-        const video = document.getElementById('video');
+        // const video = document.getElementById('video');
         // const canvas = document.getElementById('canvas');
         const capturedImage = document.getElementById('capturedImage');
         const captureButton = document.getElementById('captureButton');
@@ -1002,10 +1002,10 @@
             setTimeout(function () {
                 var video = document.getElementById('video');
                 var canvas = document.createElement('canvas');
-                console.log(video.height);
-                console.log(video.width);
-                canvas.width = newHeight;
-                canvas.height = newWidth;
+    //             console.log(video.videoHeight);   480
+    // console.log(video.videoWidth);   640
+                canvas.width = video.videoHeight * 2; 
+                canvas.height = video.videoWidth * 2;
                 var context = canvas.getContext('2d');
                 // context.translate(canvas.height, 0);
                 // context.rotate(-Math.PI / 2);
