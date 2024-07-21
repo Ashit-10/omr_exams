@@ -76,9 +76,9 @@
         }
 
         video {
-            width: calc(100% - 40px);
+            width: calc(100% - 80px);
             height: 70vh;
-            margin: 0 20px;
+            margin: 0 40px;
             margin-top: -20px;
             object-fit: cover;
             border: 2px solid #ccc;
@@ -336,6 +336,13 @@
             flex-direction: column;
             align-items: center;
         }
+        .controls2 {
+            width: calc(100% - 30px);
+            margin: 0 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
     </style>
 
 </head>
@@ -388,7 +395,8 @@
     <div id="remove2">
 
         <input type="file" id="fileInput">
-        <button onclick="sendImage()">Check Result</button>
+        <br> 
+        <button class="controls" onclick="sendImage()">Check Result</button>
         <div class="loader" id="loader"></div>
         <!-- Add loader overlay -->
         <div class="loader-overlay" id="loaderOverlay" style="display: none;">
@@ -691,7 +699,7 @@
                     messagesDiv2.innerHTML = ''; // Clear older messages2
                     const messageElement = document.createElement('div');
                     messageElement.classList.add('message');
-                    messageElement.className = 'controls';
+                    messageElement.className = 'controls2';
 
                     if (caption) {
                         const captionElement = document.createElement('p');
@@ -753,6 +761,7 @@
                     rollInput.max = '99';
                     rollInput.placeholder = 'Enter roll no';
                     rollInput.style.marginRight = '10px';
+                    rollInput.style.marginLeft = '20px';
                     rollInput.style.width = '30%';
 
                     const updateButton = document.createElement('button');
@@ -849,11 +858,16 @@
                     // Add back button in the middle of the device screen
                     backButton1.innerText = 'Back';
                     backButton1.marginTop = "20px";
+                    // backButton1.marginLeft = "40%";
 
                     backButton1.addEventListener('click', function () {
                         location.reload();
                     });
                     messageElement.appendChild(backButton1);
+                    const br3 = document.createElement('br');
+                    const br4 = document.createElement('br');
+                    messageElement.appendChild(br3);
+                    messageElement.appendChild(br4);
 
 
                 }
