@@ -379,10 +379,11 @@
         <div id="overlayBox1"></div> <!-- Empty square -->
     </div>
     <div class="controls">
-        <div id="remove1">
+  
+      <div id="remove1">
             <button id="flashlightButton">Flashlight</button>
             <button id="capture-btn">Capture</button>
-            <button id="downloadButton" onclick="saveImage()" download="capture.png">Save</button>
+            <button id="downloadButton" onclick="saveImage()" >Save</button>
             <!-- <a id="downloadButton" download="capture.png">Download</a> -->
             <div class="loader1" id="loader1"></div>
             <br>
@@ -1131,7 +1132,7 @@
             // video.pause(); // Pause the video stream
             // stopSparkling();
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            var imageUrl = canvas.toDataURL('image/png');
+            var imageUrl = canvas.toDataURL('image/jpg');
             // downloadButton.href = canvas.toDataURL('image/png');
             downloadImage(imageUrl);
             
@@ -1145,6 +1146,7 @@
             link.click();
             document.body.removeChild(link);
         }
+
         function handleVisibilityChange() {
             if (document.hidden) {
                 // Page is now hidden, stop the camera
