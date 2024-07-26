@@ -336,6 +336,7 @@
             flex-direction: column;
             align-items: center;
         }
+
         .controls2 {
             width: calc(100% - 30px);
             margin: 0 20px;
@@ -377,36 +378,37 @@
         <div id="overlayBox4"></div>
         <div id="overlayBox1"></div> <!-- Empty square -->
     </div>
-<div class="controls">
-    <div id="remove1">
-        <button id="flashlightButton">Flashlight</button>
-        <button id="capture-btn">Capture</button>
-        <button id="reloadbtn">Cancel</button>
-        <div class="loader1" id="loader1"></div>
-        <br>
+    <div class="controls">
+        <div id="remove1">
+            <button id="flashlightButton">Flashlight</button>
+            <button id="capture-btn">Capture</button>
+            <button id="downloadButton" onclick="saveImage()" download="capture.png">Save</button>
+            <!-- <a id="downloadButton" download="capture.png">Download</a> -->
+            <div class="loader1" id="loader1"></div>
+            <br>
 
-        <form id="myForm">
-            <!-- Add the input field next to the capture and cancel buttons -->
-            <input type="text" id="rollNumberInput" placeholder="Roll No (Optional)  ">
-            <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
-            Image is darker <input id="chek" type="checkbox" name="option" value="shadow">
-        </form>
-    </div>
+            <form id="myForm">
+                <!-- Add the input field next to the capture and cancel buttons -->
+                <input type="text" id="rollNumberInput" placeholder="Roll No (Optional)  ">
+                <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
+                Image is darker <input id="chek" type="checkbox" name="option" value="shadow">
+            </form>
+        </div>
 
-    <div id="remove2">
+        <div id="remove2">
 
-        <input type="file" id="fileInput">
-        <br> 
-        <button class="controls" onclick="sendImage()">Check Result</button>
-        <div class="loader" id="loader"></div>
-        <!-- Add loader overlay -->
-        <div class="loader-overlay" id="loaderOverlay" style="display: none;">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+            <input type="file" id="fileInput">
+            <br>
+            <button class="controls" onclick="sendImage()">Check Result</button>
+            <div class="loader" id="loader"></div>
+            <!-- Add loader overlay -->
+            <div class="loader-overlay" id="loaderOverlay" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
         </div>
     </div>
-     </div>
     <br><br><br><br>
     <br><br><br><br>
 
@@ -995,16 +997,16 @@
         // Start camera button click event
         startCamera();
 
-        const newWidth = 1280;
-        const newHeight = 640;
+        // const newWidth = 1280;
+        // const newHeight = 640;
 
         function captureImage(delay) {
             setTimeout(function () {
                 var video = document.getElementById('video');
                 var canvas = document.createElement('canvas');
-    //             console.log(video.videoHeight);   480
-    //             console.log(video.videoWidth);   640
-                canvas.height = video.videoHeight; 
+                //             console.log(video.videoHeight);   480
+                //             console.log(video.videoWidth);   640
+                canvas.height = video.videoHeight;
                 canvas.width = video.videoWidth;
                 var context = canvas.getContext('2d');
                 // context.translate(canvas.height, 0);
@@ -1012,11 +1014,11 @@
                 video.pause(); // Pause the video stream
                 stopSparkling();
                 // Get coordinates of the box relative to the video frame
-                const boxRect = overlayBox.getBoundingClientRect();
-                const videoRect = video.getBoundingClientRect();
+                // const boxRect = overlayBox.getBoundingClientRect();
+                // const videoRect = video.getBoundingClientRect();
 
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
+
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
                 stopCamera();
@@ -1117,11 +1119,32 @@
         // Polling function to fetch bot replies every 5 seconds
         setInterval(fetchBotReplies, 3000);
 
-        // Toggle flashlight
-        reloadBtn.addEventListener('click', () => {
-            location.reload();
-        });
 
+        const downloadButton = document.getElementById('downloadButton');
+        // Capture the image and set the download link
+        function saveImage() {
+            var video = document.getElementById('video');
+            var canvas = document.createElement('canvas');
+            canvas.height = video.videoHeight;
+            canvas.width = video.videoWidth;
+            var context = canvas.getContext('2d');
+            // video.pause(); // Pause the video stream
+            // stopSparkling();
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var imageUrl = canvas.toDataURL('image/png');
+            // downloadButton.href = canvas.toDataURL('image/png');
+            downloadImage(imageUrl);
+            
+        }
+
+        function downloadImage(dataUrl) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = 'captured_image.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
         function handleVisibilityChange() {
             if (document.hidden) {
                 // Page is now hidden, stop the camera
