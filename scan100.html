@@ -76,9 +76,11 @@
         }
 
         video {
-            width: calc(100% - 16%);
-            height: 70vh;
-            margin: 0 8%;
+            /* width: calc(100% - 50%); */
+            /* height: 70vh; */
+            width: 350px;
+            height: 480px;
+            margin: 0 calc(100% - 160px)/2;
             margin-top: -20px;
             object-fit: cover;
             border: 2px solid #ccc;
@@ -172,7 +174,7 @@
             /* Adjust size as needed */
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
-            top: 495px;
+            top: 455px;
             left: calc(10%);
             transform: translate((-50%));
         }
@@ -188,7 +190,7 @@
             /* Adjust size as needed */
             pointer-events: none;
             /* Ensures the box doesn't interfere with clicking the video */
-            top: 495px;
+            top: 455px;
             right: calc(13%);
             transform: translate((-50%));
         }
@@ -381,7 +383,8 @@
     <div id="remove1">
         <button id="flashlightButton">Flashlight</button>
         <button id="capture-btn">Capture</button>
-        <button id="reloadbtn">Cancel</button>
+        <!-- <button id="reloadbtn">Cancel</button> -->
+        <button id="downloadButton" onclick="saveImage()" >Save</button>
         <div class="loader1" id="loader1"></div>
         <br>
 
@@ -1113,11 +1116,31 @@
         // Polling function to fetch bot replies every 5 seconds
         setInterval(fetchBotReplies, 3000);
 
-        // Toggle flashlight
-        reloadBtn.addEventListener('click', () => {
-            location.reload();
-        });
+        const downloadButton = document.getElementById('downloadButton');
+        // Capture the image and set the download link
+        function saveImage() {
+            var video = document.getElementById('video');
+            var canvas = document.createElement('canvas');
+            canvas.height = video.videoHeight;
+            canvas.width = video.videoWidth;
+            var context = canvas.getContext('2d');
+            // video.pause(); // Pause the video stream
+            // stopSparkling();
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var imageUrl = canvas.toDataURL('image/jpg');
+            // downloadButton.href = canvas.toDataURL('image/png');
+            downloadImage(imageUrl);
+            
+        }
 
+        function downloadImage(dataUrl) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = 'captured_image.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
         function handleVisibilityChange() {
             if (document.hidden) {
                 // Page is now hidden, stop the camera
