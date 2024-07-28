@@ -1,9 +1,9 @@
 {
       "autoSave": "On",
-      "compression": "Off",
-      "allowPartialMarks": "On",
+      "compression": "On",
+      "allowPartialMarks": "Off",
       "compressionSize": "150 KB",
-      "examFolder": "class-9_mathematics_1",
-      "signature": "Rupa",
-      "tuition": "MVM"
+      "examFolder": "class-10_english_3",
+      "signature": "Lakhia",
+      "tuition": "WSC"
 }
