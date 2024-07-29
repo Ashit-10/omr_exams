@@ -388,11 +388,11 @@
             var tuitionValue = tuition.toUpperCase();
             if (examFolderValue) {
                 const cls = examFolderValue.split('_')[0];
-                if (tuitionValue === "MVM") {
-                    tuitionValue = '2024';
-                }
-                const link1 = `https://ashit.xyz/answer_file.html?filename=${tuitionValue}/${cls}/${examFolderValue}/${examFolderValue}_ans_key.txt`;
-                const link2 = `https://ashit.xyz/names.html?filename=${tuitionValue}/${cls}/${cls}_rolls.txt`;
+              //  if (tuitionValue === "MVM") {
+              //      tuitionValue = '2024';
+             //   }   
+                const link1 = `https://ashit.xyz/answer_file.html?filename=${tuitionValue}/2024/${cls}/${examFolderValue}/${examFolderValue}_ans_key.txt`;
+                const link2 = `https://ashit.xyz/names.html?filename=${tuitionValue}/2024/${cls}/${cls}_rolls.txt`;
                 document.getElementById('link1').href = link1;
                 document.getElementById('link1').textContent = 'Answer Key';
                 document.getElementById('link2').href = link2;
