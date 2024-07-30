@@ -89,7 +89,16 @@
             <button type="submit">Verify OTP</button>
         </form>
     </div>
-
+    <div class="container" id="login-message-container" style="display: none;">
+        <h2>Login Successful</h2>
+        <p>Welcome! Choose an action:</p>
+        <button onclick="window.location.href='select.html'">Control pannel</button>
+    <button onclick="window.location.href='page2.html'">Old type omr scanner</button>
+    <button onclick="window.location.href='scan50.html'">50 omr scanner</button>
+    <button onclick="window.location.href='scan100.html'">100 omr scanner</button>
+    <!-- <button onclick="window.location.href='page2.html'">Go to Page 2</button> -->
+        <!-- Add more buttons as needed -->
+    </div>
     <script>
         const loginContainer = document.getElementById('login-container');
         const signupContainer = document.getElementById('signup-container');
@@ -181,7 +190,8 @@
                 document.querySelector('.logging-in').style.display = 'block';
                 document.querySelector('.link').style.display = 'none';
                 setTimeout(() => {
-                    window.location.href = 'scan.html';
+                    document.getElementById('login-container').style.display = 'none';
+            document.getElementById('login-message-container').style.display = 'block';
                 }, 3500);
             } else {
                 alert('Incorrect ID or Password.');
@@ -207,7 +217,7 @@
             document.getElementById('login-form').dispatchEvent(new Event('submit'));  // Trigger form submit
         });
 
-        
+
         if (document.referrer.includes('login.html')) {
         // Replace the current history entry with index.html
         window.location.replace('index.html');
