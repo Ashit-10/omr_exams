@@ -63,7 +63,7 @@
     <div class="container" id="login-container">
         <h2>Login</h2>
         <form id="login-form">
-            <input type="text" id="login-id" placeholder="Enter user ID" required>
+            <input type="text" id="login-id" placeholder="Enter your email" required>
             <input type="password" id="login-password" placeholder="Enter your Password" required>
             <button type="submit">Login</button>
         </form>
@@ -75,7 +75,7 @@
     <div class="container" id="signup-container" style="display: none;">
         <h2>Sign Up</h2>
         <form id="signup-form">
-            <input type="email" id="signup-email" placeholder="Enter user Id" required>
+            <input type="email" id="signup-email" placeholder="Enter your Email" required>
             <input type="password" id="signup-password" placeholder="Enter your Password" required>
             <button type="submit">Sign Up</button>
         </form>
@@ -184,6 +184,8 @@
                 }, 3500);
             } else {
                 alert('Incorrect ID or Password.');
+                console.log(email, password);
+                console.log(userData);
             }
         });
 
