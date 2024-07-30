@@ -179,6 +179,7 @@
                 const now = new Date().getTime();
                 localStorage.setItem('loginData', JSON.stringify({ email, password, timestamp: now }));
                 document.querySelector('.logging-in').style.display = 'block';
+                document.querySelector('.link').style.display = 'none';
                 setTimeout(() => {
                     window.location.href = 'scan.html';
                 }, 3500);
@@ -205,6 +206,18 @@
         autoLoginButton.addEventListener('click', () => {
             document.getElementById('login-form').dispatchEvent(new Event('submit'));  // Trigger form submit
         });
+
+        
+        if (document.referrer.includes('login.html')) {
+        // Replace the current history entry with index.html
+        window.location.replace('index.html');
+        window.location.reload();
+    }
+    // if (document.referrer.includes('login.html')) {
+    //     history.pushState(null, '', 'index.html');
+    //     history.replaceState(null, '', 'scan.html');
+    // }
+
     </script>
 </body>
 </html>
