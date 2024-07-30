@@ -222,11 +222,12 @@
                 const now = new Date().getTime();
                 localStorage.setItem('loginData', JSON.stringify({ email, password, timestamp: now }));
                 document.querySelector('.logging-in').style.display = 'block';
+                document.querySelector('button[type="submit"]').disabled = true;
                 document.querySelector('.link').style.display = 'none';
                 setTimeout(() => {
                     document.getElementById('login-container').style.display = 'none';
                     document.getElementById('login-message-container').style.display = 'block';
-                }, 3500);
+                }, 1500);
             } else {
                 alert('Incorrect ID or Password.');
                 console.log(email, password);
