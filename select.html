@@ -248,6 +248,11 @@
                     <input type="radio" name="signature" value="lakhia" onclick="setSignature('lakhia')">
                     Lakhia bhai
                 </label>
+                <label class="radio-label" style="background-color: #FF9800;">
+                    <!-- Orange -->
+                    <input type="radio" name="signature" value="ananta" onclick="setSignature('ananta')">
+                    Ananta
+                </label>
             </div>
         </div>
 
@@ -391,8 +396,10 @@
               //  if (tuitionValue === "MVM") {
               //      tuitionValue = '2024';
              //   }   
-                const link1 = `https://ashit.xyz/answer_file.html?filename=${tuitionValue}/2024/${cls}/${examFolderValue}/${examFolderValue}_ans_key.txt`;
-                const link2 = `https://ashit.xyz/names.html?filename=${tuitionValue}/2024/${cls}/${cls}_rolls.txt`;
+                let currentdate = new Date();
+                let currentYear = currentdate.getFullYear();
+                const link1 = `https://ashit.xyz/answer_file.html?filename=${tuitionValue}/${currentYear}/${cls}/${examFolderValue}/${examFolderValue}_ans_key.txt`;
+                const link2 = `https://ashit.xyz/names.html?filename=${tuitionValue}/${currentYear}/${cls}/${cls}_rolls.txt`;
                 document.getElementById('link1').href = link1;
                 document.getElementById('link1').textContent = 'Answer Key';
                 document.getElementById('link2').href = link2;
