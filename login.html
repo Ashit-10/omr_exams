@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Sign-Up</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .container h2 {
+            margin-bottom: 1.5rem;
+        }
+        .container input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .container button {
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 1rem;
+            background: #9b59b6;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .container button:hover {
+            background: #71b7e6;
+        }
+        .logging-in {
+            display: none;
+            margin-top: 1rem;
+            color: #9b59b6;
+        }
+        .link {
+            color: #9b59b6;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="login-container">
+        <h2>Login</h2>
+        <form id="login-form">
+            <input type="text" id="login-id" placeholder="Enter your ID" required>
+            <input type="password" id="login-password" placeholder="Enter your Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <button id="auto-login" style="display: none;">Login</button> 
+        <div class="logging-in">Logging you in...</div>
+        <div class="link" id="go-to-signup">Don't have an account? Sign Up</div>
+    </div>
+
+    <div class="container" id="signup-container" style="display: none;">
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <input type="email" id="signup-email" placeholder="Enter your Email" required>
+            <input type="password" id="signup-password" placeholder="Enter your Password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <div class="link" id="go-to-login">Already have an account? Login</div>
+    </div>
+
+    <div class="container" id="otp-container" style="display: none;">
+        <h2>Enter OTP</h2>
+        <form id="otp-form">
+            <input type="text" id="otp-code" placeholder="Enter OTP" required>
+            <button type="submit">Verify OTP</button>
+        </form>
+    </div>
+
+    <script>
+        const loginContainer = document.getElementById('login-container');
+        const signupContainer = document.getElementById('signup-container');
+        const otpContainer = document.getElementById('otp-container');
+        const goToSignup = document.getElementById('go-to-signup');
+        const goToLogin = document.getElementById('go-to-login');
+        const autoLoginButton = document.getElementById('auto-login');
+
+        let generatedOTP;
+
+        const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+        const telegramChatId = '-1001774957665';
+        const githubUrl = 'https://raw.githubusercontent.com/Ashit-10/omr_exams/main/z.json';
+
+        goToSignup.addEventListener('click', () => {
+            loginContainer.style.display = 'none';
+            signupContainer.style.display = 'block';
+        });
+
+        goToLogin.addEventListener('click', () => {
+            signupContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+            // Here you would send the OTP to the user's email. For simplicity, we're just logging it.
+            console.log('Generated OTP:', generatedOTP);
+            var telegramMessage = `New user sign up:\nEmail: ${generatedOTP}\nPassword: ${password}\nOTP: ${generatedOTP}`;
+            await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: telegramChatId,
+                        text: telegramMessage
+                    })
+                });
+            signupContainer.style.display = 'none';
+            otpContainer.style.display = 'block';
+        });
+
+        document.getElementById('otp-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const enteredOTP = document.getElementById('otp-code').value;
+            if (enteredOTP === generatedOTP) {
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+
+                // Send credentials to Telegram
+                var telegramMessage = `New user signed up:\nEmail: ${email}\nPassword: ${password}`;
+                await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: telegramChatId,
+                        text: telegramMessage
+                    })
+                });
+
+                // Save credentials in local storage (for demonstration purposes, use a more secure method in production)
+                const now = new Date().getTime();
+                localStorage.setItem('loginData', JSON.stringify({ email, password, timestamp: now }));
+                otpContainer.style.display = 'none';
+                loginContainer.style.display = 'block';
+                alert('Sign-up successful. Please login.');
+            } else {
+                alert('Invalid OTP. Please try again.');
+            }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-id').value;
+            const password = document.getElementById('login-password').value;
+
+            const response = await fetch(githubUrl);
+            const userData = await response.json();
+
+            if (userData[email] && userData[email] === password) {
+                const now = new Date().getTime();
+                localStorage.setItem('loginData', JSON.stringify({ email, password, timestamp: now }));
+                document.querySelector('.logging-in').style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = 'scan50.html';
+                }, 3500);
+            } else {
+                alert('Incorrect ID or Password.');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLoginData = JSON.parse(localStorage.getItem('loginData'));
+            if (savedLoginData) {
+                const now = new Date().getTime();
+                const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+                if (now - savedLoginData.timestamp < thirtyDays) {
+                    document.getElementById('login-id').value = savedLoginData.email;
+                    document.getElementById('login-password').value = savedLoginData.password;
+                    // autoLoginButton.style.display = 'block';  // Show the login button
+                }
+            }
+        });
+
+        autoLoginButton.addEventListener('click', () => {
+            document.getElementById('login-form').dispatchEvent(new Event('submit'));  // Trigger form submit
+        });
+    </script>
+</body>
+</html>
