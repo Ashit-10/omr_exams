@@ -1031,7 +1031,7 @@
 
                 canvas.toBlob(function (blob) {
                     // Create File object from Blob
-                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, 0.7);
+                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, 0.5);
 
                     // Log the file size in KB
                     var fileSizeInKB = file.size / 1024;
@@ -1142,7 +1142,7 @@
             // video.pause(); // Pause the video stream
             // stopSparkling();
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            var imageUrl = canvas.toDataURL('image/jpeg', 0.5); // Set to 'image/jpeg' and adjust quality (0.7)
+            var imageUrl = canvas.toDataURL('image/jpeg', 0.3); // Set to 'image/jpeg' and adjust quality (0.7)
 
             downloadImage(imageUrl);
         }
