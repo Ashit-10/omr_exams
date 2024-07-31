@@ -3,7 +3,7 @@
       "compression": "Off",
       "allowPartialMarks": "Off",
       "compressionSize": "150 KB",
-      "examFolder": "class-8_nmms_1",
-      "signature": "Lakhia",
-      "tuition": "WSC"
+      "examFolder": "class-10_english_5",
+      "signature": "Ashit",
+      "tuition": "MVM"
 }
