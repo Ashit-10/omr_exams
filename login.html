@@ -243,7 +243,8 @@
                 if (now - savedLoginData.timestamp < thirtyDays) {
                     document.getElementById('login-id').value = savedLoginData.email;
                     document.getElementById('login-password').value = savedLoginData.password;
-
+loginIdField.blur();
+            loginPasswordField.blur();
                     document.getElementById('login-form').dispatchEvent(new Event('submit'));
 
                     // autoLoginButton.style.display = 'block';  // Show the login button
