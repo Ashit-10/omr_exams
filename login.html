@@ -235,22 +235,15 @@
             }
         });
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const savedLoginData = JSON.parse(localStorage.getItem('loginData'));
-            if (savedLoginData) {
-                const now = new Date().getTime();
-                const thirtyDays = 30 * 24 * 60 * 60 * 1000;
-                if (now - savedLoginData.timestamp < thirtyDays) {
-                    document.getElementById('login-id').value = savedLoginData.email;
-                    document.getElementById('login-password').value = savedLoginData.password;
-loginIdField.blur();
-            loginPasswordField.blur();
-                    document.getElementById('login-form').dispatchEvent(new Event('submit'));
+        const loginIdField = document.getElementById('login-id');
+            const loginPasswordField = document.getElementById('login-password');
 
-                    // autoLoginButton.style.display = 'block';  // Show the login button
-                }
-            }
-        });
+            loginIdField.value = savedLoginData.email;
+            loginPasswordField.value = savedLoginData.password;
+
+            // Blur the input fields to prevent the keyboard from popping up
+            loginIdField.blur();
+            loginPasswordField.blur();
 
         autoLoginButton.addEventListener('click', () => {
             document.getElementById('login-form').dispatchEvent(new Event('submit'));  // Trigger form submit
