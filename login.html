@@ -235,7 +235,13 @@
             }
         });
 
-        const loginIdField = document.getElementById('login-id');
+        document.addEventListener('DOMContentLoaded', function() {
+    const savedLoginData = JSON.parse(localStorage.getItem('loginData'));
+    if (savedLoginData) {
+        const now = new Date().getTime();
+        const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+        if (now - savedLoginData.timestamp < thirtyDays) {
+            const loginIdField = document.getElementById('login-id');
             const loginPasswordField = document.getElementById('login-password');
 
             loginIdField.value = savedLoginData.email;
@@ -245,9 +251,15 @@
             loginIdField.blur();
             loginPasswordField.blur();
 
-        autoLoginButton.addEventListener('click', () => {
-            document.getElementById('login-form').dispatchEvent(new Event('submit'));  // Trigger form submit
-        });
+            // Automatically submit the login form
+            document.getElementById('login-form').dispatchEvent(new Event('submit'));
+
+            // Optionally, hide the auto-login button if needed
+            // autoLoginButton.style.display = 'none';  // Hide the login button if it exists
+        }
+    }
+});
+
         // Event listener for logout button
         document.getElementById('logout-button').addEventListener('click', function () {
             // Clear login data from localStorage
