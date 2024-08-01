@@ -33,10 +33,15 @@
     </style>
 </head>
 <body>
-    <h1>ଇତିହାସ class-9</h1>
+    <h2>ଇତିହାସ class-9</h2>
     <div class="button-container">
         <button class="btn" onclick="viewPDF()">View Online</button>
         <button class="btn" onclick="downloadPDF()">Download</button>
+    </div>
+    <h2>ଭୂଗୋଳ class-9</h2>
+    <div class="button-container">
+        <button class="btn" onclick="geoviewPDF()">View Online</button>
+        <button class="btn" onclick="geodownloadPDF()">Download</button>
     </div>
 
     <script>
@@ -46,6 +51,15 @@
 
         function downloadPDF() {
             window.location.href = 'Images/history.pdf';
+        }
+
+
+        function geoviewPDF() {
+            window.open('Images/jalabayu.pdf', '_blank');
+        }
+
+        function geodownloadPDF() {
+            window.location.href = 'Images/jalabayu.pdf';
         }
     </script>
 </body>
