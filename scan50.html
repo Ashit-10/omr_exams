@@ -423,7 +423,7 @@
             <div class="controls1">
 
                 <button onclick="window.location.reload()">Cancel</button>
-                <button id="checkResult" onclick="sendImage()">Check result</button>
+                <button onclick="sendImage()">Check result</button>
             </div>
             <div class="loader" id="loader"></div>
             <!-- Add loader overlay -->
@@ -506,7 +506,6 @@
             const file = fileInput.files[0];
             video.pause(); // Pause the video stream
             stopCamera();
-            // toggleFlashlight();
 
             if (file) {
                 const formData = new FormData();
@@ -913,9 +912,15 @@
                         messageElement.appendChild(errorButton);
                     }
 
+                    const br1 = document.createElement('br');
+                    messageElement.appendChild(br1);
+
                     const backButton1 = document.createElement('button');
                     // Add back button in the middle of the device screen
                     backButton1.innerText = 'Back';
+                    backButton1.marginTop = "20px";
+                    // backButton1.marginLeft = "40%";
+
                     backButton1.addEventListener('click', function () {
                         location.reload();
                     });
@@ -1062,7 +1067,6 @@
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
                 stopCamera();
-                toggleFlashlight();
 
                 canvas.toBlob(function (blob) {
                     // Create File object from Blob
@@ -1130,7 +1134,6 @@
 
                                 // Show "Processing..." message
                                 displayMessage('Processing...  It may take 4-5 seconds');
-
                                 // Add spinning circle loading indicator
                                 // const loadingIndicator = document.getElementById('loadingIndicator');
                                 loadingIndicator.className = 'spinner'; // Apply appropriate CSS class for spinning circle
@@ -1141,7 +1144,7 @@
                                 document.body.appendChild(loadingIndicator);
 
                                 // Add back button in the middle of the device screen
-                                const backButton = document.createElement('button');
+                                
                                 backButton.innerText = 'Back';
                                 backButton.style.position = 'absolute';
                                 backButton.style.top = '50%';
