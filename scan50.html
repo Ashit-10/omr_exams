@@ -804,7 +804,7 @@
                     img.src = photoUrl;
                     img.alt = 'Telegram Photo';
                     img.style.marginTop = '20px';
-                    img.style.width = '100vw'; // Set width to 100% of the viewport's width
+                    img.style.width = '90vw'; // Set width to 100% of the viewport's width
                     messageElement.appendChild(img);
                     messagesDiv.appendChild(messageElement);
 
@@ -918,9 +918,6 @@
                     const backButton1 = document.createElement('button');
                     // Add back button in the middle of the device screen
                     backButton1.innerText = 'Back';
-                    backButton1.marginTop = "20px";
-                    // backButton1.marginLeft = "40%";
-
                     backButton1.addEventListener('click', function () {
                         location.reload();
                     });
