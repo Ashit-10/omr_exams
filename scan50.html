@@ -896,8 +896,6 @@
                     checkContainer.appendChild(label);
                     checkContainer.appendChild(checkbox2);
                     messageElement.appendChild(checkContainer)
-                    const br2 = document.createElement('br');
-                    messageElement.appendChild(br2);
 
                     if (!isSending) {
                         loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
@@ -911,9 +909,6 @@
                         });
                         messageElement.appendChild(errorButton);
                     }
-
-                    const br1 = document.createElement('br');
-                    messageElement.appendChild(br1);
 
                     const backButton1 = document.createElement('button');
                     // Add back button in the middle of the device screen
