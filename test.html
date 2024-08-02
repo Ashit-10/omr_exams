@@ -333,10 +333,17 @@
 
         .controls {
             width: calc(100% - 30px);
-            margin: 0 20px;
+            margin: 5px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+
+        .controls1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .controls2 {
@@ -346,6 +353,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+        }
+
+        #selectedImage {
+            display: none;
+            width: 80vw;
+            height: 100%;
+            object-fit: cover;
         }
     </style>
 
@@ -372,20 +386,25 @@
 
     <div id="cameraContainer">
         <div id="false-div"></div>
-        <video id="video" playsinline autoplay></video>
-        <div id="overlayText">Put the qr codes inside the box</div> <!-- Text over -->
-        <div id="overlayBox"></div>
-        <div id="overlayBox2"></div>
-        <div id="overlayBox3"></div>
-        <div id="overlayBox4"></div>
-        <div id="overlayBox1"></div> <!-- Empty square -->
+        <img id="selectedImage">
+        <div id="wholeCamera1">
+            <video id="video" playsinline autoplay></video>
+            <div id="overlayText">Put the qr codes inside the box</div> <!-- Text over -->
+            <div id="overlayBox"></div>
+            <div id="overlayBox2"></div>
+            <div id="overlayBox3"></div>
+            <div id="overlayBox4"></div>
+            <div id="overlayBox1"></div> <!-- Empty square -->
+        </div>
     </div>
     <div class="controls">
-
         <div id="remove1">
-            <button id="flashlightButton">Flashlight</button>
-            <button id="capture-btn">Capture</button>
-            <button id="downloadButton" onclick="saveImage()">Save</button>
+            <div class="controls1" id="wholeCamera2">
+
+                <button id="flashlightButton">Flashlight</button>
+                <button id="capture-btn">Capture</button>
+                <button id="downloadButton" onclick="saveImage()">Save</button>
+            </div>
             <!-- <a id="downloadButton" download="capture.png">Download</a> -->
             <div class="loader1" id="loader1"></div>
             <br>
@@ -399,10 +418,13 @@
         </div>
 
         <div id="remove2">
-
             <input type="file" id="fileInput">
             <br>
-            <button class="controls" onclick="sendImage()">Check Result</button>
+            <div class="controls1">
+
+                <button onclick="window.location.reload()">Cancel</button>
+                <button onclick="sendImage()">Check result</button>
+            </div>
             <div class="loader" id="loader"></div>
             <!-- Add loader overlay -->
             <div class="loader-overlay" id="loaderOverlay" style="display: none;">
@@ -416,13 +438,27 @@
                 </div>
 
             </div>
-
+            <br><br><br><br>
         </div>
     </div>
     <br><br><br><br>
     <br><br><br><br>
 
     <script>
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById('selectedImage');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('wholeCamera1').style.display = 'none';
+                    document.getElementById('wholeCamera2').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
         var isCheckboxChecked = document.getElementById('chek').checked;
         console.log(isCheckboxChecked);
 
