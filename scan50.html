@@ -913,15 +913,9 @@
                         messageElement.appendChild(errorButton);
                     }
 
-                    const br1 = document.createElement('br');
-                    messageElement.appendChild(br1);
-
                     const backButton1 = document.createElement('button');
                     // Add back button in the middle of the device screen
                     backButton1.innerText = 'Back';
-                    backButton1.marginTop = "20px";
-                    // backButton1.marginLeft = "40%";
-
                     backButton1.addEventListener('click', function () {
                         location.reload();
                     });
