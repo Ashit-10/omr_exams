@@ -413,7 +413,7 @@
             position: absolute;
 
             content: "switch";
-            font-size: 13px;
+            font-size: 15px;
             opacity: 0.5;
             height: 22px;
             width: 22px;
@@ -467,7 +467,7 @@
             <div id="switcher" class="compressionSize">
                 <p id="comp3" class="compressionSize">Camera</p>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="autoSaveToggle" onclick="switchCameraMode()">
+                    <input type="checkbox" id="switchCameraToggle" onclick="switchCameraMode()">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -544,7 +544,26 @@
     <br><br><br><br>
 
     <script>
-        var isOriginalSize = true;
+        var isOriginalSize = false;
+
+        function saveSize(idk) {
+            localStorage.setItem('isOriginalSize', idk);
+            console.log("saved", idk);
+        }
+
+        function loadSize() {
+            var loadSizedata = localStorage.getItem('isOriginalSize');
+            console.log("from local storage", loadSizedata);
+            if (loadSizedata === 'false') {
+                document.getElementById("switchCameraToggle").checked = false;
+                isOriginalSize = false;
+            } else {
+                document.getElementById("switchCameraToggle").checked = true;
+                isOriginalSize = true;
+            }
+            switchCameraMode();
+        }
+
         function switchCameraMode() {
             var video = document.getElementById('video');
             var overBox1 = document.getElementById('overlayBox1');
@@ -558,16 +577,24 @@
                 overBox2.style.left = "calc(72%)";
                 overBox3.style.left = "calc(15%)";
                 overBox4.style.left = "calc(72%)";
+                saveSize(true);
             } else {
-                video.style.height = "480px"; // Revert to original size
+                video.style.height = "480px"; // small
                 video.style.width = "180px";
                 overBox1.style.left = "calc(50% - 85px)";
                 overBox2.style.left = "calc(50% + 30px)";
                 overBox3.style.left = "calc(50% - 85px)";
                 overBox4.style.left = "calc(50% + 30px)";
+                saveSize(false);
             }
-            isOriginalSize = !isOriginalSize; // Toggle the flag
+            isOriginalSize = !isOriginalSize;
         }
+
+
+
+
+        // Load the saved size when the page loads
+        document.addEventListener('DOMContentLoaded', loadSize);
 
         // Function to save the selected option to local storage
         function saveSelection() {
@@ -1212,7 +1239,7 @@
                 canvas.toBlob(function (blob) {
                     var qualityVal = parseFloat(document.getElementById('qualityValue').value)
                     // Create File object from Blob
-                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, 0.1);
+                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, qualityVal);
 
                     // Log the file size in KB
                     var fileSizeInKB = file.size / 1024;
