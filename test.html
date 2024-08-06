@@ -413,7 +413,7 @@
             position: absolute;
 
             content: "switch";
-            font-size: 15px;
+            font-size: 13px;
             opacity: 0.5;
             height: 22px;
             width: 22px;
@@ -1212,7 +1212,7 @@
                 canvas.toBlob(function (blob) {
                     var qualityVal = parseFloat(document.getElementById('qualityValue').value)
                     // Create File object from Blob
-                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, qualityVal);
+                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, 0.1);
 
                     // Log the file size in KB
                     var fileSizeInKB = file.size / 1024;
