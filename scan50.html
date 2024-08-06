@@ -314,6 +314,7 @@
             margin-left: 10px;
             /* Add some margin to separate the buttons */
         }
+
         #myForm {
             display: inline-flex;
             align-items: center;
@@ -364,7 +365,7 @@
         #progressBar {
             height: 50px;
         }
-        
+
         .compressionSize {
             position: absolute;
             top: 55%;
@@ -373,11 +374,79 @@
             font-weight: bold;
 
         }
+
         #comp1 {
             top: calc(55% - 50px);
         }
+
         #comp2 {
             top: calc(55% - 30px);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            /* Light gray slider background */
+            transition: .4s;
+            border-radius: 28px;
+        }
+
+        .slider:before {
+            position: absolute;
+
+            content: "switch";
+            font-size: 15px;
+            opacity: 0.5;
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 2px 2px 5px #b0b0b0,
+                -2px -2px 5px #ffffff;
+            /* Neomorphic shadow */
+        }
+
+        input:checked+.slider {
+            background-color: #4CAF50;
+            content: "";
+            opacity: 1;
+            /* Green slider when checked */
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+            opacity: 1;
+            content: "";
+        }
+
+        #switcher {
+            position: absolute;
+            top: calc(15%);
+            width: 60px;
+        }
+        #comp3 {
+            top: calc(-80%);
+            left: 0;
         }
     </style>
 
@@ -393,6 +462,13 @@
         <img id="selectedImage">
         <div id="wholeCamera1">
             <video id="video" playsinline autoplay></video>
+            <div id="switcher" class="compressionSize">
+                <p id="comp3" class="compressionSize">Camera</p>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autoSaveToggle" onclick="toggleAutoSave()">
+                    <span class="slider"></span>
+                </label>
+            </div>
             <p id="comp1" class="compressionSize">Image</p>
             <p id="comp2" class="compressionSize">quality</p>
             <select id="qualityValue" class="compressionSize">
@@ -466,8 +542,8 @@
     <br><br><br><br>
 
     <script>
-          // Function to save the selected option to local storage
-          function saveSelection() {
+        // Function to save the selected option to local storage
+        function saveSelection() {
             var select = document.getElementById('qualityValue');
             var selectedColor = select.value;
             localStorage.setItem('quality', selectedColor);
@@ -487,7 +563,7 @@
 
         // Add an event listener to save the selection whenever it changes
         document.getElementById('qualityValue').addEventListener('change', saveSelection);
-   
+
         document.getElementById('fileInput').addEventListener('change', function (event) {
             const file = event.target.files[0];
             if (file) {
@@ -1224,7 +1300,7 @@
         setInterval(fetchBotReplies, 3000);
 
 
-        const downloadButton = document.getElementById('downloadButton'); 
+        const downloadButton = document.getElementById('downloadButton');
         // Capture the image and set the download link
         function saveImage() {
             var video = document.getElementById('video');
