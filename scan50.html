@@ -85,6 +85,7 @@
             object-fit: cover;
             border: 2px solid #ccc;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: 0.4s;
         }
 
         h1 {
@@ -466,7 +467,7 @@
             <div id="switcher" class="compressionSize">
                 <p id="comp3" class="compressionSize">Camera</p>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="autoSaveToggle" onclick="switchCameraMode()">
+                    <input type="checkbox" id="switchCameraToggle" onclick="switchCameraMode()">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -543,18 +544,57 @@
     <br><br><br><br>
 
     <script>
-        var isOriginalSize = true;
+        var isOriginalSize = false;
+
+        function saveSize(idk) {
+            localStorage.setItem('isOriginalSize', idk);
+            console.log("saved", idk);
+        }
+
+        function loadSize() {
+            var loadSizedata = localStorage.getItem('isOriginalSize');
+            console.log("from local storage", loadSizedata);
+            if (loadSizedata === 'false') {
+                document.getElementById("switchCameraToggle").checked = false;
+                isOriginalSize = false;
+            } else {
+                document.getElementById("switchCameraToggle").checked = true;
+                isOriginalSize = true;
+            }
+            switchCameraMode();
+        }
+
         function switchCameraMode() {
             var video = document.getElementById('video');
+            var overBox1 = document.getElementById('overlayBox1');
+            var overBox2 = document.getElementById('overlayBox2');
+            var overBox3 = document.getElementById('overlayBox3');
+            var overBox4 = document.getElementById('overlayBox4');
             if (isOriginalSize) {
                 video.style.height = "480px";
                 video.style.width = "280px";
+                overBox1.style.left = "calc(15%)";
+                overBox2.style.left = "calc(72%)";
+                overBox3.style.left = "calc(15%)";
+                overBox4.style.left = "calc(72%)";
+                saveSize(true);
             } else {
-                video.style.height = "480px"; // Revert to original size
-                video.style.width = "180px";  // Revert to original size
+                video.style.height = "480px"; // small
+                video.style.width = "180px";
+                overBox1.style.left = "calc(50% - 85px)";
+                overBox2.style.left = "calc(50% + 30px)";
+                overBox3.style.left = "calc(50% - 85px)";
+                overBox4.style.left = "calc(50% + 30px)";
+                saveSize(false);
             }
-            isOriginalSize = !isOriginalSize; // Toggle the flag
+            isOriginalSize = !isOriginalSize;
         }
+
+
+
+
+        // Load the saved size when the page loads
+        document.addEventListener('DOMContentLoaded', loadSize);
 
         // Function to save the selected option to local storage
         function saveSelection() {
@@ -1195,11 +1235,11 @@
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
                 stopCamera();
+                var qualityVal = parseFloat(document.getElementById('qualityValue').value)
 
                 canvas.toBlob(function (blob) {
-                    var qualityVal = parseFloat(document.getElementById('qualityValue').value)
                     // Create File object from Blob
-                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, qualityVal);
+                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
 
                     // Log the file size in KB
                     var fileSizeInKB = file.size / 1024;
@@ -1226,7 +1266,7 @@
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
                     loaderOverlay.style.flexDirection = 'column';
                     var filesizeDisplay = document.getElementById('fileSizeDisplay');
-                    filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
+                    filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB   ${qualityVal}`;
 
 
                     const falseDiv = document.getElementById('false-div');
@@ -1297,7 +1337,7 @@
 
                     // Send form data
                     xhr.send(formData1);
-                }, 'image/jpeg');
+                }, 'image/jpeg', qualityVal);
             }, delay);
         };
 
@@ -1326,7 +1366,6 @@
             // stopSparkling();
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             var qualityVal = parseFloat(document.getElementById('qualityValue').value)
-            console.log(qualityVal, typeof qualityVal);
             var imageUrl = canvas.toDataURL('image/jpeg', qualityVal); // Set to 'image/jpeg' and adjust quality (0.7)
 
             downloadImage(imageUrl);
