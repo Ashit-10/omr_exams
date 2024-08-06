@@ -1229,7 +1229,8 @@
             // video.pause(); // Pause the video stream
             // stopSparkling();
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            var imageUrl = canvas.toDataURL('image/jpeg', 0.5); // Set to 'image/jpeg' and adjust quality (0.7)
+            var qualityVal = document.getElementById('qualityValue').value 
+            var imageUrl = canvas.toDataURL('image/jpeg', qualityVal); // Set to 'image/jpeg' and adjust quality (0.7)
 
             downloadImage(imageUrl);
         }
