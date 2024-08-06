@@ -1104,7 +1104,7 @@
                 stopCamera();
 
                 canvas.toBlob(function (blob) {
-                    var qualityVal = document.getElementById('qualityValue').value 
+                    var qualityVal = parseFloat(document.getElementById('qualityValue').value)
                     // Create File object from Blob
                     var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, qualityVal);
 
@@ -1229,7 +1229,8 @@
             // video.pause(); // Pause the video stream
             // stopSparkling();
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            var qualityVal = document.getElementById('qualityValue').value 
+            var qualityVal = parseFloat(document.getElementById('qualityValue').value)
+            console.log(qualityVal, typeof qualityVal);
             var imageUrl = canvas.toDataURL('image/jpeg', qualityVal); // Set to 'image/jpeg' and adjust quality (0.7)
 
             downloadImage(imageUrl);
