@@ -314,6 +314,7 @@
             margin-left: 10px;
             /* Add some margin to separate the buttons */
         }
+
         #myForm {
             display: inline-flex;
             align-items: center;
@@ -364,7 +365,7 @@
         #progressBar {
             height: 50px;
         }
-        
+
         .compressionSize {
             position: absolute;
             top: 55%;
@@ -373,11 +374,80 @@
             font-weight: bold;
 
         }
+
         #comp1 {
             top: calc(55% - 50px);
         }
+
         #comp2 {
             top: calc(55% - 30px);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            /* Light gray slider background */
+            transition: .4s;
+            border-radius: 28px;
+        }
+
+        .slider:before {
+            position: absolute;
+
+            content: "switch";
+            font-size: 15px;
+            opacity: 0.5;
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 2px 2px 5px #b0b0b0,
+                -2px -2px 5px #ffffff;
+            /* Neomorphic shadow */
+        }
+
+        input:checked+.slider {
+            background-color: #4CAF50;
+            content: "";
+            opacity: 1;
+            /* Green slider when checked */
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+            opacity: 1;
+            content: "";
+        }
+
+        #switcher {
+            position: absolute;
+            top: calc(15%);
+            width: 60px;
+        }
+
+        #comp3 {
+            top: calc(-80%);
+            left: 0;
         }
     </style>
 
@@ -393,6 +463,13 @@
         <img id="selectedImage">
         <div id="wholeCamera1">
             <video id="video" playsinline autoplay></video>
+            <div id="switcher" class="compressionSize">
+                <p id="comp3" class="compressionSize">Camera</p>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autoSaveToggle" onclick="switchCameraMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
             <p id="comp1" class="compressionSize">Image</p>
             <p id="comp2" class="compressionSize">quality</p>
             <select id="qualityValue" class="compressionSize">
@@ -457,7 +534,7 @@
                 <div id="progressContainer">
                     <progress id="progressBar" value="0" max="100" style="width: 80vw;"></progress>
                 </div>
-
+                <p id="fileSizeDisplay">...</p>
             </div>
             <br><br><br><br>
         </div>
@@ -466,8 +543,44 @@
     <br><br><br><br>
 
     <script>
-          // Function to save the selected option to local storage
-          function saveSelection() {
+        var isOriginalSize = true;
+        function switchCameraMode() {
+            var video = document.getElementById('video');
+            var overBox1 = document.getElementById('overlayBox1');
+            var overBox2 = document.getElementById('overlayBox2');
+            var overBox3 = document.getElementById('overlayBox3');
+            var overBox4 = document.getElementById('overlayBox4');
+            if (isOriginalSize) {
+                video.style.height = "480px";
+                video.style.width = "280px";
+                overBox1.style.left = "calc(15%)";
+
+                overBox2.style.left = "0";
+                overBox2.style.right = "calc(13%)";
+
+                overBox3.style.left = "calc(15%)";
+
+                overBox4.style.left = "0";
+                overBox4.style.right = "calc(13%)";
+            } else {
+                video.style.height = "480px"; // Revert to original size
+                video.style.width = "180px";
+                overBox1.style.left = "calc(50% - 85px)";
+
+                overBox2.style.right = "0";
+
+                overBox2.style.left = "calc(50% + 30px)";
+                overBox3.style.left = "calc(50% - 85px)";
+
+                overBox4.style.right = "0";
+                overBox4.style.left = "calc(50% + 30px)";
+                  // Revert to original size
+            }
+            isOriginalSize = !isOriginalSize; // Toggle the flag
+        }
+
+        // Function to save the selected option to local storage
+        function saveSelection() {
             var select = document.getElementById('qualityValue');
             var selectedColor = select.value;
             localStorage.setItem('quality', selectedColor);
@@ -487,7 +600,7 @@
 
         // Add an event listener to save the selection whenever it changes
         document.getElementById('qualityValue').addEventListener('change', saveSelection);
-   
+
         document.getElementById('fileInput').addEventListener('change', function (event) {
             const file = event.target.files[0];
             if (file) {
@@ -565,6 +678,9 @@
                 const loaderOverlay = document.getElementById('loaderOverlay');
                 loaderOverlay.style.display = 'flex'; // Display loader overlay
                 loaderOverlay.style.flexDirection = 'column';
+                var filesizeDisplay = document.getElementById('filesizeDisplay');
+                filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
+
 
                 const falseDiv = document.getElementById('false-div');
                 if (falseDiv) {
@@ -1132,6 +1248,9 @@
                     const loaderOverlay = document.getElementById('loaderOverlay');
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
                     loaderOverlay.style.flexDirection = 'column';
+                    var filesizeDisplay = document.getElementById('fileSizeDisplay');
+                    filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
+
 
                     const falseDiv = document.getElementById('false-div');
                     if (falseDiv) {
