@@ -1235,11 +1235,11 @@
                 // Draw captured image onto video element
                 var videoParent = video.parentNode;
                 stopCamera();
+                var qualityVal = parseFloat(document.getElementById('qualityValue').value)
 
                 canvas.toBlob(function (blob) {
-                    var qualityVal = parseFloat(document.getElementById('qualityValue').value)
                     // Create File object from Blob
-                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, qualityVal);
+                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
 
                     // Log the file size in KB
                     var fileSizeInKB = file.size / 1024;
@@ -1266,7 +1266,7 @@
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
                     loaderOverlay.style.flexDirection = 'column';
                     var filesizeDisplay = document.getElementById('fileSizeDisplay');
-                    filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
+                    filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB   ${qualityVal}`;
 
 
                     const falseDiv = document.getElementById('false-div');
@@ -1337,7 +1337,7 @@
 
                     // Send form data
                     xhr.send(formData1);
-                }, 'image/jpeg');
+                }, 'image/jpeg', qualityVal);
             }, delay);
         };
 
@@ -1366,7 +1366,6 @@
             // stopSparkling();
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             var qualityVal = parseFloat(document.getElementById('qualityValue').value)
-            console.log(qualityVal, typeof qualityVal);
             var imageUrl = canvas.toDataURL('image/jpeg', qualityVal); // Set to 'image/jpeg' and adjust quality (0.7)
 
             downloadImage(imageUrl);
