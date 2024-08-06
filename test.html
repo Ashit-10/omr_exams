@@ -85,6 +85,7 @@
             object-fit: cover;
             border: 2px solid #ccc;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: 0.4s;
         }
 
         h1 {
@@ -554,27 +555,16 @@
                 video.style.height = "480px";
                 video.style.width = "280px";
                 overBox1.style.left = "calc(15%)";
-
-                overBox2.style.left = "0";
-                overBox2.style.right = "calc(13%)";
-
+                overBox2.style.left = "calc(72%)";
                 overBox3.style.left = "calc(15%)";
-
-                overBox4.style.left = "0";
-                overBox4.style.right = "calc(13%)";
+                overBox4.style.left = "calc(72%)";
             } else {
                 video.style.height = "480px"; // Revert to original size
                 video.style.width = "180px";
                 overBox1.style.left = "calc(50% - 85px)";
-
-                overBox2.style.right = "0";
-
                 overBox2.style.left = "calc(50% + 30px)";
                 overBox3.style.left = "calc(50% - 85px)";
-
-                overBox4.style.right = "0";
                 overBox4.style.left = "calc(50% + 30px)";
-                  // Revert to original size
             }
             isOriginalSize = !isOriginalSize; // Toggle the flag
         }
