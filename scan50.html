@@ -195,7 +195,7 @@
             transform: translate((-50%));
         }
 
-        #overlayText {
+        .overlayText {
             position: absolute;
             top: 40%;
             left: calc(50% - 55px);
@@ -207,6 +207,10 @@
             z-index: 1;
             /* Ensure the text appears above the video */
             white-space: nowrap;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
             /* Prevent text from wrapping */
         }
 
@@ -310,11 +314,6 @@
             margin-left: 10px;
             /* Add some margin to separate the buttons */
         }
-
-        audio {
-            display: none;
-        }
-
         #myForm {
             display: inline-flex;
             align-items: center;
@@ -361,38 +360,57 @@
             height: 100%;
             object-fit: cover;
         }
+
         #progressBar {
             height: 50px;
+        }
+        
+        .compressionSize {
+            position: absolute;
+            top: 55%;
+            left: calc(80% - 10px);
+            z-index: 2;
+            font-weight: bold;
+
+        }
+        #comp1 {
+            top: calc(55% - 50px);
+        }
+        #comp2 {
+            top: calc(55% - 30px);
         }
     </style>
 
 </head>
 
 <body>
-    <!--  <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <h2>Enter Login Key</h2>
-            <input type="password" id="login-key" placeholder="Login Key">
-            <button id="login-button">Login</button>
-            <p id="error-message" class="error-message"></p>
-        </div>
-    </div>
 
-    <div id="content" class="hidden"> -->
     <h1>OMR sheet evaluator
     </h1>
-    <!-- <audio autoplay>
-        <source src="scan.mp3" type="audio/mp3">
-        Your browser does not support the audio element.
-    </audio> -->
-
 
     <div id="cameraContainer">
         <div id="false-div"></div>
         <img id="selectedImage">
         <div id="wholeCamera1">
             <video id="video" playsinline autoplay></video>
-            <div id="overlayText">Put the qr codes inside the box</div> <!-- Text over -->
+            <p id="comp1" class="compressionSize">Image</p>
+            <p id="comp2" class="compressionSize">quality</p>
+            <select id="qualityValue" class="compressionSize">
+                <option value="0.1">0.1</option>
+                <option value="0.2">0.2</option>
+                <option value="0.3">0.3</option>
+                <option value="0.4">0.4</option>
+                <option value="0.5" selected>0.5</option>
+                <option value="0.6">0.6</option>
+                <option value="0.7">0.7</option>
+                <option value="0.8">0.8</option>
+                <option value="0.9">0.9</option>
+                <option value="1.0">1.0</option>
+            </select>
+            <div class="overlayText">
+                <p> Put the qr codes inside the box</p> <!-- Text over -->
+                <p>&nbsp;TOP</p>
+            </div> <!-- Text over -->
             <div id="overlayBox"></div>
             <div id="overlayBox2"></div>
             <div id="overlayBox3"></div>
@@ -448,6 +466,28 @@
     <br><br><br><br>
 
     <script>
+          // Function to save the selected option to local storage
+          function saveSelection() {
+            var select = document.getElementById('qualityValue');
+            var selectedColor = select.value;
+            localStorage.setItem('quality', selectedColor);
+        }
+
+        // Function to load the saved selection from local storage
+        function loadSelection() {
+            var select = document.getElementById('qualityValue');
+            var savedColor = localStorage.getItem('quality');
+            if (savedColor) {
+                select.value = savedColor;
+            }
+        }
+
+        // Load the selection when the page loads
+        document.addEventListener('DOMContentLoaded', loadSelection);
+
+        // Add an event listener to save the selection whenever it changes
+        document.getElementById('qualityValue').addEventListener('change', saveSelection);
+   
         document.getElementById('fileInput').addEventListener('change', function (event) {
             const file = event.target.files[0];
             if (file) {
@@ -1064,8 +1104,9 @@
                 stopCamera();
 
                 canvas.toBlob(function (blob) {
+                    var qualityVal = parseFloat(document.getElementById('qualityValue').value)
                     // Create File object from Blob
-                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
+                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, qualityVal);
 
                     // Log the file size in KB
                     var fileSizeInKB = file.size / 1024;
@@ -1139,7 +1180,7 @@
                                 document.body.appendChild(loadingIndicator);
 
                                 // Add back button in the middle of the device screen
-                                
+
                                 backButton.innerText = 'Back';
                                 backButton.style.position = 'absolute';
                                 backButton.style.top = '50%';
@@ -1177,7 +1218,7 @@
         setInterval(fetchBotReplies, 3000);
 
 
-        const downloadButton = document.getElementById('downloadButton');
+        const downloadButton = document.getElementById('downloadButton'); 
         // Capture the image and set the download link
         function saveImage() {
             var video = document.getElementById('video');
@@ -1188,7 +1229,9 @@
             // video.pause(); // Pause the video stream
             // stopSparkling();
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            var imageUrl = canvas.toDataURL('image/jpeg', 0.5); // Set to 'image/jpeg' and adjust quality (0.7)
+            var qualityVal = parseFloat(document.getElementById('qualityValue').value)
+            console.log(qualityVal, typeof qualityVal);
+            var imageUrl = canvas.toDataURL('image/jpeg', qualityVal); // Set to 'image/jpeg' and adjust quality (0.7)
 
             downloadImage(imageUrl);
         }
