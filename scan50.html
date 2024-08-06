@@ -457,7 +457,7 @@
                 <div id="progressContainer">
                     <progress id="progressBar" value="0" max="100" style="width: 80vw;"></progress>
                 </div>
-
+                <p id="fileSizeDisplay">...</p>
             </div>
             <br><br><br><br>
         </div>
@@ -565,6 +565,9 @@
                 const loaderOverlay = document.getElementById('loaderOverlay');
                 loaderOverlay.style.display = 'flex'; // Display loader overlay
                 loaderOverlay.style.flexDirection = 'column';
+                var filesizeDisplay = document.getElementById('filesizeDisplay');
+                filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
+
 
                 const falseDiv = document.getElementById('false-div');
                 if (falseDiv) {
@@ -1132,6 +1135,9 @@
                     const loaderOverlay = document.getElementById('loaderOverlay');
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
                     loaderOverlay.style.flexDirection = 'column';
+                    var filesizeDisplay = document.getElementById('fileSizeDisplay');
+                    filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
+
 
                     const falseDiv = document.getElementById('false-div');
                     if (falseDiv) {
