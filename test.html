@@ -368,7 +368,7 @@
         .compressionSize {
             position: absolute;
             top: 55%;
-            left: calc(80%);
+            left: calc(80% - 10px);
             z-index: 2;
             font-weight: bold;
 
@@ -1104,8 +1104,9 @@
                 stopCamera();
 
                 canvas.toBlob(function (blob) {
+                    var qualityVal = document.getElementById('qualityValue').value 
                     // Create File object from Blob
-                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
+                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' }, qualityVal);
 
                     // Log the file size in KB
                     var fileSizeInKB = file.size / 1024;
