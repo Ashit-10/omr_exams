@@ -444,6 +444,7 @@
             top: calc(15%);
             width: 60px;
         }
+
         #comp3 {
             top: calc(-80%);
             left: 0;
@@ -465,7 +466,7 @@
             <div id="switcher" class="compressionSize">
                 <p id="comp3" class="compressionSize">Camera</p>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="autoSaveToggle" onclick="toggleAutoSave()">
+                    <input type="checkbox" id="autoSaveToggle" onclick="switchCameraMode()">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -542,6 +543,19 @@
     <br><br><br><br>
 
     <script>
+        var isOriginalSize = true;
+        function switchCameraMode() {
+            var video = document.getElementById('video');
+            if (isOriginalSize) {
+                video.style.height = "480px";
+                video.style.width = "280px";
+            } else {
+                video.style.height = "480px"; // Revert to original size
+                video.style.width = "180px";  // Revert to original size
+            }
+            isOriginalSize = !isOriginalSize; // Toggle the flag
+        }
+
         // Function to save the selected option to local storage
         function saveSelection() {
             var select = document.getElementById('qualityValue');
