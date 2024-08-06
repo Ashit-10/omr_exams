@@ -548,12 +548,10 @@
 
         function saveSize(idk) {
             localStorage.setItem('isOriginalSize', idk);
-            console.log("saved", idk);
         }
 
         function loadSize() {
             var loadSizedata = localStorage.getItem('isOriginalSize');
-            console.log("from local storage", loadSizedata);
             if (loadSizedata === 'false') {
                 document.getElementById("switchCameraToggle").checked = false;
                 isOriginalSize = false;
@@ -695,7 +693,8 @@
                 const loaderOverlay = document.getElementById('loaderOverlay');
                 loaderOverlay.style.display = 'flex'; // Display loader overlay
                 loaderOverlay.style.flexDirection = 'column';
-                var filesizeDisplay = document.getElementById('filesizeDisplay');
+                var filesizeDisplay = document.getElementById('fileSizeDisplay');
+
                 var fileSizeInKB = (file.size / 1024).toFixed(2);
                 filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
 
@@ -1242,14 +1241,6 @@
                     // Create File object from Blob
                     var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
 
-                    // Log the file size in KB
-                    var fileSizeInKB = (file.size / 1024).toFixed(2);
-                    console.log('File size: ' + fileSizeInKB.toFixed(2) + ' KB');
-
-                    // Log the file size in MB
-                    var fileSizeInMB = file.size / (1024 * 1024);
-                    console.log('File size: ' + fileSizeInMB.toFixed(2) + ' MB');
-
                     // Send file to Telegram using XMLHttpRequest
                     var formData1 = new FormData();
                     formData1.append('photo', file);
@@ -1267,6 +1258,8 @@
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
                     loaderOverlay.style.flexDirection = 'column';
                     var filesizeDisplay = document.getElementById('fileSizeDisplay');
+
+                    var fileSizeInKB = (file.size / 1024).toFixed(2);
                     filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
 
 
