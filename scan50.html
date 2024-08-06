@@ -478,10 +478,10 @@
                 <option value="0.2">0.2</option>
                 <option value="0.3">0.3</option>
                 <option value="0.4">0.4</option>
-                <option value="0.5" selected>0.5</option>
+                <option value="0.5">0.5</option>
                 <option value="0.6">0.6</option>
                 <option value="0.7">0.7</option>
-                <option value="0.8">0.8</option>
+                <option value="0.8" selected>0.8</option>
                 <option value="0.9">0.9</option>
                 <option value="1.0">1.0</option>
             </select>
@@ -696,6 +696,7 @@
                 loaderOverlay.style.display = 'flex'; // Display loader overlay
                 loaderOverlay.style.flexDirection = 'column';
                 var filesizeDisplay = document.getElementById('filesizeDisplay');
+                var fileSizeInKB = (file.size / 1024).toFixed(2);
                 filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
 
 
@@ -1242,7 +1243,7 @@
                     var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
 
                     // Log the file size in KB
-                    var fileSizeInKB = file.size / 1024;
+                    var fileSizeInKB = (file.size / 1024).toFixed(2);
                     console.log('File size: ' + fileSizeInKB.toFixed(2) + ' KB');
 
                     // Log the file size in MB
@@ -1266,7 +1267,7 @@
                     loaderOverlay.style.display = 'flex'; // Display loader overlay
                     loaderOverlay.style.flexDirection = 'column';
                     var filesizeDisplay = document.getElementById('fileSizeDisplay');
-                    filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB   ${qualityVal}`;
+                    filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
 
 
                     const falseDiv = document.getElementById('false-div');
