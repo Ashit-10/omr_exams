@@ -85,41 +85,18 @@
         }
 
         .action-button {
-            display: block;
-            padding: 15px 30px;
             background-color: #4744f7;
             color: #fff;
             border-radius: 5px;
             cursor: pointer;
-            border: none;
-            position: fixed;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 1000;
+            font-size: 15px;
+           
         }
 
         .action-button:hover {
             background-color: #3030a6;
         }
 
-        /* .copy-button {
-            position: fixed;
-            top: 10px;
-            right: 5px;
-            padding: 2px 2px;
-            background-color: #555;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 1000;
-        } */
-
-        .copy-button:hover {
-            background-color: #0b08e2;
-            color: #e8e8ee;
-        }
 
         #loadingOverlay {
             display: none;
@@ -154,21 +131,15 @@
                 transform: rotate(360deg);
             }
         }
-
-        #saveButton {
-            left: 2%;
-            width: 100px;
-            font-size: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
         .topButtons {
             display: flex;
             align-items: center;
             flex-direction: row;
             gap: 15px;
         }
+        /* .topButt { */
+
+        /* } */
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
@@ -180,7 +151,7 @@
             const saveButton = document.getElementById('saveButton');
             const copyButton = document.getElementById('copyButon');
             // copyButton.textContent = 'Copy';
-            copyButton.className = 'copy-button';
+            // copyButton.className = 'copy-button';
             // document.body.appendChild(copyButton); // Append copy button to body
 
             const loadingOverlay = document.getElementById('loadingOverlay');
@@ -427,8 +398,7 @@
         <h5 id="filenameDisplay">New OMR Sheet</h5>
     </div>
     <div class="topButtons">
-        <button id="copyButon">Copy JSON data</button>
-        <br>
+        <button id="copyButon" class="action-button">Copy JSON data</button>
         <h3 id="setButon">set:</h3>
         <select id="setValue">
             <option value="A">set - A</option>
@@ -437,8 +407,7 @@
             <option value="D">set - D</option>
             <option value="none" selected>No set</option>
         </select>
-        <br>
-        <button id="saveButton">Save</button>
+        <button id="saveButton" class="action-button">Save</button>
     </div>
     <form id="omrForm">
         <div id="questionContainer"></div>
