@@ -3,7 +3,7 @@
       "compression": "Off",
       "allowPartialMarks": "Off",
       "compressionSize": "150 KB",
-      "examFolder": "class-10_english_5",
-      "signature": "Ashit",
+      "examFolder": "class-9_mathematics_1",
+      "signature": "Rupa",
       "tuition": "MVM"
 }
