@@ -39,6 +39,7 @@
     <input type="number" id="numQuestions" min="1" value="5">
     <button onclick="shuffleQuestions()">Shuffle and Display</button>
     <button onclick="copyToClipboard()">Copy to Clipboard</button>
+    <button onclick="printShuffledQuestions()">Print</button>
     <div id="shuffledQuestions" class="shuffled"></div>
 
     <script>
@@ -99,6 +100,14 @@
             }, (err) => {
                 console.error('Could not copy text: ', err);
             });
+        }
+
+        function printShuffledQuestions() {
+            const shuffledQuestions = document.getElementById('shuffledQuestions').innerText;
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<pre>' + shuffledQuestions + '</pre>');
+            printWindow.document.close();
+            printWindow.print();
         }
     </script>
 </body>
