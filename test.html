@@ -193,23 +193,6 @@
 
             const filename = getQueryParameter('filename');
             filenameDisplay.textContent = filename || "New OMR Sheet"; // Display filename or default text
-            function setSet() {
-                var select = document.getElementById('setValue');
-                let parts = filename.split('_ans_key.txt');
-                let fname = parts[0];
-
-                if (fname.endsWith("A")) {
-                    select.value = "A";
-                } else if (fname.endsWith("B")) {
-                    select.value = "B";
-                } else if (fname.endsWith("C")) {
-                    select.value = "C";
-                } else if (fname.endsWith("D")) {
-                    select.value = "D";
-                } else {
-                    select.value = "none";
-                }
-            }
 
             if (filename) {
                 fetch(filename)
@@ -230,6 +213,26 @@
             } else {
                 setSet();
                 displayNewOMRSheet();
+            }
+
+            function setSet() {
+                if (filename) {
+                    var select = document.getElementById('setValue');
+                    let parts = filename.split('_ans_key.txt');
+                    let fname = parts[0];
+
+                    if (fname.endsWith("A")) {
+                        select.value = "A";
+                    } else if (fname.endsWith("B")) {
+                        select.value = "B";
+                    } else if (fname.endsWith("C")) {
+                        select.value = "C";
+                    } else if (fname.endsWith("D")) {
+                        select.value = "D";
+                    } else {
+                        select.value = "none";
+                    }
+                }
             }
 
             function displayNewOMRSheet() {
