@@ -138,12 +138,13 @@
             display: flex;
             align-items: center;
             flex-direction: row;
-            gap: 15px;
+            gap: 12px;
         }
 
         select {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-            /* Add smooth transition for background, color, and border color */
+            height: 40px;
+            font-size: 15px;
         }
 
         select:focus {
@@ -178,6 +179,13 @@
 
             const filename = getQueryParameter('filename');
             filenameDisplay.textContent = filename || "New OMR Sheet"; // Display filename or default text
+            const showTopButtons = getQueryParameter('show');
+           // filenameDisplay.textContent = filename || "New OMR Sheet"; // Display filename or default text
+            if (showTopButtons) {
+                if (showTopButtons === 'false') {
+                    document.querySelector('.topButtons').style.display = 'none';                    
+                }
+            }
 
             if (filename) {
                 fetch(filename)
@@ -252,7 +260,7 @@
             function createQuestionElement(index, selectedOptions = []) {
                 const questionDiv = document.createElement('div');
                 questionDiv.className = 'question';
-                questionDiv.innerHTML = `<span>Q - ${index}:</span>`;
+                questionDiv.innerHTML = `<span>Question - ${index}:</span>`;
                 const optionsDiv = document.createElement('div');
                 optionsDiv.className = 'options';
 
