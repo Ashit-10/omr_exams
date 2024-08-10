@@ -292,6 +292,8 @@
             }
 
             function updateQuestionColors() {
+                if (showTopButtons === 'student') {
+                    return;
                 const questions = document.querySelectorAll('.question');
                 questions.forEach(question => {
                     const checkboxes = question.querySelectorAll('input[type="checkbox"]');
@@ -307,7 +309,7 @@
                         question.classList.remove('green', 'blue');
                     }
                 });
-            }
+            }}
 
             async function saveData(e) {
                 e.preventDefault();
