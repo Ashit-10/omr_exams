@@ -160,6 +160,7 @@
         document.addEventListener('DOMContentLoaded', (event) => {
             const userInput = [];
             let entryCount = 1;
+            let questionCount = 100;
 
             const questionContainer = document.getElementById('questionContainer');
             const setButton = document.getElementById('setButon');
@@ -192,7 +193,7 @@
                  filenameDisplay.style.textSize = '30px';
                  document.getElementById('questionContainer').style.pointerEvents = 'none';
             }
-
+ 
             if (filename) {
                 fetch(filename)
                     .then(response => {
@@ -203,6 +204,7 @@
                     })
                     .then(data => {
                         setSet();
+                        questionCount = Array.isArray(data) ? data.length : Object.keys(data).length;
                         processJSON(data);
                     })
                     .catch(error => {
@@ -236,7 +238,8 @@
 
             function displayNewOMRSheet() {
                 questionContainer.innerHTML = '';
-                for (let i = 1; i <= 100; i++) {
+            //    for (let i = 1; i <= 100; i++) {
+                for (let i = 1; i <= questionCount; i++) {
                     const questionDiv = createQuestionElement(i);
                     questionContainer.appendChild(questionDiv);
                 }
