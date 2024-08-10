@@ -179,12 +179,16 @@
 
             const filename = getQueryParameter('filename');
             filenameDisplay.textContent = filename || "New OMR Sheet"; // Display filename or default text
-            const showTopButtons = getQueryParameter('show');
+            const showTopButtons = getQueryParameter('user');
+            const subjectName = getQueryParameter('subject');
            // filenameDisplay.textContent = filename || "New OMR Sheet"; // Display filename or default text
             if (showTopButtons) {
-                if (showTopButtons === 'false') {
+                if (showTopButtons === 'student') {
                     document.querySelector('.topButtons').style.display = 'none';                    
                 }
+            }
+            if (subjectName) {
+                 filenameDisplay.textContent = subjectName;
             }
 
             if (filename) {
