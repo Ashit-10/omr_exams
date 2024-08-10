@@ -292,7 +292,7 @@
             }
 
             function updateQuestionColors() {
-                if (showTopButtons === 'student') {
+                if (showTopButtons && showTopButtons === 'student') {
                     return;
                 const questions = document.querySelectorAll('.question');
                 questions.forEach(question => {
