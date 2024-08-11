@@ -51,7 +51,7 @@
 </head>
 <body>
 
-    <h1>Protected Image Gallery</h1>
+    <h1 id="head">Protected Image Gallery</h1>
     
     <div class="form-container">
         <form id="passwordForm">
@@ -63,7 +63,7 @@
     <div id="gallery"></div>
 
     <script>
-        const correctPassword = 'ashit'; // Set your password here
+        const correctPassword = 'jhumuri'; // Set your password here
         const images = [
         'https://raw.githubusercontent.com/Ashit-10/test/main/zys/IMG_1.HEIC', 
         'https://raw.githubusercontent.com/Ashit-10/test/main/zys/IMG_2.HEIC', 
@@ -118,6 +118,7 @@
 
             if (enteredPassword === correctPassword) {
                 // Reveal the images
+                document.getElementById('head').innerText = "Images (Deleting in 2 days)";
                 document.querySelectorAll('.image-container').forEach(container => {
                     container.style.display = 'block';
                 });
@@ -130,4 +131,3 @@
 
 </body>
 </html>
-
