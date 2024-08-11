@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Image Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .form-container {
+            margin-bottom: 20px;
+        }
+        input[type="password"], input[type="submit"] {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        .image-container {
+            display: none; /* Initially hidden */
+            margin: 20px;
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .download-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .download-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Protected Image Gallery</h1>
+    
+    <div class="form-container">
+        <form id="passwordForm">
+            <input type="password" id="password" placeholder="Enter Password">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    
+    <div id="gallery"></div>
+
+    <script>
+        const correctPassword = 'geometry'; // Set your password here
+        const images = [
+        ['https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_1.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_2.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_3.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_4.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_5.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_6.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_7.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_8.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_9.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_10.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_11.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_12.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_13.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_14.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_15.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_16.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_17.jpg', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_18.JPG', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_19.JPG', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_20.JPG', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_21.HEIC', 
+        'https://raw.githubusercontent.com/Ashit-10/test/zys/IMG_22.HEIC']
+        ];
+
+        const gallery = document.getElementById('gallery');
+        const passwordForm = document.getElementById('passwordForm');
+
+        images.forEach(image => {
+            const container = document.createElement('div');
+            container.className = 'image-container';
+
+            const img = document.createElement('img');
+            img.src = image;
+            img.alt = image;
+            img.loading = 'lazy'; // Lazy loading
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = image;
+            downloadLink.download = image.split('/').pop(); // Get the image file name from the URL
+            downloadLink.className = 'download-btn';
+            downloadLink.innerText = 'Download';
+
+            container.appendChild(img);
+            container.appendChild(downloadLink);
+            gallery.appendChild(container);
+        });
+
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const enteredPassword = document.getElementById('password').value;
+
+            if (enteredPassword === correctPassword) {
+                // Reveal the images
+                document.querySelectorAll('.image-container').forEach(container => {
+                    container.style.display = 'block';
+                });
+                passwordForm.style.display = 'none'; // Hide the form after successful entry
+            } else {
+                alert('Incorrect password. Please try again.');
+            }
+        });
+    </script>
+
+</body>
+</html>
