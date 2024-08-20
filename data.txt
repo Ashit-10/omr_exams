@@ -3,7 +3,7 @@
       "compression": "Off",
       "allowPartialMarks": "Off",
       "compressionSize": "150 KB",
-      "examFolder": "class-9_geography_1",
-      "signature": "Ashit",
+      "examFolder": "class-10_science_5",
+      "signature": "Rupa",
       "tuition": "MVM"
 }
