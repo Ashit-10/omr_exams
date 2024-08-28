@@ -13,7 +13,7 @@
     <style>
         body {
             font-family: "Times New Roman", Times, serif;
-            background-color: #f4f4f4;
+            background-color: #2024eb;
             color: #0a0a0a;
             margin: 0;
             padding: 20px;
@@ -22,11 +22,11 @@
 
         .test-container {
             background-color: #fff;
-            padding: 0px;
-            border-radius: 0px;
+            padding: 20px;
+            border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 800px;
+            /* max-width: 100vw; */
             margin: 0 auto;
             overflow-y: auto;
         }
@@ -110,7 +110,7 @@
             color: #fff;
             display: none;
             font-weight: bold;
-            animation: blast 0.9s forwards;
+            animation: blast 1.5s forwards;
         }
 
         #notification.correct {
@@ -118,7 +118,7 @@
         }
 
         #notification.incorrect {
-            background-color: #ce5f57; /* Red */
+            background-color: #d85555; /* Red */
         }
 
         @keyframes blast {
@@ -216,7 +216,7 @@
 
                 const questionNumber = document.createElement('div');
                 questionNumber.classList.add('question-number');
-                questionNumber.textContent = ``;
+                // questionNumber.textContent = ``;
                 // questionNumber.textContent = `Question ${index + 1}`;
 
                 const questionText = document.createElement('div');
@@ -291,7 +291,7 @@
                 score++;
             } else {
                 showNotification('Wrong', 'incorrect');
-                selectedOptionLabel.style.backgroundColor = '#ce5f57'; // Light red
+                selectedOptionLabel.style.backgroundColor = '#d85555'; // Light red
                 correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
             }
 
@@ -305,7 +305,7 @@
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 1000); // Show notification for 1 second
+            }, 1500); // Show notification for 1.5 second
         }
 
         function showExamEndMessage() {
