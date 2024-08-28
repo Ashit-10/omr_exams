@@ -161,6 +161,7 @@
         const fileLoc = urlParams.get('file');
         const questionsFile = fileLoc + `/question.txt`;
         const answersFile = fileLoc + `/answer.txt`;
+        const shuffle = urlParams.get('shuffle') === 'true'; // Check for shuffle parameter
         let subjectName = urlParams.get('subject');
         if (subjectName) {
             subjectName = "Subject: " + subjectName;
@@ -206,8 +207,10 @@
                         questionList.push(currentQuestion);
                     }
 
-                    // Shuffle questions
-                    shuffleArray(questionList);
+                    // Shuffle questions if shuffle is true
+                    if (shuffle) {
+                        shuffleArray(questionList);
+                    }
 
                     // Decide how many questions to display
                     const totalQuestions = questionList.length;
@@ -229,12 +232,18 @@
             fetch(answersFile)
                 .then(response => response.json())
                 .then(json => {
-                    answers = json;
+                    // Create a mapping of shuffled question indices to original indices
+                    const originalIndices = {};
+                    questions.forEach((q, index) => {
+                        originalIndices[q.question] = index + 1;
+                    });
+
                     // Update answer keys according to shuffled questions
                     const shuffledAnswers = {};
-                    questions.forEach((q, index) => {
-                        shuffledAnswers[index + 1] = json[lines.indexOf(q.question) + 1];
-                    });
+                    for (const [key, value] of Object.entries(json)) {
+                        const questionIndex = originalIndices[lines[parseInt(key) - 1]];
+                        shuffledAnswers[questionIndex] = value;
+                    }
                     answers = shuffledAnswers;
                     updateUI();
                 });
@@ -270,6 +279,7 @@
                     radio.addEventListener('change', () => handleOptionChange(index, radio));
 
                     label.classList.add('option-label');
+                    label.classList.add(`option-${String.fromCharCode(97 + q.options.indexOf(opt))}`); // Add color class
                     label.appendChild(radio);
                     label.appendChild(document.createTextNode(opt));
 
@@ -305,7 +315,7 @@
         }
 
         function handleOptionChange(questionIndex, selectedRadio) {
-            const answer = answers[questionIndex + 1][0];
+            const answer = answers[questionIndex + 1];
             const selectedValue = selectedRadio.value;
             const correctOption = document.querySelector(`input[name="question-${questionIndex}"][value="${answer}"]`);
             const selectedOptionLabel = selectedRadio.parentElement;
