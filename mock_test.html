@@ -79,7 +79,7 @@
             margin-bottom: 15px;
         }
 
-        .options input[type="checkbox"] {
+        .options input[type="radio"] {
             margin-right: 10px;
         }
 
@@ -155,6 +155,11 @@
         button:hover {
             background-color: #45a049;
         }
+
+        .disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
     </style>
 </head>
 
@@ -170,6 +175,7 @@
             <!-- Questions will be dynamically loaded here -->
         </div>
         <div id="notification"></div>
+        <button onclick="checkAnswers()">Submit Answers</button>
     </div>
 
     <script>
@@ -263,15 +269,16 @@
                 q.options.forEach((opt, optIndex) => {
                     const optionItem = document.createElement('li');
                     const label = document.createElement('label');
-                    const checkbox = document.createElement('input');
+                    const radio = document.createElement('input');
 
-                    checkbox.type = 'checkbox';
-                    checkbox.name = `question-${index}`;
-                    checkbox.value = opt.value; // Extract option letter
+                    radio.type = 'radio';
+                    radio.name = `question-${index}`;
+                    radio.value = opt.value;
+                    radio.disabled = false; // Enable radio buttons
 
                     label.classList.add('option-label');
                     label.classList.add(`option-${opt.value.toLowerCase()}`); // Add color class
-                    label.appendChild(checkbox);
+                    label.appendChild(radio);
                     label.appendChild(document.createTextNode(opt.text));
 
                     optionItem.appendChild(label);
@@ -318,15 +325,16 @@
         function checkAnswers() {
             let correctCount = 0;
             questions.forEach((_, index) => {
-                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
+                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
                 const correctAnswer = answers[`question-${index}`];
                 const optionLabels = document.querySelectorAll(`input[name="question-${index}"] + label`);
 
                 optionLabels.forEach(label => {
                     label.style.backgroundColor = '#fff'; // Reset color
+                    label.querySelector('input').disabled = true; // Disable radio buttons
                 });
 
-                selectedOptions.forEach(selectedOption => {
+                if (selectedOption) {
                     if (selectedOption.value === correctAnswer) {
                         correctCount++;
                         selectedOption.parentElement.style.backgroundColor = '#d4edda'; // Light green
@@ -335,7 +343,7 @@
                         selectedOption.parentElement.style.backgroundColor = '#f8d7da'; // Light red
                         showNotification('Wrong', 'incorrect');
                     }
-                });
+                }
 
                 // Highlight the correct option
                 document.querySelector(`input[name="question-${index}"][value="${correctAnswer}"]`).parentElement.style.backgroundColor = '#d4edda'; // Light green
