@@ -294,11 +294,17 @@
 
         function updateUI() {
             document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
-            document.getElementById('questions-left').textContent = `Questions Left: ${questions.length - document.querySelectorAll('input[type="radio"]:checked').length}`;
+            document.getElementById('questions-left').textContent = `Questions Left: ${questions.length - getAnsweredQuestionsCount()}`;
         }
 
-        loadQuestions();
-        loadAnswers();
+        function getAnsweredQuestionsCount() {
+            return document.querySelectorAll('input[type="radio"]:checked').length;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadQuestions();
+            loadAnswers();
+        });
     </script>
 </body>
 
