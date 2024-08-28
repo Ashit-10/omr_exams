@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Online Test System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
     <style>
         body {
             font-family: "Times New Roman", Times, serif;
             background-color: #f4f4f4;
             color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .test-container {
@@ -22,12 +26,21 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow-y: auto;
         }
 
         h1 {
             text-align: center;
             margin-bottom: 20px;
+        }
+
+        .exam-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .status-bar {
@@ -37,19 +50,24 @@
             font-weight: bold;
         }
 
-        .question {
+        .question-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
             margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: bold;
+            padding: 15px;
+            background-color: #fafafa;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .question-box {
-            background-color: #e0e0e0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .question {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
         }
 
         .options {
@@ -58,277 +76,241 @@
         }
 
         .options li {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .options input[type="checkbox"] {
             margin-right: 10px;
         }
 
-        .option-A {
-            background-color: #f8d7da; /* Light red */
-        }
-
-        .option-B {
-            background-color: #d1ecf1; /* Light blue */
-        }
-
-        .option-C {
-            background-color: #d4edda; /* Light green */
-        }
-
-        .option-D {
-            background-color: #fff3cd; /* Light yellow */
-        }
-
-        #result {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 18px;
-        }
-
-        #next-btn {
-            display: none;
-            margin-top: 20px;
-            width: 100%;
+        .option-label {
             padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
             border-radius: 4px;
+            transition: background-color 0.3s;
             cursor: pointer;
-            font-size: 16px;
-        }
-
-        #next-btn:hover {
-            background-color: #0056b3;
-        }
-
-        #restart-btn {
-            display: none;
-            margin-top: 20px;
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        #restart-btn:hover {
-            background-color: #218838;
-        }
-
-        .notification {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            color: white;
             font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.5s;
         }
 
-        .notification.success {
-            background-color: #28a745;
+        .option-a {
+            background-color: #e3f2fd;
+            /* Light blue */
         }
 
-        .notification.error {
-            background-color: #dc3545;
+        .option-b {
+            background-color: #fce4ec;
+            /* Light pink */
         }
 
-        .notification.show {
-            opacity: 1;
+        .option-c {
+            background-color: #e8f5e9;
+            /* Light green */
+        }
+
+        .option-d {
+            background-color: #fff3e0;
+            /* Light orange */
+        }
+
+        #score-banner {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        #notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: #fff;
+            display: none;
+            font-weight: bold;
+            animation: blast 0.5s forwards;
+        }
+
+        #notification.incorrect {
+            background-color: #f44336;
+        }
+
+        #questions-left {
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
+
 <body>
     <div class="test-container">
-        <h1>Online Test</h1>
+        <h1>Online Test System</h1>
+        <div class="exam-name">General Knowledge Quiz</div>
         <div class="status-bar">
-            <div id="score-banner">Score: 0</div>
+            <div id="score-banner">Score: 0 / 0</div>
             <div id="questions-left">Questions Left: 0</div>
         </div>
-        <div id="question-container"></div>
-        <div id="result"></div>
-        <button id="next-btn">Next Question</button>
-        <button id="restart-btn" onclick="restartExam()">Restart Exam</button>
+        <div id="questions-container">
+            <!-- Questions will be dynamically loaded here -->
+        </div>
+        <div id="notification"></div>
     </div>
 
     <script>
+        const questionsFile = 'Images/question.txt';
+        const answersFile = 'Images/answer.txt';
+
         let questions = [];
         let answers = {};
         let score = 0;
-        let currentQuestionIndex = 0;
 
-        async function loadQuestionsAndAnswers() {
-            try {
-                const questionsResponse = await fetch('Images/question.txt');
-                const questionsText = await questionsResponse.text();
-                questions = parseQuestions(questionsText);
+        function loadQuestions() {
+            fetch(questionsFile)
+                .then(response => response.text())
+                .then(text => {
+                    const lines = text.split('\n').filter(line => line.trim() !== '');
+                    let questionList = [];
+                    let currentQuestion = {};
 
-                const answersResponse = await fetch('Images/answer.txt');
-                answers = await answersResponse.json();
+                    lines.forEach(line => {
+                        if (line.match(/^\d+\./)) { // New question
+                            if (currentQuestion.question) {
+                                questionList.push(currentQuestion);
+                            }
+                            currentQuestion = {
+                                question: line,
+                                options: []
+                            };
+                        } else if (line.match(/^[A-D]\)/)) { // Options
+                            currentQuestion.options.push(line);
+                        }
+                    });
 
-                loadQuestion();
-            } catch (error) {
-                console.error('Error loading questions or answers:', error);
+                    if (currentQuestion.question) {
+                        questionList.push(currentQuestion);
+                    }
+
+                    questions = questionList;
+                    displayQuestions();
+                });
+        }
+
+        function loadAnswers() {
+            fetch(answersFile)
+                .then(response => response.json())
+                .then(json => {
+                    answers = json;
+                    updateUI();
+                });
+        }
+
+        function displayQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const questionBox = document.createElement('div');
+                questionBox.classList.add('question-box');
+
+                const questionNumber = document.createElement('div');
+                questionNumber.classList.add('question-number');
+                questionNumber.textContent = `Question ${index + 1}`;
+
+                const questionText = document.createElement('div');
+                questionText.classList.add('question');
+                questionText.textContent = q.question;
+
+                const optionsList = document.createElement('ul');
+                optionsList.classList.add('options');
+
+                q.options.forEach((opt, optIndex) => {
+                    const optionItem = document.createElement('li');
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+
+                    checkbox.type = 'checkbox';
+                    checkbox.name = `question-${index}`;
+                    checkbox.value = opt.charAt(0); // Extract option letter
+
+                    label.classList.add('option-label');
+                    label.classList.add(`option-${String.fromCharCode(97 + optIndex)}`); // Add color class
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(opt));
+
+                    optionItem.appendChild(label);
+                    optionsList.appendChild(optionItem);
+                });
+
+                questionBox.appendChild(questionNumber);
+                questionBox.appendChild(questionText);
+                questionBox.appendChild(optionsList);
+                container.appendChild(questionBox);
+            });
+        }
+
+        function updateUI() {
+            document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
+            document.getElementById('questions-left').textContent = `Questions Left: ${questions.length - getAnsweredQuestionsCount()}`;
+
+            if (getAnsweredQuestionsCount() === questions.length) {
+                showExamEndMessage();
             }
         }
 
-        function parseQuestions(text) {
-            const lines = text.split('\n').filter(line => line.trim() !== '');
-            const parsedQuestions = [];
-            let question = null;
-
-            lines.forEach(line => {
-                if (line.startsWith('1.') || line.startsWith('2.') || line.startsWith('3.')) {
-                    if (question) {
-                        parsedQuestions.push(question);
-                    }
-                    question = { question: line.split('. ')[1], options: [], correctAnswer: '' };
-                } else if (line.startsWith('A)') || line.startsWith('B)') || line.startsWith('C)') || line.startsWith('D)')) {
-                    const option = line.split(') ')[1];
-                    question.options.push(option);
+        function getAnsweredQuestionsCount() {
+            let count = 0;
+            questions.forEach((_, index) => {
+                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
+                if (selectedOptions.length > 0) {
+                    count++;
                 }
             });
-
-            if (question) {
-                parsedQuestions.push(question);
-            }
-
-            return parsedQuestions;
+            return count;
         }
 
-        function loadQuestion() {
-            const questionContainer = document.getElementById("question-container");
-            questionContainer.innerHTML = "";
-            const currentQuestion = questions[currentQuestionIndex];
-
-            const questionElement = document.createElement("div");
-            questionElement.classList.add("question-box");
-
-            const questionTitle = document.createElement("div");
-            questionTitle.classList.add("question");
-            questionTitle.textContent = `Q${currentQuestionIndex + 1}: ${currentQuestion.question}`;
-            questionElement.appendChild(questionTitle);
-
-            const optionsList = document.createElement("ul");
-            optionsList.classList.add("options");
-
-            currentQuestion.options.forEach((option, index) => {
-                const optionElement = document.createElement("li");
-                const label = document.createElement("label");
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.name = "option";
-                checkbox.value = String.fromCharCode(65 + index); // A, B, C, D
-                checkbox.disabled = true; // Initially disable checkboxes
-
-                const colors = ['option-A', 'option-B', 'option-C', 'option-D'];
-                label.classList.add(colors[index]);
-
-                checkbox.onclick = () => checkAnswer(index);
-                label.appendChild(checkbox);
-                label.append(option);
-                optionElement.appendChild(label);
-                optionsList.appendChild(optionElement);
-            });
-
-            questionElement.appendChild(optionsList);
-            questionContainer.appendChild(questionElement);
-
-            document.getElementById("questions-left").textContent = `Questions Left: ${questions.length - currentQuestionIndex}`;
-        }
-
-        function checkAnswer(selectedIndex) {
-            const currentQuestion = questions[currentQuestionIndex];
-            const correctAnswer = answers[String(currentQuestionIndex + 1)];
-            const resultElement = document.getElementById("result");
-
-            const options = document.getElementsByName("option");
-            let isCorrect = false;
-
-            options.forEach((option, index) => {
-                const label = option.parentElement;
-                if (option.value === correctAnswer) {
-                    label.style.border = "2px solid green";
-                    label.style.backgroundColor = "#d4edda"; // Light green for correct
-                    if (index === selectedIndex) {
-                        isCorrect = true;
-                        resultElement.textContent = "Correct!";
-                        resultElement.style.color = "green";
-                        showNotification("Correct", "success");
+        function checkAnswers() {
+            let correctCount = 0;
+            questions.forEach((_, index) => {
+                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
+                selectedOptions.forEach(selectedOption => {
+                    const answer = answers[`question-${index}`];
+                    if (selectedOption.value === answer) {
+                        correctCount++;
+                        selectedOption.parentElement.style.backgroundColor = '#d4edda'; // Light green
+                    } else {
+                        selectedOption.parentElement.style.backgroundColor = '#f8d7da'; // Light red
                     }
-                } else {
-                    if (index === selectedIndex) {
-                        label.style.border = "2px solid red";
-                        label.style.backgroundColor = "#f8d7da"; // Light red for incorrect
-                        resultElement.textContent = `Incorrect! Correct answer: ${currentQuestion.options[answers[String(currentQuestionIndex + 1)].charCodeAt(0) - 65]}`;
-                        resultElement.style.color = "red";
-                        showNotification("Incorrect", "error");
-                    }
-                }
-                option.disabled = true; // Disable all options after selection
+                });
             });
-
-            if (isCorrect) {
-                score++;
-                document.getElementById("score-banner").textContent = `Score: ${score}`;
-            }
-
-            document.getElementById("next-btn").style.display = "block"; // Show next button
+            score = correctCount;
+            updateUI();
         }
 
-        function showNotification(message, type) {
-            const notification = document.createElement("div");
-            notification.className = `notification ${type}`;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.classList.add("show");
-                setTimeout(() => {
-                    notification.classList.remove("show");
-                    setTimeout(() => notification.remove(), 500);
-                }, 2000);
-            }, 100);
+        function showExamEndMessage() {
+            alert(`Exam Completed! Your score is ${score} out of ${questions.length}`);
         }
 
-        function loadNextQuestion() {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
-                loadQuestion();
-                document.getElementById("next-btn").style.display = "none"; // Hide next button
-            } else {
-                showFinalResult();
-            }
-        }
-
-        function showFinalResult() {
-            document.getElementById("question-container").innerHTML = "";
-            document.getElementById("result").textContent = `Exam has ended. You have scored ${score} out of ${questions.length}.`;
-            document.getElementById("result").style.color = "#333";
-            document.getElementById("restart-btn").style.display = "block";
-        }
-
-        function restartExam() {
-            currentQuestionIndex = 0;
-            score = 0;
-            document.getElementById("restart-btn").style.display = "none";
-            document.getElementById("questions-left").style.display = "block";
-            document.getElementById("result").textContent = "";
-            document.getElementById("score-banner").textContent = "Score: 0";
-            loadQuestionsAndAnswers();
-        }
-
-        document.getElementById("next-btn").addEventListener("click", loadNextQuestion);
-
-        loadQuestionsAndAnswers();
+        document.addEventListener('DOMContentLoaded', () => {
+            loadQuestions();
+            loadAnswers();
+        });
     </script>
 </body>
+
 </html>
