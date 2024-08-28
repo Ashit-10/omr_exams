@@ -19,6 +19,7 @@
             display: none;
             max-width: 600px;
             margin: auto;
+            text-align: center;
         }
         .active {
             display: block;
@@ -32,21 +33,66 @@
             text-align: center;
         }
         .btn {
-            padding: 10px 20px;
+            padding: 15px 25px;
             background-color: #1a73e8;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             text-decoration: none;
-            text-align: center;
             display: inline-block;
-            width: 100%;
+            width: 80%;
             max-width: 300px;
-            margin: 5px 0;
+            margin: 10px 0;
+            font-size: 18px;
         }
         .btn:hover {
             background-color: #155ab2;
+        }
+        .chapter-container {
+            background-color: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .chapter-title {
+            font-weight: bold;
+            color: #333;
+        }
+        .chapter-buttons {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .btn-read {
+            background-color: #4caf50;
+        }
+        .btn-read:hover {
+            background-color: #388e3c;
+        }
+        .btn-download {
+            background-color: #f44336;
+        }
+        .btn-download:hover {
+            background-color: #d32f2f;
+        }
+        .back-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #757575;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            width: 100px;
+        }
+        .back-btn:hover {
+            background-color: #616161;
         }
     </style>
 </head>
@@ -70,14 +116,16 @@
         <ul class="button-list" id="subjects-list">
             <!-- Subjects will be added dynamically here -->
         </ul>
+        <button class="back-btn" onclick="goBack('step1')">Back</button>
     </div>
 
     <!-- Step 3: Display Chapters (Initially hidden) -->
     <div id="step3" class="container">
         <h2 id="subject-title">Select Chapter</h2>
-        <ul class="button-list" id="chapters-list">
+        <div id="chapters-list">
             <!-- Chapters will be added dynamically here -->
-        </ul>
+        </div>
+        <button class="back-btn" onclick="goBack('step2')">Back</button>
     </div>
 
     <script>
@@ -89,7 +137,6 @@
                         chapters: [
                             { title: 'Chapter 1: Introduction to Science', url: 'https://example.com/class10_science_chapter1.pdf' },
                             { title: 'Chapter 2: The World of Living', url: 'https://example.com/class10_science_chapter2.pdf' }
-                            // Add more chapters as needed
                         ]
                     },
                     math: {
@@ -97,10 +144,8 @@
                         chapters: [
                             { title: 'Chapter 1: Algebra', url: 'https://example.com/class10_math_chapter1.pdf' },
                             { title: 'Chapter 2: Geometry', url: 'https://example.com/class10_math_chapter2.pdf' }
-                            // Add more chapters as needed
                         ]
                     }
-                    // Add more subjects as needed
                 }
             },
             class11: {
@@ -110,7 +155,6 @@
                         chapters: [
                             { title: 'Chapter 1: Mechanics', url: 'https://example.com/class11_physics_chapter1.pdf' },
                             { title: 'Chapter 2: Thermodynamics', url: 'https://example.com/class11_physics_chapter2.pdf' }
-                            // Add more chapters as needed
                         ]
                     },
                     chemistry: {
@@ -118,18 +162,15 @@
                         chapters: [
                             { title: 'Chapter 1: Atomic Structure', url: 'https://example.com/class11_chemistry_chapter1.pdf' },
                             { title: 'Chapter 2: Chemical Bonding', url: 'https://example.com/class11_chemistry_chapter2.pdf' }
-                            // Add more chapters as needed
                         ]
                     }
-                    // Add more subjects as needed
                 }
             }
-            // Add more classes as needed
         };
 
         function showSubjects(className) {
             const subjectsList = document.getElementById('subjects-list');
-            subjectsList.innerHTML = ''; // Clear previous subjects
+            subjectsList.innerHTML = '';
             const subjects = classData[className].subjects;
             for (const key in subjects) {
                 const li = document.createElement('li');
@@ -148,30 +189,43 @@
 
         function showChapters(className, subjectKey) {
             const chaptersList = document.getElementById('chapters-list');
-            chaptersList.innerHTML = ''; // Clear previous chapters
+            chaptersList.innerHTML = '';
             const chapters = classData[className].subjects[subjectKey].chapters;
             for (const chapter of chapters) {
-                const li = document.createElement('li');
-                li.className = 'button-item';
+                const div = document.createElement('div');
+                div.className = 'chapter-container';
+                const chapterTitle = document.createElement('div');
+                chapterTitle.className = 'chapter-title';
+                chapterTitle.textContent = chapter.title;
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'chapter-buttons';
+
                 const readButton = document.createElement('a');
-                readButton.className = 'btn';
-                readButton.textContent = `Read ${chapter.title}`;
+                readButton.className = 'btn btn-read';
+                readButton.textContent = 'Read Online';
                 readButton.href = chapter.url;
                 readButton.target = '_blank';
 
                 const downloadButton = document.createElement('a');
-                downloadButton.className = 'btn';
-                downloadButton.textContent = `Download ${chapter.title}`;
+                downloadButton.className = 'btn btn-download';
+                downloadButton.textContent = 'Download';
                 downloadButton.href = chapter.url;
                 downloadButton.download = '';
 
-                li.appendChild(readButton);
-                li.appendChild(downloadButton);
-                chaptersList.appendChild(li);
+                buttonContainer.appendChild(readButton);
+                buttonContainer.appendChild(downloadButton);
+                div.appendChild(chapterTitle);
+                div.appendChild(buttonContainer);
+                chaptersList.appendChild(div);
             }
             document.getElementById('step2').classList.remove('active');
             document.getElementById('step3').classList.add('active');
             document.getElementById('subject-title').textContent = `Class ${className.replace('class', '')}: ${classData[className].subjects[subjectKey].title}`;
+        }
+
+        function goBack(stepId) {
+            document.querySelectorAll('.container').forEach(container => container.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
         }
     </script>
 
