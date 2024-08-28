@@ -6,7 +6,7 @@
     <title>Online Test System</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Times New Roman", Times, serif;
             background-color: #f4f4f4;
             color: #333;
             display: flex;
@@ -27,8 +27,15 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
         .question {
             margin-bottom: 20px;
+            font-size: 18px;
         }
         .options {
             list-style-type: none;
@@ -37,7 +44,17 @@
         .options li {
             margin-bottom: 10px;
         }
-        .options li button {
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        #next-btn {
+            display: none;
+            margin-top: 20px;
             width: 100%;
             padding: 10px;
             background-color: #007bff;
@@ -47,46 +64,38 @@
             cursor: pointer;
             font-size: 16px;
         }
-        .options li button:hover {
+        #next-btn:hover {
             background-color: #0056b3;
-        }
-        #result {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 18px;
-        }
-        #score-banner {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            color: green;
         }
     </style>
 </head>
 <body>
     <div class="test-container">
         <h1>Online Test</h1>
+        <div class="status-bar">
+            <div id="score-banner">Score: 0</div>
+            <div id="questions-left">Questions Left: 3</div>
+        </div>
         <div id="question-container"></div>
         <div id="result"></div>
-        <div id="score-banner">Score: 0</div>
+        <button id="next-btn" onclick="loadNextQuestion()">Next</button>
     </div>
 
     <script>
         const questions = [
             {
                 question: "What is the capital of France?",
-                options: ["Berlin", "Madrid", "Paris", "Rome"],
+                options: ["A. Berlin", "B. Madrid", "C. Paris", "D. Rome"],
                 correctAnswer: 2
             },
             {
                 question: "What is 2 + 2?",
-                options: ["3", "4", "5", "6"],
+                options: ["A. 3", "B. 4", "C. 5", "D. 6"],
                 correctAnswer: 1
             },
             {
                 question: "Who wrote 'Hamlet'?",
-                options: ["Shakespeare", "Dickens", "Chaucer", "Austen"],
+                options: ["A. Shakespeare", "B. Dickens", "C. Chaucer", "D. Austen"],
                 correctAnswer: 0
             }
         ];
@@ -108,37 +117,56 @@
 
             currentQuestion.options.forEach((option, index) => {
                 const optionElement = document.createElement("li");
-                const button = document.createElement("button");
-                button.textContent = option;
-                button.onclick = () => checkAnswer(index);
-                optionElement.appendChild(button);
+                const label = document.createElement("label");
+                const radioButton = document.createElement("input");
+                radioButton.type = "radio";
+                radioButton.name = "option";
+                radioButton.value = index;
+                radioButton.onclick = () => checkAnswer(index);
+                label.appendChild(radioButton);
+                label.append(option);
+                optionElement.appendChild(label);
                 optionsList.appendChild(optionElement);
             });
 
             questionContainer.appendChild(questionElement);
             questionContainer.appendChild(optionsList);
+
+            // Update the questions left
+            document.getElementById("questions-left").textContent = "Questions Left: " + (questions.length - currentQuestionIndex);
         }
 
         function checkAnswer(selectedIndex) {
             const currentQuestion = questions[currentQuestionIndex];
             const resultElement = document.getElementById("result");
+            const options = document.getElementsByName("option");
+
+            options.forEach(option => {
+                option.disabled = true; // Disable all options after selection
+            });
 
             if (selectedIndex === currentQuestion.correctAnswer) {
                 score++;
                 resultElement.textContent = "Correct!";
                 resultElement.style.color = "green";
             } else {
-                resultElement.textContent = "Wrong!";
+                resultElement.textContent = `Wrong! Correct answer: ${currentQuestion.options[currentQuestion.correctAnswer]}`;
                 resultElement.style.color = "red";
             }
 
             document.getElementById("score-banner").textContent = "Score: " + score;
 
+            document.getElementById("next-btn").style.display = "block"; // Show next button
+        }
+
+        function loadNextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
-                setTimeout(loadQuestion, 1000);
+                loadQuestion();
+                document.getElementById("result").textContent = "";
+                document.getElementById("next-btn").style.display = "none";
             } else {
-                setTimeout(showFinalScore, 1000);
+                showFinalScore();
             }
         }
 
@@ -146,6 +174,8 @@
             const questionContainer = document.getElementById("question-container");
             questionContainer.innerHTML = `<h2>Test Completed!</h2><p>Your final score is: ${score}</p>`;
             document.getElementById("result").textContent = "";
+            document.getElementById("next-btn").style.display = "none";
+            document.getElementById("questions-left").style.display = "none";
         }
 
         loadQuestion();
