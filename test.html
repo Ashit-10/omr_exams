@@ -206,12 +206,11 @@
                         questionList.push(currentQuestion);
                     }
 
-                    questions = questionList;
-                    shuffleArray(questions); // Shuffle questions
-                    questions.forEach(q => shuffleArray(q.options)); // Shuffle options within each question
+                    // Shuffle questions
+                    shuffleArray(questionList);
 
                     // Decide how many questions to display
-                    const totalQuestions = questions.length;
+                    const totalQuestions = questionList.length;
                     let questionsToDisplay = totalQuestions;
 
                     if (totalQuestions > 45) {
@@ -220,7 +219,7 @@
                         questionsToDisplay = Math.floor(totalQuestions / 10) * 10; // Reduce to nearest multiple of 10
                     }
 
-                    questions = questions.slice(0, questionsToDisplay); // Select the subset to display
+                    questions = questionList.slice(0, questionsToDisplay); // Select the subset to display
 
                     displayQuestions();
                 });
@@ -265,7 +264,6 @@
                     radio.addEventListener('change', () => handleOptionChange(index, radio));
 
                     label.classList.add('option-label');
-                    label.classList.add(`option-${String.fromCharCode(97 + optIndex)}`); // Add color class
                     label.appendChild(radio);
                     label.appendChild(document.createTextNode(opt));
 
@@ -333,7 +331,7 @@
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 1000); // Show notification for 1.5 seconds
+            }, 1000); // Show notification for 1 second
         }
 
         function showExamEndMessage() {
