@@ -167,11 +167,11 @@
 
         async function loadQuestionsAndAnswers() {
             try {
-                const questionsResponse = await fetch('Image/question.txt');
+                const questionsResponse = await fetch('Images/question.txt');
                 const questionsText = await questionsResponse.text();
                 questions = parseQuestions(questionsText);
 
-                const answersResponse = await fetch('Image/answer.txt');
+                const answersResponse = await fetch('Images/answer.txt');
                 answers = await answersResponse.json();
 
                 loadQuestion();
