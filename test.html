@@ -175,7 +175,6 @@
         headName.textContent = subjectName;
 
         let questions = [];
-        let answers = {};
         let score = 0;
 
         function shuffleArray(array) {
@@ -185,47 +184,49 @@
             }
         }
 
-        function loadQuestions() {
-            fetch(questionsFile)
-                .then(response => response.text())
-                .then(text => {
-                    const lines = text.split('\n').filter(line => line.trim() !== '');
-                    let questionList = [];
-                    let currentQuestion = {};
+        function loadQuestionsAndAnswers() {
+            Promise.all([
+                fetch(questionsFile).then(response => response.text()),
+                fetch(answersFile).then(response => response.json())
+            ]).then(([questionsText, answersJson]) => {
+                const lines = questionsText.split('\n').filter(line => line.trim() !== '');
+                let questionList = [];
+                let currentQuestion = {};
 
-                    lines.forEach(line => {
-                        if (line.match(/^\d+\./)) { // New question
-                            if (currentQuestion.question) {
-                                questionList.push(currentQuestion);
-                            }
-                            currentQuestion = {
-                                question: line,
-                                options: []
-                            };
-                        } else if (line.match(/^[A-D]\)/)) { // Options
-                            currentQuestion.options.push(line);
+                lines.forEach(line => {
+                    if (line.match(/^\d+\./)) { // New question
+                        if (currentQuestion.question) {
+                            questionList.push(currentQuestion);
                         }
-                    });
-
-                    if (currentQuestion.question) {
-                        questionList.push(currentQuestion);
+                        currentQuestion = {
+                            question: line,
+                            options: []
+                        };
+                    } else if (line.match(/^[A-D]\)/)) { // Options
+                        currentQuestion.options.push(line);
                     }
-
-                    questions = questionList;
-                    if (shuffleQuestions) {
-                        shuffleArray(questions);
-                    }
-                    displayQuestions();
                 });
-        }
 
-        function loadAnswers() {
-            fetch(answersFile)
-                .then(response => response.json())
-                .then(json => {
-                    answers = json;
-                    updateUI();
+                if (currentQuestion.question) {
+                    questionList.push(currentQuestion);
+                }
+
+                // Combine questions with their corresponding answers
+                questions = questionList.map((q, index) => {
+                    return {
+                        question: q.question,
+                        options: q.options,
+                        correctAnswer: answersJson[index + 1] // Using the JSON key
+                    };
                 });
+
+                // Shuffle questions and corresponding answers if shuffle=true
+                if (shuffleQuestions) {
+                    shuffleArray(questions);
+                }
+
+                displayQuestions();
+            });
         }
 
         function displayQuestions() {
@@ -270,6 +271,8 @@
                 questionBox.appendChild(optionsList);
                 container.appendChild(questionBox);
             });
+
+            updateUI();
         }
 
         function updateUI() {
@@ -293,10 +296,11 @@
         }
 
         function handleOptionChange(questionIndex, selectedRadio) {
-            const answer = answers[questionIndex + 1][0];
+            const answer = questions[questionIndex].correctAnswer[0];
             const selectedValue = selectedRadio.value;
-            const correctOption = document.querySelector(`input[name="question-${questionIndex}"][value="${answer}"]`);
             const selectedOptionLabel = selectedRadio.parentElement;
+            const correctOption = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
+                .find(input => input.value === answer);
             const correctOptionLabel = correctOption.parentElement;
 
             // Disable all radio buttons for this question after selection
@@ -310,9 +314,9 @@
                 correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
                 score++;
             } else {
-                showNotification('Wrong', 'incorrect');
-                selectedOptionLabel.style.backgroundColor = '#d85555'; // Light red
-                correctOptionLabel.style.backgroundColor = '#80d683'; // Light green
+                showNotification('Incorrect', 'incorrect');
+                selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
+                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
             }
 
             updateUI();
@@ -321,23 +325,26 @@
         function showNotification(message, type) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
-            notification.className = `notification ${type}`;
+            notification.className = type;
             notification.style.display = 'block';
+
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 1000); // Show notification for 1 second
+            }, 1000);
         }
 
         function showExamEndMessage() {
-            alert(`Exam completed! Your score is ${score} out of ${questions.length}.`);
+            const container = document.getElementById('questions-container');
+            const message = document.createElement('div');
+            message.classList.add('exam-end-message');
+            message.textContent = `You have completed the test. Your final score is ${score} out of ${questions.length}.`;
+            container.innerHTML = '';
+            container.appendChild(message);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadQuestions();
-            loadAnswers();
-        });
+        // Load questions and answers on page load
+        loadQuestionsAndAnswers();
     </script>
 </body>
 
 </html>
-
