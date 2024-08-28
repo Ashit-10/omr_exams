@@ -115,7 +115,7 @@
         }
 
         #notification.correct {
-            background-color: #5db160; /* Green */
+            background-color: #64b966; /* Green */
         }
 
         #notification.incorrect {
@@ -162,10 +162,12 @@
         const fileLoc = urlParams.get('file');
         const questionsFile = fileLoc + `/question.txt`;
         const answersFile = fileLoc + `/answer.txt`;
-        const subjectName = urlParams.get('subject') || `Mock Test`;
+        let subjectName = urlParams.get('subject');
+        if (subjectName) {
+            subjectName = "Subject: " + subjectName;
+        }
         let headName = document.getElementById('headname');
         headName.textContent = subjectName;
-        console.log(subjectName);
 
         let questions = [];
         let answers = {};
@@ -297,7 +299,7 @@
             } else {
                 showNotification('Wrong', 'incorrect');
                 selectedOptionLabel.style.backgroundColor = '#d85555'; // Light red
-                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
+                correctOptionLabel.style.backgroundColor = '#80d683'; // Light green
             }
 
             updateUI();
@@ -325,4 +327,3 @@
 </body>
 
 </html>
-
