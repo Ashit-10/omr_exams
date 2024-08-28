@@ -163,7 +163,7 @@
         const answersFile = fileLoc + `/answer.txt`;
         const subjectName = urlParams.get('subject') || `Mock Test`;
         let headName = document.getElementById('headname');
-        headName = subjectName;
+        headName.textContent = subjectName;
         console.log(subjectName);
 
         let questions = [];
