@@ -48,24 +48,24 @@
         .options input[type="radio"] {
             margin-right: 10px;
         }
+        .correct {
+            border: 2px solid green;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+        }
+        .incorrect {
+            border: 2px solid red;
+            background-color: #fbe9e7;
+            border-radius: 4px;
+        }
+        .option-label {
+            display: block;
+            padding: 10px;
+        }
         #result {
             text-align: center;
             margin-top: 20px;
             font-size: 18px;
-        }
-        #submit-btn {
-            margin-top: 20px;
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        #submit-btn:hover {
-            background-color: #0056b3;
         }
     </style>
 </head>
@@ -80,7 +80,6 @@
             <div id="question-container"></div>
         </form>
         <div id="result"></div>
-        <button id="submit-btn" onclick="submitAnswers()">Submit</button>
     </div>
 
     <script>
@@ -119,10 +118,12 @@
                 question.options.forEach((option, optionIndex) => {
                     const optionElement = document.createElement("li");
                     const label = document.createElement("label");
+                    label.classList.add("option-label");
                     const radioButton = document.createElement("input");
                     radioButton.type = "radio";
                     radioButton.name = `option-${index}`;
                     radioButton.value = optionIndex;
+                    radioButton.onclick = () => checkAnswer(index, optionIndex, label);
                     label.appendChild(radioButton);
                     label.append(option);
                     optionElement.appendChild(label);
@@ -137,30 +138,43 @@
             document.getElementById("questions-left").textContent = `Questions Left: ${questions.length}`;
         }
 
-        function submitAnswers() {
+        function checkAnswer(questionIndex, selectedIndex, label) {
+            const currentQuestion = questions[questionIndex];
+            const allOptions = document.querySelectorAll(`input[name="option-${questionIndex}"]`);
             const resultElement = document.getElementById("result");
-            score = 0;
 
-            questions.forEach((question, index) => {
-                const selectedOption = document.querySelector(`input[name="option-${index}"]:checked`);
-                if (selectedOption && parseInt(selectedOption.value) === question.correctAnswer) {
-                    score++;
+            allOptions.forEach((option, index) => {
+                const optionLabel = option.parentElement;
+                if (index === currentQuestion.correctAnswer) {
+                    optionLabel.classList.add("correct");
+                } else {
+                    optionLabel.classList.remove("correct");
+                }
+                if (index === selectedIndex) {
+                    optionLabel.classList.add("incorrect");
+                } else {
+                    optionLabel.classList.remove("incorrect");
                 }
             });
 
-            // Display final score
-            document.getElementById("score-banner").textContent = `Score: ${score}`;
-            resultElement.textContent = `Your final score is: ${score}/${questions.length}`;
-            resultElement.style.color = "blue";
-            
-            // Disable further selections
-            const options = document.querySelectorAll('input[type="radio"]');
-            options.forEach(option => {
-                option.disabled = true;
-            });
+            if (selectedIndex === currentQuestion.correctAnswer) {
+                score++;
+                resultElement.textContent = "Correct!";
+                resultElement.style.color = "green";
+            } else {
+                resultElement.textContent = `Wrong! Correct answer: ${currentQuestion.options[currentQuestion.correctAnswer]}`;
+                resultElement.style.color = "red";
+            }
 
-            // Hide the submit button after submission
-            document.getElementById("submit-btn").style.display = "none";
+            document.getElementById("score-banner").textContent = `Score: ${score}`;
+            document.getElementById("questions-left").textContent = `Questions Left: ${questions.length - getAnsweredQuestionsCount()}`;
+        }
+
+        function getAnsweredQuestionsCount() {
+            return questions.reduce((count, _, index) => {
+                const selectedOption = document.querySelector(`input[name="option-${index}"]:checked`);
+                return selectedOption ? count + 1 : count;
+            }, 0);
         }
 
         loadQuestions();
