@@ -173,49 +173,33 @@
                     const lines = text.split('\n').filter(line => line.trim() !== '');
                     let questionList = [];
                     let currentQuestion = {};
-                    let optionLines = [];
+                    let options = [];
+                    let questionStarted = false;
 
                     lines.forEach(line => {
                         if (line.match(/^\d+\./)) { // New question
-                            if (currentQuestion.question) {
-                                currentQuestion.options = parseOptions(optionLines);
+                            if (questionStarted) {
+                                currentQuestion.options = options;
                                 questionList.push(currentQuestion);
                             }
-                            currentQuestion = {
-                                question: line,
-                                options: []
-                            };
-                            optionLines = []; // Reset for new question
-                        } else if (line.match(/^[A-D]\)/)) { // Start of options
-                            if (optionLines.length > 0) {
-                                currentQuestion.options = parseOptions(optionLines);
-                                optionLines = []; // Reset options array
-                            }
-                            optionLines.push(line);
-                        } else {
-                            optionLines.push(line); // Accumulate options
+                            currentQuestion = { question: line, options: [] };
+                            options = [];
+                            questionStarted = true;
+                        } else if (line.match(/^[A-D]\)/)) { // Options
+                            options.push(line);
+                        } else if (questionStarted) { // Append any remaining text
+                            options.push(line);
                         }
                     });
 
-                    if (currentQuestion.question) {
-                        currentQuestion.options = parseOptions(optionLines);
+                    if (questionStarted) {
+                        currentQuestion.options = options;
                         questionList.push(currentQuestion);
                     }
 
                     questions = questionList;
                     displayQuestions();
                 });
-        }
-
-        function parseOptions(optionLines) {
-            const options = [];
-            optionLines.forEach(line => {
-                const matches = line.match(/([A-D])\)\s*(.*)/);
-                if (matches) {
-                    options.push({ text: `${matches[1]}) ${matches[2]}`, value: matches[1] });
-                }
-            });
-            return options;
         }
 
         function loadAnswers() {
@@ -247,20 +231,22 @@
                 optionsList.classList.add('options');
 
                 q.options.forEach((opt) => {
+                    const [key, ...textParts] = opt.split(' ');
+                    const text = textParts.join(' ');
                     const optionItem = document.createElement('li');
                     const label = document.createElement('label');
                     const radio = document.createElement('input');
 
                     radio.type = 'radio';
                     radio.name = `question-${index}`;
-                    radio.value = opt.value;
+                    radio.value = key;
                     radio.classList.add('option-radio');
-                    radio.addEventListener('change', () => handleOptionChange(index, opt.value));
+                    radio.addEventListener('change', () => handleOptionChange(index, key));
 
                     label.classList.add('option-label');
-                    label.classList.add(`option-${opt.value.toLowerCase()}`); // Add color class
+                    label.classList.add(`option-${key.toLowerCase()}`); // Add color class
                     label.appendChild(radio);
-                    label.appendChild(document.createTextNode(opt.text));
+                    label.appendChild(document.createTextNode(opt));
 
                     optionItem.appendChild(label);
                     optionsList.appendChild(optionItem);
