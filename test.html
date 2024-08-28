@@ -80,7 +80,7 @@
 
         .options input[type="radio"] {
             margin-right: 10px;
-            accent-color: #0d6efd; 
+            accent-color: #0d6efd;
         }
 
         .option-label {
@@ -114,12 +114,12 @@
         }
 
         #notification.correct {
-            background-color: #64b966; /* Green */
+            background-color: #64b966;
         }
 
         #notification.incorrect {
             top: 40%;
-            background-color: #d85555; /* Red */
+            background-color: #d85555;
         }
 
         @keyframes blast {
@@ -172,13 +172,12 @@
         let answers = {};
         let score = 0;
 
-        // Fisher-Yates Shuffle function
+        // Shuffle function using Fisher-Yates algorithm
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
-            return array;
         }
 
         function loadQuestions() {
@@ -207,13 +206,21 @@
                         questionList.push(currentQuestion);
                     }
 
-                    // Shuffle the questions
-                    questions = shuffleArray(questionList);
+                    questions = questionList;
+                    shuffleArray(questions); // Shuffle questions
+                    questions.forEach(q => shuffleArray(q.options)); // Shuffle options within each question
 
-                    // Shuffle the options for each question
-                    questions.forEach(q => {
-                        q.options = shuffleArray(q.options);
-                    });
+                    // Decide how many questions to display
+                    const totalQuestions = questions.length;
+                    let questionsToDisplay = totalQuestions;
+
+                    if (totalQuestions > 45) {
+                        questionsToDisplay = Math.floor(totalQuestions / 5) * 5; // Reduce to nearest multiple of 5
+                    } else if (totalQuestions > 20) {
+                        questionsToDisplay = Math.floor(totalQuestions / 10) * 10; // Reduce to nearest multiple of 10
+                    }
+
+                    questions = questions.slice(0, questionsToDisplay); // Select the subset to display
 
                     displayQuestions();
                 });
@@ -238,10 +245,11 @@
 
                 const questionNumber = document.createElement('div');
                 questionNumber.classList.add('question-number');
+                questionNumber.textContent = `Question ${index + 1}:`;
 
                 const questionText = document.createElement('div');
                 questionText.classList.add('question');
-                questionText.textContent = q.question;
+                questionText.textContent = q.question.replace(/^\d+\./, `${index + 1}.`); // Update serial number
 
                 const optionsList = document.createElement('ul');
                 optionsList.classList.add('options');
@@ -325,7 +333,7 @@
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 1000); // Show notification for 1 second
+            }, 1000); // Show notification for 1.5 seconds
         }
 
         function showExamEndMessage() {
