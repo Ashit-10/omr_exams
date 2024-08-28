@@ -241,8 +241,9 @@
                     // Update answer keys according to shuffled questions
                     const shuffledAnswers = {};
                     for (const [key, value] of Object.entries(json)) {
-                        const questionIndex = originalIndices[lines[parseInt(key) - 1]];
-                        shuffledAnswers[questionIndex] = value;
+                        const originalQuestionNumber = parseInt(key);
+                        const shuffledQuestionNumber = originalIndices[lines[originalQuestionNumber - 1]];
+                        shuffledAnswers[shuffledQuestionNumber] = value;
                     }
                     answers = shuffledAnswers;
                     updateUI();
@@ -319,7 +320,7 @@
             const selectedValue = selectedRadio.value;
             const correctOption = document.querySelector(`input[name="question-${questionIndex}"][value="${answer}"]`);
             const selectedOptionLabel = selectedRadio.parentElement;
-            const correctOptionLabel = correctOption.parentElement;
+            const correctOptionLabel = correctOption ? correctOption.parentElement : null;
 
             // Disable all radio buttons for this question after selection
             document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
@@ -329,12 +330,16 @@
             if (selectedValue === answer) {
                 showNotification('Correct', 'correct');
                 selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
-                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
+                if (correctOptionLabel) {
+                    correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
+                }
                 score++;
             } else {
                 showNotification('Wrong', 'incorrect');
                 selectedOptionLabel.style.backgroundColor = '#d85555'; // Light red
-                correctOptionLabel.style.backgroundColor = '#80d683'; // Light green
+                if (correctOptionLabel) {
+                    correctOptionLabel.style.backgroundColor = '#80d683'; // Light green
+                }
             }
 
             updateUI();
