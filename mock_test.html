@@ -159,7 +159,7 @@
         // Get query parameters
         const urlParams = new URLSearchParams(window.location.search);
         const fileLoc = urlParams.get('file');
-        const questionFile = fileLoc + `/question.txt`;
+        const questionsFile = fileLoc + `/question.txt`;
         const answersFile = fileLoc + `/answer.txt`;
         const subjectName = urlParams.get('subject') || `Mock Test`;
         let headName = document.getElementById('headname');
