@@ -11,41 +11,28 @@
             background-color: #f4f4f9;
             color: #333;
         }
-        h1 {
+        h1, h2 {
             text-align: center;
             color: #5a5a5a;
         }
-        .class-container {
-            margin-bottom: 30px;
+        .container {
+            display: none;
+            max-width: 600px;
+            margin: auto;
         }
-        .class-title {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-            color: #4a4a4a;
+        .active {
+            display: block;
         }
-        .book-list {
+        .button-list {
             list-style-type: none;
             padding: 0;
         }
-        .book-item {
+        .button-item {
             margin: 10px 0;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .book-title {
-            flex: 1;
-        }
-        .button-container {
-            display: flex;
-            gap: 10px;
+            text-align: center;
         }
         .btn {
-            padding: 8px 12px;
+            padding: 10px 20px;
             background-color: #1a73e8;
             color: #fff;
             border: none;
@@ -53,6 +40,10 @@
             cursor: pointer;
             text-decoration: none;
             text-align: center;
+            display: inline-block;
+            width: 100%;
+            max-width: 300px;
+            margin: 5px 0;
         }
         .btn:hover {
             background-color: #155ab2;
@@ -63,51 +54,126 @@
 
     <h1>Books Library</h1>
 
-    <!-- Class 10 Books -->
-    <div class="class-container">
-        <div class="class-title">Class 10</div>
-        <ul class="book-list">
-            <li class="book-item">
-                <span class="book-title">Science Book</span>
-                <div class="button-container">
-                    <a class="btn" href="https://example.com/class10_science.pdf" target="_blank">Read Online</a>
-                    <a class="btn" href="https://example.com/class10_science.pdf" download>Download</a>
-                </div>
-            </li>
-            <li class="book-item">
-                <span class="book-title">Mathematics Book</span>
-                <div class="button-container">
-                    <a class="btn" href="https://example.com/class10_math.pdf" target="_blank">Read Online</a>
-                    <a class="btn" href="https://example.com/class10_math.pdf" download>Download</a>
-                </div>
-            </li>
-            <!-- Add more books as needed -->
+    <!-- Step 1: Choose Class -->
+    <div id="step1" class="container active">
+        <h2>Select Class</h2>
+        <ul class="button-list">
+            <li class="button-item"><button class="btn" onclick="showSubjects('class10')">Class 10</button></li>
+            <li class="button-item"><button class="btn" onclick="showSubjects('class11')">Class 11</button></li>
+            <!-- Add more classes as needed -->
         </ul>
     </div>
 
-    <!-- Class 11 Books -->
-    <div class="class-container">
-        <div class="class-title">Class 9</div>
-        <ul class="book-list">
-            <li class="book-item">
-                <span class="book-title">History</span>
-                <div class="button-container">
-                    <a class="btn" href="Images/history.pdf" target="_blank">Read Online</a>
-                    <a class="btn" href="Images/history.pdf" download>Download</a>
-                </div>
-            </li>
-            <li class="book-item">
-                <span class="book-title">Geography</span>
-                <div class="button-container">
-                    <a class="btn" href="Images/jalabayu.pdf" target="_blank">Read Online</a>
-                    <a class="btn" href="Images/jalabayu.pdf" download>Download</a>
-                </div>
-            </li>
-            <!-- Add more books as needed -->
+    <!-- Step 2: Choose Subject (Initially hidden) -->
+    <div id="step2" class="container">
+        <h2 id="class-title">Select Subject</h2>
+        <ul class="button-list" id="subjects-list">
+            <!-- Subjects will be added dynamically here -->
         </ul>
     </div>
 
-    <!-- Add more classes as needed -->
+    <!-- Step 3: Display Chapters (Initially hidden) -->
+    <div id="step3" class="container">
+        <h2 id="subject-title">Select Chapter</h2>
+        <ul class="button-list" id="chapters-list">
+            <!-- Chapters will be added dynamically here -->
+        </ul>
+    </div>
+
+    <script>
+        const classData = {
+            class10: {
+                subjects: {
+                    science: {
+                        title: 'Science',
+                        chapters: [
+                            { title: 'Chapter 1: Introduction to Science', url: 'https://example.com/class10_science_chapter1.pdf' },
+                            { title: 'Chapter 2: The World of Living', url: 'https://example.com/class10_science_chapter2.pdf' }
+                            // Add more chapters as needed
+                        ]
+                    },
+                    math: {
+                        title: 'Mathematics',
+                        chapters: [
+                            { title: 'Chapter 1: Algebra', url: 'https://example.com/class10_math_chapter1.pdf' },
+                            { title: 'Chapter 2: Geometry', url: 'https://example.com/class10_math_chapter2.pdf' }
+                            // Add more chapters as needed
+                        ]
+                    }
+                    // Add more subjects as needed
+                }
+            },
+            class11: {
+                subjects: {
+                    physics: {
+                        title: 'Physics',
+                        chapters: [
+                            { title: 'Chapter 1: Mechanics', url: 'https://example.com/class11_physics_chapter1.pdf' },
+                            { title: 'Chapter 2: Thermodynamics', url: 'https://example.com/class11_physics_chapter2.pdf' }
+                            // Add more chapters as needed
+                        ]
+                    },
+                    chemistry: {
+                        title: 'Chemistry',
+                        chapters: [
+                            { title: 'Chapter 1: Atomic Structure', url: 'https://example.com/class11_chemistry_chapter1.pdf' },
+                            { title: 'Chapter 2: Chemical Bonding', url: 'https://example.com/class11_chemistry_chapter2.pdf' }
+                            // Add more chapters as needed
+                        ]
+                    }
+                    // Add more subjects as needed
+                }
+            }
+            // Add more classes as needed
+        };
+
+        function showSubjects(className) {
+            const subjectsList = document.getElementById('subjects-list');
+            subjectsList.innerHTML = ''; // Clear previous subjects
+            const subjects = classData[className].subjects;
+            for (const key in subjects) {
+                const li = document.createElement('li');
+                li.className = 'button-item';
+                const button = document.createElement('button');
+                button.className = 'btn';
+                button.textContent = subjects[key].title;
+                button.onclick = () => showChapters(className, key);
+                li.appendChild(button);
+                subjectsList.appendChild(li);
+            }
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+            document.getElementById('class-title').textContent = `Class ${className.replace('class', '')}: Select Subject`;
+        }
+
+        function showChapters(className, subjectKey) {
+            const chaptersList = document.getElementById('chapters-list');
+            chaptersList.innerHTML = ''; // Clear previous chapters
+            const chapters = classData[className].subjects[subjectKey].chapters;
+            for (const chapter of chapters) {
+                const li = document.createElement('li');
+                li.className = 'button-item';
+                const readButton = document.createElement('a');
+                readButton.className = 'btn';
+                readButton.textContent = `Read ${chapter.title}`;
+                readButton.href = chapter.url;
+                readButton.target = '_blank';
+
+                const downloadButton = document.createElement('a');
+                downloadButton.className = 'btn';
+                downloadButton.textContent = `Download ${chapter.title}`;
+                downloadButton.href = chapter.url;
+                downloadButton.download = '';
+
+                li.appendChild(readButton);
+                li.appendChild(downloadButton);
+                chaptersList.appendChild(li);
+            }
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.add('active');
+            document.getElementById('subject-title').textContent = `Class ${className.replace('class', '')}: ${classData[className].subjects[subjectKey].title}`;
+        }
+    </script>
 
 </body>
 </html>
