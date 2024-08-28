@@ -14,7 +14,7 @@
         body {
             font-family: "Times New Roman", Times, serif;
             background-color: #f4f4f4;
-            color: #333;
+            color: #2633ec;
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
@@ -93,22 +93,6 @@
             align-items: center;
         }
 
-        /* .option-a {
-            background-color: #f6f8fa; 
-        }
-
-        .option-b {
-            background-color: #f6f8fa; 
-        }
-
-        .option-c {
-            background-color: #f6f8fa; 
-        }
-
-        .option-d {
-            background-color: #f6f8fa; 
-        } */
-
         #score-banner {
             font-size: 18px;
             text-align: center;
@@ -130,11 +114,11 @@
         }
 
         #notification.correct {
-            background-color: #53ad56; /* Green */
+            background-color: #5db160; /* Green */
         }
 
         #notification.incorrect {
-            background-color: #bd4c44; /* Red */
+            background-color: #ce5f57; /* Red */
         }
 
         @keyframes blast {
@@ -302,13 +286,13 @@
 
             if (selectedValue === answer) {
                 showNotification('Correct', 'correct');
-                selectedOptionLabel.style.backgroundColor = '#53ad56'; // Light green
-                correctOptionLabel.style.backgroundColor = '#53ad56'; // Light green
+                selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
+                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
                 score++;
             } else {
                 showNotification('Wrong', 'incorrect');
-                selectedOptionLabel.style.backgroundColor = '#bd4c44'; // Light red
-                correctOptionLabel.style.backgroundColor = '#53ad56'; // Light green
+                selectedOptionLabel.style.backgroundColor = '#ce5f57'; // Light red
+                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
             }
 
             updateUI();
