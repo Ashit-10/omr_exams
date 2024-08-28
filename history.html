@@ -3,64 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Viewer</title>
+    <title>Books Library</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #5a5a5a;
+        }
+        .class-container {
+            margin-bottom: 30px;
+        }
+        .class-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #4a4a4a;
+        }
+        .book-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .book-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f0f0f0;
+        }
+        .book-title {
+            flex: 1;
         }
         .button-container {
-            margin-top: 20px;
+            display: flex;
+            gap: 10px;
         }
         .btn {
-            padding: 10px 20px;
-            margin: 10px;
+            padding: 8px 12px;
+            background-color: #1a73e8;
+            color: #fff;
             border: none;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: white;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
+            text-decoration: none;
+            text-align: center;
         }
         .btn:hover {
-            background-color: #0056b3;
+            background-color: #155ab2;
         }
     </style>
 </head>
 <body>
-    <h2>ଇତିହାସ class-9</h2>
-    <div class="button-container">
-        <button class="btn" onclick="viewPDF()">View Online</button>
-        <button class="btn" onclick="downloadPDF()">Download</button>
+
+    <h1>Books Library</h1>
+
+    <!-- Class 10 Books -->
+    <div class="class-container">
+        <div class="class-title">Class 10</div>
+        <ul class="book-list">
+            <li class="book-item">
+                <span class="book-title">Science Book</span>
+                <div class="button-container">
+                    <a class="btn" href="https://example.com/class10_science.pdf" target="_blank">Read Online</a>
+                    <a class="btn" href="https://example.com/class10_science.pdf" download>Download</a>
+                </div>
+            </li>
+            <li class="book-item">
+                <span class="book-title">Mathematics Book</span>
+                <div class="button-container">
+                    <a class="btn" href="https://example.com/class10_math.pdf" target="_blank">Read Online</a>
+                    <a class="btn" href="https://example.com/class10_math.pdf" download>Download</a>
+                </div>
+            </li>
+            <!-- Add more books as needed -->
+        </ul>
     </div>
-    <h2>ଭୂଗୋଳ class-9</h2>
-    <div class="button-container">
-        <button class="btn" onclick="geoviewPDF()">View Online</button>
-        <button class="btn" onclick="geodownloadPDF()">Download</button>
+
+    <!-- Class 11 Books -->
+    <div class="class-container">
+        <div class="class-title">Class 9</div>
+        <ul class="book-list">
+            <li class="book-item">
+                <span class="book-title">History</span>
+                <div class="button-container">
+                    <a class="btn" href="Images/history.pdf" target="_blank">Read Online</a>
+                    <a class="btn" href="Images/history.pdf" download>Download</a>
+                </div>
+            </li>
+            <li class="book-item">
+                <span class="book-title">Geography</span>
+                <div class="button-container">
+                    <a class="btn" href="Images/jalabayu.pdf" target="_blank">Read Online</a>
+                    <a class="btn" href="Images/jalabayu.pdf" download>Download</a>
+                </div>
+            </li>
+            <!-- Add more books as needed -->
+        </ul>
     </div>
 
-    <script>
-        function viewPDF() {
-            window.open('Images/history.pdf', '_blank');
-        }
+    <!-- Add more classes as needed -->
 
-        function downloadPDF() {
-            window.location.href = 'Images/history.pdf';
-        }
-
-
-        function geoviewPDF() {
-            window.open('Images/jalabayu.pdf', '_blank');
-        }
-
-        function geodownloadPDF() {
-            window.location.href = 'Images/jalabayu.pdf';
-        }
-    </script>
 </body>
 </html>
