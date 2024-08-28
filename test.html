@@ -115,11 +115,13 @@
 
         #notification.correct {
             background-color: #64b966;
+            /* Green */
         }
 
         #notification.incorrect {
             top: 40%;
             background-color: #d85555;
+            /* Red */
         }
 
         @keyframes blast {
@@ -127,6 +129,7 @@
                 opacity: 1;
                 transform: scale(1);
             }
+
             100% {
                 opacity: 0;
                 transform: scale(1.5);
@@ -161,11 +164,13 @@
         const fileLoc = urlParams.get('file');
         const questionsFile = fileLoc + `/question.txt`;
         const answersFile = fileLoc + `/answer.txt`;
-        const shuffle = urlParams.get('shuffle') === 'true'; // Check for shuffle parameter
         let subjectName = urlParams.get('subject');
+        const shuffleQuestions = urlParams.get('shuffle') === 'true';
+
         if (subjectName) {
             subjectName = "Subject: " + subjectName;
         }
+
         let headName = document.getElementById('headname');
         headName.textContent = subjectName;
 
@@ -173,7 +178,6 @@
         let answers = {};
         let score = 0;
 
-        // Shuffle function using Fisher-Yates algorithm
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -207,23 +211,10 @@
                         questionList.push(currentQuestion);
                     }
 
-                    // Shuffle questions if shuffle is true
-                    if (shuffle) {
-                        shuffleArray(questionList);
+                    questions = questionList;
+                    if (shuffleQuestions) {
+                        shuffleArray(questions);
                     }
-
-                    // Decide how many questions to display
-                    const totalQuestions = questionList.length;
-                    let questionsToDisplay = totalQuestions;
-
-                    if (totalQuestions > 45) {
-                        questionsToDisplay = Math.floor(totalQuestions / 5) * 5; // Reduce to nearest multiple of 5
-                    } else if (totalQuestions > 20) {
-                        questionsToDisplay = Math.floor(totalQuestions / 10) * 10; // Reduce to nearest multiple of 10
-                    }
-
-                    questions = questionList.slice(0, questionsToDisplay); // Select the subset to display
-
                     displayQuestions();
                 });
         }
@@ -232,20 +223,7 @@
             fetch(answersFile)
                 .then(response => response.json())
                 .then(json => {
-                    // Create a mapping of shuffled question indices to original indices
-                    const originalIndices = {};
-                    questions.forEach((q, index) => {
-                        originalIndices[q.question] = index + 1;
-                    });
-
-                    // Update answer keys according to shuffled questions
-                    const shuffledAnswers = {};
-                    for (const [key, value] of Object.entries(json)) {
-                        const originalQuestionNumber = parseInt(key);
-                        const shuffledQuestionNumber = originalIndices[lines[originalQuestionNumber - 1]];
-                        shuffledAnswers[shuffledQuestionNumber] = value;
-                    }
-                    answers = shuffledAnswers;
+                    answers = json;
                     updateUI();
                 });
         }
@@ -260,16 +238,16 @@
 
                 const questionNumber = document.createElement('div');
                 questionNumber.classList.add('question-number');
-                questionNumber.textContent = `Question ${index + 1}:`;
+                questionNumber.textContent = `Question ${index + 1}`;
 
                 const questionText = document.createElement('div');
                 questionText.classList.add('question');
-                questionText.textContent = q.question.replace(/^\d+\./, `${index + 1}.`); // Update serial number
+                questionText.textContent = q.question;
 
                 const optionsList = document.createElement('ul');
                 optionsList.classList.add('options');
 
-                q.options.forEach((opt) => {
+                q.options.forEach((opt, optIndex) => {
                     const optionItem = document.createElement('li');
                     const label = document.createElement('label');
                     const radio = document.createElement('input');
@@ -280,7 +258,6 @@
                     radio.addEventListener('change', () => handleOptionChange(index, radio));
 
                     label.classList.add('option-label');
-                    label.classList.add(`option-${String.fromCharCode(97 + q.options.indexOf(opt))}`); // Add color class
                     label.appendChild(radio);
                     label.appendChild(document.createTextNode(opt));
 
@@ -316,11 +293,11 @@
         }
 
         function handleOptionChange(questionIndex, selectedRadio) {
-            const answer = answers[questionIndex + 1];
+            const answer = answers[questionIndex + 1][0];
             const selectedValue = selectedRadio.value;
             const correctOption = document.querySelector(`input[name="question-${questionIndex}"][value="${answer}"]`);
             const selectedOptionLabel = selectedRadio.parentElement;
-            const correctOptionLabel = correctOption ? correctOption.parentElement : null;
+            const correctOptionLabel = correctOption.parentElement;
 
             // Disable all radio buttons for this question after selection
             document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
@@ -330,16 +307,12 @@
             if (selectedValue === answer) {
                 showNotification('Correct', 'correct');
                 selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
-                if (correctOptionLabel) {
-                    correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
-                }
+                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
                 score++;
             } else {
                 showNotification('Wrong', 'incorrect');
                 selectedOptionLabel.style.backgroundColor = '#d85555'; // Light red
-                if (correctOptionLabel) {
-                    correctOptionLabel.style.backgroundColor = '#80d683'; // Light green
-                }
+                correctOptionLabel.style.backgroundColor = '#80d683'; // Light green
             }
 
             updateUI();
@@ -367,3 +340,4 @@
 </body>
 
 </html>
+
