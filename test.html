@@ -21,12 +21,18 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             overflow-y: auto;
         }
         h1 {
             text-align: center;
             margin-bottom: 20px;
+        }
+        .exam-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
         }
         .status-bar {
             display: flex;
@@ -34,9 +40,20 @@
             margin-bottom: 20px;
             font-weight: bold;
         }
-        .question {
+        .question-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
             margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .question {
             font-size: 18px;
+            margin-bottom: 15px;
         }
         .options {
             list-style-type: none;
@@ -62,24 +79,21 @@
             display: block;
             padding: 10px;
         }
-        #result {
-            text-align: center;
-            margin-top: 20px;
+        #score-banner {
             font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="test-container">
-        <h1>Online Test</h1>
+        <div class="exam-name">Sample Exam</div>
         <div class="status-bar">
             <div id="score-banner">Score: 0</div>
             <div id="questions-left">Questions Left: 3</div>
         </div>
-        <form id="questions-form">
-            <div id="question-container"></div>
-        </form>
-        <div id="result"></div>
+        <div id="questions-container"></div>
     </div>
 
     <script>
@@ -104,13 +118,22 @@
         let score = 0;
 
         function loadQuestions() {
-            const questionContainer = document.getElementById("question-container");
-            questionContainer.innerHTML = "";
-            
+            const questionsContainer = document.getElementById("questions-container");
+            questionsContainer.innerHTML = "";
+
             questions.forEach((question, index) => {
+                const questionBox = document.createElement("div");
+                questionBox.classList.add("question-box");
+
+                const questionNumber = document.createElement("div");
+                questionNumber.classList.add("question-number");
+                questionNumber.textContent = `Question ${index + 1}`;
+                questionBox.appendChild(questionNumber);
+
                 const questionElement = document.createElement("div");
                 questionElement.classList.add("question");
                 questionElement.textContent = question.question;
+                questionBox.appendChild(questionElement);
 
                 const optionsList = document.createElement("ul");
                 optionsList.classList.add("options");
@@ -123,25 +146,22 @@
                     radioButton.type = "radio";
                     radioButton.name = `option-${index}`;
                     radioButton.value = optionIndex;
-                    radioButton.onclick = () => checkAnswer(index, optionIndex, label);
+                    radioButton.onclick = () => checkAnswer(index, optionIndex);
                     label.appendChild(radioButton);
                     label.append(option);
                     optionElement.appendChild(label);
                     optionsList.appendChild(optionElement);
                 });
 
-                questionContainer.appendChild(questionElement);
-                questionContainer.appendChild(optionsList);
+                questionBox.appendChild(optionsList);
+                questionsContainer.appendChild(questionBox);
             });
-
-            // Update the questions left
-            document.getElementById("questions-left").textContent = `Questions Left: ${questions.length}`;
         }
 
-        function checkAnswer(questionIndex, selectedIndex, label) {
+        function checkAnswer(questionIndex, selectedIndex) {
             const currentQuestion = questions[questionIndex];
             const allOptions = document.querySelectorAll(`input[name="option-${questionIndex}"]`);
-            const resultElement = document.getElementById("result");
+            let hasSelected = false;
 
             allOptions.forEach((option, index) => {
                 const optionLabel = option.parentElement;
@@ -152,22 +172,20 @@
                 }
                 if (index === selectedIndex) {
                     optionLabel.classList.add("incorrect");
+                    hasSelected = true;
                 } else {
                     optionLabel.classList.remove("incorrect");
                 }
+                option.disabled = true; // Disable all options after selection
             });
 
-            if (selectedIndex === currentQuestion.correctAnswer) {
-                score++;
-                resultElement.textContent = "Correct!";
-                resultElement.style.color = "green";
-            } else {
-                resultElement.textContent = `Wrong! Correct answer: ${currentQuestion.options[currentQuestion.correctAnswer]}`;
-                resultElement.style.color = "red";
+            if (hasSelected) {
+                if (selectedIndex === currentQuestion.correctAnswer) {
+                    score++;
+                }
+                document.getElementById("score-banner").textContent = `Score: ${score}`;
+                document.getElementById("questions-left").textContent = `Questions Left: ${questions.length - getAnsweredQuestionsCount()}`;
             }
-
-            document.getElementById("score-banner").textContent = `Score: ${score}`;
-            document.getElementById("questions-left").textContent = `Questions Left: ${questions.length - getAnsweredQuestionsCount()}`;
         }
 
         function getAnsweredQuestionsCount() {
