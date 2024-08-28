@@ -230,6 +230,12 @@
                 .then(response => response.json())
                 .then(json => {
                     answers = json;
+                    // Update answer keys according to shuffled questions
+                    const shuffledAnswers = {};
+                    questions.forEach((q, index) => {
+                        shuffledAnswers[index + 1] = json[lines.indexOf(q.question) + 1];
+                    });
+                    answers = shuffledAnswers;
                     updateUI();
                 });
         }
@@ -253,7 +259,7 @@
                 const optionsList = document.createElement('ul');
                 optionsList.classList.add('options');
 
-                q.options.forEach((opt, optIndex) => {
+                q.options.forEach((opt) => {
                     const optionItem = document.createElement('li');
                     const label = document.createElement('label');
                     const radio = document.createElement('input');
