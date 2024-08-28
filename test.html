@@ -117,7 +117,7 @@
         }
 
         #notification {
-            /* position: fixed; */
+            position: fixed;
             top: 20px;
             display: flex;
             justify-content: center;
@@ -131,11 +131,11 @@
         }
 
         #notification.correct {
-            background-color: #4caf50; /* Green */
+            background-color: #53ad56; /* Green */
         }
 
         #notification.incorrect {
-            background-color: #f44336; /* Red */
+            background-color: #bd4c44; /* Red */
         }
 
         @keyframes blast {
@@ -233,7 +233,8 @@
 
                 const questionNumber = document.createElement('div');
                 questionNumber.classList.add('question-number');
-                questionNumber.textContent = `Question ${index + 1}`;
+                questionNumber.textContent = ``;
+                // questionNumber.textContent = `Question ${index + 1}`;
 
                 const questionText = document.createElement('div');
                 questionText.classList.add('question');
@@ -302,13 +303,13 @@
 
             if (selectedValue === answer) {
                 showNotification('Correct', 'correct');
-                selectedOptionLabel.style.backgroundColor = '#4caf50'; // Light green
-                correctOptionLabel.style.backgroundColor = '#4caf50'; // Light green
+                selectedOptionLabel.style.backgroundColor = '#53ad56'; // Light green
+                correctOptionLabel.style.backgroundColor = '#53ad56'; // Light green
                 score++;
             } else {
                 showNotification('Wrong', 'incorrect');
-                selectedOptionLabel.style.backgroundColor = '#f44336'; // Light red
-                correctOptionLabel.style.backgroundColor = '#4caf50'; // Light green
+                selectedOptionLabel.style.backgroundColor = '#bd4c44'; // Light red
+                correctOptionLabel.style.backgroundColor = '#53ad56'; // Light green
             }
 
             updateUI();
