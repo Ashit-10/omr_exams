@@ -16,7 +16,7 @@
             background-color: #2024eb;
             color: #0a0a0a;
             margin: 0;
-            padding: 20px;
+            padding: 0px;
             box-sizing: border-box;
         }
 
@@ -102,7 +102,7 @@
 
         #notification {
             position: fixed;
-            top: 20px;
+            top: 100px;
             left: 40%;
             transform: translateX(-50%);
             padding: 10px 20px;
@@ -110,7 +110,7 @@
             color: #fff;
             display: none;
             font-weight: bold;
-            animation: blast 1.5s forwards;
+            animation: blast 2.5s forwards;
         }
 
         #notification.correct {
@@ -305,7 +305,7 @@
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 1500); // Show notification for 1.5 second
+            }, 2500); // Show notification for 1.5 second
         }
 
         function showExamEndMessage() {
