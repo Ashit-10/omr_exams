@@ -89,7 +89,8 @@
             transition: background-color 0.3s;
             cursor: pointer;
             font-weight: bold;
-            display: block;
+            display: flex;
+            align-items: center;
         }
 
         .option-a {
@@ -136,6 +137,17 @@
             background-color: #f44336; /* Red */
         }
 
+        @keyframes blast {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
         #questions-left {
             font-size: 16px;
             margin-bottom: 20px;
@@ -159,8 +171,10 @@
     </div>
 
     <script>
-        const questionsFile = 'Images/question.txt';
-        const answersFile = 'Images/answer.txt';
+        // Get query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const questionsFile = urlParams.get('question_file');
+        const answersFile = urlParams.get('answer_file');
 
         let questions = [];
         let answers = {};
@@ -173,27 +187,22 @@
                     const lines = text.split('\n').filter(line => line.trim() !== '');
                     let questionList = [];
                     let currentQuestion = {};
-                    let options = [];
-                    let questionStarted = false;
 
                     lines.forEach(line => {
                         if (line.match(/^\d+\./)) { // New question
-                            if (questionStarted) {
-                                currentQuestion.options = options;
+                            if (currentQuestion.question) {
                                 questionList.push(currentQuestion);
                             }
-                            currentQuestion = { question: line, options: [] };
-                            options = [];
-                            questionStarted = true;
+                            currentQuestion = {
+                                question: line,
+                                options: []
+                            };
                         } else if (line.match(/^[A-D]\)/)) { // Options
-                            options.push(line);
-                        } else if (questionStarted) { // Append any remaining text
-                            options.push(line);
+                            currentQuestion.options.push(line);
                         }
                     });
 
-                    if (questionStarted) {
-                        currentQuestion.options = options;
+                    if (currentQuestion.question) {
                         questionList.push(currentQuestion);
                     }
 
@@ -230,21 +239,18 @@
                 const optionsList = document.createElement('ul');
                 optionsList.classList.add('options');
 
-                q.options.forEach((opt) => {
-                    const [key, ...textParts] = opt.split(' ');
-                    const text = textParts.join(' ');
+                q.options.forEach((opt, optIndex) => {
                     const optionItem = document.createElement('li');
                     const label = document.createElement('label');
                     const radio = document.createElement('input');
 
                     radio.type = 'radio';
                     radio.name = `question-${index}`;
-                    radio.value = key;
-                    radio.classList.add('option-radio');
-                    radio.addEventListener('change', () => handleOptionChange(index, key));
+                    radio.value = opt.charAt(0); // Extract option letter
+                    radio.addEventListener('change', () => handleOptionChange(index, radio));
 
                     label.classList.add('option-label');
-                    label.classList.add(`option-${key.toLowerCase()}`); // Add color class
+                    label.classList.add(`option-${String.fromCharCode(97 + optIndex)}`); // Add color class
                     label.appendChild(radio);
                     label.appendChild(document.createTextNode(opt));
 
@@ -259,24 +265,47 @@
             });
         }
 
-        function handleOptionChange(questionIndex, selectedValue) {
-            const correctAnswer = answers[`question-${questionIndex}`];
-            const optionLabels = document.querySelectorAll(`input[name="question-${questionIndex}"] + label`);
+        function updateUI() {
+            document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
+            document.getElementById('questions-left').textContent = `Questions Left: ${questions.length - getAnsweredQuestionsCount()}`;
 
-            optionLabels.forEach(label => {
-                label.style.backgroundColor = '#fff'; // Reset color
-                label.querySelector('input').disabled = true; // Disable radio buttons
+            if (getAnsweredQuestionsCount() === questions.length) {
+                showExamEndMessage();
+            }
+        }
+
+        function getAnsweredQuestionsCount() {
+            let count = 0;
+            questions.forEach((_, index) => {
+                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
+                if (selectedOptions.length > 0) {
+                    count++;
+                }
+            });
+            return count;
+        }
+
+        function handleOptionChange(questionIndex, selectedRadio) {
+            const answer = answers[questionIndex + 1][0];
+            const selectedValue = selectedRadio.value;
+            const correctOption = document.querySelector(`input[name="question-${questionIndex}"][value="${answer}"]`);
+            const selectedOptionLabel = selectedRadio.parentElement;
+            const correctOptionLabel = correctOption.parentElement;
+
+            // Disable all radio buttons for this question after selection
+            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
+                radio.disabled = true;
             });
 
-            const selectedOption = document.querySelector(`input[name="question-${questionIndex}"][value="${selectedValue}"]`);
-            if (selectedValue === correctAnswer) {
-                selectedOption.parentElement.style.backgroundColor = '#d4edda'; // Light green
+            if (selectedValue === answer) {
                 showNotification('Correct', 'correct');
+                selectedOptionLabel.style.backgroundColor = '#d4edda'; // Light green
+                correctOptionLabel.style.backgroundColor = '#d4edda'; // Light green
                 score++;
             } else {
-                selectedOption.parentElement.style.backgroundColor = '#f8d7da'; // Light red
                 showNotification('Wrong', 'incorrect');
-                document.querySelector(`input[name="question-${questionIndex}"][value="${correctAnswer}"]`).parentElement.style.backgroundColor = '#d4edda'; // Light green for correct answer
+                selectedOptionLabel.style.backgroundColor = '#f8d7da'; // Light red
+                correctOptionLabel.style.backgroundColor = '#d4edda'; // Light green
             }
 
             updateUI();
@@ -289,16 +318,11 @@
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 1500);
+            }, 1000); // Show notification for 1 second
         }
 
-        function updateUI() {
-            document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
-            document.getElementById('questions-left').textContent = `Questions Left: ${questions.length - getAnsweredQuestionsCount()}`;
-        }
-
-        function getAnsweredQuestionsCount() {
-            return document.querySelectorAll('input[type="radio"]:checked').length;
+        function showExamEndMessage() {
+            alert(`Exam completed! Your score is ${score} out of ${questions.length}.`);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
