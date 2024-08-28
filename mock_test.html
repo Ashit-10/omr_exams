@@ -13,20 +13,20 @@
     <style>
         body {
             font-family: "Times New Roman", Times, serif;
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: #2024eb;
+            color: #0a0a0a;
             margin: 0;
-            padding: 20px;
+            padding: 0px;
             box-sizing: border-box;
         }
 
         .test-container {
             background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 800px;
+            /* max-width: 100vw; */
             margin: 0 auto;
             overflow-y: auto;
         }
@@ -93,22 +93,6 @@
             align-items: center;
         }
 
-        .option-a {
-            background-color: #f6f8fa; /* Light blue */
-        }
-
-        .option-b {
-            background-color: #f6f8fa; /* Light pink */
-        }
-
-        .option-c {
-            background-color: #f6f8fa; /* Light green */
-        }
-
-        .option-d {
-            background-color: #f6f8fa; /* Light orange */
-        }
-
         #score-banner {
             font-size: 18px;
             text-align: center;
@@ -118,23 +102,23 @@
 
         #notification {
             position: fixed;
-            top: 20px;
-            left: 50%;
+            top: 30%;
+            left: 40%;
             transform: translateX(-50%);
             padding: 10px 20px;
             border-radius: 4px;
             color: #fff;
             display: none;
             font-weight: bold;
-            animation: blast 0.5s forwards;
+            animation: blast 3.0s forwards;
         }
 
         #notification.correct {
-            background-color: #4caf50; /* Green */
+            background-color: #5db160; /* Green */
         }
 
         #notification.incorrect {
-            background-color: #f44336; /* Red */
+            background-color: #d85555; /* Red */
         }
 
         @keyframes blast {
@@ -159,7 +143,7 @@
 <body>
     <div class="test-container">
         <h1>Online Test System</h1>
-        <div class="exam-name">Mock Test</div>
+        <div id="headname" class="exam-name">Mock Test</div>
         <div class="status-bar">
             <div id="score-banner">Score: 0 / 0</div>
             <div id="questions-left">Questions Left: 0</div>
@@ -175,6 +159,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const questionsFile = urlParams.get('question_file');
         const answersFile = urlParams.get('answer_file');
+        const headName = document.getElementById('headname');
+        // change head name from question name
 
         let questions = [];
         let answers = {};
@@ -230,7 +216,8 @@
 
                 const questionNumber = document.createElement('div');
                 questionNumber.classList.add('question-number');
-                questionNumber.textContent = `Question ${index + 1}`;
+                // questionNumber.textContent = ``;
+                // questionNumber.textContent = `Question ${index + 1}`;
 
                 const questionText = document.createElement('div');
                 questionText.classList.add('question');
@@ -299,13 +286,13 @@
 
             if (selectedValue === answer) {
                 showNotification('Correct', 'correct');
-                selectedOptionLabel.style.backgroundColor = '#d4edda'; // Light green
-                correctOptionLabel.style.backgroundColor = '#d4edda'; // Light green
+                selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
+                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
                 score++;
             } else {
                 showNotification('Wrong', 'incorrect');
-                selectedOptionLabel.style.backgroundColor = '#f8d7da'; // Light red
-                correctOptionLabel.style.backgroundColor = '#d4edda'; // Light green
+                selectedOptionLabel.style.backgroundColor = '#d85555'; // Light red
+                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
             }
 
             updateUI();
@@ -318,7 +305,7 @@
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 1000); // Show notification for 1 second
+            }, 3000); // Show notification for 1.5 second
         }
 
         function showExamEndMessage() {
