@@ -38,6 +38,7 @@
     <label for="numQuestions">Number of Questions:</label>
     <input type="number" id="numQuestions" min="1" value="5">
     <button onclick="shuffleQuestions()">Shuffle and Display</button>
+    <button onclick="formatDocument()">Format Document</button>
     <button onclick="copyToClipboard()">Copy to Clipboard</button>
     <button onclick="printShuffledQuestions()">Print</button>
     <div id="shuffledQuestions" class="shuffled"></div>
@@ -108,6 +109,16 @@
             printWindow.document.write('<pre>' + shuffledQuestions + '</pre>');
             printWindow.document.close();
             printWindow.print();
+        }
+
+        function formatDocument() {
+            const inputText = document.getElementById('inputText').value;
+            const formattedText = inputText
+                .replace(/A\)/g, '\nA)')
+                .replace(/B\)/g, '\nB)')
+                .replace(/C\)/g, '\nC)')
+                .replace(/D\)/g, '\nD)');
+            document.getElementById('shuffledQuestions').innerText = formattedText;
         }
     </script>
 </body>
