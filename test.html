@@ -79,7 +79,7 @@
             margin-bottom: 15px;
         }
 
-        .options input[type="checkbox"] {
+        .options input[type="radio"] {
             margin-right: 10px;
         }
 
@@ -89,27 +89,25 @@
             transition: background-color 0.3s;
             cursor: pointer;
             font-weight: bold;
+            display: flex;
+            align-items: center;
         }
 
-        .option-a {
-            background-color: #e3f2fd;
-            /* Light blue */
+        /* .option-a {
+            background-color: #f6f8fa; 
         }
 
         .option-b {
-            background-color: #fce4ec;
-            /* Light pink */
+            background-color: #f6f8fa; 
         }
 
         .option-c {
-            background-color: #e8f5e9;
-            /* Light green */
+            background-color: #f6f8fa; 
         }
 
         .option-d {
-            background-color: #fff3e0;
-            /* Light orange */
-        }
+            background-color: #f6f8fa; 
+        } */
 
         #score-banner {
             font-size: 18px;
@@ -119,20 +117,36 @@
         }
 
         #notification {
-            position: fixed;
+            /* position: fixed; */
             top: 20px;
-            left: 50%;
+            display: flex;
+            justify-content: center;
             transform: translateX(-50%);
             padding: 10px 20px;
             border-radius: 4px;
             color: #fff;
             display: none;
             font-weight: bold;
-            animation: blast 0.5s forwards;
+            animation: blast 1s forwards;
+        }
+
+        #notification.correct {
+            background-color: #4caf50; /* Green */
         }
 
         #notification.incorrect {
-            background-color: #f44336;
+            background-color: #f44336; /* Red */
+        }
+
+        @keyframes blast {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
         }
 
         #questions-left {
@@ -140,28 +154,13 @@
             margin-bottom: 20px;
             font-weight: bold;
         }
-
-        button {
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
     </style>
 </head>
 
 <body>
     <div class="test-container">
         <h1>Online Test System</h1>
-        <div class="exam-name">General Knowledge Quiz</div>
+        <div id="headname" class="exam-name">Mock Test</div>
         <div class="status-bar">
             <div id="score-banner">Score: 0 / 0</div>
             <div id="questions-left">Questions Left: 0</div>
@@ -173,8 +172,12 @@
     </div>
 
     <script>
-        const questionsFile = 'Images/question.txt';
-        const answersFile = 'Images/answer.txt';
+        // Get query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const questionsFile = urlParams.get('question_file');
+        const answersFile = urlParams.get('answer_file');
+        const headName = document.getElementById('headname');
+        // change head name from question name
 
         let questions = [];
         let answers = {};
@@ -242,15 +245,16 @@
                 q.options.forEach((opt, optIndex) => {
                     const optionItem = document.createElement('li');
                     const label = document.createElement('label');
-                    const checkbox = document.createElement('input');
+                    const radio = document.createElement('input');
 
-                    checkbox.type = 'checkbox';
-                    checkbox.name = `question-${index}`;
-                    checkbox.value = opt.charAt(0); // Extract option letter
+                    radio.type = 'radio';
+                    radio.name = `question-${index}`;
+                    radio.value = opt.charAt(0); // Extract option letter
+                    radio.addEventListener('change', () => handleOptionChange(index, radio));
 
                     label.classList.add('option-label');
                     label.classList.add(`option-${String.fromCharCode(97 + optIndex)}`); // Add color class
-                    label.appendChild(checkbox);
+                    label.appendChild(radio);
                     label.appendChild(document.createTextNode(opt));
 
                     optionItem.appendChild(label);
@@ -284,26 +288,44 @@
             return count;
         }
 
-        function checkAnswers() {
-            let correctCount = 0;
-            questions.forEach((_, index) => {
-                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
-                selectedOptions.forEach(selectedOption => {
-                    const answer = answers[`question-${index}`];
-                    if (selectedOption.value === answer) {
-                        correctCount++;
-                        selectedOption.parentElement.style.backgroundColor = '#d4edda'; // Light green
-                    } else {
-                        selectedOption.parentElement.style.backgroundColor = '#f8d7da'; // Light red
-                    }
-                });
+        function handleOptionChange(questionIndex, selectedRadio) {
+            const answer = answers[questionIndex + 1][0];
+            const selectedValue = selectedRadio.value;
+            const correctOption = document.querySelector(`input[name="question-${questionIndex}"][value="${answer}"]`);
+            const selectedOptionLabel = selectedRadio.parentElement;
+            const correctOptionLabel = correctOption.parentElement;
+
+            // Disable all radio buttons for this question after selection
+            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
+                radio.disabled = true;
             });
-            score = correctCount;
+
+            if (selectedValue === answer) {
+                showNotification('Correct', 'correct');
+                selectedOptionLabel.style.backgroundColor = '#4caf50'; // Light green
+                correctOptionLabel.style.backgroundColor = '#4caf50'; // Light green
+                score++;
+            } else {
+                showNotification('Wrong', 'incorrect');
+                selectedOptionLabel.style.backgroundColor = '#f44336'; // Light red
+                correctOptionLabel.style.backgroundColor = '#4caf50'; // Light green
+            }
+
             updateUI();
         }
 
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 1000); // Show notification for 1 second
+        }
+
         function showExamEndMessage() {
-            alert(`Exam Completed! Your score is ${score} out of ${questions.length}`);
+            alert(`Exam completed! Your score is ${score} out of ${questions.length}.`);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -314,3 +336,4 @@
 </body>
 
 </html>
+
