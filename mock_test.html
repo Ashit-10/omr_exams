@@ -110,7 +110,7 @@
             color: #fff;
             display: none;
             font-weight: bold;
-            animation: blast 3.0s forwards;
+            animation: blast 1.5s forwards;
         }
 
         #notification.correct {
@@ -164,6 +164,7 @@
         const subjectName = urlParams.get('subject') || `Mock Test`;
         let headName = document.getElementById('headname');
         headName = subjectName;
+        console.log(subjectName);
 
         let questions = [];
         let answers = {};
@@ -308,7 +309,7 @@
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 3000); // Show notification for 1.5 second
+            }); // Show notification for 1.5 second
         }
 
         function showExamEndMessage() {
