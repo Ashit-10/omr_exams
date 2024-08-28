@@ -76,23 +76,11 @@
         }
 
         .options li {
-            margin-bottom: 30px;
+            margin-bottom: 15px;
         }
 
-        .options input[type="radio"] {
+        .options input[type="checkbox"] {
             margin-right: 10px;
-        }
-
-        .correct {
-            border: 2px solid green;
-            background-color: #e8f5e9;
-            border-radius: 4px;
-        }
-
-        .incorrect {
-            border: 2px solid red;
-            background-color: #fbe9e7;
-            border-radius: 4px;
         }
 
         .option-label {
@@ -104,23 +92,19 @@
         }
 
         .option-a {
-            background-color: #e3f2fd;
-            /* Light blue */
+            background-color: #e3f2fd; /* Light blue */
         }
 
         .option-b {
-            background-color: #fce4ec;
-            /* Light pink */
+            background-color: #fce4ec; /* Light pink */
         }
 
         .option-c {
-            background-color: #e8f5e9;
-            /* Light green */
+            background-color: #e8f5e9; /* Light green */
         }
 
         .option-d {
-            background-color: #fff3e0;
-            /* Light orange */
+            background-color: #fff3e0; /* Light orange */
         }
 
         #score-banner {
@@ -143,8 +127,12 @@
             animation: blast 0.5s forwards;
         }
 
+        #notification.correct {
+            background-color: #4caf50; /* Green */
+        }
+
         #notification.incorrect {
-            background-color: #f44336;
+            background-color: #f44336; /* Red */
         }
 
         #questions-left {
@@ -199,28 +187,49 @@
                     const lines = text.split('\n').filter(line => line.trim() !== '');
                     let questionList = [];
                     let currentQuestion = {};
+                    let optionLines = [];
 
                     lines.forEach(line => {
                         if (line.match(/^\d+\./)) { // New question
                             if (currentQuestion.question) {
+                                currentQuestion.options = parseOptions(optionLines);
                                 questionList.push(currentQuestion);
                             }
                             currentQuestion = {
                                 question: line,
                                 options: []
                             };
-                        } else if (line.match(/^[A-D]\)/)) { // Options
-                            currentQuestion.options.push(line);
+                            optionLines = []; // Reset for new question
+                        } else if (line.match(/^[A-D]\)/)) { // Start of options
+                            if (optionLines.length > 0) {
+                                currentQuestion.options = parseOptions(optionLines);
+                                optionLines = []; // Reset options array
+                            }
+                            optionLines.push(line);
+                        } else {
+                            optionLines.push(line); // Accumulate options
                         }
                     });
 
                     if (currentQuestion.question) {
+                        currentQuestion.options = parseOptions(optionLines);
                         questionList.push(currentQuestion);
                     }
 
                     questions = questionList;
                     displayQuestions();
                 });
+        }
+
+        function parseOptions(optionLines) {
+            const options = [];
+            optionLines.forEach(line => {
+                const matches = line.match(/([A-D])\)\s*(.*)/);
+                if (matches) {
+                    options.push({ text: `${matches[1]}) ${matches[2]}`, value: matches[1] });
+                }
+            });
+            return options;
         }
 
         function loadAnswers() {
@@ -254,14 +263,16 @@
                 q.options.forEach((opt, optIndex) => {
                     const optionItem = document.createElement('li');
                     const label = document.createElement('label');
-                    const radioButton = document.createElement('input');
+                    const checkbox = document.createElement('input');
 
-                    radioButton.type = 'radio';
-                    radioButton.name = `question-${index}`;
-                    radioButton.value = opt.charAt(0); // Extract option letter
+                    checkbox.type = 'checkbox';
+                    checkbox.name = `question-${index}`;
+                    checkbox.value = opt.value; // Extract option letter
 
-                    label.appendChild(radioButton);
-                    label.appendChild(document.createTextNode(opt));
+                    label.classList.add('option-label');
+                    label.classList.add(`option-${opt.value.toLowerCase()}`); // Add color class
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(opt.text));
 
                     optionItem.appendChild(label);
                     optionsList.appendChild(optionItem);
@@ -286,62 +297,61 @@
         function getAnsweredQuestionsCount() {
             let count = 0;
             questions.forEach((_, index) => {
-                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
-                if (selectedOption) {
+                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
+                if (selectedOptions.length > 0) {
                     count++;
                 }
             });
             return count;
         }
 
-        function checkAnswers() {
-            let correctCount = 0;
-            questions.forEach((_, index) => {
-                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
-                if (selectedOption) {
-                    const selectedAnswer = selectedOption.value;
-                    if (answers[(index + 1).toString()] === selectedAnswer) {
-                        correctCount++;
-                        selectedOption.parentElement.classList.add('correct');
-                        showNotification('Correct', true);
-                    } else {
-                        selectedOption.parentElement.classList.add('incorrect');
-                        showNotification('Incorrect', false);
-                    }
-                }
-            });
-            score = correctCount;
-            updateUI();
-        }
-
-        function showExamEndMessage() {
-            const container = document.getElementById('questions-container');
-            const endMessage = document.createElement('div');
-            endMessage.innerHTML = `
-                <h2>Exam has ended!</h2>
-                <p>You have scored: ${score} out of ${questions.length}</p>
-                <button onclick="restartExam()">Restart Exam</button>
-            `;
-            container.innerHTML = '';
-            container.appendChild(endMessage);
-        }
-
-        function restartExam() {
-            location.reload();
-        }
-
-        function showNotification(message, isCorrect) {
+        function showNotification(message, type) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
-            notification.className = isCorrect ? '' : 'incorrect';
+            notification.className = `notification ${type}`;
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
             }, 2000);
         }
 
-        loadQuestions();
-        loadAnswers();
+        function checkAnswers() {
+            let correctCount = 0;
+            questions.forEach((_, index) => {
+                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
+                const correctAnswer = answers[`question-${index}`];
+                const optionLabels = document.querySelectorAll(`input[name="question-${index}"] + label`);
+
+                optionLabels.forEach(label => {
+                    label.style.backgroundColor = '#fff'; // Reset color
+                });
+
+                selectedOptions.forEach(selectedOption => {
+                    if (selectedOption.value === correctAnswer) {
+                        correctCount++;
+                        selectedOption.parentElement.style.backgroundColor = '#d4edda'; // Light green
+                        showNotification('Correct', 'correct');
+                    } else {
+                        selectedOption.parentElement.style.backgroundColor = '#f8d7da'; // Light red
+                        showNotification('Wrong', 'incorrect');
+                    }
+                });
+
+                // Highlight the correct option
+                document.querySelector(`input[name="question-${index}"][value="${correctAnswer}"]`).parentElement.style.backgroundColor = '#d4edda'; // Light green
+            });
+            score = correctCount;
+            updateUI();
+        }
+
+        function showExamEndMessage() {
+            alert(`Exam Completed! Your score is ${score} out of ${questions.length}`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadQuestions();
+            loadAnswers();
+        });
     </script>
 </body>
 
