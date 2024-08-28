@@ -248,7 +248,8 @@
                     const radio = document.createElement('input');
 
                     radio.type = 'radio';
-                    radio.name = `question-${index}`;
+                    radio.name = ``;
+                    // radio.name = `question-${index}`;
                     radio.value = opt.charAt(0); // Extract option letter
                     radio.addEventListener('change', () => handleOptionChange(index, radio));
 
