@@ -89,6 +89,7 @@
             transition: background-color 0.3s;
             cursor: pointer;
             font-weight: bold;
+            display: block;
         }
 
         .option-a {
@@ -140,26 +141,6 @@
             margin-bottom: 20px;
             font-weight: bold;
         }
-
-        button {
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .disabled {
-            pointer-events: none;
-            opacity: 0.6;
-        }
     </style>
 </head>
 
@@ -175,7 +156,6 @@
             <!-- Questions will be dynamically loaded here -->
         </div>
         <div id="notification"></div>
-        <button onclick="checkAnswers()">Submit Answers</button>
     </div>
 
     <script>
@@ -266,7 +246,7 @@
                 const optionsList = document.createElement('ul');
                 optionsList.classList.add('options');
 
-                q.options.forEach((opt, optIndex) => {
+                q.options.forEach((opt) => {
                     const optionItem = document.createElement('li');
                     const label = document.createElement('label');
                     const radio = document.createElement('input');
@@ -274,7 +254,8 @@
                     radio.type = 'radio';
                     radio.name = `question-${index}`;
                     radio.value = opt.value;
-                    radio.disabled = false; // Enable radio buttons
+                    radio.classList.add('option-radio');
+                    radio.addEventListener('change', () => handleOptionChange(index, opt.value));
 
                     label.classList.add('option-label');
                     label.classList.add(`option-${opt.value.toLowerCase()}`); // Add color class
@@ -292,24 +273,27 @@
             });
         }
 
-        function updateUI() {
-            document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
-            document.getElementById('questions-left').textContent = `Questions Left: ${questions.length - getAnsweredQuestionsCount()}`;
+        function handleOptionChange(questionIndex, selectedValue) {
+            const correctAnswer = answers[`question-${questionIndex}`];
+            const optionLabels = document.querySelectorAll(`input[name="question-${questionIndex}"] + label`);
 
-            if (getAnsweredQuestionsCount() === questions.length) {
-                showExamEndMessage();
-            }
-        }
-
-        function getAnsweredQuestionsCount() {
-            let count = 0;
-            questions.forEach((_, index) => {
-                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
-                if (selectedOptions.length > 0) {
-                    count++;
-                }
+            optionLabels.forEach(label => {
+                label.style.backgroundColor = '#fff'; // Reset color
+                label.querySelector('input').disabled = true; // Disable radio buttons
             });
-            return count;
+
+            const selectedOption = document.querySelector(`input[name="question-${questionIndex}"][value="${selectedValue}"]`);
+            if (selectedValue === correctAnswer) {
+                selectedOption.parentElement.style.backgroundColor = '#d4edda'; // Light green
+                showNotification('Correct', 'correct');
+                score++;
+            } else {
+                selectedOption.parentElement.style.backgroundColor = '#f8d7da'; // Light red
+                showNotification('Wrong', 'incorrect');
+                document.querySelector(`input[name="question-${questionIndex}"][value="${correctAnswer}"]`).parentElement.style.backgroundColor = '#d4edda'; // Light green for correct answer
+            }
+
+            updateUI();
         }
 
         function showNotification(message, type) {
@@ -319,49 +303,17 @@
             notification.style.display = 'block';
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 2000);
+            }, 1500);
         }
 
-        function checkAnswers() {
-            let correctCount = 0;
-            questions.forEach((_, index) => {
-                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
-                const correctAnswer = answers[`question-${index}`];
-                const optionLabels = document.querySelectorAll(`input[name="question-${index}"] + label`);
-
-                optionLabels.forEach(label => {
-                    label.style.backgroundColor = '#fff'; // Reset color
-                    label.querySelector('input').disabled = true; // Disable radio buttons
-                });
-
-                if (selectedOption) {
-                    if (selectedOption.value === correctAnswer) {
-                        correctCount++;
-                        selectedOption.parentElement.style.backgroundColor = '#d4edda'; // Light green
-                        showNotification('Correct', 'correct');
-                    } else {
-                        selectedOption.parentElement.style.backgroundColor = '#f8d7da'; // Light red
-                        showNotification('Wrong', 'incorrect');
-                    }
-                }
-
-                // Highlight the correct option
-                document.querySelector(`input[name="question-${index}"][value="${correctAnswer}"]`).parentElement.style.backgroundColor = '#d4edda'; // Light green
-            });
-            score = correctCount;
-            updateUI();
+        function updateUI() {
+            document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
+            document.getElementById('questions-left').textContent = `Questions Left: ${questions.length - document.querySelectorAll('input[type="radio"]:checked').length}`;
         }
 
-        function showExamEndMessage() {
-            alert(`Exam Completed! Your score is ${score} out of ${questions.length}`);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadQuestions();
-            loadAnswers();
-        });
+        loadQuestions();
+        loadAnswers();
     </script>
 </body>
 
 </html>
-
