@@ -189,6 +189,10 @@
         </div>
         <div id="notification"></div>
         <div id="floating-circle"></div>
+        <div id="container">
+            <button id="printButton">Print Questions</button>
+            <div id="questionsContainer"></div>
+        </div>
     </div>
 
     <script>
@@ -413,7 +417,60 @@
 
         // Load questions and answers on page load
         loadQuestionsAndAnswers();
+        document.getElementById('printButton').addEventListener('click', printQuestions);
+
+        function printQuestions() {
+            const printWindow = window.open('', '', 'height=600,width=800');
+            const questionContent = questions.map((q, index) => {
+                const correctOptionText = q.correctAnswerIndices.map(i => q.options[i]).join(', ');
+                return `
+            <div>
+                <h4>Question ${index + 1}: ${q.question}</h4>
+                <ul>
+                    ${q.options.map((option, i) => `<li>${String.fromCharCode(65 + i)}) ${option}</li>`).join('')}
+                </ul>
+                <p><strong>Correct Answer(s): ${correctOptionText}</strong></p>
+            </div>
+            <hr>
+        `;
+            }).join('');
+
+            const answersContent = questions.map((q, index) => {
+                const correctOptionText = q.correctAnswerIndices.map(i => q.options[i]).join(', ');
+                return `
+            <div>
+                <p><strong>Question ${index + 1} Correct Answer(s): ${correctOptionText}</strong></p>
+            </div>
+            <hr>
+        `;
+            }).join('');
+
+            printWindow.document.write(`
+        <html>
+        <head>
+            <title>Print Questions</title>
+            <style>
+                body { font-family: Arial, sans-serif; }
+                h4 { margin: 0; }
+                ul { list-style-type: none; padding: 0; }
+                li { margin: 5px 0; }
+                hr { margin: 20px 0; }
+            </style>
+        </head>
+        <body>
+            <div>${questionContent}</div>
+            <div style="page-break-before: always;"></div>
+            <div>${answersContent}</div>
+        </body>
+        </html>
+    `);
+
+            printWindow.document.close();
+            printWindow.print();
+        }
+
     </script>
+
 </body>
 
 </html>
