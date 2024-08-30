@@ -245,6 +245,10 @@
                 questionText.classList.add('question');
                 questionText.textContent = q.question;
 
+                // Remove the leading number and dot (e.g., "1. ") from the question text
+                const questionWithoutNumber = q.question.replace(/^\d+\.\s*/, '');
+                questionText.textContent = questionWithoutNumber;
+                
                 const optionsList = document.createElement('ul');
                 optionsList.classList.add('options');
 
