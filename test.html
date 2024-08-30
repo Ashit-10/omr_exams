@@ -252,7 +252,7 @@
 
                 // Combine questions with their corresponding answers
                 questions = questionList.map((q, index) => {
-                    const correctAnswer = answersJson[index + 1]; // Correct answer from the JSON file
+                    const correctAnswer = answersJson[index + 1][0]; // Correct answer from the JSON file
                     if (typeof correctAnswer !== 'string') {
                         console.error(`Error: Expected a string for the correct answer but got ${typeof correctAnswer}`);
                         return;
