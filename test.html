@@ -28,6 +28,7 @@
             width: 100%;
             margin: 0 auto;
             overflow-y: auto;
+            position: relative;
         }
 
         h1 {
@@ -56,6 +57,18 @@
             padding: 15px;
             background-color: #fafafa;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
+        }
+
+        /* Colorful shadow effect for question boxes */
+        .question-box:nth-child(odd) {
+            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.5);
+            /* Red shadow */
+        }
+
+        .question-box:nth-child(even) {
+            box-shadow: 0 4px 8px rgba(0, 0, 255, 0.5);
+            /* Blue shadow */
         }
 
         .question-number {
@@ -141,6 +154,25 @@
             margin-bottom: 20px;
             font-weight: bold;
         }
+
+        /* Floating circle styles */
+        #floating-circle {
+            position: fixed;
+            top: 10%;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
     </style>
 </head>
 
@@ -156,6 +188,7 @@
             <!-- Questions will be dynamically loaded here -->
         </div>
         <div id="notification"></div>
+        <div id="floating-circle">0 / 0</div>
     </div>
 
     <script>
@@ -239,7 +272,7 @@
 
                 const questionNumber = document.createElement('div');
                 questionNumber.classList.add('question-number');
-                questionNumber.textContent = `Question ${index + 1}`;
+                questionNumber.textContent = `Question ${index + 1}:`;
 
                 const questionText = document.createElement('div');
                 questionText.classList.add('question');
@@ -248,7 +281,7 @@
                 // Remove the leading number and dot (e.g., "1. ") from the question text
                 const questionWithoutNumber = q.question.replace(/^\d+\.\s*/, '');
                 questionText.textContent = questionWithoutNumber;
-                
+
                 const optionsList = document.createElement('ul');
                 optionsList.classList.add('options');
 
@@ -278,10 +311,15 @@
 
             updateUI();
         }
+        const floatingCircle = document.getElementById('floating-circle');
 
         function updateUI() {
             document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
-            document.getElementById('questions-left').textContent = `Questions Left: ${questions.length - getAnsweredQuestionsCount()}`;
+            const questionsLeft = questions.length - getAnsweredQuestionsCount();
+            document.getElementById('questions-left').textContent = `Questions Left: ${questionsLeft}`;
+
+            // Update the floating circle
+            floatingCircle.textContent = `${getAnsweredQuestionsCount()} / ${questions.length}`;
 
             if (getAnsweredQuestionsCount() === questions.length) {
                 showExamEndMessage();
