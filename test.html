@@ -165,7 +165,7 @@
             border-radius: 50%;
             background-color: #007bff;
             color: white;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             font-size: 16px;
@@ -188,7 +188,7 @@
             <!-- Questions will be dynamically loaded here -->
         </div>
         <div id="notification"></div>
-        <div id="floating-circle">0 / 0</div>
+        <div id="floating-circle"></div>
     </div>
 
     <script>
@@ -314,6 +314,7 @@
         const floatingCircle = document.getElementById('floating-circle');
 
         function updateUI() {
+            floatingCircle.style.display = 'flex';
             document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
             const questionsLeft = questions.length - getAnsweredQuestionsCount();
             document.getElementById('questions-left').textContent = `Questions Left: ${questionsLeft}`;
