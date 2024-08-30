@@ -319,14 +319,14 @@
             });
 
             if (isCorrect) {
-                showNotification('Correct', 'correct');
+                // showNotification('Correct', 'correct');
                 selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
                 correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
                 score++;
                 // Animate "+1" flying to score circle
                 animateScoreIncrease(selectedOptionLabel);
             } else {
-                showNotification('Incorrect', 'incorrect');
+                // showNotification('Incorrect', 'incorrect');
                 selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
                 correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
             }
