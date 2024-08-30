@@ -319,6 +319,12 @@
             }
 
             const correctOption = optionInputs[correctOptionIndex];
+
+            if (!correctOption) {
+                console.error('Correct option not found');
+                return;
+            }
+
             const correctOptionLabel = correctOption.parentElement;
 
             // Disable all radio buttons for this question after selection
@@ -372,7 +378,6 @@
                 scoreAnimation.style.transform = 'scale(1)'; // Reset scale
             }, 1000); // Match the animation duration
         }
-
 
         function displayQuestions() {
             const container = document.getElementById('questions-container');
