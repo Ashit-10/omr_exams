@@ -419,36 +419,35 @@
         loadQuestionsAndAnswers();
         document.getElementById('printButton').addEventListener('click', printQuestions);
 
-function printQuestions() {
-    // Fetch the question.txt and answer.txt content
-    Promise.all([
-        fetch(questionsFile).then(response => response.text()),
-        fetch(answersFile).then(response => response.json())
-    ]).then(([questionsText, answersJson]) => {
-        // Create a new window for printing
-        const printWindow = window.open('', '', 'height=600,width=800');
-        let questionContent = '';
-        let answersContent = '';
+        function printQuestions() {
+            // Fetch the question.txt and answer.txt content
+            Promise.all([
+                fetch(questionsFile).then(response => response.text()),
+                fetch(answersFile).then(response => response.json())
+            ]).then(([questionsText, answersJson]) => {
+                // Create a new window for printing
+                const printWindow = window.open('', '', 'height=600,width=800');
+                let questionContent = '';
+                let answersContent = '';
 
-        // Process questions
-        questionContent = `<pre>${questionsText}</pre>`;
+                // Process questions
+                questionContent = questionsText;
 
-        // Process answers
-        const answersList = Object.keys(answersJson).map(questionNumber => {
-            const correctAnswers = answersJson[questionNumber].join(', ');
-            return `${questionNumber}) ${correctAnswers}`;
-        }).join(', ');
+                // Process answers
+                const answersList = Object.keys(answersJson).map(questionNumber => {
+                    const correctAnswers = answersJson[questionNumber].join(', ');
+                    return `${questionNumber})${correctAnswers}`;
+                }).join(' , ');
 
-        answersContent = `<div>${answersList}</div>`;
+                answersContent = `<div>${answersList}</div>`;
 
-        // Write content to the print window
-        printWindow.document.write(`
+                // Write content to the print window
+                printWindow.document.write(`
             <html>
             <head>
                 <title>Print Questions</title>
                 <style>
                     body { font-family: Arial, sans-serif; }
-                    pre { white-space: pre-wrap; }
                     hr { margin: 20px 0; }
                 </style>
             </head>
@@ -456,7 +455,8 @@ function printQuestions() {
                 <div>
                     <h2>Questions:</h2>
                     ${questionContent}
-                    <hr>
+            <div style="page-break-before: always;"></div>
+                    
                     <h2>Answers:</h2>
                     ${answersContent}
                 </div>
@@ -464,13 +464,13 @@ function printQuestions() {
             </html>
         `);
 
-        // Close the document and trigger print
-        printWindow.document.close();
-        printWindow.print();
-    }).catch(error => {
-        console.error('Error fetching or printing content:', error);
-    });
-}
+                // Close the document and trigger print
+                printWindow.document.close();
+                printWindow.print();
+            }).catch(error => {
+                console.error('Error fetching or printing content:', error);
+            });
+        }
 
     </script>
 
