@@ -253,6 +253,10 @@
                 // Combine questions with their corresponding answers
                 questions = questionList.map((q, index) => {
                     const correctAnswer = answersJson[index + 1]; // Correct answer from the JSON file
+                    if (typeof correctAnswer !== 'string') {
+                        console.error(`Error: Expected a string for the correct answer but got ${typeof correctAnswer}`);
+                        return;
+                    }
 
                     // Shuffle the options
                     const optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
@@ -260,14 +264,16 @@
 
                     // Find new index of the correct answer after shuffling
                     const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-                    const newCorrectIndex = optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0));
+                    const correctCharIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
+                    const newCorrectIndex = optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctCharIndex);
 
                     return {
                         question: q.question,
                         options: shuffledOptions,
                         correctAnswerIndex: newCorrectIndex // Store the new correct index
                     };
-                });
+                }).filter(q => q !== undefined); // Remove undefined entries if any question failed to process
+
 
                 // Shuffle questions and corresponding answers if shuffle=true
                 if (shuffleQuestions) {
