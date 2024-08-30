@@ -158,7 +158,7 @@
         /* Floating circle styles */
         #floating-circle {
             position: fixed;
-            top: 24%;
+            top: 20%;
             right: 20px;
             width: 60px;
             height: 60px;
@@ -220,6 +220,8 @@
             }
         }
 
+
+
         function loadQuestionsAndAnswers() {
             Promise.all([
                 fetch(questionsFile).then(response => response.text()),
@@ -235,7 +237,7 @@
                             questionList.push(currentQuestion);
                         }
                         currentQuestion = {
-                            question: line,
+                            question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
                             options: []
                         };
                     } else if (line.match(/^[A-D]\)/)) { // Options
@@ -249,10 +251,20 @@
 
                 // Combine questions with their corresponding answers
                 questions = questionList.map((q, index) => {
+                    const correctAnswer = answersJson[index + 1]; // Correct answer from the JSON file
+
+                    // Shuffle the options
+                    const optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
+                    shuffleArray(optionsWithIndex);
+
+                    // Find new index of the correct answer after shuffling
+                    const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
+                    const newCorrectIndex = optionsWithIndex.findIndex(optObj => optObj.opt.startsWith(correctAnswer));
+
                     return {
                         question: q.question,
-                        options: q.options,
-                        correctAnswer: answersJson[index + 1] // Using the JSON key
+                        options: shuffledOptions,
+                        correctAnswerIndex: newCorrectIndex // Store the new correct index
                     };
                 });
 
@@ -265,6 +277,7 @@
             });
         }
 
+
         function displayQuestions() {
             const container = document.getElementById('questions-container');
             container.innerHTML = '';
@@ -275,15 +288,11 @@
 
                 const questionNumber = document.createElement('div');
                 questionNumber.classList.add('question-number');
-                questionNumber.textContent = `Question ${index + 1}:`;
+                questionNumber.textContent = `Question ${index + 1}`;
 
                 const questionText = document.createElement('div');
                 questionText.classList.add('question');
                 questionText.textContent = q.question;
-
-                // Remove the leading number and dot (e.g., "1. ") from the question text
-                const questionWithoutNumber = q.question.replace(/^\d+\.\s*/, '');
-                questionText.textContent = questionWithoutNumber;
 
                 const optionsList = document.createElement('ul');
                 optionsList.classList.add('options');
@@ -296,7 +305,7 @@
                     radio.type = 'radio';
                     radio.name = `question-${index}`;
                     radio.value = opt.charAt(0); // Extract option letter
-                    radio.addEventListener('change', () => handleOptionChange(index, radio));
+                    radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
 
                     label.classList.add('option-label');
                     label.appendChild(radio);
@@ -339,13 +348,12 @@
             return count;
         }
 
-        function handleOptionChange(questionIndex, selectedRadio) {
+
+        function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
             floatingCircle.style.display = 'flex';
-            const answer = questions[questionIndex].correctAnswer[0];
-            const selectedValue = selectedRadio.value;
+            const correctOptionIndex = questions[questionIndex].correctAnswerIndex;
             const selectedOptionLabel = selectedRadio.parentElement;
-            const correctOption = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
-                .find(input => input.value === answer);
+            const correctOption = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))[correctOptionIndex];
             const correctOptionLabel = correctOption.parentElement;
 
             // Disable all radio buttons for this question after selection
@@ -353,7 +361,7 @@
                 radio.disabled = true;
             });
 
-            if (selectedValue === answer) {
+            if (selectedOptionIndex === correctOptionIndex) {
                 showNotification('Correct', 'correct');
                 selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
                 correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
@@ -366,7 +374,6 @@
 
             updateUI();
         }
-
         function showNotification(message, type) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
