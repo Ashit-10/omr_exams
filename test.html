@@ -173,22 +173,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             z-index: 1000;
         }
-
-        .score-animation {
-            position: absolute;
-            font-size: 24px;
-            font-weight: bold;
-            color: #0d6efd;
-            pointer-events: none;
-            transition: transform 1s ease-out, opacity 1s ease-out;
-            opacity: 0;
-            white-space: nowrap;
-        }
-
-
-        .score-animation.active {
-            opacity: 1;
-        }
     </style>
 </head>
 
@@ -205,7 +189,6 @@
         </div>
         <div id="notification"></div>
         <div id="floating-circle"></div>
-        <div id="score-animation" class="score-animation"></div>
     </div>
 
     <script>
@@ -215,8 +198,21 @@
         // Get query parameters
         const urlParams = new URLSearchParams(window.location.search);
         const fileLoc = urlParams.get('file');
-        const questionsFile = fileLoc + `/question.txt`;
-        const answersFile = fileLoc + `/answer.txt`;
+        const examFile = urlParams.get('exam');
+        let questionsFile;
+        let answersFile;
+        
+        if (examFile) {
+            questionsFile = fileLoc + `_question.txt`;
+            answersFile = fileLoc + `_ans_key.txt`;
+            
+        } else {
+            console.log("else");
+            questionsFile = fileLoc + `/question.txt`;
+            answersFile = fileLoc + `/answer.txt`;
+        }
+
+        
         let subjectName = urlParams.get('subject');
         const shuffleQuestions = urlParams.get('shuffle') === 'true';
 
@@ -239,57 +235,72 @@
 
 
 
+        
         function loadQuestionsAndAnswers() {
-            Promise.all([
-                fetch(questionsFile).then(response => response.text()),
-                fetch(answersFile).then(response => response.json())
-            ]).then(([questionsText, answersJson]) => {
-                const lines = questionsText.split('\n').filter(line => line.trim() !== '');
-                let questionList = [];
-                let currentQuestion = {};
+    Promise.all([
+        fetch(questionsFile).then(response => response.text()),
+        fetch(answersFile).then(response => response.json())
+    ]).then(([questionsText, answersJson]) => {
+        const lines = questionsText.split('\n').filter(line => line.trim() !== '');
+        let questionList = [];
+        let currentQuestion = {};
 
-                lines.forEach(line => {
-                    if (line.match(/^\d+\./)) { // New question
-                        if (currentQuestion.question) {
-                            questionList.push(currentQuestion);
-                        }
-                        currentQuestion = {
-                            question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
-                            options: []
-                        };
-                    } else if (line.match(/^[A-D]\)/)) { // Options
-                        const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
-                        currentQuestion.options.push(optionText);
-                    }
-                });
-
+        lines.forEach(line => {
+            if (line.match(/^\d+\./)) { // New question
                 if (currentQuestion.question) {
                     questionList.push(currentQuestion);
                 }
+                currentQuestion = {
+                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
+                    options: []
+                };
+            } else if (line.match(/^[A-D]\)/)) { // Options
+                const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
+                currentQuestion.options.push(optionText);
+            }
+        });
 
-                // Combine questions with their corresponding answers
-                questions = questionList.map((q, index) => {
-                    const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
+        if (currentQuestion.question) {
+            questionList.push(currentQuestion);
+        }
 
-                    // Ensure correctAnswers is an array
-                    const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
+        // Combine questions with their corresponding answers
+        questions = questionList.map((q, index) => {
+            const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
 
-                    // Shuffle the options
-                    const optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
-                    shuffleArray(optionsWithIndex);
+            // Ensure correctAnswers is an array
+            const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
 
-                    // Find new indices of the correct answers after shuffling
-                    const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-                    const correctIndices = correctAnswerArray.map(correctAnswer =>
-                        optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0))
-                    );
+            // Shuffle the options if shuffle=true
+            let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
+            if (shuffleQuestions) {
+                shuffleArray(optionsWithIndex);
+            }
 
-                    return {
-                        question: q.question,
-                        options: shuffledOptions,
-                        correctAnswerIndices: correctIndices // Store the new correct indices
-                    };
-                });
+            // Find new indices of the correct answers after shuffling
+            const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
+            const correctIndices = correctAnswerArray.map(correctAnswer =>
+                optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0))
+            );
+
+            return {
+                question: q.question,
+                options: shuffledOptions,
+                correctAnswerIndices: correctIndices // Store the new correct indices
+            };
+        });
+
+        // Remove the code that shuffles questions since we are only shuffling options
+        // if (shuffleQuestions) {
+        //     shuffleArray(questions);
+        // }
+
+        displayQuestions();
+    }).catch(error => {
+        console.error("Error loading questions or answers:", error);
+    });
+}
+
 
                 // Shuffle questions and corresponding answers if shuffle=true
                 if (shuffleQuestions) {
@@ -320,53 +331,17 @@
             });
 
             if (isCorrect) {
-                // showNotification('Correct', 'correct');
+                showNotification('Correct', 'correct');
                 selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
                 correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
                 score++;
-                // Animate "+1" flying to score circle
-                animateScoreIncrease(selectedOptionLabel);
             } else {
-                // showNotification('Incorrect', 'incorrect');
+                showNotification('Incorrect', 'incorrect');
                 selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
                 correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
             }
 
             updateUI();
-        }
-
-
-        function animateScoreIncrease(selectedOptionLabel) {
-            const scoreAnimation = document.getElementById('score-animation');
-            scoreAnimation.textContent = '+1';
-
-            // Reset any previous animation
-            scoreAnimation.style.transition = 'none';
-            scoreAnimation.style.opacity = '0';
-            scoreAnimation.style.transform = 'scale(1)';
-
-            // Position the animation near the selected option
-            const rect = selectedOptionLabel.getBoundingClientRect();
-            const containerRect = document.querySelector('.test-container').getBoundingClientRect();
-            scoreAnimation.style.left = `${rect.left - containerRect.left + rect.width / 2}px`;
-            scoreAnimation.style.top = `${rect.top - containerRect.top + rect.height / 2}px`;
-
-            // Show and animate the "+1" element
-            scoreAnimation.style.opacity = '1';
-            scoreAnimation.style.transition = 'transform 1s ease-out, opacity 1s ease-out';
-
-            setTimeout(() => {
-                const circleRect = floatingCircle.getBoundingClientRect();
-                scoreAnimation.style.left = `${circleRect.left - containerRect.left + circleRect.width / 2}px`;
-                scoreAnimation.style.top = `${circleRect.top - containerRect.top + circleRect.height / 2}px`;
-                scoreAnimation.style.transform = 'scale(0)'; // Shrink effect
-            }, 10); // Small delay to ensure animation start
-
-            // Reset animation after completion
-            setTimeout(() => {
-                scoreAnimation.style.opacity = '0';
-                scoreAnimation.style.transform = 'scale(1)'; // Reset scale
-            }, 1000); // Match the animation duration
         }
 
 
