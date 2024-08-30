@@ -235,7 +235,6 @@
 
 
 
-        
         function loadQuestionsAndAnswers() {
     Promise.all([
         fetch(questionsFile).then(response => response.text()),
@@ -271,13 +270,13 @@
             // Ensure correctAnswers is an array
             const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
 
-            // Shuffle the options if shuffle=true
+            // Optionally shuffle the options if shuffle=true
             let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
             if (shuffleQuestions) {
                 shuffleArray(optionsWithIndex);
             }
 
-            // Find new indices of the correct answers after shuffling
+            // Extract the shuffled options
             const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
             const correctIndices = correctAnswerArray.map(correctAnswer =>
                 optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0))
@@ -290,10 +289,10 @@
             };
         });
 
-        // Remove the code that shuffles questions since we are only shuffling options
-        // if (shuffleQuestions) {
-        //     shuffleArray(questions);
-        // }
+        // Shuffle questions if shuffle=true
+        if (shuffleQuestions) {
+            shuffleArray(questions);
+        }
 
         displayQuestions();
     }).catch(error => {
@@ -301,18 +300,11 @@
     });
 }
 
+                
+        
+        
 
-                // Shuffle questions and corresponding answers if shuffle=true
-                if (shuffleQuestions) {
-                    shuffleArray(questions);
-                }
-
-                displayQuestions();
-            }).catch(error => {
-                console.error("Error loading questions or answers:", error);
-            });
-        }
-
+                
         function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
             floatingCircle.style.display = 'flex';
             const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
