@@ -199,11 +199,14 @@
         const urlParams = new URLSearchParams(window.location.search);
         const fileLoc = urlParams.get('file');
         const examFile = urlParams.get('exam');
+        console.log(examFile);
         if (examFile) {
             const questionsFile = fileLoc + `_question.txt`;
             const answersFile = fileLoc + `_ans_key.txt`;
+            console.log(questionsFile);
         }
         else {
+            console.log("else");
             const questionsFile = fileLoc + `/question.txt`;
             const answersFile = fileLoc + `/answer.txt`;
         }
