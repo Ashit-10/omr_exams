@@ -373,7 +373,7 @@
             document.getElementById('questions-left').textContent = `Questions Left: ${questionsLeft}`;
 
             // Update the floating circle
-            floatingCircle.textContent = `${getAnsweredQuestionsCount()} / ${questions.length}`;
+            floatingCircle.textContent = `${score} / ${questions.length}`;
 
             if (getAnsweredQuestionsCount() === questions.length) {
                 showExamEndMessage();
