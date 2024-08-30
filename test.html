@@ -182,7 +182,9 @@
             pointer-events: none;
             transition: transform 1s ease-out, opacity 1s ease-out;
             opacity: 0;
+            white-space: nowrap;
         }
+
 
         .score-animation.active {
             opacity: 1;
@@ -204,7 +206,6 @@
         <div id="notification"></div>
         <div id="floating-circle"></div>
         <div id="score-animation" class="score-animation"></div>
-
     </div>
 
     <script>
@@ -336,9 +337,13 @@
 
 
         function animateScoreIncrease(selectedOptionLabel) {
-            // Create "+1" element
             const scoreAnimation = document.getElementById('score-animation');
             scoreAnimation.textContent = '+1';
+
+            // Reset any previous animation
+            scoreAnimation.style.transition = 'none';
+            scoreAnimation.style.opacity = '0';
+            scoreAnimation.style.transform = 'scale(1)';
 
             // Position the animation near the selected option
             const rect = selectedOptionLabel.getBoundingClientRect();
@@ -346,10 +351,10 @@
             scoreAnimation.style.left = `${rect.left - containerRect.left + rect.width / 2}px`;
             scoreAnimation.style.top = `${rect.top - containerRect.top + rect.height / 2}px`;
 
-            // Start animation
-            scoreAnimation.classList.add('active');
+            // Show and animate the "+1" element
+            scoreAnimation.style.opacity = '1';
+            scoreAnimation.style.transition = 'transform 1s ease-out, opacity 1s ease-out';
 
-            // Move to the center of the floating circle
             setTimeout(() => {
                 const circleRect = floatingCircle.getBoundingClientRect();
                 scoreAnimation.style.left = `${circleRect.left - containerRect.left + circleRect.width / 2}px`;
@@ -357,12 +362,13 @@
                 scoreAnimation.style.transform = 'scale(0)'; // Shrink effect
             }, 10); // Small delay to ensure animation start
 
-            // Reset animation
+            // Reset animation after completion
             setTimeout(() => {
-                scoreAnimation.classList.remove('active');
+                scoreAnimation.style.opacity = '0';
                 scoreAnimation.style.transform = 'scale(1)'; // Reset scale
             }, 1000); // Match the animation duration
         }
+
 
 
 
