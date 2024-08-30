@@ -173,6 +173,20 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             z-index: 1000;
         }
+
+        .score-animation {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            color: #0d6efd;
+            pointer-events: none;
+            transition: transform 1s ease-out, opacity 1s ease-out;
+            opacity: 0;
+        }
+
+        .score-animation.active {
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -193,6 +207,8 @@
             <button id="printButton">Print Questions</button>
             <div id="questionsContainer"></div>
         </div>
+        <div id="score-animation" class="score-animation"></div>
+
     </div>
 
     <script>
@@ -291,35 +307,62 @@
 
         function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
             floatingCircle.style.display = 'flex';
-            const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
+            const correctOptionIndex = questions[questionIndex].correctAnswerIndex;
             const selectedOptionLabel = selectedRadio.parentElement;
-
-            // Check if selected option is among the correct answers
-            const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
-
-            const correctOptions = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
-                .filter((_, index) => correctOptionIndices.includes(index));
-            const correctOptionLabels = correctOptions.map(option => option.parentElement);
+            const correctOption = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))[correctOptionIndex];
+            const correctOptionLabel = correctOption.parentElement;
 
             // Disable all radio buttons for this question after selection
             document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
                 radio.disabled = true;
             });
 
-            if (isCorrect) {
+            if (selectedOptionIndex === correctOptionIndex) {
                 showNotification('Correct', 'correct');
                 selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
-                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
+
+                // Animate "+1" flying to score circle
+                animateScoreIncrease(selectedOptionLabel);
+
                 score++;
             } else {
                 showNotification('Incorrect', 'incorrect');
                 selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
-                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
             }
 
             updateUI();
         }
 
+        function animateScoreIncrease(selectedOptionLabel) {
+            // Create "+1" element
+            const scoreAnimation = document.getElementById('score-animation');
+            scoreAnimation.textContent = '+1';
+
+            // Position the animation near the selected option
+            const rect = selectedOptionLabel.getBoundingClientRect();
+            const containerRect = document.querySelector('.test-container').getBoundingClientRect();
+            scoreAnimation.style.left = `${rect.left - containerRect.left + rect.width / 2}px`;
+            scoreAnimation.style.top = `${rect.top - containerRect.top + rect.height / 2}px`;
+
+            // Start animation
+            scoreAnimation.classList.add('active');
+
+            // Move to the center of the floating circle
+            setTimeout(() => {
+                const circleRect = floatingCircle.getBoundingClientRect();
+                scoreAnimation.style.left = `${circleRect.left - containerRect.left + circleRect.width / 2}px`;
+                scoreAnimation.style.top = `${circleRect.top - containerRect.top + circleRect.height / 2}px`;
+                scoreAnimation.style.transform = 'scale(0)'; // Shrink effect
+            }, 10); // Small delay to ensure animation start
+
+            // Reset animation
+            setTimeout(() => {
+                scoreAnimation.classList.remove('active');
+                scoreAnimation.style.transform = 'scale(1)'; // Reset scale
+            }, 1000); // Match the animation duration
+        }
 
 
 
@@ -420,56 +463,52 @@
         document.getElementById('printButton').addEventListener('click', printQuestions);
 
         function printQuestions() {
-            // Fetch the question.txt and answer.txt content
-            Promise.all([
-                fetch(questionsFile).then(response => response.text()),
-                fetch(answersFile).then(response => response.json())
-            ]).then(([questionsText, answersJson]) => {
-                // Create a new window for printing
-                const printWindow = window.open('', '', 'height=600,width=800');
-                let questionContent = '';
-                let answersContent = '';
+            const printWindow = window.open('', '', 'height=600,width=800');
+            const questionContent = questions.map((q, index) => {
+                const correctOptionText = q.correctAnswerIndices.map(i => q.options[i]).join(', ');
+                return `
+            <div>
+                <h4>${index + 1}. ${q.question}</h4>
+                <ul>
+                    ${q.options.map((option, i) => `<li>${String.fromCharCode(65 + i)}) ${option}</li>`).join('')}
+                </ul>
+            </div>
+            <hr>
+        `;
+            }).join('');
 
-                // Process questions
-                questionContent = questionsText;
+            const answersContent = questions.map((q, index) => {
+                const correctOptionText = q.correctAnswerIndices.map(i => q.options[i]).join(', ');
+                return `
+            <div>
+                <p><strong>${index + 1}) ${correctOptionText}</strong></p>
+            </div>
+            <hr>
+        `;
+            }).join('');
 
-                // Process answers
-                const answersList = Object.keys(answersJson).map(questionNumber => {
-                    const correctAnswers = answersJson[questionNumber].join(', ');
-                    return `${questionNumber})${correctAnswers}`;
-                }).join(' , ');
-
-                answersContent = `<div>${answersList}</div>`;
-
-                // Write content to the print window
-                printWindow.document.write(`
-            <html>
-            <head>
-                <title>Print Questions</title>
-                <style>
-                    body { font-family: Arial, sans-serif; }
-                    hr { margin: 20px 0; }
-                </style>
-            </head>
-            <body>
-                <div>
-                    <h2>Questions:</h2>
-                    ${questionContent}
+            printWindow.document.write(`
+        <html>
+        <head>
+            <title>Print Questions</title>
+            <style>
+                body { font-family: Arial, sans-serif; }
+                h4 { margin: 0; }
+                ul { list-style-type: none; padding: 0; }
+                li { margin: 5px 0; }
+                hr { margin: 20px 0; }
+            </style>
+        </head>
+        <body>
+            <div>${questionContent}</div>
             <div style="page-break-before: always;"></div>
-                    
-                    <h2>Answers:</h2>
-                    ${answersContent}
-                </div>
-            </body>
-            </html>
-        `);
+            <div>${answersContent}</div>
+        </body>
+        </html>
+    `);
 
-                // Close the document and trigger print
-                printWindow.document.close();
-                printWindow.print();
-            }).catch(error => {
-                console.error('Error fetching or printing content:', error);
-            });
+            printWindow.document.close();
+            printWindow.print();
         }
 
     </script>
