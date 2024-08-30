@@ -241,7 +241,8 @@
                             options: []
                         };
                     } else if (line.match(/^[A-D]\)/)) { // Options
-                        currentQuestion.options.push(line);
+                        const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
+                        currentQuestion.options.push(optionText);
                     }
                 });
 
@@ -259,7 +260,7 @@
 
                     // Find new index of the correct answer after shuffling
                     const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-                    const newCorrectIndex = optionsWithIndex.findIndex(optObj => optObj.opt.startsWith(correctAnswer));
+                    const newCorrectIndex = optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0));
 
                     return {
                         question: q.question,
@@ -276,7 +277,6 @@
                 displayQuestions();
             });
         }
-
 
         function displayQuestions() {
             const container = document.getElementById('questions-container');
@@ -304,12 +304,12 @@
 
                     radio.type = 'radio';
                     radio.name = `question-${index}`;
-                    radio.value = opt.charAt(0); // Extract option letter
+                    radio.value = String.fromCharCode(65 + optIndex); // A, B, C, D serially
                     radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
 
                     label.classList.add('option-label');
                     label.appendChild(radio);
-                    label.appendChild(document.createTextNode(opt));
+                    label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) ${opt}`)); // Add A), B), C), D)
 
                     optionItem.appendChild(label);
                     optionsList.appendChild(optionItem);
@@ -323,6 +323,7 @@
 
             updateUI();
         }
+
 
         function updateUI() {
             document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
