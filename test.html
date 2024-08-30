@@ -192,6 +192,9 @@
     </div>
 
     <script>
+
+        const floatingCircle = document.getElementById('floating-circle');
+
         // Get query parameters
         const urlParams = new URLSearchParams(window.location.search);
         const fileLoc = urlParams.get('file');
@@ -311,10 +314,8 @@
 
             updateUI();
         }
-        const floatingCircle = document.getElementById('floating-circle');
 
         function updateUI() {
-            floatingCircle.style.display = 'flex';
             document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
             const questionsLeft = questions.length - getAnsweredQuestionsCount();
             document.getElementById('questions-left').textContent = `Questions Left: ${questionsLeft}`;
@@ -339,6 +340,7 @@
         }
 
         function handleOptionChange(questionIndex, selectedRadio) {
+            floatingCircle.style.display = 'flex';
             const answer = questions[questionIndex].correctAnswer[0];
             const selectedValue = selectedRadio.value;
             const selectedOptionLabel = selectedRadio.parentElement;
