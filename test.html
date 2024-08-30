@@ -309,11 +309,20 @@
             floatingCircle.style.display = 'flex';
             const correctOptionIndex = questions[questionIndex].correctAnswerIndex;
             const selectedOptionLabel = selectedRadio.parentElement;
-            const correctOption = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))[correctOptionIndex];
+
+            // Ensure the correctOptionIndex is within bounds
+            const optionInputs = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`));
+
+            if (correctOptionIndex < 0 || correctOptionIndex >= optionInputs.length) {
+                console.error('Invalid correctOptionIndex:', correctOptionIndex);
+                return;
+            }
+
+            const correctOption = optionInputs[correctOptionIndex];
             const correctOptionLabel = correctOption.parentElement;
 
             // Disable all radio buttons for this question after selection
-            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
+            optionInputs.forEach(radio => {
                 radio.disabled = true;
             });
 
@@ -363,8 +372,6 @@
                 scoreAnimation.style.transform = 'scale(1)'; // Reset scale
             }, 1000); // Match the animation duration
         }
-
-
 
 
         function displayQuestions() {
