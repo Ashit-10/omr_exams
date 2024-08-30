@@ -210,6 +210,10 @@
             let questionsFile = fileLoc + `/question.txt`;
             let answersFile = fileLoc + `/answer.txt`;
         }
+
+        const questionsFile = questionsFile;
+        const answersFile = answersFile;
+        
         let subjectName = urlParams.get('subject');
         const shuffleQuestions = urlParams.get('shuffle') === 'true';
 
