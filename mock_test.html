@@ -199,20 +199,19 @@
         const urlParams = new URLSearchParams(window.location.search);
         const fileLoc = urlParams.get('file');
         const examFile = urlParams.get('exam');
-        console.log(examFile);
+        let questionsFile;
+        let answersFile;
+        
         if (examFile) {
-            let questionsFile = fileLoc + `_question.txt`;
-            let answersFile = fileLoc + `_ans_key.txt`;
-            console.log(questionsFile);
-        }
-        else {
+            questionsFile = fileLoc + `_question.txt`;
+            answersFile = fileLoc + `_ans_key.txt`;
+            
+        } else {
             console.log("else");
-            let questionsFile = fileLoc + `/question.txt`;
-            let answersFile = fileLoc + `/answer.txt`;
+            questionsFile = fileLoc + `/question.txt`;
+            answersFile = fileLoc + `/answer.txt`;
         }
 
-        const questionsFile = questionsFile;
-        const answersFile = answersFile;
         
         let subjectName = urlParams.get('subject');
         const shuffleQuestions = urlParams.get('shuffle') === 'true';
