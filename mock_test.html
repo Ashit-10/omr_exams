@@ -236,68 +236,75 @@
 
 
         function loadQuestionsAndAnswers() {
-            Promise.all([
-                fetch(questionsFile).then(response => response.text()),
-                fetch(answersFile).then(response => response.json())
-            ]).then(([questionsText, answersJson]) => {
-                const lines = questionsText.split('\n').filter(line => line.trim() !== '');
-                let questionList = [];
-                let currentQuestion = {};
+    Promise.all([
+        fetch(questionsFile).then(response => response.text()),
+        fetch(answersFile).then(response => response.json())
+    ]).then(([questionsText, answersJson]) => {
+        const lines = questionsText.split('\n').filter(line => line.trim() !== '');
+        let questionList = [];
+        let currentQuestion = {};
 
-                lines.forEach(line => {
-                    if (line.match(/^\d+\./)) { // New question
-                        if (currentQuestion.question) {
-                            questionList.push(currentQuestion);
-                        }
-                        currentQuestion = {
-                            question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
-                            options: []
-                        };
-                    } else if (line.match(/^[A-D]\)/)) { // Options
-                        const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
-                        currentQuestion.options.push(optionText);
-                    }
-                });
-
+        lines.forEach(line => {
+            if (line.match(/^\d+\./)) { // New question
                 if (currentQuestion.question) {
                     questionList.push(currentQuestion);
                 }
+                currentQuestion = {
+                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
+                    options: []
+                };
+            } else if (line.match(/^[A-D]\)/)) { // Options
+                const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
+                currentQuestion.options.push(optionText);
+            }
+        });
 
-                // Combine questions with their corresponding answers
-                questions = questionList.map((q, index) => {
-                    const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
-
-                    // Ensure correctAnswers is an array
-                    const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
-
-                    // Shuffle the options
-                    const optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
-                    shuffleArray(optionsWithIndex);
-
-                    // Find new indices of the correct answers after shuffling
-                    const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-                    const correctIndices = correctAnswerArray.map(correctAnswer =>
-                        optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0))
-                    );
-
-                    return {
-                        question: q.question,
-                        options: shuffledOptions,
-                        correctAnswerIndices: correctIndices // Store the new correct indices
-                    };
-                });
-
-                // Shuffle questions and corresponding answers if shuffle=true
-                if (shuffleQuestions) {
-                    shuffleArray(questions);
-                }
-
-                displayQuestions();
-            }).catch(error => {
-                console.error("Error loading questions or answers:", error);
-            });
+        if (currentQuestion.question) {
+            questionList.push(currentQuestion);
         }
 
+        // Combine questions with their corresponding answers
+        questions = questionList.map((q, index) => {
+            const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
+
+            // Ensure correctAnswers is an array
+            const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
+
+            // Optionally shuffle the options if shuffle=true
+            let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
+            if (shuffleQuestions) {
+                shuffleArray(optionsWithIndex);
+            }
+
+            // Extract the shuffled options
+            const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
+            const correctIndices = correctAnswerArray.map(correctAnswer =>
+                optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0))
+            );
+
+            return {
+                question: q.question,
+                options: shuffledOptions,
+                correctAnswerIndices: correctIndices // Store the new correct indices
+            };
+        });
+
+        // Shuffle questions if shuffle=true
+        if (shuffleQuestions) {
+            shuffleArray(questions);
+        }
+
+        displayQuestions();
+    }).catch(error => {
+        console.error("Error loading questions or answers:", error);
+    });
+}
+
+                
+        
+        
+
+                
         function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
             floatingCircle.style.display = 'flex';
             const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
