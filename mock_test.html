@@ -201,14 +201,14 @@
         const examFile = urlParams.get('exam');
         console.log(examFile);
         if (examFile) {
-            const questionsFile = fileLoc + `_question.txt`;
-            const answersFile = fileLoc + `_ans_key.txt`;
+            let questionsFile = fileLoc + `_question.txt`;
+            let answersFile = fileLoc + `_ans_key.txt`;
             console.log(questionsFile);
         }
         else {
             console.log("else");
-            const questionsFile = fileLoc + `/question.txt`;
-            const answersFile = fileLoc + `/answer.txt`;
+            let questionsFile = fileLoc + `/question.txt`;
+            let answersFile = fileLoc + `/answer.txt`;
         }
         let subjectName = urlParams.get('subject');
         const shuffleQuestions = urlParams.get('shuffle') === 'true';
