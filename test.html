@@ -203,10 +203,6 @@
         </div>
         <div id="notification"></div>
         <div id="floating-circle"></div>
-        <div id="container">
-            <button id="printButton">Print Questions</button>
-            <div id="questionsContainer"></div>
-        </div>
         <div id="score-animation" class="score-animation"></div>
 
     </div>
@@ -307,48 +303,37 @@
 
         function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
             floatingCircle.style.display = 'flex';
-            const correctOptionIndex = questions[questionIndex].correctAnswerIndex;
+            const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
             const selectedOptionLabel = selectedRadio.parentElement;
 
-            // Ensure the correctOptionIndex is within bounds
-            const optionInputs = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`));
+            // Check if selected option is among the correct answers
+            const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
 
-            if (correctOptionIndex < 0 || correctOptionIndex >= optionInputs.length) {
-                console.error('Invalid correctOptionIndex:', correctOptionIndex);
-                return;
-            }
-
-            const correctOption = optionInputs[correctOptionIndex];
-
-            if (!correctOption) {
-                console.error('Correct option not found');
-                return;
-            }
-
-            const correctOptionLabel = correctOption.parentElement;
+            const correctOptions = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
+                .filter((_, index) => correctOptionIndices.includes(index));
+            const correctOptionLabels = correctOptions.map(option => option.parentElement);
 
             // Disable all radio buttons for this question after selection
-            optionInputs.forEach(radio => {
+            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
                 radio.disabled = true;
             });
 
-            if (selectedOptionIndex === correctOptionIndex) {
+            if (isCorrect) {
                 showNotification('Correct', 'correct');
                 selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
-                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
-
+                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+                score++;
                 // Animate "+1" flying to score circle
                 animateScoreIncrease(selectedOptionLabel);
-
-                score++;
             } else {
                 showNotification('Incorrect', 'incorrect');
                 selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
-                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
+                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
             }
 
             updateUI();
         }
+
 
         function animateScoreIncrease(selectedOptionLabel) {
             // Create "+1" element
@@ -378,6 +363,9 @@
                 scoreAnimation.style.transform = 'scale(1)'; // Reset scale
             }, 1000); // Match the animation duration
         }
+
+
+
 
         function displayQuestions() {
             const container = document.getElementById('questions-container');
@@ -472,59 +460,7 @@
 
         // Load questions and answers on page load
         loadQuestionsAndAnswers();
-        document.getElementById('printButton').addEventListener('click', printQuestions);
-
-        function printQuestions() {
-            const printWindow = window.open('', '', 'height=600,width=800');
-            const questionContent = questions.map((q, index) => {
-                const correctOptionText = q.correctAnswerIndices.map(i => q.options[i]).join(', ');
-                return `
-            <div>
-                <h4>${index + 1}. ${q.question}</h4>
-                <ul>
-                    ${q.options.map((option, i) => `<li>${String.fromCharCode(65 + i)}) ${option}</li>`).join('')}
-                </ul>
-            </div>
-            <hr>
-        `;
-            }).join('');
-
-            const answersContent = questions.map((q, index) => {
-                const correctOptionText = q.correctAnswerIndices.map(i => q.options[i]).join(', ');
-                return `
-            <div>
-                <p><strong>${index + 1}) ${correctOptionText}</strong></p>
-            </div>
-            <hr>
-        `;
-            }).join('');
-
-            printWindow.document.write(`
-        <html>
-        <head>
-            <title>Print Questions</title>
-            <style>
-                body { font-family: Arial, sans-serif; }
-                h4 { margin: 0; }
-                ul { list-style-type: none; padding: 0; }
-                li { margin: 5px 0; }
-                hr { margin: 20px 0; }
-            </style>
-        </head>
-        <body>
-            <div>${questionContent}</div>
-            <div style="page-break-before: always;"></div>
-            <div>${answersContent}</div>
-        </body>
-        </html>
-    `);
-
-            printWindow.document.close();
-            printWindow.print();
-        }
-
     </script>
-
 </body>
 
 </html>
