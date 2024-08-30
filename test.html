@@ -425,11 +425,10 @@
                 const correctOptionText = q.correctAnswerIndices.map(i => q.options[i]).join(', ');
                 return `
             <div>
-                <h4>Question ${index + 1}: ${q.question}</h4>
+                <h4>${index + 1}. ${q.question}</h4>
                 <ul>
                     ${q.options.map((option, i) => `<li>${String.fromCharCode(65 + i)}) ${option}</li>`).join('')}
                 </ul>
-                <p><strong>Correct Answer(s): ${correctOptionText}</strong></p>
             </div>
             <hr>
         `;
@@ -439,7 +438,7 @@
                 const correctOptionText = q.correctAnswerIndices.map(i => q.options[i]).join(', ');
                 return `
             <div>
-                <p><strong>Question ${index + 1} Correct Answer(s): ${correctOptionText}</strong></p>
+                <p><strong>${index + 1}) ${correctOptionText}</strong></p>
             </div>
             <hr>
         `;
