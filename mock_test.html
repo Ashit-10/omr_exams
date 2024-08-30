@@ -198,8 +198,15 @@
         // Get query parameters
         const urlParams = new URLSearchParams(window.location.search);
         const fileLoc = urlParams.get('file');
-        const questionsFile = fileLoc + `/question.txt`;
-        const answersFile = fileLoc + `/answer.txt`;
+        const examFile = urlParams.get('exam');
+        if (examFile) {
+            const questionsFile = fileLoc + `_question.txt`;
+            const answersFile = fileLoc + `_ans_key.txt`;
+        }
+        else {
+            const questionsFile = fileLoc + `/question.txt`;
+            const answersFile = fileLoc + `/answer.txt`;
+        }
         let subjectName = urlParams.get('subject');
         const shuffleQuestions = urlParams.get('shuffle') === 'true';
 
