@@ -252,28 +252,27 @@
 
                 // Combine questions with their corresponding answers
                 questions = questionList.map((q, index) => {
-                    const correctAnswer = answersJson[index + 1][0]; // Correct answer from the JSON file
-                    if (typeof correctAnswer !== 'string') {
-                        console.error(`Error: Expected a string for the correct answer but got ${typeof correctAnswer}`);
-                        return;
-                    }
+                    const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
+
+                    // Ensure correctAnswers is an array
+                    const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
 
                     // Shuffle the options
                     const optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
                     shuffleArray(optionsWithIndex);
 
-                    // Find new index of the correct answer after shuffling
+                    // Find new indices of the correct answers after shuffling
                     const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-                    const correctCharIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
-                    const newCorrectIndex = optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctCharIndex);
+                    const correctIndices = correctAnswerArray.map(correctAnswer =>
+                        optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0))
+                    );
 
                     return {
                         question: q.question,
                         options: shuffledOptions,
-                        correctAnswerIndex: newCorrectIndex // Store the new correct index
+                        correctAnswerIndices: correctIndices // Store the new correct indices
                     };
-                }).filter(q => q !== undefined); // Remove undefined entries if any question failed to process
-
+                });
 
                 // Shuffle questions and corresponding answers if shuffle=true
                 if (shuffleQuestions) {
@@ -281,8 +280,45 @@
                 }
 
                 displayQuestions();
+            }).catch(error => {
+                console.error("Error loading questions or answers:", error);
             });
         }
+
+        function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
+            floatingCircle.style.display = 'flex';
+            const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
+            const selectedOptionLabel = selectedRadio.parentElement;
+
+            // Check if selected option is among the correct answers
+            const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
+
+            const correctOptions = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
+                .filter((_, index) => correctOptionIndices.includes(index));
+            const correctOptionLabels = correctOptions.map(option => option.parentElement);
+
+            // Disable all radio buttons for this question after selection
+            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
+                radio.disabled = true;
+            });
+
+            if (isCorrect) {
+                showNotification('Correct', 'correct');
+                selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
+                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+                score++;
+            } else {
+                showNotification('Incorrect', 'incorrect');
+                selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
+                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+            }
+
+            updateUI();
+        }
+
+
+
+
 
         function displayQuestions() {
             const container = document.getElementById('questions-container');
@@ -337,7 +373,7 @@
             document.getElementById('questions-left').textContent = `Questions Left: ${questionsLeft}`;
 
             // Update the floating circle
-            floatingCircle.textContent = `${getAnsweredQuestionsCount()} / ${questions.length}`;
+            floatingCircle.textContent = `${score} / ${questions.length}`;
 
             if (getAnsweredQuestionsCount() === questions.length) {
                 showExamEndMessage();
@@ -355,32 +391,6 @@
             return count;
         }
 
-
-        function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
-            floatingCircle.style.display = 'flex';
-            const correctOptionIndex = questions[questionIndex].correctAnswerIndex;
-            const selectedOptionLabel = selectedRadio.parentElement;
-            const correctOption = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))[correctOptionIndex];
-            const correctOptionLabel = correctOption.parentElement;
-
-            // Disable all radio buttons for this question after selection
-            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
-                radio.disabled = true;
-            });
-
-            if (selectedOptionIndex === correctOptionIndex) {
-                showNotification('Correct', 'correct');
-                selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
-                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
-                score++;
-            } else {
-                showNotification('Incorrect', 'incorrect');
-                selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
-                correctOptionLabel.style.backgroundColor = '#5db160'; // Light green
-            }
-
-            updateUI();
-        }
         function showNotification(message, type) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
