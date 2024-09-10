@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lazy Loading Images</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%; /* Ensures it fits within the container width */
+            height: auto; /* Preserves aspect ratio */
+        }
+    </style>
+</head>
+<body>
+
+    <h2 style="text-align: center;">Geography (Test-3)</h2>
+
+     <div class="image-container">
+        <img src="class-10_geography_3/geo_result_1.jpg" alt="Image 1" loading="lazy">
+    </div>
+
+    <div class="image-container">
+        <img src="class-10_geography_3/geo_result_2.jpg" alt="Image 2" loading="lazy">
+    </div>
+
+    <div class="image-container">
+        <img src="class-10_geography_3/geo_result_3.jpg" alt="Image 3" loading="lazy">
+    </div>
+
+    
+
+</body>
+</html>
