@@ -24,28 +24,24 @@
                 margin: 0;
             }
             .page {
-                page-break-after: always;
-                display: block;
                 width: 100%;
                 height: 100%;
                 box-sizing: border-box;
                 padding: 20mm;
+                display: flex;
+                flex-wrap: wrap;
             }
-            .left, .right {
-                float: left;
-                width: 48%;
+            .column {
+                width: 50%;
                 box-sizing: border-box;
                 padding: 10px;
+                white-space: pre-wrap;
             }
-            .right {
-                float: right;
-                width: 48%;
+            .column.left {
+                text-align: left;
+            }
+            .column.right {
                 text-align: right;
-            }
-            .clearfix::after {
-                content: "";
-                display: table;
-                clear: both;
             }
         }
     </style>
@@ -63,61 +59,39 @@
         document.getElementById('print-btn').addEventListener('click', function() {
             const inputText = document.getElementById('inputText').value;
             const heading = document.getElementById('heading').value;
-            const pageWidth = 190; // approx. width in mm (A4 width - margins)
-            const pageHeight = 277; // approx. height in mm (A4 height - margins)
-            const lineHeight = 6; // approx. height of a line in mm
-            const charsPerLine = Math.floor(pageWidth / 5); // approx chars per line, adjust as needed
-            const linesPerPage = Math.floor(pageHeight / lineHeight);
-
-            function splitTextIntoPages(text) {
-                const pages = [];
-                let currentPage = '';
-                let currentLine = '';
+            
+            function splitTextIntoColumns(text) {
                 const lines = text.split('\n');
+                let leftColumn = '';
+                let rightColumn = '';
+                let isLeft = true;
 
                 lines.forEach(line => {
-                    const words = line.split(' ');
-                    words.forEach(word => {
-                        if ((currentLine + word).length > charsPerLine) {
-                            currentPage += currentLine + '\n';
-                            if (currentPage.split('\n').length >= linesPerPage) {
-                                pages.push(currentPage);
-                                currentPage = '';
-                            }
-                            currentLine = word + ' ';
-                        } else {
-                            currentLine += word + ' ';
-                        }
-                    });
-                    if (currentLine.trim()) {
-                        currentPage += currentLine + '\n';
-                        currentLine = '';
+                    if (isLeft) {
+                        leftColumn += line + '\n';
+                    } else {
+                        rightColumn += line + '\n';
                     }
+                    isLeft = !isLeft; // Alternate between left and right columns
                 });
 
-                if (currentPage.trim()) {
-                    pages.push(currentPage);
-                }
-
-                return pages;
+                return { leftColumn, rightColumn };
             }
 
-            function generatePrintHtml(pages, heading) {
-                return pages.map(page => `
+            function generatePrintHtml(leftColumn, rightColumn, heading) {
+                return `
                     <div class="page">
                         ${heading ? `<h1>${heading}</h1>` : ''}
-                        <div class="clearfix">
-                            <div class="left">${page}</div>
-                            <div class="right">${page}</div>
-                        </div>
+                        <div class="column left">${leftColumn}</div>
+                        <div class="column right">${rightColumn}</div>
                     </div>
-                `).join('');
+                `;
             }
 
-            const pages = splitTextIntoPages(inputText);
+            const { leftColumn, rightColumn } = splitTextIntoColumns(inputText);
             const printWindow = window.open('', '', 'height=800,width=600');
             printWindow.document.write('<html><head><title>Print</title><style>' + document.querySelector('style').innerHTML + '</style></head><body>');
-            printWindow.document.write(generatePrintHtml(pages, heading));
+            printWindow.document.write(generatePrintHtml(leftColumn, rightColumn, heading));
             printWindow.document.write('</body></html>');
             printWindow.document.close();
             printWindow.focus();
