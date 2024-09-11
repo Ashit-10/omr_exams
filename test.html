@@ -37,12 +37,10 @@
                 padding: 10px;
                 white-space: pre-wrap; /* Preserve spacing */
                 overflow-wrap: break-word;
-            }
-            .half.left {
                 text-align: left;
             }
-            .half.right {
-                text-align: left; /* Align text to the left in right half */
+            .half.left {
+                border-right: 1px solid #ddd; /* Optional: visual separation */
             }
         }
     </style>
@@ -73,7 +71,7 @@
                 let currentPageLeft = '';
                 let currentPageRight = '';
                 let lineCount = 0;
-                
+
                 lines.forEach(line => {
                     if (lineCount < linesPerPage) {
                         currentPageLeft += line + '\n';
@@ -87,7 +85,7 @@
                     }
                     lineCount++;
                 });
-                
+
                 if (currentPageLeft || currentPageRight) {
                     pages.push({ left: currentPageLeft, right: currentPageRight });
                 }
