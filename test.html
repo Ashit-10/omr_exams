@@ -141,23 +141,31 @@
             const charsPerHalf = 1000; // Adjust this value based on text density
             const lines = text.split(/\n+/); // Split text by new lines
             let currentText = '';
-            let left = '', right = '', pages = [];
+            let left = '', right = '', pages = [], isLeft = true;
 
             lines.forEach(line => {
                 currentText += line + '\n';
 
-                // Fill left half first
-                if (left.length < charsPerHalf) {
-                    left += line + '\n';
-                } else if (right.length < charsPerHalf) {
-                    right += line + '\n';
-                }
+                // Check if we should add to the left or right
+                if (isLeft) {
+                    if (left.length + line.length < charsPerHalf) {
+                        left += line + '\n';
+                    } else {
+                        isLeft = false;
+                        right += line + '\n';
+                    }
+                } else {
+                    if (right.length + line.length < charsPerHalf) {
+                        right += line + '\n';
+                    }
 
-                // When both halves are filled, create a new page
-                if (left.length >= charsPerHalf && right.length >= charsPerHalf) {
-                    pages.push({ left, right });
-                    left = '';
-                    right = '';
+                    // When both halves are filled, create a new page
+                    if (right.length >= charsPerHalf) {
+                        pages.push({ left, right });
+                        left = '';
+                        right = '';
+                        isLeft = true; // Start next page on the left side
+                    }
                 }
             });
 
