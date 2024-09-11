@@ -72,21 +72,23 @@
                 let currentPageRight = '';
                 let lineCount = 0;
 
-                for (let i = 0; i < lines.length; i++) {
+                lines.forEach(line => {
                     if (lineCount < linesPerPage) {
-                        currentPageLeft += lines[i] + '\n';
+                        currentPageLeft += line + '\n';
                     } else if (lineCount < 2 * linesPerPage) {
-                        currentPageRight += lines[i] + '\n';
+                        currentPageRight += line + '\n';
                     } else {
+                        // Add completed page with left and right halves
                         pages.push({ left: currentPageLeft, right: currentPageRight });
-                        currentPageLeft = lines[i] + '\n';
+                        currentPageLeft = line + '\n';
                         currentPageRight = '';
                         lineCount = 0;
                     }
                     lineCount++;
-                }
+                });
 
                 if (currentPageLeft || currentPageRight) {
+                    // Add the last page if not empty
                     pages.push({ left: currentPageLeft, right: currentPageRight });
                 }
 
