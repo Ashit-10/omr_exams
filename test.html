@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Alignment for Test Papers</title>
+    <title>Text Alignment for A4 Sheet</title>
     <style>
-        /* Basic page styles */
+        /* Minimal page styling */
         body {
             font-family: 'Times New Roman', Times, serif;
             margin: 0;
@@ -13,29 +13,19 @@
             box-sizing: border-box;
         }
 
+        /* Style for the heading and the content box */
         h1 {
             text-align: center;
         }
 
-        .heading-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .container {
-            width: 21cm;
-            height: 29.7cm;
-            margin: 0 auto;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 10px;
-            page-break-after: always; /* Ensures proper page break for print */
+        .content-box {
+            margin: 20px auto;
+            width: 80%;
         }
 
         textarea {
             width: 100%;
-            height: 90%;
+            height: 200px;
             font-size: 14pt;
             font-family: 'Times New Roman', Times, serif;
             padding: 10px;
@@ -43,7 +33,8 @@
             resize: none;
         }
 
-        .print-btn {
+        /* Button styling */
+        .format-btn {
             display: block;
             margin: 20px auto;
             padding: 10px 20px;
@@ -51,78 +42,73 @@
             cursor: pointer;
         }
 
+        /* Styling for print layout */
+        .container {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 1cm; /* 1 cm gap between left and right halves */
+            padding: 1cm 0.8cm; /* Minimal padding on the top, bottom, and sides */
+            page-break-after: always; /* Ensure proper page breaks */
+        }
+
+        .left-content, .right-content {
+            font-size: 14pt;
+            font-family: 'Times New Roman', Times, serif;
+            padding: 0;
+        }
+
         /* Print styles */
         @media print {
-            textarea, .print-btn, .heading-container {
+            textarea, .format-btn {
                 display: none;
             }
 
             .container {
-                page-break-after: always;
-                padding: 0;
-            }
-
-            /* Remove borders */
-            .container, .container > div {
                 border: none;
+                margin: 0;
+                padding: 0.8cm; /* Apply small margins for print */
+                width: 100%;
+                height: 100%;
             }
 
             body {
                 margin: 0;
             }
         }
-
-        .output {
-            font-size: 14pt;
-        }
-
-        .left-content, .right-content {
-            padding: 10px;
-        }
     </style>
 </head>
 <body>
 
-    <h1>Text Alignment Tool</h1>
+    <h1>Text Alignment Tool for A4 Sheets</h1>
 
-    <!-- Optional Headings -->
-    <div class="heading-container">
-        <input id="headingText" type="text" placeholder="Optional heading..." style="font-size: 16pt; padding: 10px; width: 50%;">
+    <!-- Text input box -->
+    <div class="content-box">
+        <textarea id="fullText" placeholder="Paste your content here..."></textarea>
     </div>
 
-    <div class="container">
-        <div class="left-content">
-            <textarea id="leftText" placeholder="Paste your text for the left side here..."></textarea>
-        </div>
-        <div class="right-content">
-            <textarea id="rightText" placeholder="Paste your text for the right side here..."></textarea>
-        </div>
-    </div>
-
-    <button class="print-btn" onclick="printPage()">Print</button>
+    <!-- Format button -->
+    <button class="format-btn" onclick="formatContent()">Format</button>
 
     <script>
-        function printPage() {
-            const leftText = document.getElementById('leftText').value;
-            const rightText = document.getElementById('rightText').value;
-            const headingText = document.getElementById('headingText').value;
+        function formatContent() {
+            const fullText = document.getElementById('fullText').value;
 
-            // Split the content based on the height of an A4 page
-            const pageContent = splitTextForPages(leftText, rightText);
+            // Split text into lines for left and right content
+            const splitText = splitIntoHalves(fullText);
 
+            // Generate content in a new window for printing
             const printWindow = window.open('', '', 'height=800,width=600');
             printWindow.document.write('<html><head><title>Print</title>');
             printWindow.document.write('<style>');
             printWindow.document.write('body { font-family: "Times New Roman", Times, serif; }');
-            printWindow.document.write('.container { display: grid; grid-template-columns: 1fr 1fr; page-break-after: always; }');
-            printWindow.document.write('.left-content, .right-content { padding: 10px; }');
+            printWindow.document.write('.container { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1cm; }');
+            printWindow.document.write('.left-content, .right-content { padding: 0; }');
             printWindow.document.write('</style></head><body>');
 
-            if (headingText.trim()) {
-                printWindow.document.write('<h1 style="text-align: center;">' + headingText + '</h1>');
-            }
-
-            pageContent.forEach((page) => {
+            splitText.forEach(page => {
                 printWindow.document.write('<div class="container">');
                 printWindow.document.write('<div class="left-content">' + page.left.replace(/\n/g, '<br>') + '</div>');
                 printWindow.document.write('<div class="right-content">' + page.right.replace(/\n/g, '<br>') + '</div>');
@@ -136,37 +122,33 @@
             printWindow.close();
         }
 
-        // Function to split the content into pages
-        function splitTextForPages(leftText, rightText) {
-            const charsPerPage = 1800; // Approximate character count for one A4 page (adjust as needed)
-            const leftPages = splitByLength(leftText, charsPerPage);
-            const rightPages = splitByLength(rightText, charsPerPage);
+        // Function to split the text into halves and pages
+        function splitIntoHalves(text) {
+            const charsPerPage = 2000; // Adjust as needed for the approximate amount of text per page
+            const lines = text.split(/\n+/); // Split by new lines
+            let left = '', right = '', pages = [];
 
-            // Merge left and right texts into pages
-            const totalPages = Math.max(leftPages.length, rightPages.length);
-            const pageContent = [];
+            lines.forEach((line, index) => {
+                if (index % 2 === 0) {
+                    left += line + '\n'; // Left side for even lines
+                } else {
+                    right += line + '\n'; // Right side for odd lines
+                }
 
-            for (let i = 0; i < totalPages; i++) {
-                pageContent.push({
-                    left: leftPages[i] || '',
-                    right: rightPages[i] || ''
-                });
+                // When accumulated text reaches a page's worth, push and reset
+                if (left.length > charsPerPage || right.length > charsPerPage) {
+                    pages.push({ left, right });
+                    left = '';
+                    right = '';
+                }
+            });
+
+            // Push the last remaining text
+            if (left || right) {
+                pages.push({ left, right });
             }
 
-            return pageContent;
-        }
-
-        // Helper function to split a string by length
-        function splitByLength(text, length) {
-            const result = [];
-            let start = 0;
-
-            while (start < text.length) {
-                result.push(text.substring(start, start + length));
-                start += length;
-            }
-
-            return result;
+            return pages;
         }
     </script>
 
