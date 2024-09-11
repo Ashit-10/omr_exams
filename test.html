@@ -48,7 +48,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             column-gap: 1cm; /* Small gap between left and right halves */
-            padding: 0.5cm 0.8cm; /* Minimal top/bottom padding */
+            padding: 0.2cm 0.5cm; /* Minimal top/bottom padding */
             page-break-after: always;
         }
 
@@ -67,7 +67,7 @@
             .container {
                 border: none;
                 margin: 0;
-                padding: 0.5cm 0.8cm; /* Minimal margins for print */
+                padding: 0.2cm 0.5cm; /* Minimal margins for print */
                 width: 100%;
                 height: 100%;
             }
@@ -75,10 +75,19 @@
             /* Remove default browser print headers/footers */
             @page {
                 margin: 0;
+                size: auto;
+            }
+
+            /* Fix for iPhone Safari to remove print headers/footers */
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
             }
 
             body {
                 margin: 0;
+                padding: 0;
             }
         }
     </style>
@@ -106,9 +115,11 @@
             const printWindow = window.open('', '', 'height=800,width=600');
             printWindow.document.write('<html><head><title>Print</title>');
             printWindow.document.write('<style>');
-            printWindow.document.write('body { font-family: "Times New Roman", Times, serif; }');
+            printWindow.document.write('body { font-family: "Times New Roman", Times, serif; margin: 0; padding: 0; }');
             printWindow.document.write('.container { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1cm; }');
             printWindow.document.write('.left-content, .right-content { padding: 0; }');
+            printWindow.document.write('@page { margin: 0; }');
+            printWindow.document.write('html, body { margin: 0; padding: 0; }');
             printWindow.document.write('</style></head><body>');
 
             splitText.forEach(page => {
@@ -127,21 +138,23 @@
 
         // Function to split the text and fill it into pages: left half first, then right
         function splitForPages(text) {
-            const charsPerPage = 2000; // Adjust this value based on text density
+            const charsPerHalf = 1000; // Adjust this value based on text density
             const lines = text.split(/\n+/); // Split text by new lines
-            let left = '', right = '', pages = [], count = 0;
+            let currentText = '';
+            let left = '', right = '', pages = [];
 
-            lines.forEach((line, index) => {
-                // Fill left first, then right
-                if (count % 2 === 0) {
+            lines.forEach(line => {
+                currentText += line + '\n';
+
+                // Fill left half first
+                if (left.length < charsPerHalf) {
                     left += line + '\n';
-                } else {
+                } else if (right.length < charsPerHalf) {
                     right += line + '\n';
                 }
-                count++;
 
-                // When accumulated text reaches a page's worth, push and reset
-                if (left.length > charsPerPage || right.length > charsPerPage) {
+                // When both halves are filled, create a new page
+                if (left.length >= charsPerHalf && right.length >= charsPerHalf) {
                     pages.push({ left, right });
                     left = '';
                     right = '';
