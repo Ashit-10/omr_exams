@@ -56,6 +56,7 @@
             font-size: 14pt;
             font-family: 'Times New Roman', Times, serif;
             padding: 0;
+            margin: 0;
         }
 
         /* Print styles */
@@ -72,13 +73,11 @@
                 height: 100%;
             }
 
-            /* Remove default browser print headers/footers */
             @page {
                 margin: 0;
                 size: auto;
             }
 
-            /* Fix for iPhone Safari to remove print headers/footers */
             html, body {
                 height: 100%;
                 margin: 0;
@@ -117,7 +116,7 @@
             printWindow.document.write('<style>');
             printWindow.document.write('body { font-family: "Times New Roman", Times, serif; margin: 0; padding: 0; }');
             printWindow.document.write('.container { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1cm; }');
-            printWindow.document.write('.left-content, .right-content { padding: 0; }');
+            printWindow.document.write('.left-content, .right-content { padding: 0; margin: 0; }');
             printWindow.document.write('@page { margin: 0; }');
             printWindow.document.write('html, body { margin: 0; padding: 0; }');
             printWindow.document.write('</style></head><body>');
@@ -138,40 +137,42 @@
 
         // Function to split the text and fill it into pages: left half first, then right
         function splitForPages(text) {
-            const charsPerHalf = 1000; // Adjust this value based on text density
-            const lines = text.split(/\n+/); // Split text by new lines
-            let currentText = '';
-            let left = '', right = '', pages = [], isLeft = true;
+            const charsPerHalf = 2000; // Approximate character limit for half a page
+            const lines = text.split(/\n+/);
+            let left = '', right = '', pages = [];
+            let currentHalf = 'left';
 
-            lines.forEach(line => {
-                currentText += line + '\n';
-
-                // Check if we should add to the left or right
-                if (isLeft) {
-                    if (left.length + line.length < charsPerHalf) {
-                        left += line + '\n';
-                    } else {
-                        isLeft = false;
-                        right += line + '\n';
+            while (lines.length) {
+                if (currentHalf === 'left') {
+                    while (left.length < charsPerHalf && lines.length) {
+                        let line = lines.shift() + '\n';
+                        if (left.length + line.length <= charsPerHalf) {
+                            left += line;
+                        } else {
+                            lines.unshift(line); // Push the line back if it can't fit
+                            break;
+                        }
                     }
+                    currentHalf = 'right'; // Switch to the right half
                 } else {
-                    if (right.length + line.length < charsPerHalf) {
-                        right += line + '\n';
+                    while (right.length < charsPerHalf && lines.length) {
+                        let line = lines.shift() + '\n';
+                        if (right.length + line.length <= charsPerHalf) {
+                            right += line;
+                        } else {
+                            lines.unshift(line); // Push the line back if it can't fit
+                            break;
+                        }
                     }
-
-                    // When both halves are filled, create a new page
-                    if (right.length >= charsPerHalf) {
-                        pages.push({ left, right });
-                        left = '';
-                        right = '';
-                        isLeft = true; // Start next page on the left side
-                    }
+                    currentHalf = 'left'; // Switch to the left half for next page
                 }
-            });
 
-            // Push the remaining content
-            if (left || right) {
-                pages.push({ left, right });
+                // Push the page if both halves are filled or content is left
+                if (left || right) {
+                    pages.push({ left, right });
+                    left = '';
+                    right = '';
+                }
             }
 
             return pages;
