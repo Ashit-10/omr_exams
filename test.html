@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text Alignment for A4 Sheet</title>
     <style>
-        /* Basic page styles */
         body {
             font-family: 'Times New Roman', Times, serif;
             margin: 0;
@@ -59,7 +58,6 @@
             margin: 0;
         }
 
-        /* Print styles */
         @media print {
             textarea, .format-btn {
                 display: none;
@@ -137,7 +135,7 @@
 
         // Function to split the text and fill it into pages: left half first, then right
         function splitForPages(text) {
-            const charsPerHalf = 2000; // Approximate character limit for half a page
+            const charsPerHalf = 4000; // Increase character limit for book-like content
             const lines = text.split(/\n+/);
             let left = '', right = '', pages = [];
             let currentHalf = 'left';
@@ -165,14 +163,19 @@
                         }
                     }
                     currentHalf = 'left'; // Switch to the left half for next page
-                }
 
-                // Push the page if both halves are filled or content is left
-                if (left || right) {
-                    pages.push({ left, right });
-                    left = '';
-                    right = '';
+                    // Push the page if both halves are filled or content is left
+                    if (left || right) {
+                        pages.push({ left, right });
+                        left = '';
+                        right = '';
+                    }
                 }
+            }
+
+            // Push the remaining content if any
+            if (left || right) {
+                pages.push({ left, right });
             }
 
             return pages;
