@@ -72,19 +72,19 @@
                 let currentPageRight = '';
                 let lineCount = 0;
 
-                lines.forEach(line => {
+                for (let i = 0; i < lines.length; i++) {
                     if (lineCount < linesPerPage) {
-                        currentPageLeft += line + '\n';
+                        currentPageLeft += lines[i] + '\n';
                     } else if (lineCount < 2 * linesPerPage) {
-                        currentPageRight += line + '\n';
+                        currentPageRight += lines[i] + '\n';
                     } else {
                         pages.push({ left: currentPageLeft, right: currentPageRight });
-                        currentPageLeft = line + '\n';
+                        currentPageLeft = lines[i] + '\n';
                         currentPageRight = '';
                         lineCount = 0;
                     }
                     lineCount++;
-                });
+                }
 
                 if (currentPageLeft || currentPageRight) {
                     pages.push({ left: currentPageLeft, right: currentPageRight });
