@@ -3,180 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Alignment for A4 Sheet</title>
+    <title>Print Text to A4</title>
     <style>
         body {
-            font-family: 'Times New Roman', Times, serif;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
-
-        h1 {
-            text-align: center;
+        .container {
+            margin: 20px;
         }
-
-        .content-box {
-            margin: 20px auto;
-            width: 80%;
-        }
-
         textarea {
             width: 100%;
             height: 200px;
-            font-size: 14pt;
-            font-family: 'Times New Roman', Times, serif;
-            padding: 10px;
-            box-sizing: border-box;
-            resize: none;
         }
-
-        .format-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
+        #print-btn {
+            margin-top: 10px;
         }
-
-        /* Print layout with reduced margins */
-        .container {
-            width: 21cm;
-            height: 29.7cm;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            column-gap: 1cm; /* Small gap between left and right halves */
-            padding: 0; /* No padding */
-            page-break-after: always;
-        }
-
-        .left-content, .right-content {
-            font-size: 14pt;
-            font-family: 'Times New Roman', Times, serif;
-            padding: 0;
-            margin: 0;
-        }
-
         @media print {
-            textarea, .format-btn {
-                display: none;
-            }
-
-            .container {
-                border: none;
+            @page {
+                size: A4;
                 margin: 0;
-                padding: 0;
+            }
+            .page {
+                page-break-after: always;
+                display: block;
                 width: 100%;
                 height: 100%;
+                box-sizing: border-box;
+                padding: 20mm;
             }
-
-            @page {
-                margin: 0;
+            .left, .right {
+                float: left;
+                width: 48%;
+                box-sizing: border-box;
+                padding: 10px;
             }
-
-            html, body {
-                height: 100%;
-                margin: 0;
-                padding: 0;
+            .right {
+                float: right;
+                width: 48%;
+                text-align: right;
             }
-
-            body {
-                margin: 0;
-                padding: 0;
+            .clearfix::after {
+                content: "";
+                display: table;
+                clear: both;
             }
         }
     </style>
 </head>
 <body>
-
-    <h1>Text Alignment Tool for A4 Sheets</h1>
-
-    <!-- Text input box -->
-    <div class="content-box">
-        <textarea id="fullText" placeholder="Paste your content here..."></textarea>
+    <div class="container">
+        <textarea id="inputText" placeholder="Enter text here..."></textarea>
+        <br>
+        <input type="text" id="heading" placeholder="Enter heading (optional)">
+        <br>
+        <button id="print-btn">Print</button>
     </div>
 
-    <!-- Format button -->
-    <button class="format-btn" onclick="formatContent()">Format</button>
-
     <script>
-        function formatContent() {
-            const fullText = document.getElementById('fullText').value.trim();
-            const pageHeight = 29.7; // in cm
-            const pageWidth = 21; // in cm
-            const gap = 1; // gap between left and right columns in cm
-            const maxHeightPerHalfPage = pageHeight / 2 - 0.5; // Considering margins
+        document.getElementById('print-btn').addEventListener('click', function() {
+            const inputText = document.getElementById('inputText').value;
+            const heading = document.getElementById('heading').value;
+            const pageWidth = 190; // approx. width in mm (A4 width - margins)
+            const pageHeight = 277; // approx. height in mm (A4 height - margins)
+            const lineHeight = 6; // approx. height of a line in mm
+            const charsPerLine = Math.floor(pageWidth / 5); // approx chars per line, adjust as needed
+            const linesPerPage = Math.floor(pageHeight / lineHeight);
 
-            const lines = fullText.split('\n');
-            const pages = [];
-            let currentPage = { left: '', right: '' };
-            let currentHalf = 'left';
+            function splitTextIntoPages(text) {
+                const pages = [];
+                let currentPage = '';
+                let currentLine = '';
+                const lines = text.split('\n');
 
-            function addContentToHalf(content) {
-                if (currentHalf === 'left') {
-                    currentPage.left += content;
-                } else {
-                    currentPage.right += content;
+                lines.forEach(line => {
+                    const words = line.split(' ');
+                    words.forEach(word => {
+                        if ((currentLine + word).length > charsPerLine) {
+                            currentPage += currentLine + '\n';
+                            if (currentPage.split('\n').length >= linesPerPage) {
+                                pages.push(currentPage);
+                                currentPage = '';
+                            }
+                            currentLine = word + ' ';
+                        } else {
+                            currentLine += word + ' ';
+                        }
+                    });
+                    if (currentLine.trim()) {
+                        currentPage += currentLine + '\n';
+                        currentLine = '';
+                    }
+                });
+
+                if (currentPage.trim()) {
+                    pages.push(currentPage);
                 }
+
+                return pages;
             }
 
-            function pushCurrentPage() {
-                pages.push(currentPage);
-                currentPage = { left: '', right: '' };
+            function generatePrintHtml(pages, heading) {
+                return pages.map(page => `
+                    <div class="page">
+                        ${heading ? `<h1>${heading}</h1>` : ''}
+                        <div class="clearfix">
+                            <div class="left">${page}</div>
+                            <div class="right">${page}</div>
+                        </div>
+                    </div>
+                `).join('');
             }
 
-            function getMaxCharsForHalf(content) {
-                // This function simulates the maximum characters that can fit in half a page
-                // You can adjust this based on your specific font size and layout
-                const charsPerLine = 80; // Estimate of maximum characters per line
-                const linesPerHalfPage = Math.floor(maxHeightPerHalfPage * 30 / pageHeight);
-                return charsPerLine * linesPerHalfPage;
-            }
-
-            let maxCharsPerHalfPage = getMaxCharsForHalf(fullText);
-
-            while (lines.length) {
-                let line = lines.shift() + '\n';
-                if (currentHalf === 'left' && currentPage.left.length + line.length > maxCharsPerHalfPage) {
-                    currentHalf = 'right'; // Switch to the right half
-                }
-                if (currentHalf === 'right' && currentPage.right.length + line.length > maxCharsPerHalfPage) {
-                    pushCurrentPage(); // Finish current page and start a new one
-                }
-                addContentToHalf(line);
-            }
-
-            // Push the remaining content if any
-            if (currentPage.left || currentPage.right) {
-                pushCurrentPage();
-            }
-
-            // Open a new window for the formatted content
+            const pages = splitTextIntoPages(inputText);
             const printWindow = window.open('', '', 'height=800,width=600');
-            printWindow.document.write('<html><head><title>Print</title>');
-            printWindow.document.write('<style>');
-            printWindow.document.write('body { font-family: "Times New Roman", Times, serif; margin: 0; padding: 0; }');
-            printWindow.document.write('.container { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1cm; }');
-            printWindow.document.write('.left-content, .right-content { padding: 0; margin: 0; }');
-            printWindow.document.write('@page { margin: 0; }');
-            printWindow.document.write('html, body { margin: 0; padding: 0; }');
-            printWindow.document.write('</style></head><body>');
-
-            pages.forEach(page => {
-                printWindow.document.write('<div class="container">');
-                printWindow.document.write('<div class="left-content">' + page.left.replace(/\n/g, '<br>') + '</div>');
-                printWindow.document.write('<div class="right-content">' + page.right.replace(/\n/g, '<br>') + '</div>');
-                printWindow.document.write('</div>');
-            });
-
+            printWindow.document.write('<html><head><title>Print</title><style>' + document.querySelector('style').innerHTML + '</style></head><body>');
+            printWindow.document.write(generatePrintHtml(pages, heading));
             printWindow.document.write('</body></html>');
             printWindow.document.close();
             printWindow.focus();
             printWindow.print();
-            printWindow.close();
-        }
+        });
     </script>
-
 </body>
 </html>
