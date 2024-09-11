@@ -39,7 +39,7 @@
             cursor: pointer;
         }
 
-        /* Print layout with reduced top and bottom margins */
+        /* Print layout with reduced margins */
         .container {
             width: 21cm;
             height: 29.7cm;
@@ -47,7 +47,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             column-gap: 1cm; /* Small gap between left and right halves */
-            padding: 0.2cm 0.5cm; /* Minimal top/bottom padding */
+            padding: 0; /* No padding */
             page-break-after: always;
         }
 
@@ -66,14 +66,13 @@
             .container {
                 border: none;
                 margin: 0;
-                padding: 0.2cm 0.5cm; /* Minimal margins for print */
+                padding: 0;
                 width: 100%;
                 height: 100%;
             }
 
             @page {
                 margin: 0;
-                size: auto;
             }
 
             html, body {
@@ -103,10 +102,55 @@
 
     <script>
         function formatContent() {
-            const fullText = document.getElementById('fullText').value;
+            const fullText = document.getElementById('fullText').value.trim();
+            const pageHeight = 29.7; // in cm
+            const pageWidth = 21; // in cm
+            const gap = 1; // gap between left and right columns in cm
+            const maxHeightPerHalfPage = pageHeight / 2 - 0.5; // Considering margins
 
-            // Split text to fill left half first, then right, then next page
-            const splitText = splitForPages(fullText);
+            const lines = fullText.split('\n');
+            const pages = [];
+            let currentPage = { left: '', right: '' };
+            let currentHalf = 'left';
+
+            function addContentToHalf(content) {
+                if (currentHalf === 'left') {
+                    currentPage.left += content;
+                } else {
+                    currentPage.right += content;
+                }
+            }
+
+            function pushCurrentPage() {
+                pages.push(currentPage);
+                currentPage = { left: '', right: '' };
+            }
+
+            function getMaxCharsForHalf(content) {
+                // This function simulates the maximum characters that can fit in half a page
+                // You can adjust this based on your specific font size and layout
+                const charsPerLine = 80; // Estimate of maximum characters per line
+                const linesPerHalfPage = Math.floor(maxHeightPerHalfPage * 30 / pageHeight);
+                return charsPerLine * linesPerHalfPage;
+            }
+
+            let maxCharsPerHalfPage = getMaxCharsForHalf(fullText);
+
+            while (lines.length) {
+                let line = lines.shift() + '\n';
+                if (currentHalf === 'left' && currentPage.left.length + line.length > maxCharsPerHalfPage) {
+                    currentHalf = 'right'; // Switch to the right half
+                }
+                if (currentHalf === 'right' && currentPage.right.length + line.length > maxCharsPerHalfPage) {
+                    pushCurrentPage(); // Finish current page and start a new one
+                }
+                addContentToHalf(line);
+            }
+
+            // Push the remaining content if any
+            if (currentPage.left || currentPage.right) {
+                pushCurrentPage();
+            }
 
             // Open a new window for the formatted content
             const printWindow = window.open('', '', 'height=800,width=600');
@@ -119,7 +163,7 @@
             printWindow.document.write('html, body { margin: 0; padding: 0; }');
             printWindow.document.write('</style></head><body>');
 
-            splitText.forEach(page => {
+            pages.forEach(page => {
                 printWindow.document.write('<div class="container">');
                 printWindow.document.write('<div class="left-content">' + page.left.replace(/\n/g, '<br>') + '</div>');
                 printWindow.document.write('<div class="right-content">' + page.right.replace(/\n/g, '<br>') + '</div>');
@@ -131,54 +175,6 @@
             printWindow.focus();
             printWindow.print();
             printWindow.close();
-        }
-
-        // Function to split the text and fill it into pages: left half first, then right
-        function splitForPages(text) {
-            const charsPerHalf = 4000; // Increase character limit for book-like content
-            const lines = text.split(/\n+/);
-            let left = '', right = '', pages = [];
-            let currentHalf = 'left';
-
-            while (lines.length) {
-                if (currentHalf === 'left') {
-                    while (left.length < charsPerHalf && lines.length) {
-                        let line = lines.shift() + '\n';
-                        if (left.length + line.length <= charsPerHalf) {
-                            left += line;
-                        } else {
-                            lines.unshift(line); // Push the line back if it can't fit
-                            break;
-                        }
-                    }
-                    currentHalf = 'right'; // Switch to the right half
-                } else {
-                    while (right.length < charsPerHalf && lines.length) {
-                        let line = lines.shift() + '\n';
-                        if (right.length + line.length <= charsPerHalf) {
-                            right += line;
-                        } else {
-                            lines.unshift(line); // Push the line back if it can't fit
-                            break;
-                        }
-                    }
-                    currentHalf = 'left'; // Switch to the left half for next page
-
-                    // Push the page if both halves are filled or content is left
-                    if (left || right) {
-                        pages.push({ left, right });
-                        left = '';
-                        right = '';
-                    }
-                }
-            }
-
-            // Push the remaining content if any
-            if (left || right) {
-                pages.push({ left, right });
-            }
-
-            return pages;
         }
     </script>
 
