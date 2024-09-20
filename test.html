@@ -3,69 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Splitter for A4 Format</title>
+    <title>Text to A4 with Columns</title>
     <style>
         body {
             font-family: Arial, sans-serif;
         }
         .container {
-            width: 100%;
-            max-width: 900px;
+            width: 210mm;
+            height: 297mm;
+            padding: 5mm;
             margin: 0 auto;
-            padding: 20px;
+            box-sizing: border-box;
         }
         textarea {
             width: 100%;
             height: 150px;
             margin-bottom: 10px;
             font-size: 16px;
-            white-space: pre-wrap; /* Keep spaces and line breaks in the textarea */
+            white-space: pre-wrap;
         }
         label {
             margin-right: 10px;
         }
-        .page-preview {
-            width: 210mm;  /* A4 width */
-            height: 297mm; /* A4 height */
-            padding: 5mm;  /* 0.5 cm margin */
-            box-sizing: border-box; /* Ensure padding doesn't increase size */
-            position: relative;
+        .page {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             justify-content: space-between;
+            height: 100%;
             page-break-after: always;
         }
         .column {
-            width: 48%;
-            height: 100%;
-            overflow: hidden;
-        }
-        .column p {
+            width: 100%;
+            white-space: pre-wrap;
             margin: 0;
-            white-space: pre-wrap; /* Keep spaces and line breaks in the columns */
         }
         .controls {
             margin-bottom: 10px;
         }
         @media print {
-            * {
-                -webkit-print-color-adjust: exact !important; /* Fix printing on Safari */
-            }
-            body {
-                margin: 0;
-            }
-            .container, .controls {
+            .controls {
                 display: none;
             }
-            .page-preview {
-                border: none;
-                padding: 5mm; /* 0.5 cm border for print */
-                display: block;
+            .container {
+                padding: 5mm;
                 page-break-after: always;
-                overflow: visible;
-            }
-            .column {
-                overflow: visible; /* Ensure text flows properly */
             }
         }
     </style>
@@ -73,94 +54,122 @@
 <body>
     <div class="container">
         <h1>Text Splitter for A4 Format</h1>
-        
         <textarea id="text-input" placeholder="Enter your text here..."></textarea>
-
         <div class="controls">
             <label for="font-size">Font Size:</label>
             <input type="number" id="font-size" value="16" min="10" max="36" step="1"> px
             <button onclick="printPage()">Print</button>
         </div>
-
-        <div class="page-preview" id="page-preview">
-            <div class="column left" id="left-column"></div>
-            <div class="column right" id="right-column"></div>
-        </div>
+        <div id="pages"></div>
     </div>
 
     <script>
         const textInput = document.getElementById("text-input");
         const fontSizeInput = document.getElementById("font-size");
-        const leftColumn = document.getElementById("left-column");
-        const rightColumn = document.getElementById("right-column");
+        const pagesContainer = document.getElementById("pages");
 
-        // Function to update the font size live
-        fontSizeInput.addEventListener('input', () => {
-            updatePreview();
-        });
-
-        // Function to update the preview with the text
-        textInput.addEventListener('input', () => {
-            updatePreview();
-        });
+        const pageHeight = 297 - 10; // Subtracting padding
+        const pageWidth = 210 - 10;
 
         function updatePreview() {
+            pagesContainer.innerHTML = ''; // Clear existing pages
             const fontSize = fontSizeInput.value + 'px';
             const text = textInput.value;
 
-            leftColumn.style.fontSize = fontSize;
-            rightColumn.style.fontSize = fontSize;
+            // Create a temporary element to measure text height
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.visibility = 'hidden';
+            tempDiv.style.fontSize = fontSize;
+            tempDiv.style.lineHeight = '1.5';
+            tempDiv.style.width = (pageWidth / 2) + 'mm'; // Width of one column
+            document.body.appendChild(tempDiv);
 
-            // Split text into two halves based on newline characters and spaces
+            // Split text by paragraphs and simulate text filling
             const paragraphs = text.split('\n');
+            let currentPage = createPage();
+            let leftContent = '';
+            let rightContent = '';
+            let leftFull = false;
+            let rightFull = false;
 
-            let leftText = '';
-            let rightText = '';
-            let leftFilled = false;
+            paragraphs.forEach(paragraph => {
+                tempDiv.innerText = paragraph;
+                const paragraphHeight = tempDiv.clientHeight;
 
-            paragraphs.forEach((paragraph) => {
-                paragraph += '\n';  // Preserve the line breaks
-                if (!leftFilled) {
-                    if (getTextHeight(leftText + paragraph, leftColumn) < leftColumn.offsetHeight) {
-                        leftText += paragraph;
+                // If the left column isn't full, add text to it
+                if (!leftFull) {
+                    if (currentPage.leftHeight + paragraphHeight <= pageHeight) {
+                        currentPage.leftHeight += paragraphHeight;
+                        leftContent += paragraph + '\n';
                     } else {
-                        leftFilled = true;
-                        rightText += paragraph;
+                        leftFull = true; // Left column is full
                     }
-                } else {
-                    if (getTextHeight(rightText + paragraph, rightColumn) < rightColumn.offsetHeight) {
-                        rightText += paragraph;
+                }
+
+                // If the left is full, we try to fill the right column
+                if (leftFull && !rightFull) {
+                    if (currentPage.rightHeight + paragraphHeight <= pageHeight) {
+                        currentPage.rightHeight += paragraphHeight;
+                        rightContent += paragraph + '\n';
+                    } else {
+                        rightFull = true; // Right column is full
                     }
+                }
+
+                // If both columns are full, we create a new page
+                if (leftFull && rightFull) {
+                    appendPage(currentPage, leftContent, rightContent);
+                    currentPage = createPage();
+                    leftContent = paragraph + '\n';
+                    rightContent = '';
+                    leftFull = false;
+                    rightFull = false;
                 }
             });
 
-            leftColumn.innerHTML = '<p>' + leftText.trim() + '</p>';
-            rightColumn.innerHTML = '<p>' + rightText.trim() + '</p>';
+            // Append any remaining content
+            appendPage(currentPage, leftContent, rightContent);
+
+            // Cleanup temp div
+            document.body.removeChild(tempDiv);
         }
 
-        // Function to measure the height of the text content
-        function getTextHeight(text, container) {
-            const clone = document.createElement('div');
-            clone.style.position = 'absolute';
-            clone.style.visibility = 'hidden';
-            clone.style.width = container.clientWidth + 'px';
-            clone.style.fontSize = container.style.fontSize;
-            clone.style.whiteSpace = 'pre-wrap'; // Keep spaces and line breaks
-            clone.innerHTML = text;
-            document.body.appendChild(clone);
-            const height = clone.clientHeight;
-            document.body.removeChild(clone);
-            return height;
+        function createPage() {
+            return {
+                leftHeight: 0,
+                rightHeight: 0,
+                element: document.createElement('div'),
+            };
         }
 
-        // Function to trigger the print
+        function appendPage(page, leftText, rightText) {
+            const pageElement = document.createElement('div');
+            pageElement.classList.add('page');
+
+            const leftColumn = document.createElement('div');
+            leftColumn.classList.add('column');
+            leftColumn.style.fontSize = fontSizeInput.value + 'px';
+            leftColumn.innerText = leftText;
+
+            const rightColumn = document.createElement('div');
+            rightColumn.classList.add('column');
+            rightColumn.style.fontSize = fontSizeInput.value + 'px';
+            rightColumn.innerText = rightText;
+
+            pageElement.appendChild(leftColumn);
+            pageElement.appendChild(rightColumn);
+
+            pagesContainer.appendChild(pageElement);
+        }
+
+        fontSizeInput.addEventListener('input', updatePreview);
+        textInput.addEventListener('input', updatePreview);
+
         function printPage() {
-            updatePreview();  // Ensure preview is up-to-date before printing
+            updatePreview();
             window.print();
         }
-
-        // Initialize preview
-        updatePreview();
     </script>
 </body>
 </html>
