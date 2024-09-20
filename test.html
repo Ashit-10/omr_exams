@@ -27,13 +27,13 @@
         }
         .page {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             justify-content: space-between;
             height: 100%;
             page-break-after: always;
         }
         .column {
-            width: 100%;
+            width: 48%;
             white-space: pre-wrap;
             margin: 0;
         }
@@ -76,63 +76,50 @@
             const fontSize = fontSizeInput.value + 'px';
             const text = textInput.value;
 
-            // Create a temporary element to measure text height
-            const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.visibility = 'hidden';
-            tempDiv.style.fontSize = fontSize;
-            tempDiv.style.lineHeight = '1.5';
-            tempDiv.style.width = (pageWidth / 2) + 'mm'; // Width of one column
-            document.body.appendChild(tempDiv);
-
             // Split text by paragraphs and simulate text filling
             const paragraphs = text.split('\n');
             let currentPage = createPage();
-            let leftContent = '';
-            let rightContent = '';
+            let leftText = '';
+            let rightText = '';
             let leftFull = false;
             let rightFull = false;
 
             paragraphs.forEach(paragraph => {
-                tempDiv.innerText = paragraph;
-                const paragraphHeight = tempDiv.clientHeight;
-
-                // If the left column isn't full, add text to it
+                // Add text to left first
                 if (!leftFull) {
-                    if (currentPage.leftHeight + paragraphHeight <= pageHeight) {
-                        currentPage.leftHeight += paragraphHeight;
-                        leftContent += paragraph + '\n';
+                    const testLeft = leftText + paragraph + '\n';
+                    const tempLeftHeight = measureHeight(testLeft, fontSize, (pageWidth / 2));
+                    if (tempLeftHeight <= pageHeight) {
+                        leftText = testLeft;
                     } else {
-                        leftFull = true; // Left column is full
+                        leftFull = true;
                     }
                 }
 
-                // If the left is full, we try to fill the right column
+                // Then fill the right column
                 if (leftFull && !rightFull) {
-                    if (currentPage.rightHeight + paragraphHeight <= pageHeight) {
-                        currentPage.rightHeight += paragraphHeight;
-                        rightContent += paragraph + '\n';
+                    const testRight = rightText + paragraph + '\n';
+                    const tempRightHeight = measureHeight(testRight, fontSize, (pageWidth / 2));
+                    if (tempRightHeight <= pageHeight) {
+                        rightText = testRight;
                     } else {
-                        rightFull = true; // Right column is full
+                        rightFull = true;
                     }
                 }
 
-                // If both columns are full, we create a new page
+                // If both are full, append the page and move to the next
                 if (leftFull && rightFull) {
-                    appendPage(currentPage, leftContent, rightContent);
+                    appendPage(currentPage, leftText, rightText);
                     currentPage = createPage();
-                    leftContent = paragraph + '\n';
-                    rightContent = '';
+                    leftText = paragraph + '\n';
+                    rightText = '';
                     leftFull = false;
                     rightFull = false;
                 }
             });
 
             // Append any remaining content
-            appendPage(currentPage, leftContent, rightContent);
-
-            // Cleanup temp div
-            document.body.removeChild(tempDiv);
+            appendPage(currentPage, leftText, rightText);
         }
 
         function createPage() {
@@ -161,6 +148,20 @@
             pageElement.appendChild(rightColumn);
 
             pagesContainer.appendChild(pageElement);
+        }
+
+        function measureHeight(text, fontSize, width) {
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.visibility = 'hidden';
+            tempDiv.style.fontSize = fontSize;
+            tempDiv.style.lineHeight = '1.5';
+            tempDiv.style.width = width + 'mm';
+            tempDiv.innerText = text;
+            document.body.appendChild(tempDiv);
+            const height = tempDiv.clientHeight;
+            document.body.removeChild(tempDiv);
+            return height;
         }
 
         fontSizeInput.addEventListener('input', updatePreview);
