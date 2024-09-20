@@ -3,77 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print A4 Question Format</title>
+    <title>Text Splitter for A4 Format</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
             padding: 20px;
         }
-
-        /* Style for the entire A4 sheet layout */
-        .a4 {
-            width: 210mm;
-            height: 297mm;
-            margin: 0 auto;
-            padding: 10mm;
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        label {
+            margin-right: 10px;
+        }
+        .page-preview {
+            width: 210mm;  /* A4 width */
+            height: 297mm; /* A4 height */
+            padding: 20mm;
+            border: 1px solid #000;
+            position: relative;
             display: flex;
-            flex-wrap: wrap;
-            column-count: 2; /* Two columns */
-            column-gap: 20px; /* Space between columns */
-            font-size: 14px;
-            line-height: 1.5;
+            flex-direction: row;
+            justify-content: space-between;
         }
-
-        .question {
-            margin-bottom: 15px;
-            break-inside: avoid; /* Prevent breaking questions between columns */
+        .column {
+            width: 48%;
+            height: 100%;
+            overflow: hidden;
         }
-
-        .question-number {
-            font-weight: bold;
+        .column.left {
+            border-right: 1px solid #000;
         }
-
+        .column p {
+            margin: 0;
+        }
+        .controls {
+            margin-bottom: 10px;
+        }
         @media print {
-            body {
-                padding: 0;
+            .container, .controls {
+                display: none;
             }
-            .a4 {
-                page-break-after: always;
-                margin: 0;
-                padding: 0;
+            .page-preview {
+                border: none;
             }
         }
     </style>
 </head>
 <body>
-    <h1>Question Layout Example</h1>
-    <textarea id="questionsInput" placeholder="Enter your questions here..." rows="8" style="width:100%;"></textarea>
-    <button onclick="formatQuestions()">Generate Questions</button>
-    
-    <div class="a4" id="a4Content"></div>
+    <div class="container">
+        <h1>Text Splitter for A4 Format</h1>
+        
+        <textarea id="text-input" placeholder="Enter your text here..."></textarea>
+
+        <div class="controls">
+            <label for="font-size">Font Size:</label>
+            <input type="number" id="font-size" value="16" min="10" max="36" step="1"> px
+            <button onclick="printPage()">Print</button>
+        </div>
+
+        <div class="page-preview" id="page-preview">
+            <div class="column left" id="left-column"></div>
+            <div class="column right" id="right-column"></div>
+        </div>
+    </div>
 
     <script>
-        function formatQuestions() {
-            const questionsText = document.getElementById('questionsInput').value;
-            if (!questionsText) {
-                alert("Please enter some questions.");
-                return;
-            }
+        const textInput = document.getElementById("text-input");
+        const fontSizeInput = document.getElementById("font-size");
+        const leftColumn = document.getElementById("left-column");
+        const rightColumn = document.getElementById("right-column");
 
-            // Split questions by line breaks or period to extract individual questions
-            const questions = questionsText.split(/\n|(?<=\.)\s/);
+        // Function to update the font size live
+        fontSizeInput.addEventListener('input', () => {
+            updatePreview();
+        });
 
-            let a4Content = document.getElementById('a4Content');
-            a4Content.innerHTML = ''; // Clear previous content
+        // Function to update the preview with the text
+        textInput.addEventListener('input', () => {
+            updatePreview();
+        });
 
-            questions.forEach((question, index) => {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'question';
-                questionDiv.innerHTML = `<span class="question-number">${index + 1}.</span> ${question}`;
-                a4Content.appendChild(questionDiv);
+        function updatePreview() {
+            const fontSize = fontSizeInput.value + 'px';
+            const text = textInput.value;
+            const words = text.split(' ');
+
+            leftColumn.style.fontSize = fontSize;
+            rightColumn.style.fontSize = fontSize;
+
+            let leftText = '';
+            let rightText = '';
+            let leftFilled = false;
+
+            // Fill the left and right columns
+            words.forEach((word) => {
+                if (!leftFilled) {
+                    if (getTextHeight(leftText + word, leftColumn) < leftColumn.offsetHeight) {
+                        leftText += word + ' ';
+                    } else {
+                        leftFilled = true;
+                        rightText += word + ' ';
+                    }
+                } else {
+                    if (getTextHeight(rightText + word, rightColumn) < rightColumn.offsetHeight) {
+                        rightText += word + ' ';
+                    }
+                }
             });
+
+            leftColumn.innerHTML = '<p>' + leftText.trim() + '</p>';
+            rightColumn.innerHTML = '<p>' + rightText.trim() + '</p>';
         }
+
+        // Function to measure the height of the text content
+        function getTextHeight(text, container) {
+            const clone = document.createElement('div');
+            clone.style.position = 'absolute';
+            clone.style.visibility = 'hidden';
+            clone.style.width = container.clientWidth + 'px';
+            clone.style.fontSize = container.style.fontSize;
+            clone.innerHTML = text;
+            document.body.appendChild(clone);
+            const height = clone.clientHeight;
+            document.body.removeChild(clone);
+            return height;
+        }
+
+        // Function to trigger the print
+        function printPage() {
+            window.print();
+        }
+
+        // Initialize preview
+        updatePreview();
     </script>
 </body>
 </html>
