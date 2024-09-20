@@ -14,7 +14,9 @@
             margin: 0 auto;
             padding: 10mm;
             box-sizing: border-box;
-            page-break-after: always;  /* Each container is one full page */
+            page-break-after: always;
+            display: flex;
+            justify-content: space-between;
         }
 
         .column {
@@ -70,18 +72,26 @@
         function generateDocument() {
             const text = textInput.value;
             const lines = text.split('\n');
-            const linesPerPage = 60;  // Approximate number of lines that can fit in one full page (you can adjust this)
+            const linesPerPage = 30;  // Number of lines to fit per page, adjust as needed
+
+            documentContainer.innerHTML = '';  // Clear previous content
 
             let currentPage = createNewPage();
-            let currentColumn = currentPage.querySelector('.column');
+            let currentColumn = currentPage.querySelector('.left');  // Start with the left column
             let lineCounter = 0;
+            let isLeftColumnFilled = true;
 
-            // Split content into pages
             lines.forEach((line, index) => {
                 if (lineCounter >= linesPerPage) {
-                    currentPage = createNewPage();  // Start new page after filling one
-                    currentColumn = currentPage.querySelector('.column');
+                    currentPage = createNewPage();  // Create a new page once the current page is full
+                    currentColumn = currentPage.querySelector('.left');  // Restart with the left column on the new page
                     lineCounter = 0;
+                }
+
+                // If left column is filled, fill the right column
+                if (lineCounter >= linesPerPage / 2 && isLeftColumnFilled) {
+                    currentColumn = currentPage.querySelector('.right');
+                    isLeftColumnFilled = false;
                 }
 
                 const lineElement = document.createElement("p");
@@ -96,11 +106,16 @@
             const pageContainer = document.createElement('div');
             pageContainer.classList.add('container');
 
-            const column = document.createElement('div');
-            column.classList.add('column');
+            const leftColumn = document.createElement('div');
+            leftColumn.classList.add('column', 'left');
 
-            pageContainer.appendChild(column);
+            const rightColumn = document.createElement('div');
+            rightColumn.classList.add('column', 'right');
+
+            pageContainer.appendChild(leftColumn);
+            pageContainer.appendChild(rightColumn);
             documentContainer.appendChild(pageContainer);
+
             return pageContainer;
         }
 
