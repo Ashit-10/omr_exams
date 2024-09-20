@@ -27,8 +27,7 @@
         .page-preview {
             width: 210mm;  /* A4 width */
             height: 297mm; /* A4 height */
-            padding: 20mm;
-            border: 1px solid #000;
+            padding: 5mm;  /* 0.5 cm margin */
             position: relative;
             display: flex;
             flex-direction: row;
@@ -39,9 +38,6 @@
             width: 48%;
             height: 100%;
             overflow: hidden;
-        }
-        .column.left {
-            border-right: 1px solid #000;
         }
         .column p {
             margin: 0;
@@ -54,8 +50,17 @@
             .container, .controls {
                 display: none;
             }
+            body {
+                margin: 0;
+            }
             .page-preview {
                 border: none;
+                padding: 5mm; /* 0.5 cm border for print */
+                display: block;
+                page-break-after: always;
+            }
+            .column {
+                overflow: visible; /* Ensure text flows properly */
             }
         }
     </style>
