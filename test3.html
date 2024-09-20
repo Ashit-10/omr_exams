@@ -3,69 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Splitter for A4 Format</title>
+    <title>Text to A4 with Columns</title>
     <style>
         body {
             font-family: Arial, sans-serif;
         }
         .container {
-            width: 100%;
-            max-width: 900px;
+            width: 210mm;
+            height: 297mm;
+            padding: 5mm;
             margin: 0 auto;
-            padding: 20px;
+            box-sizing: border-box;
         }
         textarea {
             width: 100%;
             height: 150px;
             margin-bottom: 10px;
             font-size: 16px;
-            white-space: pre-wrap; /* Keep spaces and line breaks in the textarea */
+            white-space: pre-wrap;
         }
         label {
             margin-right: 10px;
         }
-        .page-preview {
-            width: 210mm;  /* A4 width */
-            height: 297mm; /* A4 height */
-            padding: 5mm;  /* 0.5 cm margin */
-            box-sizing: border-box; /* Ensure padding doesn't increase size */
-            position: relative;
+        .page {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            page-break-after: always;
+            height: 100%;
         }
         .column {
             width: 48%;
-            height: 100%;
-            overflow: hidden;
-        }
-        .column p {
+            white-space: pre-wrap;
             margin: 0;
-            white-space: pre-wrap; /* Keep spaces and line breaks in the columns */
         }
         .controls {
             margin-bottom: 10px;
         }
         @media print {
-            body, html {
-                height: 100%;
-                -webkit-print-color-adjust: exact !important;
-                margin: 0;
-                padding: 0;
-            }
-            .container, .controls {
+            .controls {
                 display: none;
             }
-            .page-preview {
-                border: none;
-                padding: 5mm; /* 0.5 cm border for print */
-                display: block;
+            .container {
+                padding: 5mm;
                 page-break-after: always;
-                overflow: visible;
-            }
-            .column {
-                overflow: visible; /* Ensure text flows properly */
             }
         }
     </style>
@@ -73,18 +53,15 @@
 <body>
     <div class="container">
         <h1>Text Splitter for A4 Format</h1>
-        
         <textarea id="text-input" placeholder="Enter your text here..."></textarea>
-
         <div class="controls">
             <label for="font-size">Font Size:</label>
             <input type="number" id="font-size" value="16" min="10" max="36" step="1"> px
             <button onclick="printPage()">Print</button>
         </div>
-
-        <div class="page-preview" id="page-preview">
-            <div class="column left" id="left-column"></div>
-            <div class="column right" id="right-column"></div>
+        <div class="page" id="page">
+            <div class="column" id="left-column"></div>
+            <div class="column" id="right-column"></div>
         </div>
     </div>
 
@@ -94,16 +71,6 @@
         const leftColumn = document.getElementById("left-column");
         const rightColumn = document.getElementById("right-column");
 
-        // Function to update the font size live
-        fontSizeInput.addEventListener('input', () => {
-            updatePreview();
-        });
-
-        // Function to update the preview with the text
-        textInput.addEventListener('input', () => {
-            updatePreview();
-        });
-
         function updatePreview() {
             const fontSize = fontSizeInput.value + 'px';
             const text = textInput.value;
@@ -111,58 +78,25 @@
             leftColumn.style.fontSize = fontSize;
             rightColumn.style.fontSize = fontSize;
 
-            // Split text into two halves based on newline characters and spaces
             const paragraphs = text.split('\n');
-
             let leftText = '';
             let rightText = '';
-            let leftFilled = false;
 
-            paragraphs.forEach((paragraph) => {
-                paragraph += '\n';  // Preserve the line breaks
-                if (!leftFilled) {
-                    if (getTextHeight(leftText + paragraph, leftColumn) < leftColumn.offsetHeight) {
-                        leftText += paragraph;
-                    } else {
-                        leftFilled = true;
-                        rightText += paragraph;
-                    }
-                } else {
-                    if (getTextHeight(rightText + paragraph, rightColumn) < rightColumn.offsetHeight) {
-                        rightText += paragraph;
-                    }
-                }
-            });
+            const half = Math.ceil(paragraphs.length / 2);
+            leftText = paragraphs.slice(0, half).join('\n');
+            rightText = paragraphs.slice(half).join('\n');
 
-            leftColumn.innerHTML = '<p>' + leftText.trim() + '</p>';
-            rightColumn.innerHTML = '<p>' + rightText.trim() + '</p>';
+            leftColumn.innerHTML = leftText;
+            rightColumn.innerHTML = rightText;
         }
 
-        // Function to measure the height of the text content
-        function getTextHeight(text, container) {
-            const clone = document.createElement('div');
-            clone.style.position = 'absolute';
-            clone.style.visibility = 'hidden';
-            clone.style.width = container.clientWidth + 'px';
-            clone.style.fontSize = container.style.fontSize;
-            clone.style.whiteSpace = 'pre-wrap'; // Keep spaces and line breaks
-            clone.innerHTML = text;
-            document.body.appendChild(clone);
-            const height = clone.clientHeight;
-            document.body.removeChild(clone);
-            return height;
-        }
+        fontSizeInput.addEventListener('input', updatePreview);
+        textInput.addEventListener('input', updatePreview);
 
-        // Function to trigger the print
         function printPage() {
-            updatePreview();  // Ensure preview is up-to-date before printing
-            setTimeout(() => {
-                window.print();
-            }, 100);  // Delay to ensure content is fully rendered
+            updatePreview();
+            window.print();
         }
-
-        // Initialize preview
-        updatePreview();
     </script>
 </body>
 </html>
