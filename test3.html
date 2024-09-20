@@ -9,92 +9,104 @@
             font-family: Arial, sans-serif;
         }
         .container {
-            width: 210mm;
-            height: 297mm;
-            padding: 5mm;
+            width: 210mm;  /* A4 width */
+            height: 297mm; /* A4 height */
             margin: 0 auto;
+            padding: 10mm;
+            box-sizing: border-box;
+            page-break-after: always;  /* Each container is one full page */
+        }
+
+        .column {
+            display: inline-block;
+            width: 48%; /* Half width of the page */
+            vertical-align: top;
+            white-space: pre-wrap;
+            padding: 0 5mm;
             box-sizing: border-box;
         }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
         textarea {
             width: 100%;
             height: 150px;
             margin-bottom: 10px;
             font-size: 16px;
-            white-space: pre-wrap;
+            white-space: pre-wrap; /* Preserve text formatting */
         }
-        label {
-            margin-right: 10px;
-        }
-        .page {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            height: 100%;
-        }
-        .column {
-            width: 48%;
-            white-space: pre-wrap;
-            margin: 0;
-        }
-        .controls {
-            margin-bottom: 10px;
-        }
+
         @media print {
-            .controls {
+            .controls, textarea {
                 display: none;
             }
+
+            body {
+                margin: 0;
+            }
+
             .container {
-                padding: 5mm;
                 page-break-after: always;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="controls">
         <h1>Text Splitter for A4 Format</h1>
         <textarea id="text-input" placeholder="Enter your text here..."></textarea>
-        <div class="controls">
-            <label for="font-size">Font Size:</label>
-            <input type="number" id="font-size" value="16" min="10" max="36" step="1"> px
-            <button onclick="printPage()">Print</button>
-        </div>
-        <div class="page" id="page">
-            <div class="column" id="left-column"></div>
-            <div class="column" id="right-column"></div>
-        </div>
+        <button onclick="generateDocument()">Generate & Print</button>
     </div>
+
+    <div id="document-container"></div>
 
     <script>
         const textInput = document.getElementById("text-input");
-        const fontSizeInput = document.getElementById("font-size");
-        const leftColumn = document.getElementById("left-column");
-        const rightColumn = document.getElementById("right-column");
+        const documentContainer = document.getElementById("document-container");
 
-        function updatePreview() {
-            const fontSize = fontSizeInput.value + 'px';
+        // Generate the document content and paginate it
+        function generateDocument() {
             const text = textInput.value;
+            const lines = text.split('\n');
+            const linesPerPage = 60;  // Approximate number of lines that can fit in one full page (you can adjust this)
 
-            leftColumn.style.fontSize = fontSize;
-            rightColumn.style.fontSize = fontSize;
+            let currentPage = createNewPage();
+            let currentColumn = currentPage.querySelector('.column');
+            let lineCounter = 0;
 
-            const paragraphs = text.split('\n');
-            let leftText = '';
-            let rightText = '';
+            // Split content into pages
+            lines.forEach((line, index) => {
+                if (lineCounter >= linesPerPage) {
+                    currentPage = createNewPage();  // Start new page after filling one
+                    currentColumn = currentPage.querySelector('.column');
+                    lineCounter = 0;
+                }
 
-            const half = Math.ceil(paragraphs.length / 2);
-            leftText = paragraphs.slice(0, half).join('\n');
-            rightText = paragraphs.slice(half).join('\n');
-
-            leftColumn.innerHTML = leftText;
-            rightColumn.innerHTML = rightText;
+                const lineElement = document.createElement("p");
+                lineElement.textContent = line;
+                currentColumn.appendChild(lineElement);
+                lineCounter++;
+            });
         }
 
-        fontSizeInput.addEventListener('input', updatePreview);
-        textInput.addEventListener('input', updatePreview);
+        // Create a new page with two columns
+        function createNewPage() {
+            const pageContainer = document.createElement('div');
+            pageContainer.classList.add('container');
 
-        function printPage() {
-            updatePreview();
+            const column = document.createElement('div');
+            column.classList.add('column');
+
+            pageContainer.appendChild(column);
+            documentContainer.appendChild(pageContainer);
+            return pageContainer;
+        }
+
+        // Print the document
+        function printDocument() {
+            generateDocument();
             window.print();
         }
     </script>
