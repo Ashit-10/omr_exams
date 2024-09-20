@@ -3,97 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text to A4 Print</title>
+    <title>Print A4 Question Format</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
         }
 
-        #inputContainer {
-            margin-bottom: 20px;
-        }
-
-        textarea {
-            width: 100%;
-            height: 150px;
-        }
-
-        .printable-page {
+        /* Style for the entire A4 sheet layout */
+        .a4 {
             width: 210mm;
             height: 297mm;
             margin: 0 auto;
-            border: 1px solid black;
-            box-sizing: border-box;
-            page-break-after: always;
-            padding: 20mm;
+            padding: 10mm;
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            column-count: 2; /* Two columns */
+            column-gap: 20px; /* Space between columns */
+            font-size: 14px;
+            line-height: 1.5;
         }
 
-        .column {
-            width: 48%;
-            text-align: justify;
+        .question {
+            margin-bottom: 15px;
+            break-inside: avoid; /* Prevent breaking questions between columns */
+        }
+
+        .question-number {
+            font-weight: bold;
         }
 
         @media print {
-            body * {
-                visibility: hidden;
+            body {
+                padding: 0;
             }
-            .printable-page, .printable-page * {
-                visibility: visible;
-            }
-            .printable-page {
+            .a4 {
                 page-break-after: always;
+                margin: 0;
+                padding: 0;
             }
         }
     </style>
 </head>
 <body>
+    <h1>Question Layout Example</h1>
+    <textarea id="questionsInput" placeholder="Enter your questions here..." rows="8" style="width:100%;"></textarea>
+    <button onclick="formatQuestions()">Generate Questions</button>
+    
+    <div class="a4" id="a4Content"></div>
 
-<div id="inputContainer">
-    <textarea id="inputText" placeholder="Enter your text here"></textarea>
-    <button onclick="preparePrint()">Print</button>
-</div>
+    <script>
+        function formatQuestions() {
+            const questionsText = document.getElementById('questionsInput').value;
+            if (!questionsText) {
+                alert("Please enter some questions.");
+                return;
+            }
 
-<div id="outputContainer"></div>
+            // Split questions by line breaks or period to extract individual questions
+            const questions = questionsText.split(/\n|(?<=\.)\s/);
 
-<script>
-    function preparePrint() {
-        const inputText = document.getElementById('inputText').value;
-        const words = inputText.split(' ');
+            let a4Content = document.getElementById('a4Content');
+            a4Content.innerHTML = ''; // Clear previous content
 
-        const outputContainer = document.getElementById('outputContainer');
-        outputContainer.innerHTML = ''; // Clear previous content
-
-        const wordsPerPage = 1300; // Approximate value, adjust as needed for your formatting
-
-        let pageCount = Math.ceil(words.length / wordsPerPage);
-        for (let i = 0; i < pageCount; i++) {
-            const page = document.createElement('div');
-            page.classList.add('printable-page');
-
-            const columnLeft = document.createElement('div');
-            columnLeft.classList.add('column');
-
-            const columnRight = document.createElement('div');
-            columnRight.classList.add('column');
-
-            const startIndex = i * wordsPerPage;
-            const middleIndex = startIndex + Math.floor(wordsPerPage / 2);
-            const endIndex = (i + 1) * wordsPerPage;
-
-            columnLeft.textContent = words.slice(startIndex, middleIndex).join(' ');
-            columnRight.textContent = words.slice(middleIndex, endIndex).join(' ');
-
-            page.appendChild(columnLeft);
-            page.appendChild(columnRight);
-
-            outputContainer.appendChild(page);
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `<span class="question-number">${index + 1}.</span> ${question}`;
+                a4Content.appendChild(questionDiv);
+            });
         }
-
-        window.print();
-    }
-</script>
-
+    </script>
 </body>
 </html>
