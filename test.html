@@ -19,6 +19,7 @@
             height: 150px;
             margin-bottom: 10px;
             font-size: 16px;
+            white-space: pre-wrap; /* Keep spaces and line breaks in the textarea */
         }
         label {
             margin-right: 10px;
@@ -32,6 +33,7 @@
             display: flex;
             flex-direction: row;
             justify-content: space-between;
+            page-break-after: always;
         }
         .column {
             width: 48%;
@@ -43,6 +45,7 @@
         }
         .column p {
             margin: 0;
+            white-space: pre-wrap; /* Keep spaces and line breaks in the columns */
         }
         .controls {
             margin-bottom: 10px;
@@ -94,27 +97,29 @@
         function updatePreview() {
             const fontSize = fontSizeInput.value + 'px';
             const text = textInput.value;
-            const words = text.split(' ');
 
             leftColumn.style.fontSize = fontSize;
             rightColumn.style.fontSize = fontSize;
+
+            // Split text into two halves based on newline characters and spaces
+            const paragraphs = text.split('\n');
 
             let leftText = '';
             let rightText = '';
             let leftFilled = false;
 
-            // Fill the left and right columns
-            words.forEach((word) => {
+            paragraphs.forEach((paragraph) => {
+                paragraph += '\n';  // Preserve the line breaks
                 if (!leftFilled) {
-                    if (getTextHeight(leftText + word, leftColumn) < leftColumn.offsetHeight) {
-                        leftText += word + ' ';
+                    if (getTextHeight(leftText + paragraph, leftColumn) < leftColumn.offsetHeight) {
+                        leftText += paragraph;
                     } else {
                         leftFilled = true;
-                        rightText += word + ' ';
+                        rightText += paragraph;
                     }
                 } else {
-                    if (getTextHeight(rightText + word, rightColumn) < rightColumn.offsetHeight) {
-                        rightText += word + ' ';
+                    if (getTextHeight(rightText + paragraph, rightColumn) < rightColumn.offsetHeight) {
+                        rightText += paragraph;
                     }
                 }
             });
@@ -130,6 +135,7 @@
             clone.style.visibility = 'hidden';
             clone.style.width = container.clientWidth + 'px';
             clone.style.fontSize = container.style.fontSize;
+            clone.style.whiteSpace = 'pre-wrap'; // Keep spaces and line breaks
             clone.innerHTML = text;
             document.body.appendChild(clone);
             const height = clone.clientHeight;
@@ -139,6 +145,7 @@
 
         // Function to trigger the print
         function printPage() {
+            updatePreview();  // Ensure preview is up-to-date before printing
             window.print();
         }
 
