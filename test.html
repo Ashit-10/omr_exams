@@ -28,6 +28,7 @@
             width: 210mm;  /* A4 width */
             height: 297mm; /* A4 height */
             padding: 5mm;  /* 0.5 cm margin */
+            box-sizing: border-box; /* Ensure padding doesn't increase size */
             position: relative;
             display: flex;
             flex-direction: row;
@@ -47,17 +48,21 @@
             margin-bottom: 10px;
         }
         @media print {
-            .container, .controls {
-                display: none;
+            * {
+                -webkit-print-color-adjust: exact !important; /* Fix printing on Safari */
             }
             body {
                 margin: 0;
+            }
+            .container, .controls {
+                display: none;
             }
             .page-preview {
                 border: none;
                 padding: 5mm; /* 0.5 cm border for print */
                 display: block;
                 page-break-after: always;
+                overflow: visible;
             }
             .column {
                 overflow: visible; /* Ensure text flows properly */
