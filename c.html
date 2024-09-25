@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Questions</title>
+    <style>
+        .question-box {
+            border: 1px solid black;
+            padding: 10px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .select-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: green;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="questions"></div>
+    <button id="submit">Submit Selected Questions</button>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                text: "ସମ୍ବିଧାନର କେଉଁ ଧାରାରେ ପ୍ରଦତ୍ତ ବ୍ୟବସ୍ଥା ଅନୁସାରେ କୌଣସି ବ୍ୟକ୍ତିଙ୍କୁ ପୋଲିସ୍ ମନ ଇଚ୍ଛା ଗରିଫ କରିପାରିବ ନାହିଁ?",
+                options: {A: "ଧାରା ୨୦", B: "ଧାରା ୨୨", C: "ଧାରା ୨୧", D: "ଧାରା ୨୩"}
+            },
+            {
+                id: 2,
+                text: "'ଭାରତ ଏକ ଧର୍ମନିରପେକ୍ଷ ରାଷ୍ଟ୍ର' – ଏହାର ସୂଚନା କେଉଁ ମୌଳିକ ଅଧିକାରରୁ ମିଳୁଅଛି?",
+                options: {A: "ସମାନତାର ଅଧିକାର", B: "ସ୍ଵାଧୀନତାର ଅଧିକାର", C: "ଧର୍ମଗତ ସ୍ୱାଧୀନତାର ଅଧୂକାର", D: "ଶୋଷଣ ବିରୋଧରେ ଅଧିକାର"}
+            }
+        ];
+
+        let selectedQuestions = [];
+
+        // Render questions and options
+        function displayQuestions() {
+            const questionContainer = document.getElementById('questions');
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question-box');
+                questionDiv.innerHTML = `<p>Question ${index + 1}: ${question.text}</p>
+                                         <p>A) ${question.options.A}</p>
+                                         <p>B) ${question.options.B}</p>
+                                         <p>C) ${question.options.C}</p>
+                                         <p>D) ${question.options.D}</p>
+                                         <button class="select-btn" onclick="selectQuestion(${index})">Select</button>`;
+                questionContainer.appendChild(questionDiv);
+            });
+        }
+
+        displayQuestions();
+
+        // Select question function
+        function selectQuestion(index) {
+            const selected = questions[index];
+            if (!selectedQuestions.includes(selected)) {
+                selectedQuestions.push(selected);
+                alert(`Question ${index + 1} selected!`);
+            }
+        }
+
+        // Submit selected questions
+        document.getElementById('submit').addEventListener('click', () => {
+            if (selectedQuestions.length === 0) {
+                alert("No questions selected!");
+                return;
+            }
+
+            // Arrange selected questions serially
+            const arrangedQuestions = selectedQuestions.map((q, i) => `Question ${i + 1}: ${q.text}`).join('\n\n');
+
+            // Create and save custom_question.txt
+            const questionFile = new Blob([arrangedQuestions], { type: 'text/plain' });
+
+            // Send file to Telegram
+            sendToTelegram(questionFile);
+        });
+
+        // Function to send file to Telegram using raw API
+        function sendToTelegram(questionFile) {
+            const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';  // Replace with your bot token
+            const chatId = '-1001570223088';  // Replace with your chat ID
+
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append('document', questionFile, 'custom_question.txt');
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert("File sent successfully!");
+                } else {
+                    alert("Failed to send file.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
