@@ -3,79 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Questionnaire</title>
+    <title>Select Questions</title>
+    <style>
+        .question-box {
+            border: 1px solid black;
+            padding: 10px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .selected {
+            border-color: green;
+            background-color: #f0fff0;
+        }
+        .select-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: green;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+        .selected-btn {
+            background-color: red;
+        }
+        /* Circular overlay for selected question count */
+        .circle-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: red;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
-     <div id="questions"></div>
-    <button id="submit">Submit</button>
+    <!-- Circular counter -->
+    <div id="circle-counter" class="circle-counter">0</div>
+
+    <div id="questions"></div>
+    <button id="submit">Submit Selected Questions</button>
 
     <script>
-        const questions = []; // Store questions here
-        const answers = {}; // Store answers here
+        let questions = [];
+        let selectedQuestions = [];
 
-        // Load questions and answers
-        fetch('mock_test/class-9/polity/chapter-1/question.txt')
-            .then(response => response.text())
-            .then(data => {
-                // Split and process data into questions
-                questions.push(...data.split('\n'));
+        // Function to load the questions from question.txt
+        async function loadQuestions() {
+            try {
+                const response = await fetch('mock_test/class-9/polity/chapter-1/question.txt');
+                const text = await response.text();
+                const lines = text.split('\n').filter(line => line.trim() !== '');
+
+                let currentQuestion = null;
+                lines.forEach((line, index) => {
+                    const questionMatch = line.match(/^\d+\.\s(.+)/);
+                    if (questionMatch) {
+                        // Start a new question
+                        if (currentQuestion) {
+                            questions.push(currentQuestion);
+                        }
+                        currentQuestion = {
+                            id: questions.length + 1,
+                            text: questionMatch[1],
+                            options: {}
+                        };
+                    } else {
+                        const optionMatch = line.match(/([A-D])\)\s(.+)/);
+                        if (optionMatch && currentQuestion) {
+                            currentQuestion.options[optionMatch[1]] = optionMatch[2];
+                        }
+                    }
+
+                    // Push the last question after the loop ends
+                    if (index === lines.length - 1 && currentQuestion) {
+                        questions.push(currentQuestion);
+                    }
+                });
+
                 displayQuestions();
-            });
+            } catch (error) {
+                console.error('Error loading questions:', error);
+            }
+        }
 
-        fetch('mock_test/class-9/polity/chapter-1/answer.txt')
-            .then(response => response.json())
-            .then(data => {
-                Object.assign(answers, data);
-            });
-
+        // Render questions and options
         function displayQuestions() {
-            const container = document.getElementById('questions');
+            const questionContainer = document.getElementById('questions');
             questions.forEach((question, index) => {
                 const questionDiv = document.createElement('div');
-                questionDiv.innerHTML = `<p>${question}</p>`;
-                for (let option of ['A', 'B', 'C', 'D']) {
-                    questionDiv.innerHTML += `
-                        <label>
-                            <input type="radio" name="question${index}" value="${option}">${option}
-                        </label>
-                    `;
-                }
-                container.appendChild(questionDiv);
+                questionDiv.classList.add('question-box');
+                questionDiv.setAttribute('id', `question-box-${index}`);
+                questionDiv.innerHTML = `<p>Question ${index + 1}: ${question.text}</p>
+                                         <p>A) ${question.options.A}</p>
+                                         <p>B) ${question.options.B}</p>
+                                         <p>C) ${question.options.C}</p>
+                                         <p>D) ${question.options.D}</p>
+                                         <button id="btn-${index}" class="select-btn" onclick="toggleQuestion(${index})">Select</button>`;
+                questionContainer.appendChild(questionDiv);
             });
         }
 
+        // Select/Unselect question function
+        function toggleQuestion(index) {
+            const selected = questions[index];
+            const questionDiv = document.getElementById(`question-box-${index}`);
+            const button = document.getElementById(`btn-${index}`);
+            const selectedIndex = selectedQuestions.indexOf(selected);
+
+            if (selectedIndex === -1) {
+                // If the question is not selected, select it
+                selectedQuestions.push(selected);
+                questionDiv.classList.add('selected');
+                button.textContent = 'Selected';
+                button.classList.add('selected-btn');
+            } else {
+                // If the question is already selected, unselect it
+                selectedQuestions.splice(selectedIndex, 1);
+                questionDiv.classList.remove('selected');
+                button.textContent = 'Select';
+                button.classList.remove('selected-btn');
+            }
+
+            // Update the circular counter
+            updateCounter();
+        }
+
+        // Update the circular counter display
+        function updateCounter() {
+            const counter = document.getElementById('circle-counter');
+            counter.textContent = selectedQuestions.length;
+        }
+
+        // Submit selected questions
         document.getElementById('submit').addEventListener('click', () => {
-            // Collect selected answers and prepare files
-            let selectedQuestions = [];
-            let selectedAnswers = [];
-            questions.forEach((_, index) => {
-                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
-                if (selectedOption) {
-                    selectedQuestions.push(questions[index]);
-                    selectedAnswers.push(selectedOption.value);
-                }
-            });
+            if (selectedQuestions.length === 0) {
+                alert("No questions selected!");
+                return;
+            }
 
-            // Create and send files to 
-          const customQuestionsText = selectedQuestions.join('\n\n');
-            const customAnswersText = JSON.stringify(selectedAnswers, null, 2);
+            // Arrange selected questions serially and include options
+            const arrangedQuestions = selectedQuestions.map((q, i) => 
+                `Question ${i + 1}: ${q.text}\nA) ${q.options.A}\nB) ${q.options.B}\nC) ${q.options.C}\nD) ${q.options.D}\n`
+            ).join('\n');
 
-            // Send to Telegram
-            sendToTelegram(customQuestionsText, customAnswersText);
+            // Create and save custom_question.txt in UTF-8 encoding
+            const questionFile = new Blob([arrangedQuestions], { type: 'text/plain;charset=utf-8' });
+
+            // Send file to Telegram
+            sendToTelegram(questionFile);
         });
-      function sendToTelegram(questionsText, answersText) {
-            const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY'; // Replace with your bot token
-            const chatId = '-1001570223088'; // Replace with your chat ID
 
-            // Create text blobs for the files
-            const customQuestionsFile = new Blob([questionsText], { type: 'text/plain' });
-            const customAnswersFile = new Blob([answersText], { type: 'application/json' });
+        // Function to send file to Telegram using raw API with UTF-8
+        function sendToTelegram(questionFile) {
+            const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';  // Replace with your bot token
+            const chatId = '-1001570223088';  // Replace with your chat ID
 
-            // FormData to send files
             const formData = new FormData();
             formData.append('chat_id', chatId);
-            formData.append('document', customQuestionsFile, 'custom_question.txt');
-            formData.append('document', customAnswersFile, 'custom_answers.txt');
+            formData.append('document', questionFile, 'custom_question.txt');
 
             fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
                 method: 'POST',
@@ -84,15 +180,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.ok) {
-                    alert('Files sent successfully!');
+                    alert("File sent successfully!");
                 } else {
-                    alert('Error sending files: ' + data.description);
+                    alert("Failed to send file.");
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
             });
         }
+
+        // Load questions when the page loads
+        loadQuestions();
     </script>
 </body>
 </html>
