@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionnaire</title>
+</head>
+<body>
+     <div id="questions"></div>
+    <button id="submit">Submit</button>
+
+    <script>
+        const questions = []; // Store questions here
+        const answers = {}; // Store answers here
+
+        // Load questions and answers
+        fetch('mock_test/class-9/polity/chapter-1/question.txt')
+            .then(response => response.text())
+            .then(data => {
+                // Split and process data into questions
+                questions.push(...data.split('\n'));
+                displayQuestions();
+            });
+
+        fetch('mock_test/class-9/polity/chapter-1/answer.txt')
+            .then(response => response.json())
+            .then(data => {
+                Object.assign(answers, data);
+            });
+
+        function displayQuestions() {
+            const container = document.getElementById('questions');
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.innerHTML = `<p>${question}</p>`;
+                for (let option of ['A', 'B', 'C', 'D']) {
+                    questionDiv.innerHTML += `
+                        <label>
+                            <input type="radio" name="question${index}" value="${option}">${option}
+                        </label>
+                    `;
+                }
+                container.appendChild(questionDiv);
+            });
+        }
+
+        document.getElementById('submit').addEventListener('click', () => {
+            // Collect selected answers and prepare files
+            let selectedQuestions = [];
+            let selectedAnswers = [];
+            questions.forEach((_, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                if (selectedOption) {
+                    selectedQuestions.push(questions[index]);
+                    selectedAnswers.push(selectedOption.value);
+                }
+            });
+
+            // Create and send files to 
+          const customQuestionsText = selectedQuestions.join('\n\n');
+            const customAnswersText = JSON.stringify(selectedAnswers, null, 2);
+
+            // Send to Telegram
+            sendToTelegram(customQuestionsText, customAnswersText);
+        });
+      function sendToTelegram(questionsText, answersText) {
+            const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY'; // Replace with your bot token
+            const chatId = '-1001570223088'; // Replace with your chat ID
+
+            // Create text blobs for the files
+            const customQuestionsFile = new Blob([questionsText], { type: 'text/plain' });
+            const customAnswersFile = new Blob([answersText], { type: 'application/json' });
+
+            // FormData to send files
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append('document', customQuestionsFile, 'custom_question.txt');
+            formData.append('document', customAnswersFile, 'custom_answers.txt');
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendDocument`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('Files sent successfully!');
+                } else {
+                    alert('Error sending files: ' + data.description);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
