@@ -11,6 +11,10 @@
             margin-bottom: 15px;
             position: relative;
         }
+        .selected {
+            border-color: green;
+            background-color: #f0fff0;
+        }
         .select-btn {
             position: absolute;
             right: 10px;
@@ -20,6 +24,9 @@
             padding: 5px 10px;
             border: none;
             cursor: pointer;
+        }
+        .selected-btn {
+            background-color: red;
         }
     </style>
 </head>
@@ -76,22 +83,36 @@
             questions.forEach((question, index) => {
                 const questionDiv = document.createElement('div');
                 questionDiv.classList.add('question-box');
+                questionDiv.setAttribute('id', `question-box-${index}`);
                 questionDiv.innerHTML = `<p>Question ${index + 1}: ${question.text}</p>
                                          <p>A) ${question.options.A}</p>
                                          <p>B) ${question.options.B}</p>
                                          <p>C) ${question.options.C}</p>
                                          <p>D) ${question.options.D}</p>
-                                         <button class="select-btn" onclick="selectQuestion(${index})">Select</button>`;
+                                         <button id="btn-${index}" class="select-btn" onclick="toggleQuestion(${index})">Select</button>`;
                 questionContainer.appendChild(questionDiv);
             });
         }
 
-        // Select question function
-        function selectQuestion(index) {
+        // Select/Unselect question function
+        function toggleQuestion(index) {
             const selected = questions[index];
-            if (!selectedQuestions.includes(selected)) {
+            const questionDiv = document.getElementById(`question-box-${index}`);
+            const button = document.getElementById(`btn-${index}`);
+            const selectedIndex = selectedQuestions.indexOf(selected);
+
+            if (selectedIndex === -1) {
+                // If the question is not selected, select it
                 selectedQuestions.push(selected);
-                alert(`Question ${index + 1} selected!`);
+                questionDiv.classList.add('selected');
+                button.textContent = 'Selected';
+                button.classList.add('selected-btn');
+            } else {
+                // If the question is already selected, unselect it
+                selectedQuestions.splice(selectedIndex, 1);
+                questionDiv.classList.remove('selected');
+                button.textContent = 'Select';
+                button.classList.remove('selected-btn');
             }
         }
 
@@ -102,8 +123,10 @@
                 return;
             }
 
-            // Arrange selected questions serially
-            const arrangedQuestions = selectedQuestions.map((q, i) => `Question ${i + 1}: ${q.text}`).join('\n\n');
+            // Arrange selected questions serially and include options
+            const arrangedQuestions = selectedQuestions.map((q, i) => 
+                `Question ${i + 1}: ${q.text}\nA) ${q.options.A}\nB) ${q.options.B}\nC) ${q.options.C}\nD) ${q.options.D}\n`
+            ).join('\n');
 
             // Create and save custom_question.txt in UTF-8 encoding
             const questionFile = new Blob([arrangedQuestions], { type: 'text/plain;charset=utf-8' });
