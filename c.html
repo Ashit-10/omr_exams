@@ -28,20 +28,47 @@
     <button id="submit">Submit Selected Questions</button>
 
     <script>
-        const questions = [
-            {
-                id: 1,
-                text: "ସମ୍ବିଧାନର କେଉଁ ଧାରାରେ ପ୍ରଦତ୍ତ ବ୍ୟବସ୍ଥା ଅନୁସାରେ କୌଣସି ବ୍ୟକ୍ତିଙ୍କୁ ପୋଲିସ୍ ମନ ଇଚ୍ଛା ଗରିଫ କରିପାରିବ ନାହିଁ?",
-                options: {A: "ଧାରା ୨୦", B: "ଧାରା ୨୨", C: "ଧାରା ୨୧", D: "ଧାରା ୨୩"}
-            },
-            {
-                id: 2,
-                text: "'ଭାରତ ଏକ ଧର୍ମନିରପେକ୍ଷ ରାଷ୍ଟ୍ର' – ଏହାର ସୂଚନା କେଉଁ ମୌଳିକ ଅଧିକାରରୁ ମିଳୁଅଛି?",
-                options: {A: "ସମାନତାର ଅଧିକାର", B: "ସ୍ଵାଧୀନତାର ଅଧିକାର", C: "ଧର୍ମଗତ ସ୍ୱାଧୀନତାର ଅଧୂକାର", D: "ଶୋଷଣ ବିରୋଧରେ ଅଧିକାର"}
-            }
-        ];
-
+        let questions = [];
         let selectedQuestions = [];
+
+        // Function to load the questions from question.txt
+        async function loadQuestions() {
+            try {
+                const response = await fetch('mock_test/class-9/polity/chapter-1/question.txt');
+                const text = await response.text();
+                const lines = text.split('\n').filter(line => line.trim() !== '');
+
+                let currentQuestion = null;
+                lines.forEach((line, index) => {
+                    const questionMatch = line.match(/^\d+\.\s(.+)/);
+                    if (questionMatch) {
+                        // Start a new question
+                        if (currentQuestion) {
+                            questions.push(currentQuestion);
+                        }
+                        currentQuestion = {
+                            id: questions.length + 1,
+                            text: questionMatch[1],
+                            options: {}
+                        };
+                    } else {
+                        const optionMatch = line.match(/([A-D])\)\s(.+)/);
+                        if (optionMatch && currentQuestion) {
+                            currentQuestion.options[optionMatch[1]] = optionMatch[2];
+                        }
+                    }
+
+                    // Push the last question after the loop ends
+                    if (index === lines.length - 1 && currentQuestion) {
+                        questions.push(currentQuestion);
+                    }
+                });
+
+                displayQuestions();
+            } catch (error) {
+                console.error('Error loading questions:', error);
+            }
+        }
 
         // Render questions and options
         function displayQuestions() {
@@ -58,8 +85,6 @@
                 questionContainer.appendChild(questionDiv);
             });
         }
-
-        displayQuestions();
 
         // Select question function
         function selectQuestion(index) {
@@ -80,14 +105,14 @@
             // Arrange selected questions serially
             const arrangedQuestions = selectedQuestions.map((q, i) => `Question ${i + 1}: ${q.text}`).join('\n\n');
 
-            // Create and save custom_question.txt
-            const questionFile = new Blob([arrangedQuestions], { type: 'text/plain' });
+            // Create and save custom_question.txt in UTF-8 encoding
+            const questionFile = new Blob([arrangedQuestions], { type: 'text/plain;charset=utf-8' });
 
             // Send file to Telegram
             sendToTelegram(questionFile);
         });
 
-        // Function to send file to Telegram using raw API
+        // Function to send file to Telegram using raw API with UTF-8
         function sendToTelegram(questionFile) {
             const botToken = '5214279030:AAHwXVkouOpHANC1EiK6edh_ux4cFqoZ-OY';  // Replace with your bot token
             const chatId = '-1001570223088';  // Replace with your chat ID
@@ -109,6 +134,9 @@
                 }
             });
         }
+
+        // Load questions when the page loads
+        loadQuestions();
     </script>
 </body>
 </html>
