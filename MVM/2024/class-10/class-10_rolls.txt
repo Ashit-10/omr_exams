@@ -26,7 +26,7 @@
     "25": "Epsita",
     "26": "Sujata roul",
     "27": "Chittaranjan",
-    "28": "Aditya prasad",
+    "28": "Deba",
     "29": "Chhandita",
     "30": "Nisikanta",
     "31": "Samira",
