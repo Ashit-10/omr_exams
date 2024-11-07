@@ -3,7 +3,7 @@
       "compression": "Off",
       "allowPartialMarks": "Off",
       "compressionSize": "150 KB",
-      "examFolder": "class-10_science_6",
-      "signature": "Rupa",
-      "tuition": "MVM"
+      "examFolder": "class-8_nmms_2",
+      "signature": "Ananta",
+      "tuition": "WSC"
 }
