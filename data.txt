@@ -3,7 +3,7 @@
       "compression": "Off",
       "allowPartialMarks": "Off",
       "compressionSize": "150 KB",
-      "examFolder": "class-8_nmms_2",
+      "examFolder": "class-8th_nmms_1",
       "signature": "Ananta",
       "tuition": "WSC"
 }
