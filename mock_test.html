@@ -313,22 +313,27 @@ let studentName = '';
             // Ensure correctAnswers is an array
             const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
 
-            // Optionally shuffle the options if shuffle=true
+            // Create options with their original indices
             let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
+
+            // Shuffle options if shuffle=true
             if (shuffleQuestions) {
                 shuffleArray(optionsWithIndex);
             }
 
-            // Extract the shuffled options
+            // Extract shuffled options
             const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-            const correctIndices = correctAnswerArray.map(correctAnswer =>
-                optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0))
-            );
+
+            // Map correct answers to their new indices
+            const correctIndices = correctAnswerArray.map(correctAnswer => {
+                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0); // Convert A, B, C, D to indices
+                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex); // Get new index
+            });
 
             return {
                 question: q.question,
                 options: shuffledOptions,
-                correctAnswerIndices: correctIndices // Store the new correct indices
+                correctAnswerIndices: correctIndices // Store the updated correct indices
             };
         });
 
@@ -342,6 +347,7 @@ let studentName = '';
         console.error("Error loading questions or answers:", error);
     });
 }
+
 
                 
         
