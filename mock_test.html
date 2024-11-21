@@ -173,6 +173,24 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             z-index: 1000;
         }
+  
+
+        #end-exam-button {
+            position: fixed;
+            top: 30%;
+            right: 20px;
+            width: 120px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 
@@ -189,10 +207,35 @@
         </div>
         <div id="notification"></div>
         <div id="floating-circle"></div>
+        <div id="end-exam-button" onclick="endExam()">End Exam</div>
     </div>
 
     <script>
+let studentName = '';
 
+        // Prompt the student for their name on page load
+        window.onload = function () {
+            studentName = prompt("Please enter your name:");
+            if (!studentName || studentName.trim() === "") {
+                studentName = "Anonymous";
+            }
+        };
+
+        function endExam() {
+            const questionsAnswered = getAnsweredQuestionsCount();
+            const accuracy = questions.length > 0 ? ((score / questions.length) * 100).toFixed(2) : 0;
+
+            // Display the final score, student name, and accuracy
+            const container = document.getElementById('questions-container');
+            container.innerHTML = `
+                <div class="exam-end-message">
+                    <h2>Exam Completed</h2>
+                    <p><strong>Student Name:</strong> ${studentName}</p>
+                    <p><strong>Final Score:</strong> ${score} / ${questions.length}</p>
+                    <p><strong>Accuracy:</strong> ${accuracy}%</p>
+                </div>
+            `;
+        }
         const floatingCircle = document.getElementById('floating-circle');
 
         // Get query parameters
@@ -410,7 +453,6 @@
             });
             return count;
         }
-
         function showNotification(message, type) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
