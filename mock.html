@@ -195,6 +195,17 @@
 </head>
 
 <body>
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <h3>Enter Your Name</h3>
+        <input type="text" id="userName" placeholder="Your Name">
+        <button onclick="submitName()">Submit</button>
+    </div>
+
+    <h2>Exam Page</h2>
+    <p>When the exam ends, your result will be automatically submitted.</p>
+    <button onclick="endExam()">End Exam</button>
+
     <div class="test-container">
         <h1>Online Test System</h1>
         <div id="headname" class="exam-name">Mock Test</div>
@@ -211,15 +222,66 @@
     </div>
 
     <script>
-let studentName = '';
+        const BOT_TOKEN = "1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0"; // Replace with your bot token
+        const CHAT_ID = "-1001774957665"; // Replace with your chat ID
 
-        // Prompt the student for their name on page load
-        window.onload = function () {
-            studentName = prompt("Please enter your name:");
-            if (!studentName || studentName.trim() === "") {
-                studentName = "Anonymous";
-            }
+       let userName = "";
+        let score = 0; // Default score variable
+
+        // Show popup on page load to capture the user's name
+        window.onload = () => {
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("popup").style.display = "block";
         };
+
+        // Function to handle name submission
+        function submitName() {
+            userName = document.getElementById("userName").value;
+            if (!userName) {
+                alert("Please enter your name.");
+                return;
+            }
+
+            // Send name to Telegram
+            sendToTelegram(`User Name: ${userName}`);
+
+            // Close the popup
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("popup").style.display = "none";
+        }
+
+        // Function to simulate exam ending and send result
+        function endExam() {
+            // Example logic to calculate the score
+            score = Math.floor(Math.random() * 101); // Generate random score for demo purposes
+
+            const resultMessage = `Exam ended.\nUser: ${userName}\nScore: ${score}%`;
+            sendToTelegram(resultMessage);
+            alert("Exam result submitted!");
+        }
+
+        // Function to send data to Telegram
+        function sendToTelegram(message) {
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.ok) {
+                    console.error("Telegram API Error:", data.description);
+                }
+            })
+            .catch(error => console.error("Fetch Error:", error));
+        }
+        
+
 
         function endExam() {
             const questionsAnswered = getAnsweredQuestionsCount();
