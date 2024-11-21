@@ -154,6 +154,28 @@
         .dropdown-content a:hover {
             background-color: #DE4313;
         }
+
+        .ticker {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 0;
+            font-size: 1.2em;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .ticker a {
+            color: #FFC107;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .ticker a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -163,23 +185,12 @@
         <div class="menu-bar"></div>
         <div class="menu-bar"></div>
         <div id="dropdown" class="dropdown-content">
-            
             <a href="age_calculater.html">Age calculator</a>
             <div class="drop-div-bar"></div>
             <a href="login.html">Admin Login</a>
             <div class="drop-div-bar"></div>
-      <a href="practice_test.html">Mock Test</a>
+            <a href="practice_test.html">Mock Test</a>
             <div class="drop-div-bar"></div>
-      <!--        <a href="scan2.html">Auto scan OMR Sheet</a>
-            <div class="drop-div-bar"></div>
-            <a href="names.html">JSON Roll Data</a>
-            <div class="drop-div-bar"></div>
-            <a href="scan.html">Scan OMR Sheet</a>
-            <div class="drop-div-bar"></div>
-            <a href="scan100.html">< 100 OMR Sheet</a>
-            <div class="drop-div-bar"></div>
-            <a href="scan50.html">< 50 OMR Sheet</a>
-            <div class="drop-div-bar"></div> -->
             <a href="materials.html">Study Materials</a>
         </div>
     </div>
@@ -198,6 +209,11 @@
         <span style="left: 70%; animation-delay: 12s;"></span>
         <span style="left: 80%; animation-delay: 14s;"></span>
         <span style="left: 90%; animation-delay: 16s;"></span>
+    </div>
+    <div class="ticker">
+        <a href="https://www.google.com/search?q=Air+pollution+a+hidden+menace" target="_blank">
+            Give exam: Air pollution a hidden menace
+        </a>
     </div>
     <script>
         function toggleDropdown() {
@@ -252,8 +268,9 @@
         }
 
         // Start cycling colors every 5 seconds
-        setInterval(cycleColors, 3000);
+        setInterval(cycleColors, 5000);
     </script>
 </body>
 
 </html>
+
