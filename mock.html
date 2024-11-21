@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Test System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <style>
+        body {
+        /*    font-family: "Times New Roman", Times, serif; */
+            background-color: #fff;
+            color: #0a0a0a;
+            margin: 0;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        .test-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            margin: 0 auto;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .exam-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .question-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fafafa;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
+        }
+
+        /* Colorful shadow effect for question boxes */
+        .question-box:nth-child(odd) {
+            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.5);
+            /* Red shadow */
+        }
+
+        .question-box:nth-child(even) {
+            box-shadow: 0 4px 8px rgba(0, 0, 255, 0.5);
+            /* Blue shadow */
+        }
+
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .question {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .options li {
+            margin-bottom: 15px;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+            accent-color: #0d6efd;
+        }
+
+        .option-label {
+            padding: 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        #score-banner {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        #notification {
+            position: fixed;
+            top: 30%;
+            left: 40%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: #fff;
+            display: none;
+            font-weight: bold;
+            animation: blast 1.5s forwards;
+        }
+
+        #notification.correct {
+            background-color: #64b966;
+            /* Green */
+        }
+
+        #notification.incorrect {
+            top: 40%;
+            background-color: #d85555;
+            /* Red */
+        }
+
+        @keyframes blast {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+
+        #questions-left {
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Floating circle styles */
+        #floating-circle {
+            position: fixed;
+            top: 20%;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+  
+
+        #end-exam-button {
+            position: fixed;
+            top: 30%;
+            right: 20px;
+            width: 120px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>Online Test System</h1>
+        <div id="headname" class="exam-name">Mock Test</div>
+        <div class="status-bar">
+            <div id="score-banner">Score: 0 / 0</div>
+            <div id="questions-left">Questions Left: 0</div>
+        </div>
+        <div id="questions-container">
+            <!-- Questions will be dynamically loaded here -->
+        </div>
+        <div id="notification"></div>
+        <div id="floating-circle"></div>
+        <div id="end-exam-button" onclick="endExam()">End Exam</div>
+    </div>
+
+    <script>
+let studentName = '';
+
+        // Prompt the student for their name on page load
+        window.onload = function () {
+            studentName = prompt("Please enter your name:");
+            if (!studentName || studentName.trim() === "") {
+                studentName = "Anonymous";
+            }
+        };
+
+        function endExam() {
+            const questionsAnswered = getAnsweredQuestionsCount();
+            const accuracy = questions.length > 0 ? ((score / questions.length) * 100).toFixed(2) : 0;
+
+            // Display the final score, student name, and accuracy
+            const container = document.getElementById('questions-container');
+            container.innerHTML = `
+                <div class="exam-end-message">
+                    <h2>Exam Completed</h2>
+                    <p><strong>Student Name:</strong> ${studentName}</p>
+                    <p><strong>Final Score:</strong> ${score} / ${questions.length}</p>
+                    <p><strong>Accuracy:</strong> ${accuracy}%</p>
+                </div>
+            `;
+        }
+        const floatingCircle = document.getElementById('floating-circle');
+
+        // Get query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileLoc = urlParams.get('file');
+        const examFile = urlParams.get('exam');
+        let questionsFile;
+        let answersFile;
+        
+        if (examFile) {
+            questionsFile = fileLoc + `_question.txt`;
+            answersFile = fileLoc + `_ans_key.txt`;
+            
+        } else {
+            console.log("else");
+            questionsFile = fileLoc + `/question.txt`;
+            answersFile = fileLoc + `/answer.txt`;
+        }
+
+        
+        let subjectName = urlParams.get('subject');
+        const shuffleQuestions = urlParams.get('shuffle') === 'true';
+
+        if (subjectName) {
+            subjectName = "Subject: " + subjectName;
+        }
+
+        let headName = document.getElementById('headname');
+        headName.textContent = subjectName;
+
+        let questions = [];
+        let score = 0;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+
+
+        function loadQuestionsAndAnswers() {
+    Promise.all([
+        fetch(questionsFile).then(response => response.text()),
+        fetch(answersFile).then(response => response.json())
+    ]).then(([questionsText, answersJson]) => {
+        const lines = questionsText.split('\n').filter(line => line.trim() !== '');
+        let questionList = [];
+        let currentQuestion = {};
+
+        lines.forEach(line => {
+            if (line.match(/^\d+\./)) { // New question
+                if (currentQuestion.question) {
+                    questionList.push(currentQuestion);
+                }
+                currentQuestion = {
+                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
+                    options: []
+                };
+            } else if (line.match(/^[A-D]\)/)) { // Options
+                const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
+                currentQuestion.options.push(optionText);
+            }
+        });
+
+        if (currentQuestion.question) {
+            questionList.push(currentQuestion);
+        }
+
+        // Combine questions with their corresponding answers
+        questions = questionList.map((q, index) => {
+            const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
+
+            // Ensure correctAnswers is an array
+            const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
+
+            // Optionally shuffle the options if shuffle=true
+            let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
+            if (shuffleQuestions) {
+                shuffleArray(optionsWithIndex);
+            }
+
+            // Extract the shuffled options
+            const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
+            const correctIndices = correctAnswerArray.map(correctAnswer =>
+                optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0))
+            );
+
+            return {
+                question: q.question,
+                options: shuffledOptions,
+                correctAnswerIndices: correctIndices // Store the new correct indices
+            };
+        });
+
+        // Shuffle questions if shuffle=true
+        if (shuffleQuestions) {
+            shuffleArray(questions);
+        }
+
+        displayQuestions();
+    }).catch(error => {
+        console.error("Error loading questions or answers:", error);
+    });
+}
+
+                
+        
+        
+
+                
+        function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
+            floatingCircle.style.display = 'flex';
+            const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
+            const selectedOptionLabel = selectedRadio.parentElement;
+
+            // Check if selected option is among the correct answers
+            const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
+
+            const correctOptions = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
+                .filter((_, index) => correctOptionIndices.includes(index));
+            const correctOptionLabels = correctOptions.map(option => option.parentElement);
+
+            // Disable all radio buttons for this question after selection
+            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
+                radio.disabled = true;
+            });
+
+            if (isCorrect) {
+                showNotification('Correct', 'correct');
+                selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
+                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+                score++;
+            } else {
+                showNotification('Incorrect', 'incorrect');
+                selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
+                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+            }
+
+            updateUI();
+        }
+
+
+
+
+
+        function displayQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const questionBox = document.createElement('div');
+                questionBox.classList.add('question-box');
+
+                const questionNumber = document.createElement('div');
+                questionNumber.classList.add('question-number');
+                questionNumber.textContent = `Question ${index + 1}`;
+
+                const questionText = document.createElement('div');
+                questionText.classList.add('question');
+                questionText.textContent = q.question;
+
+                const optionsList = document.createElement('ul');
+                optionsList.classList.add('options');
+
+                q.options.forEach((opt, optIndex) => {
+                    const optionItem = document.createElement('li');
+                    const label = document.createElement('label');
+                    const radio = document.createElement('input');
+
+                    radio.type = 'radio';
+                    radio.name = `question-${index}`;
+                    radio.value = String.fromCharCode(65 + optIndex); // A, B, C, D serially
+                    radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
+
+                    label.classList.add('option-label');
+                    label.appendChild(radio);
+                    label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) ${opt}`)); // Add A), B), C), D)
+
+                    optionItem.appendChild(label);
+                    optionsList.appendChild(optionItem);
+                });
+
+                questionBox.appendChild(questionNumber);
+                questionBox.appendChild(questionText);
+                questionBox.appendChild(optionsList);
+                container.appendChild(questionBox);
+            });
+
+            updateUI();
+        }
+
+
+        function updateUI() {
+            document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
+            const questionsLeft = questions.length - getAnsweredQuestionsCount();
+            document.getElementById('questions-left').textContent = `Questions Left: ${questionsLeft}`;
+
+            // Update the floating circle
+            floatingCircle.textContent = `${score} / ${questions.length}`;
+
+            if (getAnsweredQuestionsCount() === questions.length) {
+                showExamEndMessage();
+            }
+        }
+
+        function getAnsweredQuestionsCount() {
+            let count = 0;
+            questions.forEach((_, index) => {
+                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
+                if (selectedOptions.length > 0) {
+                    count++;
+                }
+            });
+            return count;
+        }
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = type;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 1000);
+        }
+
+        function showExamEndMessage() {
+            const container = document.getElementById('questions-container');
+            const message = document.createElement('div');
+            message.classList.add('exam-end-message');
+            message.textContent = `You have completed the test. Your final score is ${score} out of ${questions.length}.`;
+            container.innerHTML = '';
+            container.appendChild(message);
+        }
+
+        // Load questions and answers on page load
+        loadQuestionsAndAnswers();
+    </script>
+</body>
+
+</html>
