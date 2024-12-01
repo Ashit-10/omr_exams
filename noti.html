@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Collection</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+    .date-button {
+      padding: 15px 25px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      width: 80%;
+      max-width: 300px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .date-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>PDF Notifications</h1>
+  <p>Click on a button to view the PDF.</p>
+  <div class="button-container" id="pdf-buttons">
+    <!-- Buttons will be dynamically loaded here -->
+  </div>
+
+  <script>
+    // Load buttons for PDF files
+    fetch("pdfs.json")
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("pdf-buttons");
+        data.forEach(item => {
+          const button = document.createElement("a");
+          button.href = item.url;
+          button.target = "_blank"; // Open in a new tab
+          button.className = "date-button";
+          button.textContent = item.date;
+          container.appendChild(button);
+        });
+      })
+      .catch(err => console.error("Error loading PDF list:", err));
+
+    // Request Notification permission
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
+    // Fetch and send notifications for updates
+    let lastNotificationTime = localStorage.getItem("lastNotificationTime") || 0;
+
+    function checkForUpdates() {
+      fetch("notifications.json")
+        .then(response => response.json())
+        .then(data => {
+          const notification = data.lastNotification;
+          const notificationTime = new Date(notification.timestamp).getTime();
+
+          if (notificationTime > lastNotificationTime) {
+            sendNotification(notification.title, "Click to view it!", notification.url);
+            localStorage.setItem("lastNotificationTime", notificationTime);
+          }
+        })
+        .catch(err => console.error("Error checking for updates:", err));
+    }
+
+    function sendNotification(title, body, url) {
+      if (Notification.permission === "granted") {
+        const notification = new Notification(title, {
+          body: body,
+          icon: "https://via.placeholder.com/128", // Replace with your icon URL
+        });
+        notification.onclick = () => {
+          window.open(url, "_blank");
+        };
+      }
+    }
+
+    // Check for updates every 30 seconds
+    setInterval(checkForUpdates, 30000);
+    checkForUpdates(); // Initial check
+  </script>
+</body>
+</html>
