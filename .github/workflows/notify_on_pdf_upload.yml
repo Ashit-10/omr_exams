@@ -1,0 +1,20 @@
+name: Notify on PDF Upload
+
+on:
+  push:
+    paths:
+      - "daily_task/*.pdf"  # Trigger action only for PDFs in the 'daily_task' directory
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Update website (optional)
+        run: |
+          echo "PDF uploaded" >> ./public/update.txt
+          git add .
+          git commit -m "PDF uploaded"
+          git push
