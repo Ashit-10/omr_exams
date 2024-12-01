@@ -59,42 +59,71 @@
         <button>28-Nov-2024</button>
       </a>
     </div>
-
     <div class="pdf-item">
       <a href="daily_task/29_nov_geometry.pdf" target="_blank">
         <button>29-Nov-2024</button>
       </a>
     </div>
-
     <!-- Add more entries as needed -->
   </div>
 
-  <!-- Service Worker and Push Notification Script -->
-  <script>
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-      // Register the service worker
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(function(registration) {
-          console.log('Service Worker registered with scope:', registration.scope);
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging.js"></script>
 
-          // Request notification permission
-          Notification.requestPermission().then(function(permission) {
-            if (permission === "granted") {
-              console.log('Notification permission granted.');
-              // This is where you can trigger the push notification manually
-              // if a new PDF is uploaded or a specific event occurs.
-            } else {
-              console.log('Notification permission denied.');
-            }
-          });
+  <!-- Firebase Push Notification Script -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyADJjStDyD7KFjvGPKqUlFR4ypjkgQlV7M",
+  authDomain: "send-notification-2d9db.firebaseapp.com",
+  projectId: "send-notification-2d9db",
+  storageBucket: "send-notification-2d9db.firebasestorage.app",
+  messagingSenderId: "519682556638",
+  appId: "1:519682556638:web:c8c359120381dab921f84f",
+  measurementId: "G-7B3BH3S308"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+    // Request notification permission and get the token
+    messaging.requestPermission()
+      .then(function() {
+        console.log('Notification permission granted.');
+        return messaging.getToken();
+      })
+      .then(function(token) {
+        console.log('FCM Token:', token);
+        // Save the token to your server to send notifications later
+      })
+      .catch(function(error) {
+        console.error('Notification permission denied or failed:', error);
+      });
+
+    // Listen for foreground notifications
+    messaging.onMessage(function(payload) {
+      console.log('Message received. ', payload);
+      const notificationTitle = payload.notification.title;
+      const notificationOptions = {
+        body: payload.notification.body,
+        icon: payload.notification.icon
+      };
+
+      // Show the notification
+      new Notification(notificationTitle, notificationOptions);
+    });
+
+    // Firebase Service Worker setup for background notifications
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then(function(registration) {
+          messaging.useServiceWorker(registration);
         })
         .catch(function(error) {
-          console.error('Service Worker registration failed:', error);
+          console.log('Service Worker registration failed:', error);
         });
-    } else {
-      console.log('Push notifications are not supported in this browser.');
     }
   </script>
-
 </body>
 </html>
