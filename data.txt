@@ -3,7 +3,7 @@
       "compression": "Off",
       "allowPartialMarks": "Off",
       "compressionSize": "150 KB",
-      "examFolder": "class-10_odia_4",
-      "signature": "Lakhia",
-      "tuition": "WSC"
+      "examFolder": "class-10_english_10",
+      "signature": "Ashit",
+      "tuition": "MVM"
 }
