@@ -419,15 +419,21 @@ function displayQuestions() {
             label.appendChild(radio);
           //  label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) ${opt}`)); // Use textContent for safety
           //  label.innerHTML = `${String.fromCharCode(65 + optIndex)}) ${opt}`;
-            const optionLabel = document.createElement('span');  
-optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `; // A), B), etc.  
-optionLabel.style.whiteSpace = 'nowrap'; // Prevents breaking to a new line  
+       const optionLabel = document.createElement('span');  
+optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;  
+optionLabel.style.display = 'inline-block';  
+optionLabel.style.marginRight = '5px'; // Adjust spacing  
 
-const optionContent = document.createElement('span'); // Wraps the option text including <img>  
+const optionContent = document.createElement('span');  
 optionContent.innerHTML = opt;  
 
+label.style.display = 'flex';  
+label.style.alignItems = 'flex-start'; // Aligns content to the top  
+label.style.flexWrap = 'wrap'; // Ensures text and images wrap properly  
+
 label.appendChild(optionLabel);  
-label.appendChild(optionContent); // Ensures text stays inline  
+label.appendChild(optionContent);  
+
 
 
             optionItem.appendChild(label);
