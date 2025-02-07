@@ -193,7 +193,7 @@ C) laziness
 D) his lack of skill
 21. Which of the following pie-charts represents the composition of pure air?
 
-A)<img src="https://github.com/Ashit-10/omr_exams/blob/main/mock_test/class-10/English/set-1/img/21_A.jpeg" width="200">
+A)<img src="https://github.com/Ashit-10/omr_exams/mock_test/class-10/English/set-1/img/21_A.jpeg" width="200">
 
 B) 21%  Oxygen
 78%   Nitrogen
