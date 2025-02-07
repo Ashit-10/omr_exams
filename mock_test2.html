@@ -278,7 +278,6 @@ let studentName = '';
 
 
 
-        
         function loadQuestionsAndAnswers() {
     Promise.all([
         fetch(questionsFile).then(response => response.text()),
@@ -286,57 +285,59 @@ let studentName = '';
     ]).then(([questionsText, answersJson]) => {
         const lines = questionsText.split('\n').filter(line => line.trim() !== '');
         let questionList = [];
-        let currentQuestion = null;
+        let currentQuestion = {};
 
         lines.forEach(line => {
-            if (line.match(/^\d+\./)) { // New question starts
-                if (currentQuestion) {
+            if (line.match(/^\d+\./)) { // New question
+                if (currentQuestion.question) {
                     questionList.push(currentQuestion);
                 }
                 currentQuestion = {
-                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number
+                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
                     options: []
                 };
-            } else if (line.match(/^[A-D]\)/)) { // Options detected
-                const optionText = line.replace(/^[A-D]\)\s*/, ""); 
+            } else if (line.match(/^[A-D]\)/)) { // Options
+                const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
                 currentQuestion.options.push(optionText);
-            } else if (currentQuestion) { 
-                // Append additional lines to the question while avoiding options
-                currentQuestion.question += " " + line.trim();
             }
         });
 
-        if (currentQuestion) {
+        if (currentQuestion.question) {
             questionList.push(currentQuestion);
         }
 
-        // Apply correct answer mapping
+        // Combine questions with their corresponding answers
         questions = questionList.map((q, index) => {
-            const correctAnswers = answersJson[index + 1] || []; // Ensure it exists
+            const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
+
+            // Ensure correctAnswers is an array
             const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
 
+            // Create options with their original indices
             let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
 
-            // Shuffle options if required
+            // Shuffle options if shuffle=true
             if (shuffleQuestions) {
                 shuffleArray(optionsWithIndex);
             }
 
+            // Extract shuffled options
             const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
 
+            // Map correct answers to their new indices
             const correctIndices = correctAnswerArray.map(correctAnswer => {
-                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
-                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex);
+                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0); // Convert A, B, C, D to indices
+                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex); // Get new index
             });
 
             return {
-                question: q.question,  // This now contains full questions across multiple lines
+                question: q.question,
                 options: shuffledOptions,
-                correctAnswerIndices: correctIndices
+                correctAnswerIndices: correctIndices // Store the updated correct indices
             };
         });
 
-        // Shuffle questions if needed
+        // Shuffle questions if shuffle=true
         if (shuffleQuestions) {
             shuffleArray(questions);
         }
@@ -388,7 +389,11 @@ let studentName = '';
 
 
 
-function displayQuestions() {
+        
+
+                
+
+                    function displayQuestions() {
     const container = document.getElementById('questions-container');
     container.innerHTML = '';
 
@@ -434,7 +439,7 @@ function displayQuestions() {
     updateUI();
 }
 
-
+        
 
         function updateUI() {
             document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
