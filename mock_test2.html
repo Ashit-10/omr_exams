@@ -349,36 +349,29 @@ let studentName = '';
 }
 
 
-                
-        
-        
-
-                
-        function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
+               function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
     floatingCircle.style.display = 'flex';
+
     const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
     const selectedOptionLabel = selectedRadio.parentElement;
 
-    // Check if the selected option is correct
-    const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
-
-    // Get all radio buttons for this question
+    // Disable all radio buttons for this question
     const allOptions = document.querySelectorAll(`input[name="question-${questionIndex}"]`);
-    
-    // Disable all radio buttons for this question after selection
     allOptions.forEach(radio => {
         radio.disabled = true;
     });
 
-    // Apply color changes for selected and correct options
+    // Check correctness
+    const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
     if (isCorrect) {
         showNotification('Correct', 'correct');
-        selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
+        selectedOptionLabel.style.backgroundColor = '#5db160'; // Green
+        score++; // Increase score only if correct
     } else {
         showNotification('Incorrect', 'incorrect');
-        selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
+        selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Red
 
-        // Also highlight the correct option(s) in green
+        // Highlight correct options
         correctOptionIndices.forEach(correctIndex => {
             const correctOption = allOptions[correctIndex];
             if (correctOption) {
@@ -387,14 +380,51 @@ let studentName = '';
         });
     }
 
-    if (isCorrect) {
-        score++; // Increase score only if correct
-    }
-
     updateUI();
+}
+ 
+        
+        function displayQuestions() {
+    const container = document.getElementById('question-container');
+    container.innerHTML = ''; // Clear previous content
+
+    questions.forEach((question, qIndex) => {
+        const questionBox = document.createElement('div');
+        questionBox.classList.add('question-box');
+
+        // Question Text Handling
+        const questionText = document.createElement('p');
+        questionText.innerHTML = question.text.replace(/_(.*?)_/g, '<u>$1</u>'); // Preserve underlined words
+        questionBox.appendChild(questionText);
+
+        // Options Container
+        const optionsContainer = document.createElement('div');
+        optionsContainer.classList.add('options-container');
+
+        question.options.forEach((option, oIndex) => {
+            const optionLabel = document.createElement('label');
+            optionLabel.classList.add('option-label');
+
+            const optionInput = document.createElement('input');
+            optionInput.type = 'radio';
+            optionInput.name = `question-${qIndex}`;
+            optionInput.value = oIndex;
+            optionInput.addEventListener('change', () => handleOptionChange(qIndex, oIndex, optionInput));
+
+            optionLabel.appendChild(optionInput);
+            optionLabel.appendChild(document.createTextNode(option));
+
+            optionsContainer.appendChild(optionLabel);
+        });
+
+        questionBox.appendChild(optionsContainer);
+        container.appendChild(questionBox);
+    });
 }
 
 
+                
+        
 
 
 
@@ -402,51 +432,8 @@ let studentName = '';
 
                 
 
-                    function displayQuestions() {
-    const container = document.getElementById('questions-container');
-    container.innerHTML = '';
-
-    questions.forEach((q, index) => {
-        const questionBox = document.createElement('div');
-        questionBox.classList.add('question-box');
-
-        const questionNumber = document.createElement('div');
-        questionNumber.classList.add('question-number');
-        questionNumber.textContent = `Question ${index + 1}`;
-
-        const questionText = document.createElement('div');
-        questionText.classList.add('question');
-        questionText.innerHTML = q.question; // Allow HTML rendering in questions
-
-        const optionsList = document.createElement('ul');
-        optionsList.classList.add('options');
-
-        q.options.forEach((opt, optIndex) => {
-            const optionItem = document.createElement('li');
-            const label = document.createElement('label');
-            const radio = document.createElement('input');
-
-            radio.type = 'radio';
-            radio.name = `question-${index}`;
-            radio.value = String.fromCharCode(65 + optIndex);
-            radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
-
-            label.classList.add('option-label');
-            label.appendChild(radio);
-            label.innerHTML += `${String.fromCharCode(65 + optIndex)}) ${opt}`; // Allow HTML rendering in options
-
-            optionItem.appendChild(label);
-            optionsList.appendChild(optionItem);
-        });
-
-        questionBox.appendChild(questionNumber);
-        questionBox.appendChild(questionText);
-        questionBox.appendChild(optionsList);
-        container.appendChild(questionBox);
-    });
-
-    updateUI();
-}
+                    
+   
 
         
 
