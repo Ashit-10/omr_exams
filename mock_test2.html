@@ -388,34 +388,47 @@ let studentName = '';
     const container = document.getElementById('question-container');
     container.innerHTML = ''; // Clear previous content
 
+    if (!questions || questions.length === 0) {
+        console.error("No questions loaded!");
+        container.innerHTML = '<p style="color: red;">Error: No questions found.</p>';
+        return;
+    }
+
     questions.forEach((question, qIndex) => {
+        console.log(`Rendering Question ${qIndex + 1}:`, question); // Debug log
+
         const questionBox = document.createElement('div');
         questionBox.classList.add('question-box');
 
-        // Question Text Handling
+        // Question Text
         const questionText = document.createElement('p');
         questionText.innerHTML = question.text.replace(/_(.*?)_/g, '<u>$1</u>'); // Preserve underlined words
         questionBox.appendChild(questionText);
 
-        // Options Container
+        // Options
         const optionsContainer = document.createElement('div');
         optionsContainer.classList.add('options-container');
 
-        question.options.forEach((option, oIndex) => {
-            const optionLabel = document.createElement('label');
-            optionLabel.classList.add('option-label');
+        if (!question.options || question.options.length === 0) {
+            console.error(`Question ${qIndex + 1} has no options!`);
+            questionBox.appendChild(document.createTextNode("Error: No options available."));
+        } else {
+            question.options.forEach((option, oIndex) => {
+                const optionLabel = document.createElement('label');
+                optionLabel.classList.add('option-label');
 
-            const optionInput = document.createElement('input');
-            optionInput.type = 'radio';
-            optionInput.name = `question-${qIndex}`;
-            optionInput.value = oIndex;
-            optionInput.addEventListener('change', () => handleOptionChange(qIndex, oIndex, optionInput));
+                const optionInput = document.createElement('input');
+                optionInput.type = 'radio';
+                optionInput.name = `question-${qIndex}`;
+                optionInput.value = oIndex;
+                optionInput.addEventListener('change', () => handleOptionChange(qIndex, oIndex, optionInput));
 
-            optionLabel.appendChild(optionInput);
-            optionLabel.appendChild(document.createTextNode(option));
+                optionLabel.appendChild(optionInput);
+                optionLabel.appendChild(document.createTextNode(option));
 
-            optionsContainer.appendChild(optionLabel);
-        });
+                optionsContainer.appendChild(optionLabel);
+            });
+        }
 
         questionBox.appendChild(optionsContainer);
         container.appendChild(questionBox);
