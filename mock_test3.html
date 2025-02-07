@@ -212,86 +212,71 @@
 
     <script>
     function loadQuestionsAndAnswers() {
-    const questionFile = "question.txt"; // Load from same path
-    const answerFile = "answer.txt";
-    const explanationFile = "explanation.txt"; // Try to fetch explanations
+    const questionFile = "question.txt"; 
+    const answerFile = "answer.txt"; 
+    const explanationFile = "explanation.txt";
 
-    const fetchExplanations = fetch(explanationFile)
-        .then(response => response.ok ? response.text() : null)
-        .catch(() => null);
+    let explanations = {}; // Ensure explanations object is initialized
 
-            const lines = questionsText.split('\n').filter(line => line.trim() !== '');
-            let questionList = [];
-            let currentQuestion = {};
+    // Fetch all files
+    Promise.all([
+        fetch(questionFile).then(res => res.text()),
+        fetch(answerFile).then(res => res.json()),
+        fetch(explanationFile).then(res => res.ok ? res.json() : {}) // Parse JSON correctly
+    ]).then(([questionsText, answersJson, explanationsJson]) => {
+        explanations = explanationsJson; // Store parsed explanations
+        
+        const lines = questionsText.split('\n').filter(line => line.trim() !== '');
+        let questionList = [];
+        let currentQuestion = {};
 
-            lines.forEach(line => {
-                if (line.match(/^\d+\./)) { 
-                    if (currentQuestion.question) {
-                        questionList.push(currentQuestion);
-                    }
-                    currentQuestion = {
-                        question: line.replace(/^\d+\.\s*/, ""),
-                        options: []
-                    };
-                } else if (line.match(/^[A-D]\)/)) { 
-                    const optionText = line.replace(/^[A-D]\)\s*/, "");
-                    currentQuestion.options.push(optionText);
+        lines.forEach(line => {
+            if (line.match(/^\d+\./)) { 
+                if (currentQuestion.question) {
+                    questionList.push(currentQuestion);
                 }
-            });
-
-            if (currentQuestion.question) {
-                questionList.push(currentQuestion);
-            }
-
-            // NEW CODE: Process explanations if file is available
-            if (explanationsText) {
-                const explanationLines = explanationsText.split('\n').filter(line => line.trim() !== '');
-                explanationLines.forEach(line => {
-                    const parts = line.split(':');
-                    if (parts.length >= 2) {
-                        const qNumber = parts[0].trim();
-                        const explanationText = parts.slice(1).join(':').trim();
-                        explanations[qNumber] = explanationText;
-                    }
-                });
-            }
-
-            questions = questionList.map((q, index) => {
-                const correctAnswers = answersJson[index + 1];
-                const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
-
-                let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
-
-                if (shuffleQuestions) {
-                    shuffleArray(optionsWithIndex);
-                }
-
-                const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-                const correctIndices = correctAnswerArray.map(correctAnswer => {
-                    const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
-                    return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex);
-                });
-
-                return {
-                    question: q.question,
-                    options: shuffledOptions,
-                    correctAnswerIndices: correctIndices,
-                    questionNumber: index + 1 // Store original question number for explanation lookup
+                currentQuestion = {
+                    question: line.replace(/^\d+\.\s*/, ""),
+                    options: []
                 };
+            } else if (line.match(/^[A-D]\)/)) { 
+                const optionText = line.replace(/^[A-D]\)\s*/, "");
+                currentQuestion.options.push(optionText);
+            }
+        });
+
+        if (currentQuestion.question) {
+            questionList.push(currentQuestion);
+        }
+
+        questions = questionList.map((q, index) => {
+            const correctAnswers = answersJson[index + 1];
+            const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
+
+            let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
+
+            const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
+            const correctIndices = correctAnswerArray.map(correctAnswer => {
+                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
+                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex);
             });
 
-            if (shuffleQuestions) {
-                shuffleArray(questions);
-            }
-
-            displayQuestions();
-        }).catch(error => {
-            console.error("Error loading files:", error);
+            return {
+                question: q.question,
+                options: shuffledOptions,
+                correctAnswerIndices: correctIndices,
+                questionNumber: index + 1 // Store original question number
+            };
         });
-    }
+
+        displayQuestions(explanations);
+    }).catch(error => {
+        console.error("Error loading files:", error);
+    });
+}
 
     function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
-    const correctOptionIndices = questions[questionIndex].correctAnswers.map(ans => ans.charCodeAt(0) - 'A'.charCodeAt(0));
+    const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
     const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
     const selectedOptionLabel = selectedRadio.parentElement;
     const explanationBox = document.getElementById(`explanation-${questionIndex}`);
@@ -300,17 +285,17 @@
         showNotification('Correct', 'correct');
         selectedOptionLabel.style.backgroundColor = '#5db160';
         score++;
-        explanationBox.style.display = 'none';
+        explanationBox.style.display = 'none'; // Hide explanation if correct
     } else {
         showNotification('Incorrect', 'incorrect');
         selectedOptionLabel.style.backgroundColor = '#f4a5a5';
 
         const qNum = questions[questionIndex].questionNumber;
-        if (explanations[qNum]) {
-            explanationBox.innerHTML = `<strong>Explanation:</strong> ${explanations[qNum]}`;
+        if (explanations[String(qNum)]) { // Ensure correct key type
+            explanationBox.innerHTML = `<strong>Explanation:</strong> ${explanations[String(qNum)]}`;
             explanationBox.style.display = 'block';
         } else {
-            explanationBox.style.display = 'none'; // Hide if no explanation is found
+            explanationBox.style.display = 'none'; // Hide if no explanation
         }
     }
 
@@ -318,56 +303,75 @@
 }
 
 
-    function displayQuestions() {
-        const container = document.getElementById('questions-container');
-        container.innerHTML = '';
 
-        questions.forEach((q, index) => {
-            const questionBox = document.createElement('div');
-            questionBox.classList.add('question-box');
+    function displayQuestions(explanations) {
+    const container = document.getElementById('questions-container');
+    container.innerHTML = '';
 
-            const questionNumber = document.createElement('div');
-            questionNumber.classList.add('question-number');
-            questionNumber.textContent = `Question ${index + 1}`;
+    questions.forEach((q, index) => {
+        const questionBox = document.createElement('div');
+        questionBox.classList.add('question-box');
 
-            const questionText = document.createElement('div');
-            questionText.classList.add('question');
-            questionText.innerHTML = q.question;
+        const questionNumber = document.createElement('div');
+        questionNumber.classList.add('question-number');
+        questionNumber.textContent = `Question ${index + 1}`;
 
-            const optionsList = document.createElement('ul');
-            optionsList.classList.add('options');
+        const questionText = document.createElement('div');
+        questionText.classList.add('question');
+        questionText.innerHTML = q.question;
 
-            q.options.forEach((opt, optIndex) => {
-                const optionItem = document.createElement('li');
-                const label = document.createElement('label');
-                const radio = document.createElement('input');
+        const optionsList = document.createElement('ul');
+        optionsList.classList.add('options');
 
-                radio.type = 'radio';
-                radio.name = `question-${index}`;
-                radio.value = String.fromCharCode(65 + optIndex);
-                radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
+        q.options.forEach((opt, optIndex) => {
+            const optionItem = document.createElement('li');
+            const label = document.createElement('label');
+            const radio = document.createElement('input');
 
-                label.classList.add('option-label');
-                label.appendChild(radio);
+            radio.type = 'radio';
+            radio.name = `question-${index}`;
+            radio.value = String.fromCharCode(65 + optIndex);
+            radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
 
-                const optionLabel = document.createElement('span');
-                optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;
-                optionLabel.style.display = 'inline-block';
-                optionLabel.style.marginRight = '5px';
+            label.classList.add('option-label');
+            label.appendChild(radio);
 
-                const optionContent = document.createElement('span');
-                optionContent.innerHTML = opt;
+            const optionLabel = document.createElement('span');
+            optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;
+            optionLabel.style.display = 'inline-block';
+            optionLabel.style.marginRight = '5px';
 
-                label.style.display = 'flex';
-                label.style.alignItems = 'flex-start';
-                label.style.flexWrap = 'wrap';
+            const optionContent = document.createElement('span');
+            optionContent.innerHTML = opt;
 
-                label.appendChild(optionLabel);
-                label.appendChild(optionContent);
+            label.appendChild(optionLabel);
+            label.appendChild(optionContent);
+            optionItem.appendChild(label);
+            optionsList.appendChild(optionItem);
+        });
 
-                optionItem.appendChild(label);
-                optionsList.appendChild(optionItem);
-            });
+        // ✅ Create Explanation Box
+        const explanationBox = document.createElement('div');
+        explanationBox.id = `explanation-${index}`;
+        explanationBox.classList.add('explanation-box');
+        explanationBox.style.display = 'none';
+        explanationBox.style.marginTop = '10px';
+        explanationBox.style.padding = '10px';
+        explanationBox.style.backgroundColor = '#fff3cd';
+        explanationBox.style.border = '1px solid #ffeeba';
+        explanationBox.style.borderRadius = '5px';
+
+        questionBox.appendChild(questionNumber);
+        questionBox.appendChild(questionText);
+        questionBox.appendChild(optionsList);
+        questionBox.appendChild(explanationBox); // ✅ Add explanation box
+
+        container.appendChild(questionBox);
+    });
+
+    updateUI();
+}
+
 
             // NEW CODE: Explanation box (hidden by default)
             const explanationBox = document.createElement('div');
