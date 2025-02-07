@@ -419,10 +419,15 @@ function displayQuestions() {
             label.appendChild(radio);
           //  label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) ${opt}`)); // Use textContent for safety
           //  label.innerHTML = `${String.fromCharCode(65 + optIndex)}) ${opt}`;
-            label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) `)); // Adds "A) " or "B) " before option  
+            const optionLabel = document.createElement('span');  
+optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `; // A), B), etc.  
+optionLabel.style.whiteSpace = 'nowrap'; // Prevents breaking to a new line  
+
 const optionContent = document.createElement('span'); // Wraps the option text including <img>  
 optionContent.innerHTML = opt;  
-label.appendChild(optionContent); // Appends after the radio button  
+
+label.appendChild(optionLabel);  
+label.appendChild(optionContent); // Ensures text stays inline  
 
 
             optionItem.appendChild(label);
