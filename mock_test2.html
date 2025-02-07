@@ -355,35 +355,44 @@ let studentName = '';
 
                 
         function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
-            floatingCircle.style.display = 'flex';
-            const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
-            const selectedOptionLabel = selectedRadio.parentElement;
+    floatingCircle.style.display = 'flex';
+    const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
+    const selectedOptionLabel = selectedRadio.parentElement;
 
-            // Check if selected option is among the correct answers
-            const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
+    // Check if the selected option is correct
+    const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
 
-            const correctOptions = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
-                .filter((_, index) => correctOptionIndices.includes(index));
-            const correctOptionLabels = correctOptions.map(option => option.parentElement);
+    // Get all radio buttons for this question
+    const allOptions = document.querySelectorAll(`input[name="question-${questionIndex}"]`);
+    
+    // Disable all radio buttons for this question after selection
+    allOptions.forEach(radio => {
+        radio.disabled = true;
+    });
 
-            // Disable all radio buttons for this question after selection
-            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
-                radio.disabled = true;
-            });
+    // Apply color changes for selected and correct options
+    if (isCorrect) {
+        showNotification('Correct', 'correct');
+        selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
+    } else {
+        showNotification('Incorrect', 'incorrect');
+        selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
 
-            if (isCorrect) {
-                showNotification('Correct', 'correct');
-                selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
-                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
-                score++;
-            } else {
-                showNotification('Incorrect', 'incorrect');
-                selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
-                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+        // Also highlight the correct option(s) in green
+        correctOptionIndices.forEach(correctIndex => {
+            const correctOption = allOptions[correctIndex];
+            if (correctOption) {
+                correctOption.parentElement.style.backgroundColor = '#5db160'; // Green
             }
+        });
+    }
 
-            updateUI();
-        }
+    if (isCorrect) {
+        score++; // Increase score only if correct
+    }
+
+    updateUI();
+}
 
 
 
