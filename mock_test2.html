@@ -278,6 +278,7 @@ let studentName = '';
 
 
 
+        
         function loadQuestionsAndAnswers() {
     Promise.all([
         fetch(questionsFile).then(response => response.text()),
@@ -285,59 +286,57 @@ let studentName = '';
     ]).then(([questionsText, answersJson]) => {
         const lines = questionsText.split('\n').filter(line => line.trim() !== '');
         let questionList = [];
-        let currentQuestion = {};
+        let currentQuestion = null;
 
         lines.forEach(line => {
-            if (line.match(/^\d+\./)) { // New question
-                if (currentQuestion.question) {
+            if (line.match(/^\d+\./)) { // New question starts
+                if (currentQuestion) {
                     questionList.push(currentQuestion);
                 }
                 currentQuestion = {
-                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
+                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number
                     options: []
                 };
-            } else if (line.match(/^[A-D]\)/)) { // Options
-                const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
+            } else if (line.match(/^[A-D]\)/)) { // Options detected
+                const optionText = line.replace(/^[A-D]\)\s*/, ""); 
                 currentQuestion.options.push(optionText);
+            } else if (currentQuestion) { 
+                // Append additional lines to the question while avoiding options
+                currentQuestion.question += " " + line.trim();
             }
         });
 
-        if (currentQuestion.question) {
+        if (currentQuestion) {
             questionList.push(currentQuestion);
         }
 
-        // Combine questions with their corresponding answers
+        // Apply correct answer mapping
         questions = questionList.map((q, index) => {
-            const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
-
-            // Ensure correctAnswers is an array
+            const correctAnswers = answersJson[index + 1] || []; // Ensure it exists
             const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
 
-            // Create options with their original indices
             let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
 
-            // Shuffle options if shuffle=true
+            // Shuffle options if required
             if (shuffleQuestions) {
                 shuffleArray(optionsWithIndex);
             }
 
-            // Extract shuffled options
             const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
 
-            // Map correct answers to their new indices
             const correctIndices = correctAnswerArray.map(correctAnswer => {
-                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0); // Convert A, B, C, D to indices
-                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex); // Get new index
+                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
+                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex);
             });
 
             return {
-                question: q.question,
+                question: q.question,  // This now contains full questions across multiple lines
                 options: shuffledOptions,
-                correctAnswerIndices: correctIndices // Store the updated correct indices
+                correctAnswerIndices: correctIndices
             };
         });
 
-        // Shuffle questions if shuffle=true
+        // Shuffle questions if needed
         if (shuffleQuestions) {
             shuffleArray(questions);
         }
