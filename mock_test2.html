@@ -417,7 +417,8 @@ function displayQuestions() {
 
             label.classList.add('option-label');
             label.appendChild(radio);
-            label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) ${opt}`)); // Use textContent for safety
+          //  label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) ${opt}`)); // Use textContent for safety
+            label.innerHTML = `${String.fromCharCode(65 + optIndex)}) ${opt}`;
 
             optionItem.appendChild(label);
             optionsList.appendChild(optionItem);
