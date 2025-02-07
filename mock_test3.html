@@ -211,17 +211,15 @@
     </div>
 
     <script>
-    let explanations = {}; // NEW CODE: Store explanations for questions
-
     function loadQuestionsAndAnswers() {
-        const explanationFile = fileLoc + '/explanation.txt'; // NEW CODE: Explanation file location
+    const questionFile = "question.txt"; // Load from same path
+    const answerFile = "answer.txt";
+    const explanationFile = "explanation.txt"; // Try to fetch explanations
 
-        Promise.all([
-            fetch(questionsFile).then(response => response.text()),
-            fetch(answersFile).then(response => response.json()),
-            fetch(explanationFile) // NEW CODE: Fetch explanations
-                .then(response => response.ok ? response.text() : null) // If file doesn't exist, return null
-        ]).then(([questionsText, answersJson, explanationsText]) => {
+    const fetchExplanations = fetch(explanationFile)
+        .then(response => response.ok ? response.text() : null)
+        .catch(() => null);
+
             const lines = questionsText.split('\n').filter(line => line.trim() !== '');
             let questionList = [];
             let currentQuestion = {};
@@ -293,42 +291,32 @@
     }
 
     function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
-        floatingCircle.style.display = 'flex';
-        const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
-        const selectedOptionLabel = selectedRadio.parentElement;
-        const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
+    const correctOptionIndices = questions[questionIndex].correctAnswers.map(ans => ans.charCodeAt(0) - 'A'.charCodeAt(0));
+    const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
+    const selectedOptionLabel = selectedRadio.parentElement;
+    const explanationBox = document.getElementById(`explanation-${questionIndex}`);
 
-        const correctOptions = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
-            .filter((_, index) => correctOptionIndices.includes(index));
-        const correctOptionLabels = correctOptions.map(option => option.parentElement);
+    if (isCorrect) {
+        showNotification('Correct', 'correct');
+        selectedOptionLabel.style.backgroundColor = '#5db160';
+        score++;
+        explanationBox.style.display = 'none';
+    } else {
+        showNotification('Incorrect', 'incorrect');
+        selectedOptionLabel.style.backgroundColor = '#f4a5a5';
 
-        document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
-            radio.disabled = true;
-        });
-
-        const explanationBox = document.getElementById(`explanation-${questionIndex}`); // NEW CODE: Get explanation box
-
-        if (isCorrect) {
-            showNotification('Correct', 'correct');
-            selectedOptionLabel.style.backgroundColor = '#5db160';
-            correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160');
-            score++;
-            explanationBox.style.display = 'none'; // NEW CODE: Hide explanation if previously shown
+        const qNum = questions[questionIndex].questionNumber;
+        if (explanations[qNum]) {
+            explanationBox.innerHTML = `<strong>Explanation:</strong> ${explanations[qNum]}`;
+            explanationBox.style.display = 'block';
         } else {
-            showNotification('Incorrect', 'incorrect');
-            selectedOptionLabel.style.backgroundColor = '#f4a5a5';
-            correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160');
-
-            // NEW CODE: Show explanation if available
-            const qNum = questions[questionIndex].questionNumber;
-            if (explanations[qNum]) {
-                explanationBox.innerHTML = `<strong>Explanation:</strong> ${explanations[qNum]}`;
-                explanationBox.style.display = 'block';
-            }
+            explanationBox.style.display = 'none'; // Hide if no explanation is found
         }
-
-        updateUI();
     }
+
+    updateUI();
+}
+
 
     function displayQuestions() {
         const container = document.getElementById('questions-container');
@@ -383,8 +371,11 @@
 
             // NEW CODE: Explanation box (hidden by default)
             const explanationBox = document.createElement('div');
-            explanationBox.id = `explanation-${index}`;
-            explanationBox.style.display = 'none';
+explanationBox.id = `explanation-${index}`;
+explanationBox.classList.add('explanation-box');
+explanationBox.style.display = 'none'; // Ensure it starts hidden
+
+            
             explanationBox.style.marginTop = '10px';
             explanationBox.style.padding = '10px';
             explanationBox.style.backgroundColor = '#fff3cd';
