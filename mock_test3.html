@@ -211,6 +211,8 @@
     </div>
 
     <script>
+        let questions = []; // Declare it globally
+
     function loadQuestionsAndAnswers() {
     const questionFile = "question.txt"; 
     const answerFile = "answer.txt"; 
@@ -250,7 +252,9 @@
         }
 
         questions = questionList.map((q, index) => {
-            const correctAnswers = answersJson[index + 1];
+         //   const correctAnswers = answersJson[index + 1];
+            const correctAnswers = answersJson[String(index + 1)];
+
             const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
 
             let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
@@ -351,23 +355,7 @@
         });
 
         // ✅ Create Explanation Box
-        const explanationBox = document.createElement('div');
-        explanationBox.id = `explanation-${index}`;
-        explanationBox.classList.add('explanation-box');
-        explanationBox.style.display = 'none';
-        explanationBox.style.marginTop = '10px';
-        explanationBox.style.padding = '10px';
-        explanationBox.style.backgroundColor = '#fff3cd';
-        explanationBox.style.border = '1px solid #ffeeba';
-        explanationBox.style.borderRadius = '5px';
-
-        questionBox.appendChild(questionNumber);
-        questionBox.appendChild(questionText);
-        questionBox.appendChild(optionsList);
-        questionBox.appendChild(explanationBox); // ✅ Add explanation box
-
-        container.appendChild(questionBox);
-    });
+        
 
     updateUI();
 }
@@ -396,6 +384,51 @@ explanationBox.style.display = 'none'; // Ensure it starts hidden
 
         updateUI();
     }
+        function updateUI() {
+            document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
+            const questionsLeft = questions.length - getAnsweredQuestionsCount();
+            document.getElementById('questions-left').textContent = `Questions Left: ${questionsLeft}`;
+
+            // Update the floating circle
+            floatingCircle.textContent = `${score} / ${questions.length}`;
+
+            if (getAnsweredQuestionsCount() === questions.length) {
+                showExamEndMessage();
+            }
+        }
+
+        function getAnsweredQuestionsCount() {
+            let count = 0;
+            questions.forEach((_, index) => {
+                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
+                if (selectedOptions.length > 0) {
+                    count++;
+                }
+            });
+            return count;
+        }
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = type;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 1000);
+        }
+
+        function showExamEndMessage() {
+            const container = document.getElementById('questions-container');
+            const message = document.createElement('div');
+            message.classList.add('exam-end-message');
+            message.textContent = `You have completed the test. Your final score is ${score} out of ${questions.length}.`;
+            container.innerHTML = '';
+            container.appendChild(message);
+        }
+
+        // Load questions and answers on page load
+        loadQuestionsAndAnswers();
 </script>
 
 
