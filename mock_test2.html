@@ -349,94 +349,90 @@ let studentName = '';
 }
 
 
-               function handleOptionChange(event) {
-    const selectedInput = event.target;
-    const selectedOption = selectedInput.value;
-    const questionIndex = selectedInput.dataset.questionIndex;
+                
+        
+        
 
-    // Find the correct answers
-    const correctAnswers = answers[questionIndex];
+                
+        function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
+            floatingCircle.style.display = 'flex';
+            const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
+            const selectedOptionLabel = selectedRadio.parentElement;
 
-    // ✅ Convert correct answers to an array (if it's a single string)
-    const correctList = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
+            // Check if selected option is among the correct answers
+            const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
 
-    // ✅ Check if selected answer is correct
-    const isCorrect = correctList.includes(selectedOption);
+            const correctOptions = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
+                .filter((_, index) => correctOptionIndices.includes(index));
+            const correctOptionLabels = correctOptions.map(option => option.parentElement);
 
-    // ✅ Apply color to options
-    const options = document.getElementsByName(`question-${questionIndex}`);
-    options.forEach(opt => {
-        const label = opt.parentElement;
-        if (opt.value === selectedOption) {
-            label.style.color = isCorrect ? 'green' : 'red';
-        } else {
-            label.style.color = 'black'; // Reset others
+            // Disable all radio buttons for this question after selection
+            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
+                radio.disabled = true;
+            });
+
+            if (isCorrect) {
+                showNotification('Correct', 'correct');
+                selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
+                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+                score++;
+            } else {
+                showNotification('Incorrect', 'incorrect');
+                selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
+                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+            }
+
+            updateUI();
         }
-    });
-}
 
-        function displayQuestions() {
-    const container = document.getElementById('question-container');
-    container.innerHTML = ''; // Clear previous content
 
-    if (!questions || questions.length === 0) {
-        console.error("No questions loaded!");
-        container.innerHTML = '<p style="color: red;">Error: No questions found.</p>';
-        return;
-    }
+function displayQuestions() {
+    const container = document.getElementById('questions-container');
+    container.innerHTML = '';
 
     questions.forEach((q, index) => {
         const questionBox = document.createElement('div');
         questionBox.classList.add('question-box');
 
-        // ✅ Render question properly (allowing HTML tags)
-        const questionText = document.createElement('p');
-        questionText.innerHTML = `${index + 1}. ${q.question}`;  
+        const questionNumber = document.createElement('div');
+        questionNumber.classList.add('question-number');
+        questionNumber.textContent = `Question ${index + 1}`;
 
-        questionBox.appendChild(questionText);
+        const questionText = document.createElement('div');
+        questionText.classList.add('question');
+        questionText.innerHTML = q.question; // Use innerHTML to render HTML tags in the question text
 
-        // ✅ Render options properly (allowing HTML)
-        q.options.forEach((option, optIndex) => {
+        const optionsList = document.createElement('ul');
+        optionsList.classList.add('options');
+
+        q.options.forEach((opt, optIndex) => {
+            const optionItem = document.createElement('li');
             const label = document.createElement('label');
+            const radio = document.createElement('input');
+
+            radio.type = 'radio';
+            radio.name = `question-${index}`;
+            radio.value = String.fromCharCode(65 + optIndex); // A, B, C, D serially
+            radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
+
             label.classList.add('option-label');
+            label.appendChild(radio);
+            label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) ${opt}`)); // Use textContent for safety
 
-            const input = document.createElement('input');
-            input.type = 'radio';
-            input.name = `question-${index}`;
-            input.value = option;
-            input.dataset.questionIndex = index; // Store question index
-
-            // ✅ Handle option selection
-            input.addEventListener('change', handleOptionChange);
-
-            // ✅ Render option text with HTML
-            const optionText = document.createElement('span');
-            optionText.innerHTML = option; 
-
-            label.appendChild(input);
-            label.appendChild(optionText);
-            questionBox.appendChild(label);
+            optionItem.appendChild(label);
+            optionsList.appendChild(optionItem);
         });
 
+        questionBox.appendChild(questionNumber);
+        questionBox.appendChild(questionText);
+        questionBox.appendChild(optionsList);
         container.appendChild(questionBox);
     });
+
+    updateUI();
 }
 
 
-
-                
-        
-
-
-
-        
-
-                
-
-                    
-   
-
-        
 
         function updateUI() {
             document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
