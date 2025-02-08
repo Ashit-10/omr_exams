@@ -211,38 +211,108 @@
     </div>
 
     <script>
-        let questions = []; // Declare it globally
+let studentName = '';
 
-    function loadQuestionsAndAnswers() {
-    const questionFile = "question.txt"; 
-    const answerFile = "answer.txt"; 
-    const explanationFile = "explanation.txt";
+        // Prompt the student for their name on page load
+        window.onload = function () {
+            studentName = prompt("Please enter your name:");
+            if (!studentName || studentName.trim() === "") {
+                studentName = "Anonymous";
+            }
+        };
 
-    let explanations = {}; // Ensure explanations object is initialized
+        function endExam() {
+            const questionsAnswered = getAnsweredQuestionsCount();
+            const accuracy = questions.length > 0 ? ((score / questions.length) * 100).toFixed(2) : 0;
 
-    // Fetch all files
-    Promise.all([
-        fetch(questionFile).then(res => res.text()),
-        fetch(answerFile).then(res => res.json()),
-        fetch(explanationFile).then(res => res.ok ? res.json() : {}) // Parse JSON correctly
-    ]).then(([questionsText, answersJson, explanationsJson]) => {
-        explanations = explanationsJson; // Store parsed explanations
+            // Display the final score, student name, and accuracy
+            const container = document.getElementById('questions-container');
+            container.innerHTML = `
+                <div class="exam-end-message">
+                    <h2>Exam Completed</h2>
+                    <p><strong>Student Name:</strong> ${studentName}</p>
+                    <p><strong>Final Score:</strong> ${score} / ${questions.length}</p>
+                    <p><strong>Accuracy:</strong> ${accuracy}%</p>
+                </div>
+            `;
+        }
+        const floatingCircle = document.getElementById('floating-circle');
+
+        // Get query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileLoc = urlParams.get('file');
+        const examFile = urlParams.get('exam');
+        let questionsFile;
+        let answersFile;
         
+        if (examFile) {
+            questionsFile = fileLoc + `_question.txt`;
+            answersFile = fileLoc + `_ans_key.txt`;
+            
+        } else {
+            console.log("else");
+            questionsFile = fileLoc + `/question.txt`;
+            answersFile = fileLoc + `/answer.txt`;
+        }
+
+        let Infos;
+        let subjectName; 
+        let shuffleQuestions;
+       Infos = fileLoc + `/info.txt`;
+    subjectName = "Examination";
+shuffleQuestions = false;
+
+fetch(Infos)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("info.txt not found");
+        }
+        return response.json();
+    })
+    .then(data => {
+        subjectName = data.subject || "Examination"; // Use default if missing
+        shuffleQuestions = data.shuffle === "true"; // Convert string to boolean
+    })
+    .catch(error => {
+        console.warn("Error loading info.txt:", error);
+    });
+        
+
+        let headName = document.getElementById('headname');
+        headName.textContent = subjectName;
+
+        let questions = [];
+        let score = 0;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+
+
+        function loadQuestionsAndAnswers() {
+    Promise.all([
+        fetch(questionsFile).then(response => response.text()),
+        fetch(answersFile).then(response => response.json())
+    ]).then(([questionsText, answersJson]) => {
         const lines = questionsText.split('\n').filter(line => line.trim() !== '');
         let questionList = [];
         let currentQuestion = {};
 
         lines.forEach(line => {
-            if (line.match(/^\d+\./)) { 
+            if (line.match(/^\d+\./)) { // New question
                 if (currentQuestion.question) {
                     questionList.push(currentQuestion);
                 }
                 currentQuestion = {
-                    question: line.replace(/^\d+\.\s*/, ""),
+                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
                     options: []
                 };
-            } else if (line.match(/^[A-D]\)/)) { 
-                const optionText = line.replace(/^[A-D]\)\s*/, "");
+            } else if (line.match(/^[A-D]\)/)) { // Options
+                const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
                 currentQuestion.options.push(optionText);
             }
         });
@@ -251,64 +321,87 @@
             questionList.push(currentQuestion);
         }
 
+        // Combine questions with their corresponding answers
         questions = questionList.map((q, index) => {
-         //   const correctAnswers = answersJson[index + 1];
-            const correctAnswers = answersJson[String(index + 1)];
+            const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
 
+            // Ensure correctAnswers is an array
             const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
 
+            // Create options with their original indices
             let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
 
+            // Shuffle options if shuffle=true
+            if (shuffleQuestions) {
+                shuffleArray(optionsWithIndex);
+            }
+
+            // Extract shuffled options
             const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
+
+            // Map correct answers to their new indices
             const correctIndices = correctAnswerArray.map(correctAnswer => {
-                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
-                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex);
+                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0); // Convert A, B, C, D to indices
+                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex); // Get new index
             });
 
             return {
                 question: q.question,
                 options: shuffledOptions,
-                correctAnswerIndices: correctIndices,
-                questionNumber: index + 1 // Store original question number
+                correctAnswerIndices: correctIndices // Store the updated correct indices
             };
         });
 
-        displayQuestions(explanations);
+        // Shuffle questions if shuffle=true
+        if (shuffleQuestions) {
+            shuffleArray(questions);
+        }
+
+        displayQuestions();
     }).catch(error => {
-        console.error("Error loading files:", error);
+        console.error("Error loading questions or answers:", error);
     });
 }
 
-    function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
-    const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
-    const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
-    const selectedOptionLabel = selectedRadio.parentElement;
-    const explanationBox = document.getElementById(`explanation-${questionIndex}`);
 
-    if (isCorrect) {
-        showNotification('Correct', 'correct');
-        selectedOptionLabel.style.backgroundColor = '#5db160';
-        score++;
-        explanationBox.style.display = 'none'; // Hide explanation if correct
-    } else {
-        showNotification('Incorrect', 'incorrect');
-        selectedOptionLabel.style.backgroundColor = '#f4a5a5';
+                
+        
+        
 
-        const qNum = questions[questionIndex].questionNumber;
-        if (explanations[String(qNum)]) { // Ensure correct key type
-            explanationBox.innerHTML = `<strong>Explanation:</strong> ${explanations[String(qNum)]}`;
-            explanationBox.style.display = 'block';
-        } else {
-            explanationBox.style.display = 'none'; // Hide if no explanation
+                
+        function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
+            floatingCircle.style.display = 'flex';
+            const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
+            const selectedOptionLabel = selectedRadio.parentElement;
+
+            // Check if selected option is among the correct answers
+            const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
+
+            const correctOptions = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
+                .filter((_, index) => correctOptionIndices.includes(index));
+            const correctOptionLabels = correctOptions.map(option => option.parentElement);
+
+            // Disable all radio buttons for this question after selection
+            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
+                radio.disabled = true;
+            });
+
+            if (isCorrect) {
+                showNotification('Correct', 'correct');
+                selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
+                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+                score++;
+            } else {
+                showNotification('Incorrect', 'incorrect');
+                selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
+                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
+            }
+
+            updateUI();
         }
-    }
-
-    updateUI();
-}
 
 
-
-    function displayQuestions(explanations) {
+function displayQuestions() {
     const container = document.getElementById('questions-container');
     container.innerHTML = '';
 
@@ -322,7 +415,7 @@
 
         const questionText = document.createElement('div');
         questionText.classList.add('question');
-        questionText.innerHTML = q.question;
+        questionText.innerHTML = q.question; // Use innerHTML to render HTML tags in the question text
 
         const optionsList = document.createElement('ul');
         optionsList.classList.add('options');
@@ -334,56 +427,45 @@
 
             radio.type = 'radio';
             radio.name = `question-${index}`;
-            radio.value = String.fromCharCode(65 + optIndex);
+            radio.value = String.fromCharCode(65 + optIndex); // A, B, C, D serially
             radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
 
             label.classList.add('option-label');
             label.appendChild(radio);
+          //  label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) ${opt}`)); // Use textContent for safety
+          //  label.innerHTML = `${String.fromCharCode(65 + optIndex)}) ${opt}`;
+       const optionLabel = document.createElement('span');  
+optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;  
+optionLabel.style.display = 'inline-block';  
+optionLabel.style.marginRight = '5px'; // Adjust spacing  
 
-            const optionLabel = document.createElement('span');
-            optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;
-            optionLabel.style.display = 'inline-block';
-            optionLabel.style.marginRight = '5px';
+const optionContent = document.createElement('span');  
+optionContent.innerHTML = opt;  
 
-            const optionContent = document.createElement('span');
-            optionContent.innerHTML = opt;
+label.style.display = 'flex';  
+label.style.alignItems = 'flex-start'; // Aligns content to the top  
+label.style.flexWrap = 'wrap'; // Ensures text and images wrap properly  
 
-            label.appendChild(optionLabel);
-            label.appendChild(optionContent);
+label.appendChild(optionLabel);  
+label.appendChild(optionContent);  
+
+
+
             optionItem.appendChild(label);
             optionsList.appendChild(optionItem);
         });
 
-        // ✅ Create Explanation Box
-        
+        questionBox.appendChild(questionNumber);
+        questionBox.appendChild(questionText);
+        questionBox.appendChild(optionsList);
+        container.appendChild(questionBox);
+    });
 
     updateUI();
 }
 
 
-            // NEW CODE: Explanation box (hidden by default)
-            const explanationBox = document.createElement('div');
-explanationBox.id = `explanation-${index}`;
-explanationBox.classList.add('explanation-box');
-explanationBox.style.display = 'none'; // Ensure it starts hidden
 
-            
-            explanationBox.style.marginTop = '10px';
-            explanationBox.style.padding = '10px';
-            explanationBox.style.backgroundColor = '#fff3cd';
-            explanationBox.style.border = '1px solid #ffeeba';
-            explanationBox.style.borderRadius = '5px';
-
-            questionBox.appendChild(questionNumber);
-            questionBox.appendChild(questionText);
-            questionBox.appendChild(optionsList);
-            questionBox.appendChild(explanationBox); // NEW CODE: Add explanation box
-
-            container.appendChild(questionBox);
-        });
-
-        updateUI();
-    }
         function updateUI() {
             document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
             const questionsLeft = questions.length - getAnsweredQuestionsCount();
@@ -429,11 +511,19 @@ explanationBox.style.display = 'none'; // Ensure it starts hidden
 
         // Load questions and answers on page load
         loadQuestionsAndAnswers();
-</script>
-
-
-
-
+        document.addEventListener("DOMContentLoaded", function() {
+            // Replace with your bot token and chat ID
+            const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
+            const chatId = "1602293216";
+            const message = "Someone opened your webpage!";
+            
+            // Telegram API URL
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+            
+            // Send request
+            fetch(url).then(response => console.log("Message sent to Telegram"));
+        });
+    </script>
 </body>
 
 </html>
