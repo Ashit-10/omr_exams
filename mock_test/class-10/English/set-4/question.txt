@@ -63,7 +63,7 @@ A) the mother is giving an order to her daughter to wait for her groom
 B) the mother is whispering the girl to stay back
 C) the mother is shouting at the girl to leave her
 D) the mother is addressing the girl affectionately
-14. Mother, I really think the flowers go to school underground. Who does I' refer to in the line?
+14. Mother, I really think the flowers go to school underground. <br> Who does I' refer to in the line?
 A) the thunder clouds
 B) the master
 C) the mother
@@ -100,7 +100,7 @@ A) a kind of strong alcoholic drink
 B) a kind of cold drink
 C) a kind of smoking
 D) a kind of fruit juice
-21. Many people — physicians, engineers, <u>meteorologists</u>, botanists are involved in research. Who are the meteorologists?
+21. Many people — physicians, engineers, <u>meteorologists</u>, botanists are involved in research. <br>Who are the meteorologists?
 A) Persons who check air pollution.
 B) Persons who study about weather conditions.
 C) Persons who clean dust particles and ash.
@@ -120,7 +120,7 @@ A) good health, clean habits and idling
 B) smoking, idling and gambling
 C) regular habits and good conduct
 D) drinking, interesting hobbies and good companionships.
-25. Suppose you are Lorraine. After Vicky's dreadful road accident, what advice would you like to suggest the society to avoid road injuries. [I. Don't consume alcohol.      II. Don't use cell phone while driving.       III. Don't put helmet and seat belt while driving.        IV. Don't drive with high speed.
+25. Suppose you are Lorraine. After Vicky's dreadful road accident, what advice would you like to suggest the society to avoid road injuries. <br>I. Don't consume alcohol.     <br>II. Don't use cell phone while driving.      <br> III. Don't put helmet and seat belt while driving.        <br>IV. Don't drive with high speed.
 A) I, II and III
 B) I, II and IV
 C) Only III
@@ -137,8 +137,8 @@ A) The bullock was on proper fodder and water.
 B) The bullock was making three to four trips per day.
 C) Samjhoo Sahu overworked the bullock.
 D) Samjhoo Sahu tried to put double load on it during the fourth trip.
-28. Here are some clues given in the box. [ old, bent,  pale,  toothless]
-Find out whose personality matches all these qualities.
+28. Here are some clues given in the box.<br> [ old, bent,  pale,  toothless]
+<br>Find out whose personality matches all these qualities.
 A) The old man
 B) The old man's father
 C) The old man's grandfather
