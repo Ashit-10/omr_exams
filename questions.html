@@ -9,6 +9,9 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+        .input-container {
+            position: relative;
+        }
         textarea {
             width: 100%;
             height: 150px;
@@ -17,11 +20,29 @@
         button {
             margin-top: 10px;
         }
+        .copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+        }
+        .shuffled-container {
+            position: relative;
+            margin-top: 10px;
+        }
         .shuffled {
             white-space: pre-wrap;
             border: 1px solid #ccc;
             padding: 10px;
-            margin-top: 10px;
+            font-family: "Times New Roman", serif;
+            font-size: 16px;
+            line-height: 1.5;
         }
         label {
             margin-top: 10px;
@@ -34,22 +55,39 @@
 </head>
 <body>
     <h1>Shuffle Questions</h1>
-    <textarea id="inputText" placeholder="Paste your questions here..."></textarea>
+
+    <div class="input-container">
+        <button class="copy-btn" onclick="copyRawInput()">Copy</button>
+        <textarea id="inputText" placeholder="Paste your questions here..."></textarea>
+    </div>
+
     <label for="numQuestions">Number of Questions:</label>
-    <input type="number" id="numQuestions" min="1" value="5">
+    <input type="number" id="numQuestions" min="1" value="50">
     <button onclick="shuffleQuestions()">Shuffle and Display</button>
     <button onclick="formatDocument()">Format Document</button>
-    <button onclick="copyToClipboard()">Copy to Clipboard</button>
     <button onclick="printShuffledQuestions()">Print</button>
-    <div id="shuffledQuestions" class="shuffled"></div>
+
+    <div class="shuffled-container">
+        <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        <div id="shuffledQuestions" class="shuffled"></div>
+    </div>
 
     <script>
+        function copyRawInput() {
+            const inputText = document.getElementById('inputText').value;
+            navigator.clipboard.writeText(inputText).then(() => {
+                alert('Raw input copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
         function shuffleQuestions() {
             const inputText = document.getElementById('inputText').value;
             const numQuestions = parseInt(document.getElementById('numQuestions').value, 10);
             const questions = extractQuestions(inputText);
             const filteredQuestions = questions.filter(q => q.length >= 10);
-            const shuffledQuestions = shuffleArray(filteredQuestions).slice(0, numQuestions); // Limit to specified number
+            const shuffledQuestions = shuffleArray(filteredQuestions).slice(0, numQuestions);
             const formattedQuestions = formatQuestions(shuffledQuestions);
             document.getElementById('shuffledQuestions').innerText = formattedQuestions;
         }
@@ -87,26 +125,22 @@
         }
 
         function formatQuestions(questions) {
-            let formattedQuestions = [];
-            questions.forEach((q, index) => {
-                formattedQuestions.push(`${index + 1}. ${q.replace(/^\d+\.\s|\d+\s\./, '')}`);
-            });
-            return formattedQuestions.join('\n');
+            return questions.map((q, index) => `${index + 1}. ${q.replace(/^\d+\.\s|\d+\s\./, '')}`).join('\n');
         }
 
         function copyToClipboard() {
             const shuffledQuestions = document.getElementById('shuffledQuestions').innerText;
             navigator.clipboard.writeText(shuffledQuestions).then(() => {
                 alert('Shuffled questions copied to clipboard!');
-            }, (err) => {
-                console.error('Could not copy text: ', err);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
             });
         }
 
         function printShuffledQuestions() {
             const shuffledQuestions = document.getElementById('shuffledQuestions').innerText;
             const printWindow = window.open('', '', 'height=600,width=800');
-            printWindow.document.write('<pre>' + shuffledQuestions + '</pre>');
+            printWindow.document.write('<pre style="font-family: Times New Roman, serif; font-size: 16px; line-height: 1.5;">' + shuffledQuestions + '</pre>');
             printWindow.document.close();
             printWindow.print();
         }
@@ -114,10 +148,11 @@
         function formatDocument() {
             const inputText = document.getElementById('inputText').value;
             const formattedText = inputText
-                .replace(/A\)/g, '\nA)')
-                .replace(/B\)/g, '\nB)')
-                .replace(/C\)/g, '\nC)')
-                .replace(/D\)/g, '\nD)');
+                .replace(/\(\s*A\)/g, 'A)')
+                .replace(/\(\s*B\)/g, 'B)')
+                .replace(/\(\s*C\)/g, 'C)')
+                .replace(/\(\s*D\)/g, 'D)');
+            
             document.getElementById('shuffledQuestions').innerText = formattedText;
         }
     </script>
