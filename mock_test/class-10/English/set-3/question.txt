@@ -18,7 +18,7 @@ A) good
 B) fair
 C) weak
 D) bad
-5. Lencho looked at the north-east sky and foretold about the ensuing rainfall. (Replace the underlined word with another word of same meaning)
+5. Lencho looked at the north-east sky and <u>foretold</u> about the ensuing rainfall. (Replace the underlined word with another word of same meaning)
 A) guessed
 B) imagined
 C) predicted
@@ -43,7 +43,7 @@ A) she belongs to Ireland, a cold country
 B) in summer many kinds of flowers bloom
 C) in summer streams flow and nature looks lively
 D) her favourite season is summer
-10. Dorabji Edulji Gimi was a lenient,popular, good and disciplinarian teacher.(Find the odd one out in the underlined part.)
+10. Dorabji Edulji Gimi was a <u>lenient,popular, good and disciplinarian</u> teacher.(Find the odd one out in the underlined part.)
 A) lenient
 B) popular
 C) good
@@ -68,7 +68,7 @@ A) Assam
 B) Sikkim
 C) Meghalaya
 D) Manipur
-15. Ningol Chakouba, a festival of Manipu ..................
+15. Ningol Chakouba, a festival of Manipur ..................
 A) binds and revives the relationship between married girls and their parents
 B) preserves and passes down their oral history
 C) encourages their cultural and artistic activities
@@ -78,7 +78,7 @@ A) Western-most parts
 B) Southern-most parts
 C) Eastern-most parts
 D) Northern-most parts
-17. The flowers in the poem The Flower School' are compared to the................
+17. The flowers in the poem 'The Flower School' are compared to the................
 A) School children
 B) School teacher
 C) Raindrops
@@ -105,7 +105,7 @@ C) lesions
 D) irritations
 22. Which of the following diseases in the box are caused by air pollution? ( I. Eye irritations,     II. Scratchy throats,     III. Malaria,     IV. Respiratory illness)
 A) I, II and III
-C) I, II and IV
+C) I, III and IV
 B) I, Il and IV
 D) III, II and I
 23. Brain: I'm Vicky's brain ! Ammu: Where are you?  Brain : ............................! ( Complete the dialogue from the given options.)
@@ -138,11 +138,7 @@ A) third
 B) fourth
 C) fifth
 D) sixth
-29. Who has all the following characteristics in the story Village Judge'?
--He / She had a small piece of property.
--He / She threatened to call a Panchayat.
--He / she was neglected at old age.
--He / She had deep faith in God.
+29. Who has all the following characteristics in the story 'Village Judge'? [He / She had a small piece of property.       He / She threatened to call a Panchayat.       He / she was neglected at old age.        He / She had deep faith in God.
 A) Algu Chaudhury
 B) Kariman
 C) Jumman Sheikh
