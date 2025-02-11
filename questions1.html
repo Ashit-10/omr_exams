@@ -17,11 +17,29 @@
         button {
             margin-top: 10px;
         }
+        .shuffled-container {
+            position: relative;
+            margin-top: 10px;
+        }
         .shuffled {
             white-space: pre-wrap;
             border: 1px solid #ccc;
             padding: 10px;
-            margin-top: 10px;
+            font-family: "Times New Roman", serif; /* Normal text font used in textbooks */
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
         }
         label {
             margin-top: 10px;
@@ -36,12 +54,15 @@
     <h1>Shuffle Questions</h1>
     <textarea id="inputText" placeholder="Paste your questions here..."></textarea>
     <label for="numQuestions">Number of Questions:</label>
-    <input type="number" id="numQuestions" min="1" value="5">
+    <input type="number" id="numQuestions" min="1" value="50"> <!-- Default changed to 50 -->
     <button onclick="shuffleQuestions()">Shuffle and Display</button>
     <button onclick="formatDocument()">Format Document</button>
-    <button onclick="copyToClipboard()">Copy to Clipboard</button>
     <button onclick="printShuffledQuestions()">Print</button>
-    <div id="shuffledQuestions" class="shuffled"></div>
+
+    <div class="shuffled-container">
+        <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        <div id="shuffledQuestions" class="shuffled"></div>
+    </div>
 
     <script>
         function shuffleQuestions() {
@@ -49,7 +70,7 @@
             const numQuestions = parseInt(document.getElementById('numQuestions').value, 10);
             const questions = extractQuestions(inputText);
             const filteredQuestions = questions.filter(q => q.length >= 10);
-            const shuffledQuestions = shuffleArray(filteredQuestions).slice(0, numQuestions); // Limit to specified number
+            const shuffledQuestions = shuffleArray(filteredQuestions).slice(0, numQuestions);
             const formattedQuestions = formatQuestions(shuffledQuestions);
             document.getElementById('shuffledQuestions').innerText = formattedQuestions;
         }
@@ -106,22 +127,21 @@
         function printShuffledQuestions() {
             const shuffledQuestions = document.getElementById('shuffledQuestions').innerText;
             const printWindow = window.open('', '', 'height=600,width=800');
-            printWindow.document.write('<pre>' + shuffledQuestions + '</pre>');
+            printWindow.document.write('<pre style="font-family: Times New Roman, serif; font-size: 16px; line-height: 1.5;">' + shuffledQuestions + '</pre>');
             printWindow.document.close();
             printWindow.print();
         }
 
         function formatDocument() {
-    const inputText = document.getElementById('inputText').value;
-    const formattedText = inputText
-        .replace(/\(\s*A\)/g, 'A)')
-        .replace(/\(\s*B\)/g, 'B)')
-        .replace(/\(\s*C\)/g, 'C)')
-        .replace(/\(\s*D\)/g, 'D)');
-    
-    document.getElementById('shuffledQuestions').innerText = formattedText;
-}
-
+            const inputText = document.getElementById('inputText').value;
+            const formattedText = inputText
+                .replace(/\(\s*A\)/g, 'A)')
+                .replace(/\(\s*B\)/g, 'B)')
+                .replace(/\(\s*C\)/g, 'C)')
+                .replace(/\(\s*D\)/g, 'D)');
+            
+            document.getElementById('shuffledQuestions').innerText = formattedText;
+        }
     </script>
 </body>
 </html>
