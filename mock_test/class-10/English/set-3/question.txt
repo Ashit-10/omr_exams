@@ -18,7 +18,7 @@ A) good
 B) fair
 C) weak
 D) bad
-5. Lencho looked at the north-east sky and <u>foretold</u> about the ensuing rainfall. (Replace the underlined word with another word of same meaning)
+5. Lencho looked at the north-east sky and <u>foretold</u> about the ensuing rainfall. <br>(Replace the underlined word with another word of same meaning)
 A) guessed
 B) imagined
 C) predicted
@@ -43,7 +43,7 @@ A) she belongs to Ireland, a cold country
 B) in summer many kinds of flowers bloom
 C) in summer streams flow and nature looks lively
 D) her favourite season is summer
-10. Dorabji Edulji Gimi was a <u>lenient,popular, good and disciplinarian</u> teacher.(Find the odd one out in the underlined part.)
+10. Dorabji Edulji Gimi was a <u>lenient,popular, good and disciplinarian</u> teacher.<br>(Find the odd one out in the underlined part.)
 A) lenient
 B) popular
 C) good
@@ -108,7 +108,7 @@ A) I, II and III
 C) I, III and IV
 B) I, Il and IV
 D) III, II and I
-23. Brain: I'm Vicky's brain ! Ammu: Where are you?  Brain : ............................! ( Complete the dialogue from the given options.)
+23. Brain: I'm Vicky's brain ! Ammu: Where are you?  Brain : ............................! <br>( Complete the dialogue from the given options.)
 A) In the art museum
 B) In the formalin jar
 C) In the hospital
@@ -138,7 +138,7 @@ A) third
 B) fourth
 C) fifth
 D) sixth
-29. Who has all the following characteristics in the story 'Village Judge'? [He / She had a small piece of property.       He / She threatened to call a Panchayat.       He / she was neglected at old age.        He / She had deep faith in God.
+29. Who has all the following characteristics in the story 'Village Judge'? <br>I. He / She had a small piece of property.  <br>II. He / She threatened to call a Panchayat. <br>III. He / she was neglected at old age.    <br>IV. He / She had deep faith in God.
 A) Algu Chaudhury
 B) Kariman
 C) Jumman Sheikh
@@ -193,7 +193,7 @@ A) noun clause
 C) adverb clause
 B) adjective clause
 D) conditional clause
-40. I have already read the story book <u>you gave me</u>. The underlined subordinate clause is a / an.................
+40. I have already read the story book <u>you gave me</u>. <br>The underlined subordinate clause is a / an.................
 A) noun clause
 B) relative clause
 C) adverb clause
