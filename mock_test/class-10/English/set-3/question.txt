@@ -103,7 +103,7 @@ A) respiratory disorder
 B) global warming
 C) lesions
 D) irritations
-22. Which of the following diseases in the box are caused by air pollution? ( I. Eye irritations,     II. Scratchy throats,     III. Malaria,     IV. Respiratory illness)
+22. Which of the following diseases in the box are caused by air pollution? <br>I. Eye irritations,    <br> II. Scratchy throats,     <br>III. Malaria,     <br>IV. Respiratory illness)
 A) I, II and III
 C) I, III and IV
 B) I, Il and IV
