@@ -496,18 +496,18 @@ label.appendChild(optionContent);
 
         // Load questions and answers on page load
         loadQuestionsAndAnswers();
-        document.addEventListener("DOMContentLoaded", function() {
+      //  document.addEventListener("DOMContentLoaded", function() {
             // Replace with your bot token and chat ID
-            const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
-            const chatId = "1602293216";
-            const message = "Someone opened your webpage!";
+         //   const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
+         //   const chatId = "1602293216";
+         //   const message = "Someone opened your webpage!";
             
             // Telegram API URL
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+         //   const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
             
             // Send request
-            fetch(url).then(response => console.log("Message sent to Telegram"));
-        });
+        //    fetch(url).then(response => console.log("Message sent to Telegram"));
+      //  });
     </script>
 </body>
 
