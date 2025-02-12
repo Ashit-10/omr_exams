@@ -57,7 +57,7 @@
         }
     </style>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+   document.addEventListener("DOMContentLoaded", function () {
     let studentName = localStorage.getItem("studentName");
 
     if (!studentName) {
@@ -79,19 +79,28 @@
                 const message = `Student: ${storedName} clicked on ${event.target.innerText}`;
                 const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
 
+                alert("📤 Sending data to Telegram...");
+
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
-                        if (!data.ok) {
+                        if (data.ok) {
+                            alert("✅ Data sent successfully!");
+                        } else {
+                            alert("❌ Telegram Error: " + JSON.stringify(data));
                             console.error("Telegram Error:", data);
                         }
                     })
-                    .catch(error => console.error("Fetch Error:", error));
+                    .catch(error => {
+                        alert("⚠️ Failed to send data. Check console for details.");
+                        console.error("Fetch Error:", error);
+                    });
             }
         });
     });
 });
-
+     
+            
     </script>
 </head>
 <body>
