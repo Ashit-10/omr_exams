@@ -3,113 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practice Test</title>
+    <title>Mock Test - Class 10</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f8f8;
-            margin: 20px;
+            margin: 0;
+            padding: 20px;
         }
-
         h1, h2 {
             text-align: center;
             color: #333;
         }
-
-        .section {
+        .container {
+            max-width: 800px;
+            margin: auto;
             background: white;
             padding: 20px;
-            margin: 20px auto;
-            max-width: 800px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
-
-        .link-box {
-            display: block;
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 6px;
+            background: #eef1f7;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #222;
+            font-size: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .links a {
             text-decoration: none;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-            text-align: center;
-            font-weight: bold;
-            transition: background 0.3s ease-in-out;
+            color: #0044cc;
+            font-size: 16px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            transition: 0.3s;
         }
-
-        /* SET Links - Blue */
-        .set-link {
-            background: #007BFF;
-            color: white;
-        }
-        .set-link:hover {
-            background: #0056b3;
-        }
-
-        /* Subject Category Links - Green */
-        .subject-link {
-            background: #28a745;
-            color: white;
-        }
-        .subject-link:hover {
-            background: #1e7e34;
-        }
-
-        /* Disabled Links - Gray */
-        .disabled {
-            background: #ccc !important;
-            cursor: not-allowed;
-            color: black;
+        .links a:hover {
+            background: #d9e3f1;
+            border-color: #0044cc;
         }
     </style>
 </head>
 <body>
 
-    <h1>MOCK TEST (MCQ)</h1>
-    <h2>Class - 10</h2>
-    <h2>ପରୀକ୍ଷା ଦର୍ପଣ MCQ ସେଟ୍</h2>
+<div class="container">
 
+    <h1>📚 Class 10 - Mock Tests</h1>
+
+    <!-- English MCQ Sets -->
     <div class="section">
-        <h2>English ପରୀକ୍ଷା ଦର୍ପଣ (MCQ Sets)</h2>
-        <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-1&&subject=ENGLIST%20SET-1%20(ପରୀକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true" class="link-box set-link">English Set - 1 ✅</a>
-        <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-2&&subject=ENGLIST%20SET-2%20(ପରୀକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true" class="link-box set-link">English Set - 2 ✅</a>
-        <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-3&&subject=ENGLIST%20SET-3%20(ପରୀକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true" class="link-box set-link">English Set - 3 ✅</a>
-        <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-4&&subject=ENGLIST%20SET-4%20(ପରୀକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true" class="link-box set-link">English Set - 4 ✅</a>
-        <a href="#" class="link-box disabled">English Set - 5 ❌</a>
+        <h2>📝 English - MCQ Sets</h2>
+        <div class="links">
+            <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-1&&subject=ENGLIST%20SET-1%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true">English Set - 1 ✅</a>
+            <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-2&&subject=ENGLIST%20SET-2%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true">English Set - 2 ✅</a>
+            <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-3&&subject=ENGLIST%20SET-3%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true">English Set - 3 ✅</a>
+        </div>
     </div>
 
+    <!-- History & Geography MCQ Sets -->
     <div class="section">
-        <h2>English (Detailed Text)</h2>
-        <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/English/all_things_bright_and_beautiful&&subject=All%20things%20bright%20and%20beautiful&&shuffle=true" class="link-box subject-link">All Things Bright and Beautiful</a>
-        <a href="#" class="link-box subject-link">A Letter to God</a>
-        <a href="#" class="link-box subject-link">The Solitary Reaper</a>
-        <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/English/at_the_high_school&&subject=At%20the%20high%20school&&shuffle=true" class="link-box subject-link">At the High School ✅</a>
-        <a href="#" class="link-box subject-link">Village Song</a>
-        <a href="#" class="link-box subject-link">Festivals of North East India</a>
-        <a href="#" class="link-box subject-link">The Flower School</a>
-        <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/English/air_pollution&&subject=Air%20Pollution&&shuffle=true" class="link-box subject-link">Air Pollution: A Hidden Menace ✅</a>
-        <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/English/from_the_formalin_jar&&subject=From%20The%20Formalin%20Jar&&shuffle=true" class="link-box subject-link">From the Formalin Jar ✅</a>
-        <a href="#" class="link-box subject-link">School's Goodbye</a>
+        <h2>🌍 History & Geography - MCQ Sets</h2>
+        <div class="links">
+            <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/gs/set-1&&subject=SSC%20SET-1%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true">History & Geo Set - 1 ✅</a>
+            <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/gs/set-2&&subject=SSC%20SET-2%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true">History & Geo Set - 2 ✅</a>
+        </div>
     </div>
 
+    <!-- Science MCQ Sets -->
     <div class="section">
-        <h2>English (Non-Detailed Text)</h2>
-        <a href="#" class="link-box subject-link">A Tiger in the House</a>
-        <a href="#" class="link-box subject-link">The Beggar</a>
-        <a href="#" class="link-box subject-link">The Village Judge</a>
-        <a href="#" class="link-box subject-link">A Grain as Big as a Hen's Egg</a>
+        <h2>🔬 Science - MCQ Sets</h2>
+        <div class="links">
+            <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/science/chapter-4&&subject=Excretion(ରେଚନ)&&shuffle=true">Excretion (ରେଚନ) ✅</a>
+            <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/science/chapter-6&&subject=ମୌଳିକର%20ପର୍ଯ୍ୟାୟୀକରଣ&&shuffle=true">ମୌଳିକର ପର୍ଯ୍ୟାୟୀକରଣ ✅</a>
+        </div>
     </div>
 
+    <!-- English Detailed & Non-Detailed Texts -->
     <div class="section">
-        <h2>Science</h2>
-        <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/science/chapter-4&&subject=Excretion(ରେଚନ)&&shuffle=true" class="link-box set-link">Excretion (ରେଚନ) ✅</a>
-        <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/science/chapter-6&&subject=ମୌଳିକର%20ପର୍ଯ୍ୟାୟୀକରଣ&&shuffle=true" class="link-box set-link">ମୌଳିକର ପର୍ଯ୍ୟାୟୀକରଣ ✅</a>
+        <h2>📖 English - Chapter-Based Questions</h2>
+        <div class="links">
+            <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/English/all_things_bright_and_beautiful&&subject=All%20things%20bright%20and%20beautiful&&shuffle=true">All things bright and beautiful ✅</a>
+            <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/English/at_the_high_school&&subject=At%20the%20high%20school&&shuffle=true">At the high school ✅</a>
+            <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/English/air_pollution&&subject=Air%20Pollution&&shuffle=true">Air pollution: A hidden menace ✅</a>
+            <a href="http://ashit.xyz/mock_test?file=mock_test/class-10/English/from_the_formalin_jar&&subject=From%20The%20Formalin%20Jar&&shuffle=true">From the formalin jar ✅</a>
+        </div>
     </div>
 
+    <!-- Class 9 - Polity -->
     <div class="section">
-        <h2>Class - 9</h2>
-        <h2>ରାଜନୀତି ବିଜ୍ଞାନ</h2>
-        <a href="http://ashit.xyz/mock_test?file=mock_test/class-9/polity/chapter-1&&subject=ମୌଳିକ%20ଅଧିକାର&&shuffle=true" class="link-box set-link">ମୌଳିକ ଅଧିକାର</a>
+        <h2>🏛 Class 9 - Polity</h2>
+        <div class="links">
+            <a href="http://ashit.xyz/mock_test?file=mock_test/class-9/polity/chapter-1&&subject=ମୌଳିକ%20ଅଧିକାର&&shuffle=true">ମୌଳିକ ଅଧିକାର</a>
+        </div>
     </div>
+
+</div>
 
 </body>
 </html>
