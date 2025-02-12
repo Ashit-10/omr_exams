@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Test - Class 10</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 6px;
+            background: #eef1f7;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #222;
+            font-size: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .links a {
+            text-decoration: none;
+            color: #0044cc;
+            font-size: 16px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            transition: 0.3s;
+        }
+        .links a:hover {
+            background: #d9e3f1;
+            border-color: #0044cc;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let studentName = localStorage.getItem("studentName");
+
+            if (!studentName) {
+                studentName = prompt("Enter your name:");
+                if (studentName && studentName.trim() !== "") {
+                    localStorage.setItem("studentName", studentName.trim());
+                } else {
+                    location.reload(); // Reload page if name is not provided
+                }
+            }
+
+            const links = document.querySelectorAll(".links a");
+            links.forEach(link => {
+                link.addEventListener("click", function (event) {
+                    let storedName = localStorage.getItem("studentName");
+                    if (storedName) {
+                        const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
+                        const chatId = "1602293216";
+                        const message = `Student: ${storedName} clicked on ${event.target.innerText}`;
+                        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+                        fetch(url);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <h1>📚 Class 10 - Mock Tests</h1>
+
+    <!-- English MCQ Sets -->
+    <div class="section">
+        <h2>📝 English - MCQ Sets</h2>
+        <div class="links">
+            <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-1&&subject=ENGLIST%20SET-1%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true">English ପରିକ୍ଷା ଦର୍ପଣ Set - 1 ✅</a>
+            <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-2&&subject=ENGLIST%20SET-2%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true">English ପରିକ୍ଷା ଦର୍ପଣ Set - 2 ✅</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
