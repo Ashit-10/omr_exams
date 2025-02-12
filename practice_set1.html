@@ -58,31 +58,40 @@
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            let studentName = localStorage.getItem("studentName");
+    let studentName = localStorage.getItem("studentName");
 
-            if (!studentName) {
-                studentName = prompt("Enter your name:");
-                if (studentName && studentName.trim() !== "") {
-                    localStorage.setItem("studentName", studentName.trim());
-                } else {
-                    location.reload(); // Reload page if name is not provided
-                }
+    if (!studentName) {
+        studentName = prompt("Enter your name:");
+        if (studentName && studentName.trim() !== "") {
+            localStorage.setItem("studentName", studentName.trim());
+        } else {
+            location.reload(); // Reload page if name is not provided
+        }
+    }
+
+    const links = document.querySelectorAll(".links a");
+    links.forEach(link => {
+        link.addEventListener("click", function (event) {
+            let storedName = localStorage.getItem("studentName");
+            if (storedName) {
+                const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
+                const chatId = "1602293216";
+                const message = `Student: ${storedName} clicked on ${event.target.innerText}`;
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.ok) {
+                            console.error("Telegram Error:", data);
+                        }
+                    })
+                    .catch(error => console.error("Fetch Error:", error));
             }
-
-            const links = document.querySelectorAll(".links a");
-            links.forEach(link => {
-                link.addEventListener("click", function (event) {
-                    let storedName = localStorage.getItem("studentName");
-                    if (storedName) {
-                        const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
-                        const chatId = "1602293216";
-                        const message = `Student: ${storedName} clicked on ${event.target.innerText}`;
-                        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-                        fetch(url);
-                    }
-                });
-            });
         });
+    });
+});
+
     </script>
 </head>
 <body>
