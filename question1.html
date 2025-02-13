@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shuffle Questions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .input-container {
+      position: relative;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+    }
+    button {
+      margin-top: 10px;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 3px;
+    }
+    .shuffled-container {
+      position: relative;
+      margin-top: 10px;
+    }
+    .shuffled {
+      white-space: pre-wrap;
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-family: "Times New Roman", serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    label {
+      margin-top: 10px;
+      display: block;
+    }
+    input[type="number"] {
+      width: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Shuffle Questions</h1>
+
+  <div class="input-container">
+    <button class="copy-btn" onclick="copyRawInput()">Copy</button>
+    <textarea id="inputText" placeholder="Paste your questions here..."></textarea>
+  </div>
+
+  <label for="numQuestions">Number of Questions:</label>
+  <input type="number" id="numQuestions" min="1" value="50" />
+  <button onclick="shuffleQuestions()">Shuffle and Display</button>
+  <button onclick="formatDocument()">Format Document</button>
+  <button onclick="printShuffledQuestions()">Print</button>
+
+  <div class="shuffled-container">
+    <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+    <div id="shuffledQuestions" class="shuffled"></div>
+  </div>
+
+  <script>
+    function copyRawInput() {
+      const inputText = document.getElementById('inputText').value;
+      navigator.clipboard.writeText(inputText).then(() => {
+        alert('Raw input copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy:', err);
+      });
+    }
+
+    function shuffleQuestions() {
+      const inputText = document.getElementById('inputText').value;
+      const numQuestions = parseInt(document.getElementById('numQuestions').value, 10);
+      const questions = extractQuestions(inputText);
+      const filteredQuestions = questions.filter(q => q.length >= 10);
+      const shuffledQuestions = shuffleArray(filteredQuestions).slice(0, numQuestions);
+      const formattedQuestions = formatQuestions(shuffledQuestions);
+      document.getElementById('shuffledQuestions').innerText = formattedQuestions;
+    }
+
+    function extractQuestions(text) {
+      const questionPattern = /^\d+\.\s|\d+\s\./;
+      const lines = text.split('\n');
+      const questions = [];
+      let currentQuestion = '';
+
+      lines.forEach(line => {
+        if (questionPattern.test(line)) {
+          if (currentQuestion) {
+            questions.push(currentQuestion.trim());
+          }
+          currentQuestion = line;
+        } else {
+          currentQuestion += '\n' + line;
+        }
+      });
+
+      if (currentQuestion) {
+        questions.push(currentQuestion.trim());
+      }
+
+      return questions;
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function formatQuestions(questions) {
+      return questions
+        .map((q, index) => `${index + 1}. ${q.replace(/^\d+\.\s|\d+\s\./, '')}`)
+        .join('\n');
+    }
+
+    function copyToClipboard() {
+      const shuffledQuestions = document.getElementById('shuffledQuestions').innerText;
+      navigator.clipboard.writeText(shuffledQuestions).then(() => {
+        alert('Shuffled questions copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy:', err);
+      });
+    }
+
+    function printShuffledQuestions() {
+      const shuffledQuestions = document.getElementById('shuffledQuestions').innerText;
+      const printWindow = window.open('', '', 'height=600,width=800');
+      printWindow.document.write(
+        '<pre style="font-family: Times New Roman, serif; font-size: 16px; line-height: 1.5;">' +
+          shuffledQuestions +
+          '</pre>'
+      );
+      printWindow.document.close();
+      printWindow.print();
+    }
+
+    // ---------------------------
+    // New formatting functionality
+    // ---------------------------
+    function formatDocument() {
+      let inputText = document.getElementById('inputText').value;
+      // First, perform the simple replacements for options
+      let formattedText = inputText
+        .replace(/\(\s*A\)/g, 'A)')
+        .replace(/\(\s*B\)/g, 'B)')
+        .replace(/\(\s*C\)/g, 'C)')
+        .replace(/\(\s*D\)/g, 'D)');
+
+      // Next, split the document into question blocks.
+      // This assumes questions start with a number and a dot (e.g., "1. ")
+      const questions = formattedText.split(/(?=\d+\.\s)/);
+      const processedQuestions = questions.map(q => reorderOptionsInQuestion(q));
+      formattedText = processedQuestions.join('\n\n');
+
+      document.getElementById('shuffledQuestions').innerText = formattedText;
+    }
+
+    // This function attempts to detect an options block (lines starting with "A)", "B)", etc.)
+    // and, if detected, reorder the options alphabetically.
+    function reorderOptionsInQuestion(questionText) {
+      // Split the question text into individual lines.
+      const lines = questionText.split('\n');
+      // Find the first line that looks like an option (e.g., "A) ...")
+      let startIndex = -1;
+      for (let i = 0; i < lines.length; i++) {
+        if (/^[A-D]\)\s*/.test(lines[i].trim())) {
+          startIndex = i;
+          break;
+        }
+      }
+      // If no options are detected, return the question as is.
+      if (startIndex === -1) {
+        return questionText;
+      }
+      
+      // Group contiguous lines into options.
+      let options = [];
+      let currentOption = lines[startIndex];
+      for (let i = startIndex + 1; i < lines.length; i++) {
+        if (/^[A-D]\)\s*/.test(lines[i].trim())) {
+          // New option found, push the previous option.
+          options.push(currentOption);
+          currentOption = lines[i];
+        } else {
+          // This line is a continuation of the current option.
+          currentOption += '\n' + lines[i];
+        }
+      }
+      options.push(currentOption);
+
+      // If fewer than 2 options are detected, nothing to reorder.
+      if (options.length < 2) {
+        return questionText;
+      }
+
+      // Extract each option's letter.
+      const parsedOptions = options.map(opt => {
+        const match = opt.match(/^([A-D])\)/);
+        return match ? { letter: match[1], text: opt } : null;
+      });
+
+      // If any option does not match the expected pattern, leave the question unchanged.
+      if (parsedOptions.some(o => o === null)) {
+        return questionText;
+      }
+
+      // Sort options alphabetically by their letter.
+      const sortedOptions = parsedOptions.slice().sort((a, b) =>
+        a.letter.localeCompare(b.letter)
+      );
+
+      // Rebuild the question.
+      // The "header" is the part before the options block.
+      const header = lines.slice(0, startIndex).join('\n').trim();
+      // Join the sorted options.
+      const reorderedOptions = sortedOptions.map(opt => opt.text.trim()).join('\n');
+      
+      // Return the recombined question. (If there’s no header, just return the options.)
+      return header ? header + '\n' + reorderedOptions : reorderedOptions;
+    }
+  </script>
+</body>
+</html>
