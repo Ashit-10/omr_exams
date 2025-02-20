@@ -214,12 +214,12 @@
 let studentName = '';
 
         // Prompt the student for their name on page load
-        window.onload = function () {
-            studentName = prompt("Please enter your name:");
-            if (!studentName || studentName.trim() === "") {
-                studentName = "Anonymous";
-            }
-        };
+  //      window.onload = function () {
+ //           studentName = prompt("Please enter your name:");
+      //      if (!studentName || studentName.trim() === "") {
+//                studentName = "Anonymous";
+//            }
+   //     };
 
         function endExam() {
             const questionsAnswered = getAnsweredQuestionsCount();
@@ -255,28 +255,13 @@ let studentName = '';
             answersFile = fileLoc + `/answer.txt`;
         }
 
-        let Infos;
-        let subjectName; 
-        let shuffleQuestions;
-       Infos = fileLoc + `/info.txt`;
-    subjectName = "Examination";
-shuffleQuestions = false;
-
-fetch(Infos)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("info.txt not found");
-        }
-        return response.json();
-    })
-    .then(data => {
-        subjectName = data.subject || "Examination"; // Use default if missing
-        shuffleQuestions = data.shuffle === "true"; // Convert string to boolean
-    })
-    .catch(error => {
-        console.warn("Error loading info.txt:", error);
-    });
         
+        let subjectName = urlParams.get('subject');
+        const shuffleQuestions = urlParams.get('shuffle') === 'true';
+
+        if (subjectName) {
+            subjectName = subjectName;
+        }
 
         let headName = document.getElementById('headname');
         headName.textContent = subjectName;
@@ -511,18 +496,102 @@ label.appendChild(optionContent);
 
         // Load questions and answers on page load
         loadQuestionsAndAnswers();
-        document.addEventListener("DOMContentLoaded", function() {
-            // Replace with your bot token and chat ID
-            const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
-            const chatId = "1602293216";
-            const message = "Someone opened your webpage!";
+      //  document.addEventListener("DOMContentLoaded", function() {
+            //:/ Replace with your bot token and chat ID
+           // const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
+           // const chatId = "1602293216";
+          //  const message = "Someone opened your webpage!";
             
             // Telegram API URL
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+         //   const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
             
             // Send request
-            fetch(url).then(response => console.log("Message sent to Telegram"));
+        //    fetch(url).then(response => console.log("Message sent to Telegram"));
+      //  });
+            document.addEventListener("DOMContentLoaded", function () {
+    const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
+            const chatId = "1602293216";
+       
+    document.querySelectorAll(".question-box").forEach((box, index) => {
+        // Create the "Report Problem" button
+        const reportBtn = document.createElement("button");
+        reportBtn.innerText = "Report Problem";
+        reportBtn.classList.add("report-btn");
+
+        // Create a hidden text input field
+        const issueInput = document.createElement("textarea");
+        issueInput.placeholder = "Describe the issue...";
+        issueInput.classList.add("issue-input");
+        issueInput.style.display = "none";
+
+        // Create a submit button
+        const submitBtn = document.createElement("button");
+        submitBtn.innerText = "Submit Issue";
+        submitBtn.classList.add("submit-btn");
+        submitBtn.style.display = "none";
+
+        // Append elements to the question box
+        box.appendChild(reportBtn);
+        box.appendChild(issueInput);
+        box.appendChild(submitBtn);
+
+        // Show input field when "Report Problem" is clicked
+        reportBtn.addEventListener("click", () => {
+            issueInput.style.display = "block";
+            submitBtn.style.display = "block";
         });
+
+        // Handle issue submission
+        submitBtn.addEventListener("click", () => {
+            const issueText = issueInput.value.trim();
+            if (issueText === "") {
+                alert("Please enter an issue before submitting.");
+                return;
+            }
+
+            const questionText = box.querySelector(".question-text").innerText;
+            const selectedOption = box.querySelector("input[type='radio']:checked");
+            const selectedAnswer = selectedOption ? selectedOption.value : "No option selected";
+
+            const message = `🚨 *Question Reported* 🚨\n\n` +
+                `*Question:* ${questionText}\n` +
+                `*Reported Issue:* ${issueText}\n` +
+                `*Selected Answer:* ${selectedAnswer}`;
+
+            sendToTelegram(botToken, chatId, message);
+
+            // Hide input after submission
+            issueInput.style.display = "none";
+            submitBtn.style.display = "none";
+            issueInput.value = "";
+            alert("Issue submitted successfully!");
+        });
+    });
+});
+
+// Function to send data to Telegram
+function sendToTelegram(botToken, chatId, message) {
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    const data = {
+        chat_id: chatId,
+        text: message,
+        parse_mode: "Markdown",
+    };
+
+    fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Telegram response:", data);
+    })
+    .catch(error => {
+        console.error("Error sending to Telegram:", error);
+    });
+}
+
     </script>
 </body>
 
