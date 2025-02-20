@@ -168,15 +168,17 @@
 
 </div>
 <script>
-    function showLoader(event) {
-            event.preventDefault(); // Prevent default navigation initially
-            document.getElementById("loader").style.display = "flex";
-            window.location.href = event.currentTarget.href; // Proceed with navigation
-        }
+    document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", function () {
+                    document.getElementById("loader").style.display = "flex";
+                });
+            });
+        });
 
-        // Attach the function to all links
-        document.querySelectorAll(".links a").forEach(link => {
-            link.addEventListener("click", showLoader);
+        // Hide loader when the page is fully loaded
+        window.addEventListener("load", function () {
+            document.getElementById("loader").style.display = "none";
         });
     const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
     const chatId = "1602293216";
