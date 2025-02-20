@@ -384,8 +384,6 @@ let studentName = '';
 
             updateUI();
         }
-
-
 function displayQuestions() {
     const container = document.getElementById('questions-container');
     container.innerHTML = '';
@@ -412,43 +410,44 @@ function displayQuestions() {
 
             radio.type = 'radio';
             radio.name = `question-${index}`;
-            radio.value = String.fromCharCode(65 + optIndex); // A, B, C, D serially
+            radio.value = String.fromCharCode(65 + optIndex);
             radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
 
             label.classList.add('option-label');
             label.appendChild(radio);
-          //  label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) ${opt}`)); // Use textContent for safety
-          //  label.innerHTML = `${String.fromCharCode(65 + optIndex)}) ${opt}`;
-       const optionLabel = document.createElement('span');  
-optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;  
-optionLabel.style.display = 'inline-block';  
-optionLabel.style.marginRight = '5px'; // Adjust spacing  
 
-const optionContent = document.createElement('span');  
-optionContent.innerHTML = opt;  
+            const optionLabel = document.createElement('span');
+            optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;
+            optionLabel.style.marginRight = '5px';
 
-label.style.display = 'flex';  
-label.style.alignItems = 'flex-start'; // Aligns content to the top  
-label.style.flexWrap = 'wrap'; // Ensures text and images wrap properly  
+            const optionContent = document.createElement('span');
+            optionContent.innerHTML = opt;
 
-label.appendChild(optionLabel);  
-label.appendChild(optionContent);  
-
-
-
+            label.appendChild(optionLabel);
+            label.appendChild(optionContent);
             optionItem.appendChild(label);
             optionsList.appendChild(optionItem);
         });
 
+        // ✅ Add "Report Problem" Button  
+        const reportButton = document.createElement("button");
+        reportButton.innerText = "Report Problem";
+        reportButton.classList.add("report-button");
+        reportButton.onclick = () => reportIssue(index + 1, q.question);
+
         questionBox.appendChild(questionNumber);
         questionBox.appendChild(questionText);
         questionBox.appendChild(optionsList);
+        questionBox.appendChild(reportButton); // 🔥 Button now added to each question box
         container.appendChild(questionBox);
     });
 
     updateUI();
 }
 
+
+
+        
 
 
         function updateUI() {
@@ -514,10 +513,7 @@ label.appendChild(optionContent);
        
     document.querySelectorAll(".question-box").forEach((box, index) => {
         // Create the "Report Problem" button
-        const reportBtn = document.createElement("button");
-        reportBtn.innerText = "Report Problem";
-        reportBtn.classList.add("report-btn");
-
+        
         // Create a hidden text input field
         const issueInput = document.createElement("textarea");
         issueInput.placeholder = "Describe the issue...";
@@ -542,33 +538,33 @@ label.appendChild(optionContent);
         });
 
         // Handle issue submission
-        submitBtn.addEventListener("click", () => {
-            const issueText = issueInput.value.trim();
-            if (issueText === "") {
-                alert("Please enter an issue before submitting.");
-                return;
-            }
+        function reportIssue(questionIndex, questionText) {
+    const issueText = prompt("Describe the problem with this question:");
 
-            const questionText = box.querySelector(".question-text").innerText;
-            const selectedOption = box.querySelector("input[type='radio']:checked");
-            const selectedAnswer = selectedOption ? selectedOption.value : "No option selected";
+    if (!issueText) return;
 
-            const message = `🚨 *Question Reported* 🚨\n\n` +
-                `*Question:* ${questionText}\n` +
-                `*Reported Issue:* ${issueText}\n` +
-                `*Selected Answer:* ${selectedAnswer}`;
+    const message = `🚨 *Question Reported* 🚨\n\n` +
+                    `*Question ${questionIndex}:* ${questionText}\n` +
+                    `*Issue:* ${issueText}`;
 
-            sendToTelegram(botToken, chatId, message);
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "Markdown" })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.ok) {
+            alert("Issue reported successfully!");
+        } else {
+            alert("Failed to send report. Try again.");
+        }
+    })
+    .catch(error => console.error("Error sending to Telegram:", error));
+}
 
-            // Hide input after submission
-            issueInput.style.display = "none";
-            submitBtn.style.display = "none";
-            issueInput.value = "";
-            alert("Issue submitted successfully!");
-        });
-    });
-});
-
+            
+            
 // Function to send data to Telegram
 function sendToTelegram(botToken, chatId, message) {
     const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
