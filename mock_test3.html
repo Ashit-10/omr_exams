@@ -398,7 +398,7 @@ function displayQuestions() {
 
         const questionText = document.createElement('div');
         questionText.classList.add('question');
-        questionText.innerHTML = q.question; // Use innerHTML to render HTML tags in the question text
+        questionText.innerHTML = q.question; // ✅ Keeping your original logic
 
         const optionsList = document.createElement('ul');
         optionsList.classList.add('options');
@@ -429,7 +429,7 @@ function displayQuestions() {
             optionsList.appendChild(optionItem);
         });
 
-        // ✅ Add "Report Problem" Button  
+        // ✅ Add "Report Problem" Button WITHOUT breaking existing code  
         const reportButton = document.createElement("button");
         reportButton.innerText = "Report Problem";
         reportButton.classList.add("report-button");
@@ -438,16 +438,12 @@ function displayQuestions() {
         questionBox.appendChild(questionNumber);
         questionBox.appendChild(questionText);
         questionBox.appendChild(optionsList);
-        questionBox.appendChild(reportButton); // 🔥 Button now added to each question box
+        questionBox.appendChild(reportButton); // ✅ Button added correctly
         container.appendChild(questionBox);
     });
 
     updateUI();
 }
-
-
-
-        
 
 
         function updateUI() {
