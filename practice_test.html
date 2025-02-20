@@ -55,9 +55,40 @@
             background: #d9e3f1;
             border-color: #0044cc;
         }
+         .loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader div {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+      <!-- Loader -->
+    <div class="loader" id="loader">
+        <div></div>
+    </div>
 <div class="container">
 
     <h1>📚 Class 10 - Mock Tests</h1>
@@ -74,7 +105,7 @@
     <!-- English MCQ Sets -->
     <div class="section">
         <h2>📝 English - MCQ Sets</h2>
-        <div class="links" id="gsc-set">
+        <div class="links" id="english-set">
             <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-1&&subject=English%20SET-1%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true" onclick="sendToTelegram(event)">English ପରିକ୍ଷା ଦର୍ପଣ Set - 1 ✅</a>
             <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-2&&subject=English%20SET-2%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true" onclick="sendToTelegram(event)">English ପରିକ୍ଷା ଦର୍ପଣ Set - 2 ✅</a>
             <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-3&&subject=English%20SET-3%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true" onclick="sendToTelegram(event)">English ପରିକ୍ଷା ଦର୍ପଣ Set - 3 ✅</a>
@@ -84,7 +115,7 @@
     </div>
     <div class="section">
         <h2>📝 Sanskrit - MCQ Sets</h2>
-        <div class="links" id="gsc-set">
+        <div class="links" id="sanskrit-set">
             <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/sanskrit/set-1&&subject=sanskrit%20SET-1%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true" onclick="sendToTelegram(event)">Sanskrit ପରିକ୍ଷା ଦର୍ପଣ Set - 1 ✅</a>
             <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-2&&subject=English%20SET-2%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true" onclick="sendToTelegram(event)">English ପରିକ୍ଷା ଦର୍ପଣ Set - 2 ❌</a>
             <a href="http://ashit.xyz/mock_test2?file=mock_test/class-10/English/set-3&&subject=English%20SET-3%20(ପରିକ୍ଷା%20ଦର୍ପଣ)&&shuffle=true" onclick="sendToTelegram(event)">English ପରିକ୍ଷା ଦର୍ପଣ Set - 3 ❌</a>
@@ -137,6 +168,16 @@
 
 </div>
 <script>
+    function showLoader(event) {
+            event.preventDefault(); // Prevent default navigation initially
+            document.getElementById("loader").style.display = "flex";
+            window.location.href = event.currentTarget.href; // Proceed with navigation
+        }
+
+        // Attach the function to all links
+        document.querySelectorAll(".links a").forEach(link => {
+            link.addEventListener("click", showLoader);
+        });
     const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
     const chatId = "1602293216";
 
