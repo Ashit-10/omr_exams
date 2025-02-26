@@ -1,0 +1,599 @@
+1. Which is the highest mountain peak in India?
+a) Nanda Devi
+b) Kanchenjunga
+c) Mount Everest
+d) Anamudi
+
+2. The Himalayas are an example of which type of mountains?
+   a) Block Mountains
+   b) Volcanic Mountains
+   c) Fold Mountains
+   d) Residual Mountains
+
+3. Nanda Devi is located in which Indian state?
+   a) Himachal Pradesh
+   b) Sikkim
+   c) Uttarakhand
+   d) Arunachal Pradesh
+
+4. Which mountain range separates the Deccan Plateau from the Indo-Gangetic Plain?
+   a) Aravalli Range
+   b) Vindhya Range
+   c) Eastern Ghats
+   d) Western Ghats
+
+5. The Aravalli Range is one of the oldest fold mountains in:
+   a) Nepal
+   b) Bhutan
+   c) India
+   d) Pakistan
+
+6. Which mountain pass connects Srinagar to Leh?
+   a) Rohtang Pass
+   b) Nathu La
+   c) Zoji La
+   d) Shipki La
+
+7. The Eastern Ghats run along the:
+   a) West coast of India
+   b) East coast of India
+   c) Northern border of India
+   d) Central India
+
+8. Which mountain range is known for its biodiversity hotspots?
+   a) Aravalli Range
+   b) Himalayas
+   c) Eastern Ghats
+   d) Western Ghats
+
+9. The Nilgiri Hills are located at the junction of:
+   a) Himalayas and Aravalli
+   b) Vindhya and Satpura
+   c) Shiwalik and Pir Panjal
+   d) Eastern and Western Ghats
+
+10. Which peak is the highest in the Western Ghats?
+    a) Doddabetta
+    b) Anamudi
+    c) Kudremukh
+    d) Mullayanagiri
+
+11. The Satpura Range is located between which two rivers?
+    a) Ganga and Yamuna
+    b) Godavari and Krishna
+    c) Narmada and Tapti
+    d) Mahanadi and Kaveri
+
+12. Which Himalayan range is known as the Lesser Himalayas?
+    a) Himadri Range
+    b) Shiwalik Range
+    c) Himachal Range
+    d) Karakoram Range
+
+13. The Karakoram Range is primarily located in:
+    a) Sikkim
+    b) Arunachal Pradesh
+    c) Ladakh
+    d) Uttarakhand
+
+14. Which mountain pass connects India with Tibet?
+    a) Rohtang Pass
+    b) Zoji La
+    c) Nathu La
+    d) Shipki La
+
+15. The Shiwalik Range is the outermost range of the:
+    a) Western Ghats
+    b) Eastern Ghats
+    c) Himalayas
+    d) Aravalli Range
+
+16. Which mountain range is known for its tea plantations?
+    a) Vindhya Range
+    b) Satpura Range
+    c) Nilgiri Hills
+    d) Aravalli Range
+
+17. Which river originates from the Gangotri Glacier?
+    a) Yamuna
+    b) Indus
+    c) Ganga
+    d) Brahmaputra
+
+18. The Deccan Plateau is primarily composed of:
+    a) Sedimentary rocks
+    b) Metamorphic rocks
+    c) Basaltic lava
+    d) Granite
+
+19. Which is the highest peak in the Eastern Ghats?
+    a) Mahendragiri
+    b) Anamudi
+    c) Doddabetta
+    d) Guru Shikhar
+
+20. The Chota Nagpur Plateau is rich in:
+    a) Oil reserves
+    b) Mineral resources
+    c) Forest cover
+    d) Agricultural land
+
+21. Which mountain range runs parallel to the Arabian Sea coast?
+    a) Eastern Ghats
+    b) Western Ghats
+    c) Himalayas
+    d) Vindhya Range
+
+22. The Thar Desert is located in which Indian state?
+    a) Gujarat
+    b) Punjab
+    c) Rajasthan
+    d) Haryana
+
+23. Which river flows through the Ladakh region?
+    a) Ganga
+    b) Brahmaputra
+    c) Indus
+    d) Yamuna
+
+24. The Sundarbans delta is formed by which rivers?
+    a) Ganga and Brahmaputra
+    b) Indus and Jhelum
+    c) Narmada and Tapti
+    d) Godavari and Krishna
+
+25. Which is the highest peak in the Aravalli Range?
+    a) Anamudi
+    b) Doddabetta
+    c) Guru Shikhar
+    d) Mahendragiri
+
+26. The Pir Panjal Range is part of which mountain system?
+    a) Eastern Ghats
+    b) Western Ghats
+    c) Himalayas
+    d) Aravalli Range
+
+27. The Garo, Khasi, and Jaintia hills are located in:
+    a) Arunachal Pradesh
+    b) Sikkim
+    c) Meghalaya
+    d) Nagaland
+
+28. Which mountain range is known for its horizontal rock strata?
+    a) Himalayas
+    b) Vindhya Range
+    c) Eastern Ghats
+    d) Western Ghats
+
+29. The Coromandel Coast is located in:
+    a) Kerala
+    b) Tamil Nadu
+    c) Goa
+    d) Maharashtra
+
+30. The Malabar Coast is known for its:
+    a) Coral reefs
+    b) Backwaters
+    c) Sandy beaches
+    d) Mangrove forests
+
+31. The Deccan Trap is associated with which geological event?
+    a) Himalayan orogeny
+    b) Volcanic activity
+    c) Glaciation
+    d) Faulting
+
+32. Which river originates from the Mansarovar Lake?
+    a) Ganga
+    b) Yamuna
+    c) Brahmaputra
+    d) Godavari
+
+33. The Bay of Bengal is located to the:
+    a) West of India
+    b) East of India
+    c) North of India
+    d) South of India
+
+34. The Lakshadweep Islands are located in the:
+    a) Bay of Bengal
+    b) Arabian Sea
+    c) Indian Ocean
+    d) Andaman Sea
+
+35. The Andaman and Nicobar Islands are of which origin?
+    a) Volcanic and tectonic
+    b) Coral
+    c) Alluvial
+    d) Residual
+
+36. Which mountain range is known for its biodiversity and shola forests?
+    a) Aravalli Range
+    b) Himalayas
+    c) Eastern Ghats
+    d) Western Ghats
+
+37. The highest point of the Andaman and Nicobar Islands is:
+    a) Saddle Peak
+    b) Kanchenjunga
+    c) Anamudi
+    d) Guru Shikhar
+
+38. The Great Indian Desert is also known as:
+    a) Sahara Desert
+    b) Gobi Desert
+    c) Thar Desert
+    d) Atacama Desert
+
+39. The Konkan Coast is located in:
+    a) Kerala
+    b) Tamil Nadu
+    c) Goa and Maharashtra
+    d) Andhra Pradesh
+
+40. The highest plateau in India is:
+    a) Deccan Plateau
+    b) Chota Nagpur Plateau
+    c) Ladakh Plateau
+    d) Malwa Plateau
+
+41. The Saltoro Kangri is located in:
+    a) Sikkim
+    b) Ladakh
+    c) Uttarakhand
+    d) Arunachal Pradesh
+
+42. Which river forms the Jog Falls?
+    a) Godavari
+    b) Krishna
+    c) Sharavathi
+    d) Kaveri
+
+43. The Palk Strait separates India from:
+    a) Maldives
+    b) Sri Lanka
+    c) Indonesia
+    d) Thailand
+
+44. Which mountain pass connects Kalimpong with Lhasa?
+    a) Nathu La
+    b) Rohtang Pass
+    c) Zoji La
+    d) Shipki La
+
+45. The Cardamom Hills are located in:
+    a) Karnataka and Tamil Nadu
+    b) Kerala and Tamil Nadu
+    c) Andhra Pradesh and Odisha
+    d) Maharashtra and Goa
+
+46. The Dandakaranya region is known for:
+    a) Coal mines
+    b) Dense forests
+    c) Oil fields
+    d) Tea plantations
+
+47. The Malwa Plateau is located in:
+    a) Rajasthan
+    b) Madhya Pradesh
+    c) Gujarat
+    d) Maharashtra
+
+48. The highest point of the Satpura Range is:
+    a) Anamudi
+    b) Guru Shikhar
+    c) Dhupgarh
+    d) Doddabetta
+
+49. The Gulf of Kutch is known for its:
+    a) Coral reefs
+    b) Tidal currents
+    c) Mangrove forests
+    d) Sandy beaches
+
+50. The Brahmaputra River enters India through which state?
+    a) Sikkim
+    b) Arunachal Pradesh
+    c) Assam
+    d) Meghalaya
+
+51. The Great Himalayan National Park is located in:
+    a) Uttarakhand
+    b) Himachal Pradesh
+    c) Sikkim
+    d) Arunachal Pradesh
+
+52. The Shiwalik Range is also known as:
+    a) Inner Himalayas
+    b) Outer Himalayas
+    c) Middle Himalayas
+    d) Trans Himalayas
+
+53. The highest peak of the Nilgiri Hills is:
+    a) Anamudi
+    b) Doddabetta
+    c) Guru Shikhar
+    d) Mahendragiri
+
+54. The Rann of Kutch is known for its:
+    a) Salt marshes
+    b) Coral reefs
+    c) Mangrove forests
+    d) Sandy beaches
+
+55. The Patkai Hills form the border between India and:
+    a) Nepal
+    b) Bhutan
+    c) Myanmar
+    d) Bangladesh
+
+56. The Chambal River flows through which plateau?
+    a) Deccan Plateau
+    b) Malwa Plateau
+    c) Chota Nagpur Plateau
+    d) Ladakh Plateau
+
+57. The Silent Valley National Park is located in:
+    a) Karnataka
+    b) Kerala
+    c) Tamil Nadu
+    d) Andhra Pradesh
+
+58. The Barren Island is India's only:
+    a) Coral island
+    b) Active volcano
+    c) Mangrove forest
+    d) Salt marsh
+
+59. The Jog Falls is located on which river?
+    a) Godavari
+    b) Krishna
+    c) Sharavathi
+    d) Kaveri
+
+60. The Gulf of Mannar is known for its:
+    a) Coral reefs
+    b) Mangrove forests
+    c) Salt marshes
+    d) Sandy beaches
+
+61. The Zanskar Range is located in:
+    a) Sikkim
+    b) Ladakh
+    c) Uttarakhand
+    d) Arunachal Pradesh
+
+62. The Maikal Range is part of which mountain system?
+    a) Himalayas
+    b) Eastern Ghats
+    c) Western Ghats
+    d) Satpura Range
+
+63. The Kaziranga National Park is located on the banks of which river?
+    a) Ganga
+    b) Brahmaputra
+    c) Yamuna
+    d) Godavari
+
+64. The Lakshadweep Islands are primarily composed of:
+    a) Volcanic rocks
+    b) Coral reefs
+    c) Sedimentary rocks
+    d) Metamorphic rocks
+
+65. The highest point of the Eastern Ghats is generally considered to be:
+    a) Mahendragiri
+    b) Jindhagada Peak
+    c) Anamudi
+    d) Doddabetta
+
+66. The Sundarbans are known for their:
+    a) Coral reefs
+    b) Mangrove forests
+    c) Salt marshes
+    d) Sandy beaches
+
+67. The Spiti Valley is located in:
+    a) Uttarakhand
+    b) Himachal Pradesh
+    c) Sikkim
+    d) Arunachal Pradesh
+
+68. The Amarkantak Plateau is the origin of which rivers?
+    a) Ganga and Yamuna
+    b) Godavari and Krishna
+    c) Narmada and Son
+    d) Mahanadi and Kaveri
+
+69. The Chilika Lake is located in:
+    a) Andhra Pradesh
+    b) Odisha
+    c) Tamil Nadu
+    d) Kerala
+
+70. The Nagarhole National Park is located in:
+    a) Kerala
+    b) Tamil Nadu
+    c) Karnataka
+    d) Andhra Pradesh
+
+71. The Dhauladhar Range is part of which mountain system?
+    a) Himalayas
+    b) Eastern Ghats
+    c) Western Ghats
+    d) Aravalli Range
+
+72. The Valley of Flowers National Park is located in:
+    a) Himachal Pradesh
+    b) Uttarakhand
+    c) Sikkim
+    d) Arunachal Pradesh
+
+73. The Bhakra Nangal Dam is located on which river?
+    a) Ganga
+    b) Indus
+    c) Sutlej
+    d) Brahmaputra
+
+74. The Great Rann of Kutch is known for its:
+    a) Salt marshes
+    b) Coral reefs
+    c) Mangrove forests
+    d) Sandy beaches
+
+75. The Mawsynram is known for:
+    a) Highest rainfall
+    b) High temperature
+    c) Low temperature
+    d) High altitude
+
+76. The Deccan Plateau is located to the:
+    a) North of India
+    b) South of India
+    c) East of India
+    d) West of India
+
+77. The highest point of the Aravalli Range is:
+    a) Anamudi
+    b) Doddabetta
+    c) Guru Shikhar
+    d) Mahendragiri
+
+78. The Manas National Park is located in:
+    a) Meghalaya
+    b) Assam
+    c) Arunachal Pradesh
+    d) Sikkim
+
+79. The Khardung La is located in:
+    a) Sikkim
+    b) Ladakh
+    c) Uttarakhand
+    d) Arunachal Pradesh
+
+80. The Anaimalai Hills are located in:
+    a) Karnataka and Tamil Nadu
+    b) Kerala and Tamil Nadu
+    c) Andhra Pradesh and Odisha
+    d) Maharashtra and Goa
+
+81. The formation of the Himalayas is a result of:
+    a) Volcanic activity
+    b) Folding of tectonic plates
+    c) Faulting
+    d) Erosion
+
+82. The Dandeli Wildlife Sanctuary is located in:
+    a) Kerala
+    b) Tamil Nadu
+    c) Karnataka
+    d) Andhra Pradesh
+
+83. The highest peak of the Trans-Himalayas is:
+    a) Kanchenjunga
+    b) Nanda Devi
+    c) Mount Kailash
+    d) Kamet
+
+84. The Jog Falls is also known as:
+    a) Dudhsagar Falls
+    b) Gersoppa Falls
+    c) Athirappilly Falls
+    d) Hogenakkal Falls
+
+85. The Minicoy Island is part of:
+    a) Andaman and Nicobar Islands
+    b) Lakshadweep Islands
+    c) Sundarbans
+    d) Gulf of Mannar
+
+86. The formation of the Deccan Traps is associated with:
+    a) Volcanic eruptions
+    b) Glaciation
+    c) Folding
+    d) Erosion
+
+87. The Kanha National Park is located in:
+    a) Rajasthan
+    b) Madhya Pradesh
+    c) Gujarat
+    d) Maharashtra
+
+88. The Siachen Glacier is located in:
+    a) Sikkim
+    b) Ladakh
+    c) Uttarakhand
+    d) Arunachal Pradesh
+
+89. The Pamban Bridge connects India to:
+    a) Maldives
+    b) Sri Lanka
+    c) Indonesia
+    d) Thailand
+
+90. The formation of the Eastern and Western Ghats is related to:
+    a) Tectonic activity
+    b) Volcanic activity
+    c) Erosion
+    d) Glaciation
+
+91. The Periyar National Park is located in:
+    a) Karnataka
+    b) Kerala
+    c) Tamil Nadu
+    d) Andhra Pradesh
+
+92. The Nubra Valley is located in:
+    a) Sikkim
+    b) Ladakh
+    c) Uttarakhand
+    d) Arunachal Pradesh
+
+93. The formation of the Indo-Gangetic Plain is due to:
+    a) Volcanic activity
+    b) Deposition of sediments
+    c) Faulting
+    d) Folding
+
+94. The Bhitarkanika Mangroves are located in:
+    a) Andhra Pradesh
+    b) Odisha
+    c) Tamil Nadu
+    d) Kerala
+
+95. The Pangong Tso Lake is located in:
+    a) Sikkim
+    b) Ladakh
+    c) Uttarakhand
+    d) Arunachal Pradesh
+
+96. The formation of the Aravalli Range is due to:
+    a) Volcanic activity
+    b) Folding
+    c) Faulting
+    d) Erosion
+
+97. The Bandipur National Park is located in:
+    a) Kerala
+    b) Tamil Nadu
+    c) Karnataka
+    d) Andhra Pradesh
+
+98. The Rohtang Pass is located in:
+    a) Uttarakhand
+    b) Himachal Pradesh
+    c) Sikkim
+    d) Arunachal Pradesh
+
+99. The formation of the Chota Nagpur Plateau is associated with:
+    a) Volcanic activity
+    b) Faulting and uplift
+c) Folding
+    d) Erosion
+
+100. The Jim Corbett National Park is located in:
+     a) Uttarakhand
+     b) Himachal Pradesh
+     c) Sikkim
+     d) Arunachal Pradesh
