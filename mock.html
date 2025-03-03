@@ -12,7 +12,6 @@
         crossorigin="anonymous"></script>
     <style>
         body {
-        /*    font-family: "Times New Roman", Times, serif; */
             background-color: #fff;
             color: #0a0a0a;
             margin: 0;
@@ -48,6 +47,7 @@
             justify-content: space-between;
             margin-bottom: 20px;
             font-weight: bold;
+            align-items: center;
         }
 
         .question-box {
@@ -60,15 +60,12 @@
             transition: box-shadow 0.3s;
         }
 
-        /* Colorful shadow effect for question boxes */
         .question-box:nth-child(odd) {
             box-shadow: 0 4px 8px rgba(255, 0, 0, 0.5);
-            /* Red shadow */
         }
 
         .question-box:nth-child(even) {
             box-shadow: 0 4px 8px rgba(0, 0, 255, 0.5);
-            /* Blue shadow */
         }
 
         .question-number {
@@ -91,19 +88,30 @@
             margin-bottom: 15px;
         }
 
-        .options input[type="radio"] {
-            margin-right: 10px;
-            accent-color: #0d6efd;
-        }
-
         .option-label {
-            padding: 10px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-            cursor: pointer;
-            font-weight: bold;
             display: flex;
             align-items: center;
+            justify-content: flex-start;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            background-color: #fff;
+            transition: background-color 0.3s, border-color 0.3s;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            text-align: left;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .options input[type="radio"] {
+            display: none;
+        }
+
+        .options input[type="radio"]:checked + .option-label {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0b5ed7;
         }
 
         #score-banner {
@@ -128,13 +136,11 @@
 
         #notification.correct {
             background-color: #64b966;
-            /* Green */
         }
 
         #notification.incorrect {
             top: 40%;
             background-color: #d85555;
-            /* Red */
         }
 
         @keyframes blast {
@@ -155,7 +161,6 @@
             font-weight: bold;
         }
 
-        /* Floating circle styles */
         #floating-circle {
             position: fixed;
             top: 20%;
@@ -173,7 +178,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             z-index: 1000;
         }
-  
 
         #end-exam-button {
             position: fixed;
@@ -191,353 +195,38 @@
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+
+        .explanation {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
 <body>
-    <div class="overlay" id="overlay"></div>
-    <div class="popup" id="popup">
-        <h3>Enter Your Name</h3>
-        <input type="text" id="userName" placeholder="Your Name">
-        <button onclick="submitName()">Submit</button>
-    </div>
-
-    <h2>Exam Page</h2>
-    <p>When the exam ends, your result will be automatically submitted.</p>
-    <button onclick="endExam()">End Exam</button>
-
     <div class="test-container">
         <h1>Online Test System</h1>
         <div id="headname" class="exam-name">Mock Test</div>
         <div class="status-bar">
             <div id="score-banner">Score: 0 / 0</div>
             <div id="questions-left">Questions Left: 0</div>
+            <div id="timer"></div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="explanationToggle">
+                <label class="form-check-label" for="explanationToggle">Explanations</label>
+            </div>
         </div>
         <div id="questions-container">
-            <!-- Questions will be dynamically loaded here -->
         </div>
         <div id="notification"></div>
         <div id="floating-circle"></div>
         <div id="end-exam-button" onclick="endExam()">End Exam</div>
     </div>
 
-    <script>
-        const BOT_TOKEN = "1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0"; // Replace with your bot token
-        const CHAT_ID = "-1001774957665"; // Replace with your chat ID
-
-       let userName = "";
-        let score = 0; // Default score variable
-
-        // Show popup on page load to capture the user's name
-        window.onload = () => {
-            document.getElementById("overlay").style.display = "block";
-            document.getElementById("popup").style.display = "block";
-        };
-
-        // Function to handle name submission
-        function submitName() {
-            userName = document.getElementById("userName").value;
-            if (!userName) {
-                alert("Please enter your name.");
-                return;
-            }
-
-            // Send name to Telegram
-            sendToTelegram(`User Name: ${userName}`);
-
-            // Close the popup
-            document.getElementById("overlay").style.display = "none";
-            document.getElementById("popup").style.display = "none";
-        }
-
-        // Function to simulate exam ending and send result
-        function endExam() {
-            // Example logic to calculate the score
-            score = Math.floor(Math.random() * 101); // Generate random score for demo purposes
-
-            const resultMessage = `Exam ended.\nUser: ${userName}\nScore: ${score}%`;
-            sendToTelegram(resultMessage);
-            alert("Exam result submitted!");
-        }
-
-        // Function to send data to Telegram
-        function sendToTelegram(message) {
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: message,
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.ok) {
-                    console.error("Telegram API Error:", data.description);
-                }
-            })
-            .catch(error => console.error("Fetch Error:", error));
-        }
-        
-
-
-        function endExam() {
-            const questionsAnswered = getAnsweredQuestionsCount();
-            const accuracy = questions.length > 0 ? ((score / questions.length) * 100).toFixed(2) : 0;
-
-            // Display the final score, student name, and accuracy
-            const container = document.getElementById('questions-container');
-            container.innerHTML = `
-                <div class="exam-end-message">
-                    <h2>Exam Completed</h2>
-                    <p><strong>Student Name:</strong> ${studentName}</p>
-                    <p><strong>Final Score:</strong> ${score} / ${questions.length}</p>
-                    <p><strong>Accuracy:</strong> ${accuracy}%</p>
-                </div>
-            `;
-        }
-        const floatingCircle = document.getElementById('floating-circle');
-
-        // Get query parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const fileLoc = urlParams.get('file');
-        const examFile = urlParams.get('exam');
-        let questionsFile;
-        let answersFile;
-        
-        if (examFile) {
-            questionsFile = fileLoc + `_question.txt`;
-            answersFile = fileLoc + `_ans_key.txt`;
-            
-        } else {
-            console.log("else");
-            questionsFile = fileLoc + `/question.txt`;
-            answersFile = fileLoc + `/answer.txt`;
-        }
-
-        
-        let subjectName = urlParams.get('subject');
-        const shuffleQuestions = urlParams.get('shuffle') === 'true';
-
-        if (subjectName) {
-            subjectName = "Subject: " + subjectName;
-        }
-
-        let headName = document.getElementById('headname');
-        headName.textContent = subjectName;
-
-        let questions = [];
-        let score = 0;
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-
-
-        function loadQuestionsAndAnswers() {
-    Promise.all([
-        fetch(questionsFile).then(response => response.text()),
-        fetch(answersFile).then(response => response.json())
-    ]).then(([questionsText, answersJson]) => {
-        const lines = questionsText.split('\n').filter(line => line.trim() !== '');
-        let questionList = [];
-        let currentQuestion = {};
-
-        lines.forEach(line => {
-            if (line.match(/^\d+\./)) { // New question
-                if (currentQuestion.question) {
-                    questionList.push(currentQuestion);
-                }
-                currentQuestion = {
-                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
-                    options: []
-                };
-            } else if (line.match(/^[A-D]\)/)) { // Options
-                const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
-                currentQuestion.options.push(optionText);
-            }
-        });
-
-        if (currentQuestion.question) {
-            questionList.push(currentQuestion);
-        }
-
-        // Combine questions with their corresponding answers
-        questions = questionList.map((q, index) => {
-            const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
-
-            // Ensure correctAnswers is an array
-            const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
-
-            // Optionally shuffle the options if shuffle=true
-            let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
-            if (shuffleQuestions) {
-                shuffleArray(optionsWithIndex);
-            }
-
-            // Extract the shuffled options
-            const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-            const correctIndices = correctAnswerArray.map(correctAnswer =>
-                optionsWithIndex.findIndex(optObj => optObj.originalIndex === correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0))
-            );
-
-            return {
-                question: q.question,
-                options: shuffledOptions,
-                correctAnswerIndices: correctIndices // Store the new correct indices
-            };
-        });
-
-        // Shuffle questions if shuffle=true
-        if (shuffleQuestions) {
-            shuffleArray(questions);
-        }
-
-        displayQuestions();
-    }).catch(error => {
-        console.error("Error loading questions or answers:", error);
-    });
-}
-
-                
-        
-        
-
-                
-        function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
-            floatingCircle.style.display = 'flex';
-            const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
-            const selectedOptionLabel = selectedRadio.parentElement;
-
-            // Check if selected option is among the correct answers
-            const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
-
-            const correctOptions = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
-                .filter((_, index) => correctOptionIndices.includes(index));
-            const correctOptionLabels = correctOptions.map(option => option.parentElement);
-
-            // Disable all radio buttons for this question after selection
-            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
-                radio.disabled = true;
-            });
-
-            if (isCorrect) {
-                showNotification('Correct', 'correct');
-                selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
-                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
-                score++;
-            } else {
-                showNotification('Incorrect', 'incorrect');
-                selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
-                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
-            }
-
-            updateUI();
-        }
-
-
-
-
-
-        function displayQuestions() {
-            const container = document.getElementById('questions-container');
-            container.innerHTML = '';
-
-            questions.forEach((q, index) => {
-                const questionBox = document.createElement('div');
-                questionBox.classList.add('question-box');
-
-                const questionNumber = document.createElement('div');
-                questionNumber.classList.add('question-number');
-                questionNumber.textContent = `Question ${index + 1}`;
-
-                const questionText = document.createElement('div');
-                questionText.classList.add('question');
-                questionText.textContent = q.question;
-
-                const optionsList = document.createElement('ul');
-                optionsList.classList.add('options');
-
-                q.options.forEach((opt, optIndex) => {
-                    const optionItem = document.createElement('li');
-                    const label = document.createElement('label');
-                    const radio = document.createElement('input');
-
-                    radio.type = 'radio';
-                    radio.name = `question-${index}`;
-                    radio.value = String.fromCharCode(65 + optIndex); // A, B, C, D serially
-                    radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
-
-                    label.classList.add('option-label');
-                    label.appendChild(radio);
-                    label.appendChild(document.createTextNode(`${String.fromCharCode(65 + optIndex)}) ${opt}`)); // Add A), B), C), D)
-
-                    optionItem.appendChild(label);
-                    optionsList.appendChild(optionItem);
-                });
-
-                questionBox.appendChild(questionNumber);
-                questionBox.appendChild(questionText);
-                questionBox.appendChild(optionsList);
-                container.appendChild(questionBox);
-            });
-
-            updateUI();
-        }
-
-
-        function updateUI() {
-            document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
-            const questionsLeft = questions.length - getAnsweredQuestionsCount();
-            document.getElementById('questions-left').textContent = `Questions Left: ${questionsLeft}`;
-
-            // Update the floating circle
-            floatingCircle.textContent = `${score} / ${questions.length}`;
-
-            if (getAnsweredQuestionsCount() === questions.length) {
-                showExamEndMessage();
-            }
-        }
-
-        function getAnsweredQuestionsCount() {
-            let count = 0;
-            questions.forEach((_, index) => {
-                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
-                if (selectedOptions.length > 0) {
-                    count++;
-                }
-            });
-            return count;
-        }
-        function showNotification(message, type) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = type;
-            notification.style.display = 'block';
-
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 1000);
-        }
-
-        function showExamEndMessage() {
-            const container = document.getElementById('questions-container');
-            const message = document.createElement('div');
-            message.classList.add('exam-end-message');
-            message.textContent = `You have completed the test. Your final score is ${score} out of ${questions.length}.`;
-            container.innerHTML = '';
-            container.appendChild(message);
-        }
-
-        // Load questions and answers on page load
-        loadQuestionsAndAnswers();
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
