@@ -163,7 +163,7 @@ function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
             correctOptionRadios.forEach(radio => {
                 const optionLabel = radio.parentElement;
                 optionLabel.parentElement.appendChild(explanationDiv); // Add to the <li> element
-            });
+            })
 
             explanationDiv.style.display = 'block';
         }
