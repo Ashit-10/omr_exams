@@ -1,6 +1,7 @@
 let studentName = ''; // Assuming you get it from local storage
 let timeLeft = 600; // 10 minutes (in seconds)
-let questions =;
+let questions = [];
+
 let score = 0;
 let explanationEnabled = false; // Initially disabled
 
@@ -46,7 +47,7 @@ function loadQuestionsAndAnswers() {
         fetch(explanationFile).then(response => response.json()) // Load explanations
     ]).then(([questionsText, answersJson, explanationJson]) => { // added explanationJson
         const lines = questionsText.split('\n').filter(line => line.trim() !== '');
-        let questionList =;
+        let questionList = [];
         let currentQuestion = {};
 
         lines.forEach(line => {
