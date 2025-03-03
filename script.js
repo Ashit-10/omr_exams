@@ -57,7 +57,7 @@ function loadQuestionsAndAnswers() {
                 }
                 currentQuestion = {
                     question: line.replace(/^\d+\.\s*/, ""),
-                    options:
+                    options: []
                 };
             } else if (line.match(/^[A-D]\)/)) {
                 const optionText = line.replace(/^[A-D]\)\s*/, "");
