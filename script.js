@@ -222,4 +222,74 @@ function displayQuestions() {
 
         questionBox.appendChild(questionNumber);
         questionBox.appendChild(questionText);
-        questionBox.appendChild(options
+        questionBox.appendChild(optionsList);
+        container.appendChild(questionBox);
+    });
+
+    updateUI();
+}
+
+function updateUI() {
+    document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
+    const questionsLeft = questions.length - getAnsweredQuestionsCount();
+    document.getElementById('questions-left').textContent = `Questions Left: ${questionsLeft}`;
+
+    // Update the floating circle
+    document.getElementById('floating-circle').textContent = `${score}`;
+
+}
+
+function getAnsweredQuestionsCount() {
+    let count = 0;
+    questions.forEach((_, index) => {
+        const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
+        if (selectedOptions.length > 0) {
+            count++;
+        }
+    });
+    return count;
+}
+
+function showNotification(message, type) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = type;
+    notification.style.display = 'block';
+
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 1000);
+}
+
+function showExamEndMessage() {
+    const container = document.getElementById('questions-container');
+    const message = document.createElement('div');
+    message.classList.add('exam-end-message');
+    message.textContent = `You have completed the test. Your final score is ${score} out of ${questions.length}.`;
+    container.innerHTML = '';
+    container.appendChild(message);
+}
+
+// Add event listener for explanation toggle
+document.getElementById('explanationToggle').addEventListener('change', function () {
+    explanationEnabled = this.checked;
+});
+
+function endExam() {
+    const questionsAnswered = getAnsweredQuestionsCount();
+    const accuracy = questions.length > 0 ? ((score / questions.length) * 100).toFixed(2) : 0;
+
+    // Display the final score, student name, and accuracy
+    const container = document.getElementById('questions-container');
+    container.innerHTML = `
+        <div class="exam-end-message">
+            <h2>Exam Completed</h2>
+            <p><strong>Student Name:</strong> ${studentName}</p>
+            <p><strong>Final Score:</strong> ${score} / ${questions.length}</p>
+            <p><strong>Accuracy:</strong> ${accuracy}%</p>
+        </div>
+    `;
+}
+
+// Load questions and answers on page load
+loadQuestionsAndAnswers();
