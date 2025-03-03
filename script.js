@@ -1,5 +1,5 @@
 let studentName = ''; // Assuming you get it from local storage
-let timeLeft = 600; // 10 minutes (in seconds)
+let timeLeft = 6000; // 10 minutes (in seconds)
 let questions = [];
 
 let score = 0;
