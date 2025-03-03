@@ -1,6 +1,6 @@
 let studentName = ''; // Assuming you get it from local storage
 let timeLeft = 600; // 10 minutes (in seconds)
-let questions = [];
+let questions =;
 let score = 0;
 let explanationEnabled = false; // Initially disabled
 
@@ -10,14 +10,16 @@ const fileLoc = urlParams.get('file');
 const examFile = urlParams.get('exam');
 let questionsFile;
 let answersFile;
+let explanationFile; // Add explanation file variable
 
 if (examFile) {
     questionsFile = fileLoc + `_question.txt`;
     answersFile = fileLoc + `_ans_key.txt`;
-
+    explanationFile = fileLoc + `_explanation.txt`; //added
 } else {
     questionsFile = fileLoc + `/question.txt`;
     answersFile = fileLoc + `/answer.txt`;
+    explanationFile = fileLoc + `/explanation.txt`; //added
 }
 
 let subjectName = urlParams.get('subject');
@@ -40,23 +42,24 @@ function shuffleArray(array) {
 function loadQuestionsAndAnswers() {
     Promise.all([
         fetch(questionsFile).then(response => response.text()),
-        fetch(answersFile).then(response => response.json())
-    ]).then(([questionsText, answersJson]) => {
+        fetch(answersFile).then(response => response.json()),
+        fetch(explanationFile).then(response => response.json()) // Load explanations
+    ]).then(([questionsText, answersJson, explanationJson]) => { // added explanationJson
         const lines = questionsText.split('\n').filter(line => line.trim() !== '');
-        let questionList = [];
+        let questionList =;
         let currentQuestion = {};
 
         lines.forEach(line => {
-            if (line.match(/^\d+\./)) { // New question
+            if (line.match(/^\d+\./)) {
                 if (currentQuestion.question) {
                     questionList.push(currentQuestion);
                 }
                 currentQuestion = {
-                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
-                    options: []
+                    question: line.replace(/^\d+\.\s*/, ""),
+                    options:
                 };
-            } else if (line.match(/^[A-D]\)/)) { // Options
-                const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
+            } else if (line.match(/^[A-D]\)/)) {
+                const optionText = line.replace(/^[A-D]\)\s*/, "");
                 currentQuestion.options.push(optionText);
             }
         });
@@ -65,45 +68,35 @@ function loadQuestionsAndAnswers() {
             questionList.push(currentQuestion);
         }
 
-        // Combine questions with their corresponding answers
         questions = questionList.map((q, index) => {
-            const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
-
-            // Ensure correctAnswers is an array
+            const correctAnswers = answersJson[index + 1];
             const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
-
-            // Create options with their original indices
             let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
 
-            // Shuffle options if shuffle=true
             if (shuffleQuestions) {
                 shuffleArray(optionsWithIndex);
             }
 
-            // Extract shuffled options
             const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-
-            // Map correct answers to their new indices
             const correctIndices = correctAnswerArray.map(correctAnswer => {
-                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0); // Convert A, B, C, D to indices
-                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex); // Get new index
+                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
+                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex);
             });
 
             const questionObject = {
                 question: q.question,
                 options: shuffledOptions,
-                correctAnswerIndices: correctIndices // Store the updated correct indices
+                correctAnswerIndices: correctIndices
             };
 
-            //add explanation if it exists in the json
-            if(answersJson[index+1].explanation){
-                questionObject.explanation = answersJson[index+1].explanation;
+            // Add explanation if it exists
+            if (explanationJson && explanationJson[index + 1]) {
+                questionObject.explanation = explanationJson[index + 1];
             }
 
             return questionObject;
         });
 
-        // Shuffle questions if shuffle=true
         if (shuffleQuestions) {
             shuffleArray(questions);
         }
@@ -117,7 +110,7 @@ function loadQuestionsAndAnswers() {
 function updateTimer() {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
-    document.getElementById('timer').textContent = `Time Left: <span class="math-inline">\{minutes\}\:</span>{seconds < 10 ? '0' : ''}${seconds}`;
+    document.getElementById('timer').textContent = `Time Left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     if (timeLeft <= 0) {
         clearInterval(timerInterval);
         endExam();
@@ -157,11 +150,21 @@ function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
         selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
         correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
 
-        if (explanationEnabled) {
+        if (explanationEnabled && questions[questionIndex].explanation) { // Check if explanation exists
             const explanationDiv = document.createElement('div');
             explanationDiv.classList.add('explanation');
-            explanationDiv.textContent = questions[questionIndex].explanation || "No explanation available.";
-            selectedOptionLabel.parentElement.appendChild(explanationDiv);
+            explanationDiv.textContent = questions[questionIndex].explanation;
+
+            // Add explanation under correct options
+            const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
+            const correctOptionRadios = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
+                .filter((_, index) => correctOptionIndices.includes(index));
+
+            correctOptionRadios.forEach(radio => {
+                const optionLabel = radio.parentElement;
+                optionLabel.parentElement.appendChild(explanationDiv); // Add to the <li> element
+            });
+
             explanationDiv.style.display = 'block';
         }
     }
