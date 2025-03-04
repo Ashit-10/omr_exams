@@ -1,5 +1,5 @@
 {
-"1": "Explanation: The Sun is a mixture of many gases. Hydrogen (about 70%) and helium (about 28%). Carbon, nitrogen and oxygen make up 1.5% and the other 0.5% is made up of small amounts of many other elements like neon, iron, silicon, magnesium and sulfur.",
+"1": "<b>Explanation:</b><i> The Sun is a mixture of many gases. Hydrogen (about 70%) and helium (about 28%). Carbon, nitrogen and oxygen make up 1.5% and the other 0.5% is made up of small amounts of many other elements like neon, iron, silicon, magnesium and sulfur.</i>",
 "2": "Explanation: Orion is the brightest and most beautiful of the winter constellations. Some of its stars, including Betelgeuse and Rigel, are among the brightest stars.",
 "3": "Explanation: The Indian Institute of Astrophysics, with its headquarters in Bangalore, is a National Research Institute of India. IIA conducts research primarily in the areas of astronomy, astrophysics and related subjects. It is widely recognised as a leading research center for astrophysics in India.",
 "4": "Explanation: A total lunar eclipse is sometimes called a Blood Moon, because of the reddish tinge the Full Moon takes on when fully shadowed by the Earth.",
