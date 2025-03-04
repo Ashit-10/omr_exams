@@ -1,21 +1,10 @@
 {
-    "1": "<b>Explanation:</b><ul>
-            <li>The <b>Sun</b> is a mixture of many gases.</li>
-            <li><b>Hydrogen</b> (about 70%) and helium (about 28%).</li>
-            <li>Carbon, nitrogen, and oxygen make up 1.5%, while other elements like neon, iron, and silicon make up 0.5%.</li>
-          </ul>",
+    "1": "<b>Explanation:</b><ul><br><li>The <b>Sun</b> is a mixture of many gases.</li><br><li><b>Hydrogen</b> (about 70%) and helium (about 28%).</li><br><li>Carbon, nitrogen, and oxygen make up 1.5%, while other elements like neon, iron, and silicon make up 0.5%.</li> </ul>",
           
-    "2": "<b>Explanation:</b><ul>
-            <li><b>Orion</b> is the brightest and most beautiful winter constellation.</li>
-            <li>Its stars, including <b>Betelgeuse</b> and <b>Rigel</b>, are among the brightest stars.</li>
-          </ul>",
+"2": "<b>Explanation:</b><ul><br><li><b>Orion</b> is the brightest and most beautiful winter constellation.</li><br> <li>Its stars, including <b>Betelgeuse</b> and <b>Rigel</b>, are among the brightest stars.</li</ul>",
 
-    "3": "<b>Explanation:</b><ul>
-            <li>The <b>Indian Institute of Astrophysics (IIA)</b> is a National Research Institute headquartered in Bangalore.</li>
-            <li>It specializes in <b>astronomy, astrophysics</b>, and related subjects.</li>
-            <li>IIA is widely recognized as a leading research center for astrophysics in India.</li>
-          </ul>",
-    "4": "- Explanation: A total lunar eclipse is sometimes called a Blood Moon, because of the reddish tinge the Full Moon takes on when fully shadowed by the **Earth**.",
+   "3": "<b>Explanation:</b><ul><br><li>The <b>Indian Institute of Astrophysics (IIA)</b> is a National Research Institute headquartered in Bangalore.</li> <br><li>It specializes in <b>astronomy, astrophysics</b>, and related subjects.</li> <br><li>IIA is widely recognized as a leading research center for astrophysics in India.</li> </ul>",
+"4": "- Explanation: A total lunar eclipse is sometimes called a Blood Moon, because of the reddish tinge the Full Moon takes on when fully shadowed by the **Earth**.",
     "5": "- Explanation: Hydra is the largest of the 88 modern constellations, measuring 1302.\n- 844 square degrees, and it was included by Ptolemy in his list of 48 constellations.\n- It is one of the longest constellations, stretching more than 100 degrees across the sky.",
     "6": "- Explanation: The **Sun**'s diameter is **about** 109 times the **Earth**'s diameter.\n- The **Sun**'s mass is **about** 330,000 times the **Earth**'s mass, and the gravity at the **Sun**'s surface is 28 times the gravity at the **Earth**'s surface.",
     "7": "- Explanation: Neptune is the eighth and farthest known Solar planet from the **Sun**.\n- It is the fourth-largest planet by diameter, the third-most massive planet, and the densest giant planet.\n- It is 17 times the mass of **Earth**, and slightly more massive than its near-twin Uranus.",
