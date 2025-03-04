@@ -171,7 +171,7 @@
 "166": "Explanation: Spodosol is a type of soil that is characterized by its high organic matter content and low fertility and low water content. They are found in cool, humid climates. Spodosols are acidic and infertile soils.",
 "167": "Explanation: Mollisol is a type of soil that is characterized by its high calcium carbonate content and high fertility and low water content. They are found in grasslands and other areas with moderate rainfall. Mollisols are fertile soils that are often used for agriculture.",
 "168": "Explanation: Aridisol is a type of soil that is characterized by its high sodium content and low fertility and low water content. They are found in arid and semi-arid climates. Aridisols are not very fertile soils.",
-"169": "Explanation: Aridisol is a type of soil that is characterized by its high salt content and low fertility and low water content. They are found in arid and semi-arid climates. Aridisols are not very fertile soils."
+"169": "Explanation: Aridisol is a type of soil that is characterized by its high salt content and low fertility and low water content. They are found in arid and semi-arid climates. Aridisols are not very fertile soils.",
 
 "170": "Explanation: Histosol is a type of soil that is characterized by its high water content and low fertility and low water content. They are found in wetlands and other areas with poor drainage. Histosols are acidic and infertile soils.",
 "171": "Explanation: Mollisol is a type of soil that is characterized by its low water content and high fertility and low water content. They are found in grasslands and other areas with moderate rainfall. Mollisols are fertile soils that are often used for agriculture.",
@@ -203,7 +203,7 @@
 "197": "Explanation: Mollisol is a type of soil that is characterized by its low water content and high fertility and low water content. They are found in grasslands and other areas with moderate rainfall. Mollisols are fertile soils that are often used for agriculture.",
 "198": "Explanation: Inceptisol is a type of soil that is characterized by its young age and high fertility and low water content. They are found in a variety of climates and landscapes. Inceptisols are fertile soils that are often used for agriculture.",
 "199": "Explanation: Inceptisol is a type of soil that is characterized by its very young age and high fertility and low water content. They are found in a variety of climates and landscapes. Inceptisols are fertile soils that are often used for agriculture.",
-"200": "Explanation: Gelisol is a type of soil that is characterized by its permafrost and low fertility and low water content. They are found in cold climates. Gelisols are not very fertile soils."
+"200": "Explanation: Gelisol is a type of soil that is characterized by its permafrost and low fertility and low water content. They are found in cold climates. Gelisols are not very fertile soils.",
 
 "201": "Explanation: Oxisol is a type of soil that is characterized by its high iron and aluminum oxide content and low fertility and low water content. They are found in tropical rainforests. Oxisols are heavily weathered and leached, which makes them acidic and infertile.",
 "202": "Explanation: Vertisol is a type of soil that is characterized by its high clay content and high fertility and high water content. They are found in a variety of climates. Vertisols are often used for agriculture.",
@@ -234,7 +234,7 @@
 "227": "Explanation: Mollisol is a type of soil that is characterized by its high calcium carbonate content and high fertility and low water content. They are found in grasslands and other areas with moderate rainfall. Mollisols are fertile soils that are often used for agriculture.",
 "228": "Explanation: Aridisol is a type of soil that is characterized by its high sodium content and low fertility and low water content. They are found in arid and semi-arid climates. Aridisols are not very fertile soils.",
 "229": "Explanation: Aridisol is a type of soil that is characterized by its high salt content and low fertility and low water content. They are found in arid and semi-arid climates. Aridisols are not very fertile soils.",
-"230": "Explanation: Histosol is a type of soil that is characterized by its high water content and low fertility and low water content. They are found in wetlands and other areas with poor drainage. Histosols are acidic and infertile soils."
+"230": "Explanation: Histosol is a type of soil that is characterized by its high water content and low fertility and low water content. They are found in wetlands and other areas with poor drainage. Histosols are acidic and infertile soils.",
 
 "231": "Explanation: Mollisol is a type of soil that is characterized by its low water content and high fertility and low water content. They are found in grasslands and other areas with moderate rainfall. Mollisols are fertile soils that are often used for agriculture.",
 "232": "Explanation: Inceptisol is a type of soil that is characterized by its young age and high fertility and low water content. They are found in a variety of climates and landscapes. Inceptisols are fertile soils that are often used for agriculture.",
