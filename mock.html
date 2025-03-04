@@ -44,10 +44,17 @@
 
         .status-bar {
             display: flex;
+            flex-wrap: wrap; /* Allow items to wrap on smaller screens */
             justify-content: space-between;
             margin-bottom: 20px;
             font-weight: bold;
             align-items: center;
+        }
+
+        .status-bar > div {
+            flex: 1 1 auto; /* Allow items to grow and shrink */
+            text-align: center; /* Center text in each item */
+            margin: 5px; /* Add some spacing between items */
         }
 
         .question-box {
@@ -183,7 +190,7 @@
             position: fixed;
             top: 30%;
             right: 20px;
-            width: 120px;
+            width: 60px;
             height: 40px;
             border-radius: 8px;
             background-color: #28a745;
@@ -211,11 +218,8 @@
         <h1>Online Test System</h1>
         <div id="headname" class="exam-name">Mock Test</div>
         <div class="status-bar">
-            
-            
             <div id="score-banner">Score: 0 / 0</div>
             <div id="questions-left">Questions Left: 0</div>
-           
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="explanationToggle">
                 <label class="form-check-label" for="explanationToggle">Explanations</label>
@@ -225,7 +229,7 @@
         </div>
         <div id="notification"></div>
         <div id="floating-circle"></div>
-        <div id="end-exam-button" onclick="endExam()">End Exam</div>
+        <div id="end-exam-button" onclick="endExam()">End</div>
     </div>
 
     <script src="script.js"></script>
