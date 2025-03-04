@@ -139,7 +139,8 @@ function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
             const explanationDiv = document.createElement('div');
             explanationDiv.classList.add('explanation');
          //   explanationDiv.innerHTML = questions[questionIndex].explanation;
-explanationDiv.innerHTML = decodeURIComponent(questions[questionIndex].explanation);
+explanationDiv.innerHTML = questions[questionIndex].explanation.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+
 
 
             // Add explanation under correct options
