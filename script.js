@@ -138,7 +138,8 @@ function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
         if (explanationEnabled && questions[questionIndex].explanation) { // Check if explanation exists
             const explanationDiv = document.createElement('div');
             explanationDiv.classList.add('explanation');
-            explanationDiv.innerHTML = questions[questionIndex].explanation;
+         //   explanationDiv.innerHTML = questions[questionIndex].explanation;
+explanationDiv.innerHTML = decodeURIComponent(questions[questionIndex].explanation);
 
 
             // Add explanation under correct options
