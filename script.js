@@ -1,5 +1,4 @@
 let studentName = ''; // Assuming you get it from local storage
-let timeLeft = 6000; // 10 minutes (in seconds)
 let questions = [];
 
 let score = 0;
@@ -107,21 +106,6 @@ function loadQuestionsAndAnswers() {
         console.error("Error loading questions or answers:", error);
     });
 }
-
-function updateTimer() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    document.getElementById('timer').textContent = `Time Left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        endExam();
-    } else {
-        timeLeft--;
-    }
-}
-
-const timerInterval = setInterval(updateTimer, 1000);
-updateTimer();
 
 function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
     const floatingCircle = document.getElementById('floating-circle');
