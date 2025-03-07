@@ -84,8 +84,8 @@ D) .pptx
 
 15. How can you create a bulleted list in Word?
 A) Press Ctrl + B
-B) Press Ctrl + L
-C) Press Ctrl + U
+B) Press Ctrl + Shift + L
+C) Press Ctrl + Shift + U
 D) Press Ctrl + Shift + B
 
 16. In Word, what is the purpose of the "Thesaurus" feature?
