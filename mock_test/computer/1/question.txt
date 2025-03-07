@@ -1,0 +1,359 @@
+1. What does "Ctrl + S" do in Microsoft Word?
+A) Save
+B) Select All
+C) Copy
+D) Paste
+
+2. Which ribbon tab contains options related to font formatting?
+A) Home
+B) Insert
+C) Page Layout
+D) References
+
+3. How can you change the line spacing in a Word document?
+A) Ctrl + L
+B) Ctrl + 1
+C) Ctrl + 5
+D) Ctrl + P
+
+4. Which file format is used for documents created in Word 2013 and later versions?
+A) .doc
+B) .txt
+C) .docx
+D) .rtf
+
+5. What is the purpose of the "Find and Replace" feature in Word?
+A) To search for specific text and replace it with another
+B) To find spelling errors in a document
+C) To locate the word count of a document
+D) To search for formatting options
+
+6. Which view allows you to see how your document will appear when printed?
+A) Normal
+B) Print Layout
+C) Web Layout
+D) Outline
+
+7. How can you insert a page break in a Word document?
+A) Ctrl + Enter
+B) Alt + Enter
+C) Shift + Enter
+D) Ctrl + Shift + Enter
+
+8. What is the function of the "Bullets" button in the Home tab?
+A) Change font color
+B) Insert bullet points
+C) Increase indent
+D) Apply bold formatting
+
+9. How do you remove formatting from selected text in Word?
+A) Ctrl + Z
+B) Ctrl + X
+C) Ctrl + Spacebar
+D) Ctrl + Shift + N
+
+10. Which of the following is not a valid file extension for a Word document?
+A) .doc
+B) .txt
+C) .pdf
+D) .xlsx
+
+11. What is the purpose of the "Mail Merge" feature in Word?
+A) Create envelopes
+B) Combine data from a data source with a document
+C) Send emails directly from Word
+D) Create hyperlinks
+
+12. How can you change the page orientation of a document in Word?
+A) Page Layout tab > Orientation
+B) Home tab > Orientation
+C) Insert tab > Page Orientation
+D) Format tab > Page Setup
+
+13. Which of the following is a non-printing character in Word?
+A) Paragraph mark
+B) Tab character
+C) Space character
+D) All of the above
+
+14. What is the default file extension for a Word template?
+A) .dotx
+B) .docx
+C) .txt
+D) .pptx
+
+15. How can you create a bulleted list in Word?
+A) Press Ctrl + B
+B) Press Ctrl + L
+C) Press Ctrl + U
+D) Press Ctrl + Shift + B
+
+16. In Word, what is the purpose of the "Thesaurus" feature?
+A) Spell checking
+B) Synonym lookup
+C) Grammar checking
+D) Word count
+
+17. How can you add a page border to your document in Word?
+A) Page Layout tab > Page Borders
+B) Home tab > Page Borders
+C) Insert tab > Page Borders
+D) Format tab > Page Borders
+
+18. What is the purpose of the "Track Changes" feature in Word?
+A) Change font style
+B) Record and display changes made to a document
+C) Insert comments
+D) Create a table of contents
+
+19. How can you insert a hyperlink in Word?
+A) Ctrl + H
+B) Ctrl + K
+C) Ctrl + L
+D) Ctrl + M
+
+20. What is the maximum number of columns you can insert in a Word table?
+A) 20
+B) 50
+C) 63
+D) 100
+
+21. Which view allows you to see the structure of your document in an outline format?
+A) Outline
+B) Draft
+C) Web Layout
+D) Print Layout
+
+22. How can you change the language of the spell-check in Word?
+A) Home tab > Language
+B) Review tab > Language
+C) Insert tab > Language
+D) Format tab > Language
+
+23. What is the purpose of the "AutoCorrect" feature in Word?
+A) Automatically correct spelling and typing errors
+B) Auto-save the document
+C) Auto-format the document
+D) Auto-indent paragraphs
+
+24. How can you insert a comment in a Word document?
+A) Ctrl + C
+B) Ctrl + I
+C) Ctrl + Alt + C
+D) Ctrl + Shift + I
+
+25. Which option is used to create a drop cap in Word?
+A) Page Layout tab > Drop Cap
+B) Home tab > Drop Cap
+C) Insert tab > Drop Cap
+D) Format tab > Drop Cap
+
+26. How can you remove a page break in Word?
+A) Backspace key
+B) Delete key
+C) Ctrl + Enter
+D) Ctrl + Shift + Enter
+
+27. What is the purpose of the "Format Painter" in Word?
+A) Copy and paste text
+B) Copy and paste formatting
+C) Change font color
+D) Apply styles
+
+28. Which option is used to split a document window into two panes?
+A) View tab > Split
+B) Format tab > Split
+C) Window tab > Split
+D) Insert tab > Split
+
+29. How can you remove paragraph formatting in Word?
+A) Ctrl + Q
+B) Ctrl + R
+C) Ctrl + T
+D) Ctrl + Spacebar
+
+30. What is the purpose of the "Quick Parts" feature in Word?
+A) Quickly insert pre-defined parts of a document
+B) Create a table of contents
+C) Insert footnotes
+D) Apply styles to text
+
+31. How can you view multiple pages of a document simultaneously in Word?
+A) Zoom slider in the status bar
+B) View tab > Multiple Pages
+C) Home tab > Multiple Views
+D) Insert tab > Multiple Pages
+
+32. What is the purpose of the "Table of Contents" feature in Word?
+A) Automatically generates a list of figures
+B) Creates an index for the document
+C) Generates a list of headings and their page numbers
+D) Insert footnotes
+
+33. How can you change the case of selected text in Word?
+A) Format tab > Change Case
+B) Home tab > Change Case
+C) Insert tab > Change Case
+D) Review tab > Change Case
+
+34. What is the purpose of the "Watermark" feature in Word?
+A) Add a background image to the document
+B) Apply a transparent overlay to text
+C) Insert a logo in the header
+D) Add a shadow to the text
+
+35. How can you insert a manual page break in Word?
+A) Ctrl + Enter
+B) Ctrl + Shift + Enter
+C) Alt + Enter
+D) Alt + Shift + Enter
+
+36. What is the purpose of the "SmartArt" feature in Word?
+A) Create professional-looking documents
+B) Insert mathematical equations
+C) Create visual representations of information
+D) Apply special effects to text
+
+37. Which option is used to change the color of text in Word?
+A) Home tab > Font Color
+B) Insert tab > Text Color
+C) Format tab > Color
+D) Page Layout tab > Font Color
+
+38. How can you remove a hyperlink in Word?
+A) Right-click and select "Remove Hyperlink"
+B) Ctrl + Shift + H
+C) Format tab > Hyperlink > Remove
+D) Home tab > Hyperlink > Remove
+
+39. What is the purpose of the "Columns" feature in Word?
+A) Adjust line spacing
+B) Divide the document into multiple columns
+C) Insert mathematical columns
+D) Create a table of contents
+
+40. How can you customize the appearance of bullets in a bulleted list?
+A) Home tab > Bullets > Customize
+B) Format tab > Bullets > Customize
+C) Page Layout tab > Bullets > Customize
+D) Right-click on the bullet and select "Customize"
+
+41. What is the purpose of the "Styles" feature in Word?
+A) Change the font color
+B) Apply predefined formatting to text
+C) Insert shapes and images
+D) Create a table of contents
+
+42. How can you create a new section in a Word document?
+A) Page Layout tab > Breaks > Next Page
+B) Insert tab > Section Break
+C) Home tab > Breaks > New Section
+D) Format tab > Section
+
+43. What is the purpose of the "AutoText" feature in Word?
+A) Automatically correct spelling errors
+B) Insert frequently used text with a shortcut
+C) Auto-save the document
+D) Auto-indent paragraphs
+
+44. How can you add line numbers to a document in Word?
+A) Page Layout tab > Line Numbers
+B) Insert tab > Line Numbers
+C) Format tab > Line Numbers
+D) Home tab > Line Numbers
+
+45. Which of the following is a valid method to align text in a table cell?
+A) Home tab > Align > Left
+B) Format tab > Alignment > Center
+C) Table Tools tab > Layout > Right
+D) Ctrl + E
+
+46. What is the purpose of the "Document Inspector" in Word?
+A) Check for spelling errors
+B) Remove personal information and metadata from a document
+C) Create a backup of the document
+D) Track changes made to the document
+
+47. How can you insert a page number in the header or footer of a Word document?
+A) Insert tab > Page Number
+B) Home tab > Page Number
+C) Page Layout tab > Page Number
+D) Format tab > Page Number
+
+48. What is the purpose of the "Paragraph" dialog box in Word?
+A) Change the font size
+B) Adjust paragraph spacing and indentation
+C) Insert a new paragraph
+D) Create a bulleted list
+
+49. How can you split a table in Word?
+A) Format tab > Split Table
+B) Table Tools tab > Layout > Split Table
+C) Home tab > Split Table
+D) Insert tab > Split Table
+
+50. What does the "Shading" option in Word allow you to do?
+A) Change the font color
+B) Apply a background color to selected text or cells
+C) Add a shadow to the text
+D) Insert a shape
+
+51. How can you insert a page number in a specific format, such as Roman numerals or letters, in Word?
+A) Page Layout tab > Page Number > Format
+B) Insert tab > Page Number > Format
+C) Home tab > Page Number > Format
+D) Format tab > Page Number > Customize
+
+52. What is the purpose of the "Quick Access Toolbar" in Word?
+A) Access frequently used commands with a single click
+B) Change the document theme
+C) Insert a quick table
+D) Customize page margins
+
+53. Which feature in Word helps you compare two versions of a document to see the differences?
+A) Track Changes
+B) Compare Documents
+C) Document Inspector
+D) Version History
+
+54. What is the purpose of the "Outline" view in Word?
+A) Edit the document in a distraction-free mode
+B) View the document as it will appear when printed
+C) Display the document structure in an outline format
+D) Insert an outline around text
+
+55. How can you add a footnote in Word?
+A) Ctrl + F
+B) Insert tab > Footnote
+C) Reference> Footnote
+D) Home tab > Footnote
+
+56. What is the purpose of the "Smart Lookup" feature in Word?
+A) Check for spelling errors
+B) Insert comments in the document
+C) Look up information on the web
+D) Create a table of contents
+
+57. How can you apply a border to a paragraph in Word?
+A) Format tab > Paragraph > Border
+B) Home tab > Paragraph > Border
+C) Insert tab > Paragraph > Border
+D) Page Layout tab > Paragraph > Border
+
+58. What is the purpose of the "Building Blocks Organizer" in Word?
+A) Create and manage templates
+B) Insert predefined building blocks into a document
+C) Organize document properties
+D) Insert hyperlinks
+
+59. How can you create a hyperlink to another document in Word?
+A) Ctrl + K
+B) Insert tab > Hyperlink
+C) Home tab > Hyperlink
+D) Format tab > Hyperlink
+
+60. What is the purpose of the "Split" option in Word?
+A) Divide the document into multiple sections
+B) Split the screen to view different parts of the document
+C) Create a split table
+D) Add a split effect to text
