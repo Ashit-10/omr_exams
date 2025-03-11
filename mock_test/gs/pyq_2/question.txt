@@ -355,3 +355,104 @@ A)Task scheduler
 B)Defender  
 C)BitLocker  
 D)Registry editor  
+
+61. The memory dedicated for computer graphics is:
+A) CPU
+B) ROM
+C) GPU
+D) FPU
+62. In Microsoft Excel, __________ key combination can be used to display the formulas entered in a cell.
+A) Ctrl key + ) symbol
+B) Ctrl key + ] symbol
+C) Ctrl key + ` symbol
+D) Ctrl key + * symbol
+63. In PowerPoint, which of the following views will display each slide at the top of a page where you can add speaker notes?
+A) Notes page
+B) Reading view
+C) 3D view
+D) Speaker page
+64. The application used for viewing web pages is known as:
+A) PowerPoint
+B) Email
+C) Browser
+D) MS Word
+65. The blinking symbol on the computer screen when you open any text editor is called:
+A) Logo
+B) Palm
+C) Cursor
+D) Mouse
+66. ________ is a computer that is integrated into devices and is dedicated to the functions of a specific device.
+A) Robotic computer
+B) Server
+C) Mainframe
+D) Embedded computer
+67. The interface between the motherboard and an external device is called:
+A) Register
+B) Switch
+C) Port
+D) Bus
+68. How many binary digits are needed to represent all 16 hexadecimal symbols?
+A) Four
+B) Sixteen
+C) Two
+D) Eight
+69. _________ allows the Internet User to move a file from one computer to another on the Internet.
+A) DVD
+B) Floppy disk
+C) CD
+D) FTP
+70. Which of the following uses high-frequency radio waves instead of cables for connecting the devices in LAN?
+A) Bluetooth LAN
+B) Wireless LAN
+C) Wired LAN
+D) FiberGlass LAN
+71. The Excel function to remove the decimal or fractional part of the number is:
+A) AVG
+B) REPLACE
+C) TRUNC
+D) ABS
+72. _______ is used in news articles and documents to make the first character of a paragraph larger, taking up several lines of text.
+A) Drop cap
+B) Word art
+C) Clipart
+D) All caps
+73. What is the shortcut key to delete one character to the left?
+A) Right arrow
+B) Left arrow
+C) Backspace
+D) Delete
+74. Which generation of computers introduced Parallel processing and Superconductors?
+A) Fourth
+B) Fifth
+C) Third
+D) Future
+75. Which among the following parts of the computer is referred to as Monitor?
+A) VDU
+B) ALU
+C) USB
+D) CPU
+76. What is PROM?
+A) Processor ROM
+B) Peripheral ROM
+C) Programmable ROM
+D) Productive ROM
+77. The metal pen-like tool with a rubber tip used to interact with the touchscreen device is called:
+A) Mouse
+B) Laser pen
+C) Keyboard
+D) Stylus pen
+78. What is the shortcut key in MS Word to apply 'Change case'?
+A) Shift + L
+B) Shift + F3
+C) Shift + F2
+D) Shift + S
+79. The _________ feature of Microsoft Word helps you to create professional formats.
+A) Mail merge
+B) Template
+C) Gallery
+D) Formatting tools
+80. ________ is a full-volume encryption feature included with Microsoft Windows versions.
+A) Task scheduler
+B) Defender
+C) BitLocker
+D) Registry editor
