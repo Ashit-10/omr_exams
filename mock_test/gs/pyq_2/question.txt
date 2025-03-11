@@ -456,3 +456,104 @@ A) Task scheduler
 B) Defender
 C) BitLocker
 D) Registry editor
+81. _________ feature in Word allows you to create a variety of documents that can be personalized for each person receiving it.
+A) Sync mail
+B) File -> Share with people
+C) Send as Email option
+D) Mail merge
+82. In Excel, combining two or more cells into one cell is called _________.
+A) Justify
+B) Merge
+C) Wrap Text
+D) Concatenate
+83. The printers that create images by spraying ink through tiny nozzles are called:
+A) Inkjet Printers
+B) Band Printers
+C) Laser Printers
+D) Impact Printers
+84. What is the shortcut key to close PowerPoint?
+A) Shift + Q
+B) Shift + D
+C) Ctrl + Q
+D) Ctrl + D
+85. __________ is a proprietary journaling file system developed by Microsoft.
+A) ACLS
+B) NTFS
+C) UTF
+D) HFS
+86. Each hexadecimal symbol is an encoding for how many digit binary numbers?
+A) 16-digit binary number
+B) 8-digit binary number
+C) 2-digit binary number
+D) 4-digit binary number
+87. In Windows 10 Operating system, __________ key combination opens the start button's context menu.
+A) Windows + O
+B) Windows + M
+C) Windows + X
+D) Windows + C
+88. A collection of related web pages is known as ________.
+A) Webinar
+B) Web browser
+C) Website
+D) HTML
+89. What is the full form of 'MAN' in networking?
+A) Main Area Network
+B) Multimedia Area Network
+C) Mini Area Network
+D) Metropolitan Area Network
+90. High-level languages were introduced in which generation of computers?
+A) Fourth
+B) First
+C) Third
+D) Second
+91. In Microsoft Word, a collection of frequently used commands such as save, undo, and print preview is located on the _________.
+A) Status bar
+B) Context Menu
+C) Task bar
+D) Quick access toolbar
+92. Which chart type in Microsoft Excel is useful when you want to find optimum combinations between two sets of data?
+A) Stock Chart
+B) Line chart
+C) Bar chart
+D) Surface chart
+93. How many bits make one Nibble?
+A) 1024 bit
+B) 4 bit
+C) 0 or 1 bit
+D) 8 bit
+94. Which among the following components is referred to as Main memory in a computer?
+A) HDD
+B) CD
+C) USB
+D) RAM
+95. What is the shortcut key to center-align text in MS Word?
+A) Ctrl + P
+B) Ctrl + R
+C) Ctrl + C
+D) Ctrl + E
+96. Identify the domain name from http://www.ourcountry.in/home.aboutus.html
+A) ourcountry.in
+B) http
+C) aboutus.html
+D) home
+97. ________ wizard helps the presentation to run on another computer.
+A) Send To
+B) Pack and Go
+C) Page Setup
+D) Properties
+98. The component on a printer that enables it to write, spray, or put ink on the paper is called ________.
+A) Printer head
+B) Printer Punch
+C) Printer orientation
+D) Printer resolution
+99. _________ is responsible for resolving friendly domain names to an IP address.
+A) HTTP
+B) DNS
+C) FTP
+D) IOS
+100. ________ is the center of your internet network that serves as the point of contact for all your connected devices.
+A) Router
+B) Cable
+C) Node
+D) Modem
+
