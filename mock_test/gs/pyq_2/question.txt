@@ -531,7 +531,7 @@ A) Ctrl + P
 B) Ctrl + R
 C) Ctrl + C
 D) Ctrl + E
-96. Identify the domain name from http://www.ourcountry.in/home.aboutus.html
+96. Identify the domain name from http://www.ourcountry.in/<br>home.aboutus.html
 A) ourcountry.in
 B) http
 C) aboutus.html
