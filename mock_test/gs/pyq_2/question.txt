@@ -657,3 +657,445 @@ A) Ultimate Power Supply
 B) Uninterruptible Power Supply
 C) Ultimate Power Storage
 D) Uniform Power Storage
+
+121. Which of the following were used in second-generation computers?
+A) Transistors
+B) Integrated Circuits
+C) Microprocessors
+D) Vacuum Tubes
+
+122. In a standard keyboard, where are the function keys arranged?
+A) Center of the keyboard
+B) Left side of the Keyboard
+C) Bottom row of the keyboard
+D) Top row of the keyboard
+
+123. What is the shortcut key to go to the next slide in MS PowerPoint?
+A) Page up
+B) Page down
+C) Ctrl + Down Arrow
+D) Ctrl + Up Arrow
+
+124. In Microsoft Word, which option from the Insert tab is used to add objects such as a file, image, audio, and video?
+A) Styles
+B) Object
+C) Themes
+D) Icons
+
+125. What is the main component of a Linux operating system and the core interface between a computer’s hardware and its processes?
+A) Linux Kernel
+B) Linux Config
+C) Linux VM
+D) Linux BIOS
+
+126. In Microsoft Word, which option is used to provide additional information about a word within a document?
+A) Footnotes and Endnotes
+B) Tables and Objects
+C) Word Art and Object
+D) Header and Footer
+
+127. What is the full form of HTTP?
+A) Hyper Text Transfer Protocol
+B) Highlighted Text Transfer Protocol
+C) Hiding Text Transfer Protocol
+D) Hyper Tool Transfer Protocol
+
+128. What does ".com" refer to with respect to websites?
+A) Communication
+B) Community
+C) Commercial
+D) Common
+
+129. What are the unique symbols of hexadecimal numbers?
+A) (0 – 9, a–f)
+B) (0 – 9, A–F)
+C) (0 -15)
+D) (a-p)
+
+130. Which among the following output ports gives you 4K resolution?
+A) RCA
+B) S-VIDEO
+C) HDMI 2.0
+D) VGA
+
+131. Which feature of Microsoft Excel can be used for grouping, filtering, and summarizing large volumes of data?
+A) Illustrations
+B) Forecast
+C) Pivot Tables
+D) Tours
+
+132. Which transmission mode permits data transmission simultaneously in both directions?
+A) Complex
+B) Full Duplex
+C) Half Duplex
+D) Simplex
+
+133. Websites such as Flipkart and Amazon are classified as what type of sites?
+A) News Media
+B) E-commerce
+C) Social Media
+D) Education
+
+134. Computer mouse is a/an ________ device.
+A) Plotting Device
+B) Processing Device
+C) Input Device
+D) Output Device
+
+135. What is the shortcut to insert a line break in MS Word?
+A) Shift + Enter
+B) Ctrl + Enter
+C) Ctrl + Shift + Enter
+D) Ctrl + Hyphen
+
+136. You can reduce the size of a file to save disk space by ________.
+A) Indexing the files
+B) Renaming the files
+C) Hiding the files
+D) Compressing the files
+
+137. Every cell in an Excel worksheet contains an address, which is defined by ________.
+A) A column number followed by a row letter
+B) A column letter followed by a row number
+C) A row number
+D) A row number followed by a special character
+
+138. What is the process of creating one or more regions on secondary storage so that each region can be managed separately?
+A) Disk Fragmentation
+B) Disk Allocation
+C) Disk Partitioning
+D) Disk Restoration
+
+139. What is the file extension of a Microsoft PowerPoint presentation?
+A) .ppt
+B) .mdb
+C) .doc
+D) .xls
+
+140. To shut down Windows, you need to select which option from the Start menu before selecting Shut down?
+A) Account
+B) Settings
+C) Control Panel
+D) Power
+
+141. ________ is used as reference points for cross-references, index, and macros.
+A) Caption
+B) Hyperlink
+C) Bookmark
+D) Citation
+
+142. The software that detects, prevents, and takes action against computer viruses is called _________.
+A) Word Processor
+B) Antivirus
+C) Spreadsheet
+D) Hardware
+
+143. The process of starting a computer by initiating through hardware such as a button press or by a software command is called ________.
+A) Resetting
+B) Operating
+C) Restoring
+D) Booting
+
+144. The secondary memory that comes fixed internally in your computer is:
+A) Floppy Disk
+B) Compact Disk
+C) USB Disk
+D) Hard Disk
+
+145. Which generation of computers included the IBM series and APPLE computers?
+A) Second
+B) Third
+C) First
+D) Fourth
+
+146. The _________ option under the Insert menu in Microsoft Word is used to create basic Venn diagrams and organization charts.
+A) Chart
+B) Screenshot
+C) Smart Art
+D) Store
+
+147. What is the shortcut key to lock your desktop?
+A) Windows key + L
+B) Windows key + K
+C) Windows key + N
+D) Windows key + M
+
+148. ________ is used to present the information to the communicating application entities.
+A) Presentation Layer
+B) Transport Layer
+C) Application Layer
+D) Session Layer
+
+149. ________ feature in Microsoft Excel allows you to print column headings repeatedly on each page.
+A) Print Orientation
+B) Print Titles
+C) Set Print Area
+D) Set Margins
+
+150. Which file format should be chosen to save a PowerPoint file so that when a user opens the file, it directly starts a slide show?
+A) OpenDocument Presentation
+B) PowerPoint Slideshow
+C) PowerPoint Presentation
+D) PowerPoint Show
+
+151. To add a symbol or number slightly below the normal line of text in Microsoft Word, you need to select the _______ option.
+A) Typescript
+B) Superscript
+C) Subscript
+D) Strikethrough
+
+152. The device that connects with your telephone line and translates data from the internet to your computer is called _______.
+A) MMC
+B) Modem
+C) PS2
+D) SSD
+
+153. How will you term a program written in a high-level language?
+A) Source Code
+B) Flowchart
+C) Document
+D) Algorithm
+
+154. What is the shortcut key to duplicate a slide in MS PowerPoint?
+A) Ctrl + C
+B) Ctrl + D
+C) Ctrl + B
+D) Ctrl + A
+
+155. The device that you use to swipe your debit and credit card during shopping is called _________.
+A) DOC
+B) PDF
+C) PSD
+D) POS
+
+156. ________ actually separates the logical memory as perceived by users from physical memory on a computer.
+A) Primary Memory
+B) Kernel Memory
+C) Memory Cache
+D) Virtual Memory
+
+157. What is RAM?
+A) Random Access Memory
+B) Read Access Memory
+C) Random Aided Memory
+D) Read Analog Memory
+
+158. How will you term 1024 GB?
+A) 1 Kilo Byte
+B) 1 Tera Byte
+C) 1 Peta Byte
+D) 1 Mega Byte
+
+159. ________ feature of emails lets you add your name and contact information automatically at the bottom of every email.
+A) Signature
+B) Logo
+C) Salutation
+D) Watermark
+
+160. _______ control on the Windows operating system allows an option or choice to be enabled or not.
+A) Textbox
+B) Checkbox
+C) Choicebox
+D) Contextbox
+
+161. In Windows operating system, the default folder available to keep personal files/folders is ____________.
+A) My Documents
+B) My Folder
+C) My Text
+D) My Files
+162. _________ is RAM that is stored on a Hard disk by extending a portion of its available disk capacity.
+A) Volatile Memory
+B) Virtual Memory
+C) USB Memory
+D) Non-Volatile Memory
+163. What is the shortcut key for warm booting?
+A) Ctrl + Upward Arrow + Del
+B) Ctrl + F2 + Del
+C) Ctrl + Alt + Del
+D) Ctrl + Shift + Del
+164. A _______ is a subdivision of a track on a magnetic disk or optical disc.
+A) Layer
+B) Vector
+C) Sector
+D) Cluster
+165. What is POST in computers?
+A) Power off Self Text
+B) Power off Slow Text
+C) Power on Self Test
+D) Power on Slow Text
+166. The input device that resembles an upside-down mouse is:
+A) Trackball
+B) Stylus
+C) Keyboard
+D) Light Pen
+167. How many bytes make 1 KiloByte?
+A) 1000
+B) 1034
+C) 1024
+D) 100
+168. Which generation do voice recognition applications belong to?
+A) Fifth
+B) Fourth
+C) Third
+D) Future
+169. You can add sequential numbers to a row of data in Excel by using ________.
+A) Auto Sum
+B) Auto Format
+C) Filter
+D) Fill Handle
+170. ________ option in Microsoft Word will display the document on-screen, to get an understanding of how the hard copy would look like when printed.
+A) Lookup
+B) Redo
+C) Print Preview
+D) Freeze Pane
+171. What is the shortcut key to cut any text?
+A) Ctrl + X
+B) Ctrl + C
+C) Ctrl + T
+D) Ctrl + V
+172. ____________ displays thumbnail views of your slides.
+A) Slide Sorter View
+B) Slide Show View
+C) Notes Page View
+D) Normal View
+173. Websites such as Facebook and Twitter are classified as ________ sites.
+A) E-commerce
+B) News Media
+C) Social Media
+D) Education
+174. The ________ sub-menu in MS Word is used to send documents to colleagues for them to work on, and they can track their changes.
+A) Send as Attachment
+B) Track Changes
+C) Share
+D) Send
+175. ________ is a component of software or application through which the user can feed input and receive a response, which consists of form and button controls.
+A) Screensaver
+B) Platform
+C) Language Translator
+D) User Interface
+176. We can refresh the connection outside the web book in Excel using ________.
+A) Data Link
+B) Data Connections
+C) Reapply
+D) Force Update
+177. A unique number that is assigned to any device connected to the Internet is called:
+A) MAC Address
+B) IP Address
+C) Email Address
+D) Website Address
+178. Crimes committed using computers and the internet are called:
+A) Cyber Crime
+B) Crime against Property
+C) Hate Crimes
+D) Crime against Persons
+179. The basic idea of solving a complex problem by breaking it down into smaller sub-problems is termed as:
+A) Break Down
+B) Sub Program
+C) Decomposition
+D) Split Up
+180. Which of the following is an input device on a computer?
+A) Speakers
+B) Mouse
+C) Monitor
+D) Printer
+
+181. What is the full form of DSL?
+A) Digital Sub Connector Line
+B) Digital Subscriber Line
+C) Digital Sub Line
+D) Digital Superior Line
+182. __________ is a specific class of computer software that provides low-level control for a device's specific hardware.
+A) CoreMemory
+B) Controller
+C) Uniqueware
+D) Firmware
+183. To prevent Excel from changing the cell references in a formula, you need to place __________ sign before and after the column letter.
+A) +
+B) &
+C) *
+D) $
+184. ______ in Microsoft PowerPoint allows the user to see all the slides in the presentation in a single view.
+A) Slide Sorter View
+B) Image View
+C) Notes Page View
+D) Normal View
+185. What is the shortcut key to insert a new slide in MS PowerPoint?
+A) Ctrl + K
+B) Ctrl + N
+C) Ctrl + L
+D) Ctrl + M
+186. Special memory units, which are part of the CPU (not main memory) and hold information temporarily, are called _________.
+A) Control Unit
+B) Registers
+C) Bus
+D) ALU
+187. Which among the following is a valid internet website URL?
+A) mycomputer@gmail
+B) c:\gmail
+C) www.gmail.com
+D) www.gmail
+188. Which of the following functions of an Operating System includes a program known as I/O controller?
+A) Device Management
+B) File Management
+C) Memory Management
+D) Processor Management
+189. What does a diamond flowchart shape indicate?
+A) Decision
+B) Terminator
+C) Process
+D) Input / Output
+190. The device that connects the computer to the internet using a wired phone connection is ________.
+A) Modem
+B) Wi-Fi
+C) Multiplexer
+D) Hub
+191. What does .gov refer to with respect to a website?
+A) Grocery
+B) General
+C) Government
+D) Geographical
+192. What is the shortcut to justify a paragraph in Word?
+A) Ctrl + L
+B) Ctrl + E
+C) Ctrl + R
+D) Ctrl + J
+193. _________ device can scan items and retrieve instant information as the customers shop for faster checkout.
+A) Retina Scanner
+B) Photo Scanner
+C) Barcode Scanner
+D) Biometric Scanner
+194. In MS-Word, the Footnotes group is available under which ribbon?
+A) REFERENCES
+B) PAGE LAYOUT
+C) DATA
+D) FORMULAS
+195. __________ allows the user to create TCP or UDP connections and send lines of text back and forth.
+A) Route
+B) Tshark
+C) Netcat
+D) Netstat
+196. You need to perform _________ action to open an office document.
+A) Mouse Scroll
+B) Double Click
+C) Single Click
+D) Mouse Drag
+197. Which is also known as the brain of a computer?
+A) CPU
+B) Keyboard
+C) Mouse
+D) Monitor
+198. Which of the following printers is categorized as a character printer?
+A) Inkjet Printer
+B) Optical Image Printer
+C) Laser Printer
+D) Dot Matrix Printer
+199. ________ option in Excel allows you to display longer text within a cell without over-spilling.
+A) Word Art
+B) Watermark
+C) Bookmark
+D) Wrap Text
+200. Who is called the 'Father of Computer'?
+A) Alexander Graham Bell
+B) Charles Babbage
+C) Thomas Alva Edison
+D) Isaac Newton
