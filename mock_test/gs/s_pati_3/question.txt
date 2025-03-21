@@ -1,0 +1,898 @@
+1. Which shortcut key is used to insert a hyperlink in MS Word?
+A) Ctrl + H
+B) Ctrl + K
+C) Ctrl + L
+D) Ctrl + U
+
+2. Which function in MS Excel is used to find the highest value in a range?
+A) MAX()
+B) HIGH()
+C) UPPER()
+D) LARGEST()
+
+3. In PowerPoint, which view is used to rearrange slides easily?
+A) Normal View
+B) Slide Sorter View
+C) Outline View
+D) Reading View
+
+4. Which of the following is NOT a network topology?
+A) Star
+B) Ring
+C) Mesh
+D) Cylinder
+
+5. Which protocol is used for secure file transfer over the internet?
+A) FTP
+B) SFTP
+C) SMTP
+D) SNMP
+
+6. What does "www" stand for in a website address?
+A) World Wide Web
+B) Web World Wide
+C) Wireless Web Work
+D) Wide Wireless Web
+
+7. Which type of software controls the overall functioning of a computer?
+A) Application Software
+B) System Software
+C) Utility Software
+D) Malware
+
+8. Which hardware component stores the operating system?
+A) RAM
+B) Hard Drive
+C) Cache Memory
+D) Register
+
+9. Which of the following is NOT an input device?
+A) Scanner
+B) Mouse
+C) Monitor
+D) Keyboard
+
+10. Which input device is primarily used for gaming?
+A) Joystick
+B) Touchpad
+C) Trackball
+D) Light Pen
+
+11. Which device is used to convert digital signals into analog for phone lines?
+A) Router
+B) Hub
+C) Modem
+D) Repeater
+
+12. Which email protocol is used for retrieving messages from a mail server?
+A) SMTP
+B) IMAP
+C) POP3
+D) FTP
+
+13. Which email field is used when sending a copy of an email without the recipient knowing?
+A) CC
+B) BCC
+C) To
+D) Reply All
+
+14. Which of the following is NOT a web browser?
+A) Mozilla Firefox
+B) Microsoft Edge
+C) Windows Explorer
+D) Google Chrome
+
+15. What is the purpose of a firewall?
+A) To block unauthorized access
+B) To clean the hard drive
+C) To speed up the internet
+D) To store backup data
+
+16. Which of the following is an example of a social networking site?
+A) Wikipedia
+B) Twitter
+C) Google Docs
+D) Adobe Photoshop
+
+17. Which of the following is NOT an example of social media?
+A) Facebook
+B) Instagram
+C) Excel
+D) LinkedIn
+
+18. Which generation of computers introduced transistors?
+A) First Generation
+B) Second Generation
+C) Third Generation
+D) Fourth Generation
+
+19. Which of the following is a cloud storage service?
+A) Google Drive
+B) Notepad
+C) Microsoft Word
+D) VLC Media Player
+
+20. Which key combination is used to open Task Manager in Windows?
+A) Ctrl + Alt + Delete
+B) Ctrl + Shift + Esc
+C) Both A & B
+D) Alt + F4
+
+21. Which function in MS Excel is used to count only blank cells in a range?
+A) COUNTBLANK()
+B) COUNT()
+C) COUNTA()
+D) COUNTIF()
+
+22. Which key is used to open the "Find and Replace" dialog box in MS Word?
+A) Ctrl + H
+B) Ctrl + F
+C) Ctrl + G
+D) Ctrl + R
+
+23. Which PowerPoint feature is used to add visual movement to objects?
+A) Slide Transition
+B) Animation
+C) Template
+D) Slide Show
+
+24. Which network topology has all nodes connected to a central device?
+A) Mesh
+B) Star
+C) Ring
+D) Bus
+
+25. Which layer of the OSI model is responsible for end-to-end delivery?
+A) Transport Layer
+B) Network Layer
+C) Data Link Layer
+D) Physical Layer
+
+26. Which IP address class is used for the largest networks?
+A) Class A
+B) Class B
+C) Class C
+D) Class D
+
+27. Which device forwards data packets between different networks?
+A) Switch
+B) Router
+C) Hub
+D) Repeater
+
+28. Which software is used for website creation?
+A) MS Word
+B) Adobe Dreamweaver
+C) VLC Media Player
+D) MS Access
+
+29. Which of the following is an example of open-source software?
+A) Windows 11
+B) macOS
+C) Linux
+D) Adobe Photoshop
+
+30. Which of the following is an input device?
+A) Printer
+B) Scanner
+C) Monitor
+D) Speaker
+
+31. Which of the following is NOT an output device?
+A) Projector
+B) Printer
+C) Mouse
+D) Speaker
+
+32. Which email protocol allows accessing emails from multiple devices?
+A) POP3
+B) IMAP
+C) SMTP
+D) FTP
+
+33. Which of the following is a cybercrime?
+A) Phishing
+B) Debugging
+C) Data Backup
+D) Cloud Computing
+
+34. Which company developed the first graphical web browser?
+A) Microsoft
+B) Netscape
+C) Apple
+D) Google
+
+35. Which type of memory is used in USB flash drives?
+A) RAM
+B) ROM
+C) Flash Memory
+D) DRAM
+
+36. Which social media platform is known for short-form video content?
+A) LinkedIn
+B) Instagram
+C) TikTok
+D) Reddit
+
+37. Which generation of computers used integrated circuits (ICs)?
+A) First
+B) Second
+C) Third
+D) Fourth
+
+38. What does HTTP stand for?
+A) HyperText Transfer Protocol
+B) HyperText Transport Protocol
+C) High Transfer Text Protocol
+D) Hyperlink Transfer Protocol
+
+39. Which of the following is a primary memory?
+A) HDD
+B) SSD
+C) RAM
+D) CD-ROM
+
+40. Which cloud service model provides a platform for developers to build applications?
+A) SaaS
+B) PaaS
+C) IaaS
+D) FaaS
+
+41. Which of the following is NOT an operating system?
+A) Windows
+B) Linux
+C) Python
+D) macOS
+
+42. Which shortcut key is used to select all content in MS Word?
+A) Ctrl + C
+B) Ctrl + A
+C) Ctrl + S
+D) Ctrl + X
+
+43. Which function in MS Excel is used to find the average of a given range?
+A) SUM()
+B) AVERAGE()
+C) COUNT()
+D) MEDIAN()
+
+44. Which PowerPoint feature is used to apply movement to text or objects?
+A) Slide Transition
+B) Animation
+C) Slide Layout
+D) Design Template
+
+45. Which network device connects multiple networks and directs data between them?
+A) Hub
+B) Switch
+C) Router
+D) Repeater
+
+46. Which type of network covers a large geographical area?
+A) LAN
+B) MAN
+C) WAN
+D) PAN
+
+47. Which layer of the OSI model is responsible for routing data?
+A) Physical Layer
+B) Data Link Layer
+C) Network Layer
+D) Transport Layer
+
+48. Which protocol is used for secure web browsing?
+A) HTTP
+B) FTP
+C) HTTPS
+D) SMTP
+
+49. Which type of software allows users to create documents?
+A) System Software
+B) Application Software
+C) Utility Software
+D) Firmware
+
+50. Which file extension is used for PowerPoint presentations?
+A) .pptx
+B) .xlsx
+C) .docx
+D) .txt
+51. Which part of the computer is responsible for executing instructions?
+A) RAM
+B) Hard Disk
+C) CPU
+D) Motherboard
+
+52. Which of the following is NOT an input device?
+A) Keyboard
+B) Scanner
+C) Monitor
+D) Microphone
+
+53. Which email protocol is used for sending emails?
+A) POP3
+B) IMAP
+C) SMTP
+D) HTTP
+
+54. Which social media platform is primarily used for professional networking?
+A) Facebook
+B) Twitter
+C) LinkedIn
+D) Instagram
+
+55. Which generation of computers introduced microprocessors?
+A) First
+B) Second
+C) Third
+D) Fourth
+
+56. What is the full form of URL?
+A) Uniform Resource Locator
+B) Universal Routing Link
+C) Uniform Readable Language
+D) Unified Retrieval List
+
+57. Which type of memory loses data when the power is turned off?
+A) ROM
+B) RAM
+C) Flash Memory
+D) Hard Drive
+
+58. Which of the following is an example of cloud storage?
+A) MS Paint
+B) Google Drive
+C) Windows Explorer
+D) VLC Media Player
+
+59. Which key is used to refresh a web page in a browser?
+A) F2
+B) F5
+C) F8
+D) F12
+
+60. Which command is used to check the network connection in Windows?
+A) tracert
+B) ping
+C) ipconfig
+D) nslookup
+
+61. Which shortcut key is used to create a new document in MS Word?
+A) Ctrl + N
+B) Ctrl + O
+C) Ctrl + S
+D) Ctrl + P
+
+62. What does the function LEN() do in MS Excel?
+A) Counts the number of cells
+B) Returns the length of text in a cell
+C) Calculates the sum of numbers
+D) Sorts the data in a column
+
+63. Which key is used to start a slideshow in PowerPoint?
+A) F2
+B) F5
+C) F8
+D) F12
+
+64. Which of the following is an example of a peer-to-peer network?
+A) LAN
+B) WAN
+C) MAN
+D) PAN
+
+65. Which layer of the OSI model converts data into packets?
+A) Data Link Layer
+B) Transport Layer
+C) Network Layer
+D) Session Layer
+
+66. Which protocol is used for transferring files over the internet?
+A) FTP
+B) SMTP
+C) HTTP
+D) IMAP
+
+67. Which software is used for database management?
+A) MS Word
+B) MS Access
+C) MS Excel
+D) MS PowerPoint
+
+68. Which hardware component processes all instructions in a computer?
+A) RAM
+B) CPU
+C) Hard Drive
+D) Motherboard
+
+69. Which type of memory is used for long-term storage?
+A) RAM
+B) ROM
+C) HDD
+D) Cache Memory
+
+70. Which part of an email address comes after the @ symbol?
+A) Username
+B) Domain Name
+C) IP Address
+D) Protocol
+
+71. Which social media platform is owned by Meta?
+A) Twitter
+B) LinkedIn
+C) Facebook
+D) Reddit
+
+72. Which generation of computers used artificial intelligence?
+A) Third
+B) Fourth
+C) Fifth
+D) Second
+
+73. Which key combination locks a Windows computer?
+A) Ctrl + L
+B) Windows + L
+C) Alt + L
+D) Shift + L
+
+74. Which cloud computing model provides virtual machines?
+A) SaaS
+B) PaaS
+C) IaaS
+D) DaaS
+
+75. Which of the following is a type of malware?
+A) Firewall
+B) Antivirus
+C) Trojan
+D) VPN
+
+76. Which computer part acts as the main circuit board?
+A) RAM
+B) Hard Disk
+C) Motherboard
+D) CPU
+
+77. What is the purpose of a VPN?
+A) Increase internet speed
+B) Secure internet connection
+C) Block websites
+D) Manage cloud storage
+
+78. Which type of storage is used in SSDs?
+A) Optical
+B) Flash Memory
+C) Magnetic
+D) Mechanical
+
+79. Which protocol is used for securing email communication?
+A) SMTP
+B) IMAP
+C) POP3
+D) SSL/TLS
+
+80. Which Windows tool is used to manage installed applications?
+A) Task Manager
+B) Control Panel
+C) Device Manager
+D) Disk Cleanup
+
+81. Which key is used to rename a file in Windows?
+A) F1
+B) F2
+C) F5
+D) F10
+
+82. Which term refers to unwanted bulk emails?
+A) Junk Mail
+B) Spam
+C) Phishing
+D) Malware
+
+83. Which programming language is primarily used for web development?
+A) C++
+B) Python
+C) JavaScript
+D) SQL
+
+84. Which keyboard shortcut is used to undo the last action in MS Office?
+A) Ctrl + Z
+B) Ctrl + Y
+C) Ctrl + X
+D) Ctrl + A
+
+85. Which key combination is used to permanently delete a file in Windows without sending it to the Recycle Bin?
+A) Shift + Delete
+B) Ctrl + Delete
+C) Alt + Delete
+D) Esc + Delete
+
+86. Which Excel function is used to find the highest value in a range?
+A) MIN()
+B) MAX()
+C) AVERAGE()
+D) COUNT()
+
+87. What is the purpose of the Slide Master in PowerPoint?
+A) To add animations
+B) To control the design and layout of all slides
+C) To create tables
+D) To insert hyperlinks
+
+88. Which network topology uses a single backbone cable to connect all devices?
+A) Star
+B) Mesh
+C) Bus
+D) Ring
+
+89. Which protocol is used to assign IP addresses dynamically?
+A) DNS
+B) DHCP
+C) FTP
+D) HTTP
+
+90. Which shortcut key is used to save a document in MS Word?
+A) Ctrl + P
+B) Ctrl + S
+C) Ctrl + N
+D) Ctrl + O
+
+91. Which part of the CPU performs arithmetic and logical operations?
+A) Control Unit
+B) Arithmetic Logic Unit
+C) Register
+D) Cache Memory
+
+92. Which command is used to check the IP address of a computer in Windows?
+A) tracert
+B) nslookup
+C) ipconfig
+D) ping
+
+93. Which type of malware replicates itself and spreads to other computers?
+A) Virus
+B) Trojan
+C) Spyware
+D) Ransomware
+
+94. Which of the following is NOT a type of secondary storage?
+A) Hard Disk
+B) USB Flash Drive
+C) Cache Memory
+D) DVD
+
+95. Which shortcut key is used to open Task Manager in Windows?
+A) Ctrl + Shift + Esc
+B) Ctrl + Alt + Delete
+C) Ctrl + Shift + Delete
+D) Alt + Tab
+
+96. Which of the following is NOT an example of system software?
+A) Windows
+B) Linux
+C) MS Word
+D) macOS
+
+97. Which Excel function is used to count only numeric values in a range?
+A) COUNT()
+B) COUNTA()
+C) COUNTIF()
+D) COUNTBLANK()
+
+98. Which file system is used by default in Windows operating systems?
+A) FAT32
+B) NTFS
+C) exFAT
+D) HFS+
+
+99. Which layer of the OSI model ensures reliable communication between hosts?
+A) Transport Layer
+B) Network Layer
+C) Session Layer
+D) Data Link Layer
+
+100. Which part of the computer controls input and output devices?
+A) CPU
+B) Motherboard
+C) RAM
+D) BIOS
+
+101. Which of the following is NOT a valid image file format?
+A) JPEG
+B) PNG
+C) DOCX
+D) GIF
+
+102. Which key combination is used to close the active window in Windows?
+A) Ctrl + W
+B) Alt + F4
+C) Shift + Esc
+D) Ctrl + Q
+
+103. What is the purpose of a cache memory in a computer?
+A) To store permanent data
+B) To speed up processing by storing frequently used data
+C) To store BIOS settings
+D) To store software installations
+
+104. Which of the following is an example of an operating system?
+A) Google Chrome
+B) Windows 10
+C) Adobe Photoshop
+D) MS Excel
+
+105. Which device is used to provide internet access to multiple devices in a network?
+A) Switch
+B) Router
+C) Modem
+D) Hub
+
+106. Which type of software is designed to help users perform specific tasks?
+A) System Software
+B) Application Software
+C) Utility Software
+D) Firmware
+
+107. Which Excel function is used to join two or more text strings?
+A) CONCATENATE()
+B) JOIN()
+C) MERGE()
+D) COMBINE()
+
+108. Which key is used to take a screenshot in Windows?
+A) Print Screen (PrtScn)
+B) F12
+C) Esc
+D) Shift + S
+
+109. What does PDF stand for?
+A) Portable Document Format
+B) Public Data File
+C) Professional Document File
+D) Printed Data Format
+
+110. Which protocol is used for sending web pages to a browser?
+A) FTP
+B) SMTP
+C) HTTP
+D) POP3
+
+111. Which of the following is an example of spreadsheet software?
+A) MS Word
+B) MS Excel
+C) Adobe Photoshop
+D) Google Chrome
+
+112. Which command is used to list all files and directories in a folder in Windows Command Prompt?
+A) list
+B) ls
+C) dir
+D) cd
+
+113. What is the purpose of a BIOS in a computer?
+A) To manage network connections
+B) To boot up the operating system
+C) To store user documents
+D) To install applications
+
+114. Which of the following is NOT a programming language?
+A) Java
+B) Python
+C) SQL
+D) HTML
+
+115. Which key is used to open the Start menu in Windows?
+A) Ctrl
+B) Alt
+C) Windows key
+D) Shift
+
+116. Which software is used for photo editing?
+A) MS Paint
+B) Google Chrome
+C) VLC Media Player
+D) Adobe Photoshop
+
+117. Which key is used to minimize all open windows and show the desktop in Windows?
+A) Windows + D
+B) Alt + Tab
+C) Ctrl + M
+D) Shift + Esc
+
+118. Which of the following is NOT a function of an operating system?
+A) Managing hardware resources
+B) Running applications
+C) Creating web pages
+D) Managing files
+
+119. Which protocol is used for receiving emails in real-time from the mail server?
+A) SMTP
+B) IMAP
+C) POP3
+D) FTP
+
+120. Which of the following is an example of an optical storage device?
+A) Hard Disk Drive (HDD)
+B) Solid State Drive (SSD)
+C) Blu-ray Disc
+D) USB Flash Drive
+121. Which of the following is NOT an example of an input device?
+A) Mouse
+B) Keyboard
+C) Printer
+D) Scanner
+
+122. Which Windows feature allows users to switch between open applications quickly?
+A) Alt + Tab
+B) Ctrl + Alt + Del
+C) Shift + Esc
+D) Windows + P
+
+123. What is the function of an IP address?
+A) To identify a website
+B) To connect Bluetooth devices
+C) To uniquely identify a device on a network
+D) To store files on a computer
+
+124. Which type of software is used to prevent, detect, and remove malware?
+A) Firewall
+B) Antivirus
+C) Utility Software
+D) Operating System
+
+125. Which shortcut key is used to close the current window in Windows?
+A) Alt + F4
+B) Ctrl + W
+C) Ctrl + F4
+D) All of the above
+
+126. What is the primary function of RAM in a computer?
+A) Long-term storage
+B) Processing calculations
+C) Storing data temporarily for quick access
+D) Managing network connections
+
+127. Which file format is commonly used for compressed archives?
+A) .zip
+B) .exe
+C) .docx
+D) .mp3
+
+128. What is the purpose of a device driver?
+A) To control hardware components
+B) To manage files on a computer
+C) To display graphics
+D) To connect to the internet
+
+129. Which function is used to count all non-empty cells in MS Excel?
+A) COUNT()
+B) COUNTA()
+C) COUNTIF()
+D) COUNTBLANK()
+
+130. Which protocol is used for remote desktop access?
+A) FTP
+B) RDP
+C) HTTP
+D) SMTP
+
+131. Which component of the computer provides the power supply?
+A) CPU
+B) RAM
+C) Power Supply Unit (PSU)
+D) Motherboard
+
+132. What is the full form of HTML?
+A) HyperText Markup Language
+B) High Transfer Machine Language
+C) Hyperlink Text Management Language
+D) HyperText Model Layout
+
+133. Which of the following is a non-volatile memory?
+A) RAM
+B) Cache Memory
+C) ROM
+D) Register
+
+134. Which key is used to paste copied content in Windows?
+A) Ctrl + X
+B) Ctrl + P
+C) Ctrl + V
+D) Ctrl + C
+
+135. What is the function of a switch in networking?
+A) To connect devices within a LAN
+B) To provide internet access
+C) To assign IP addresses
+D) To store data
+
+136. Which Excel function is used to find the smallest value in a range?
+A) MAX()
+B) MIN()
+C) AVERAGE()
+D) COUNT()
+
+137. What is the purpose of a web browser?
+A) To edit documents
+B) To access and view websites
+C) To create spreadsheets
+D) To manage files
+
+138. Which of the following is an example of a biometric authentication method?
+A) Password
+B) Fingerprint recognition
+C) CAPTCHA
+D) Security Question
+
+139. What does the term "booting" refer to in computing?
+A) Installing software
+B) Restarting a computer
+C) The process of starting a computer
+D) Formatting a hard drive
+
+140. What does VPN stand for?
+A) Virtual Private Network
+B) Video Processing Node
+C) Verified Personal Network
+D) Variable Packet Notation
+
+141. What is the purpose of the Recycle Bin in Windows?
+A) To permanently delete files
+B) To temporarily store deleted files
+C) To store system backups
+D) To clean temporary files
+
+142. Which command is used to shut down a computer from the command prompt?
+A) shutdown /s
+B) exit
+C) poweroff
+D) close
+
+143. What is the function of a proxy server?
+A) To store passwords
+B) To manage email communications
+C) To act as an intermediary between users and the internet
+D) To improve gaming performance
+
+144. Which key is used to print a document in Windows?
+A) Ctrl + P
+B) Ctrl + S
+C) Ctrl + V
+D) Ctrl + O
+
+145. What is the role of a domain name system (DNS)?
+A) To secure network connections
+B) To convert domain names into IP addresses
+C) To store website passwords
+D) To block unauthorized access
+
+146. Which file format is commonly used for images?
+A) .exe
+B) .mp4
+C) .jpg
+D) .txt
+
+147. What is the function of a task manager in Windows?
+A) To manage running processes and applications
+B) To create system backups
+C) To install new software
+D) To format a hard drive
+
+148. Which device is commonly used to input handwritten signatures?
+A) Scanner
+B) Graphics Tablet
+C) Webcam
+D) Barcode Scanner
+
+149. What is the purpose of an Ethernet cable?
+A) To connect wireless devices
+B) To transfer data between storage devices
+C) To connect computers in a wired network
+D) To charge a laptop battery
+
+150. What is the default file extension for a Word document?
+A) .txt
+B) .pdf
+C) .docx
+D) .xlsx
+
