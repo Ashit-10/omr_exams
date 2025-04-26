@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Detect OMR Columns</title>
-  <script async src="https://docs.opencv.org/4.x/opencv.js" type="text/javascript"></script>
+  <script async src="https://cdn.jsdelivr.net/npm/opencv.js@4.5.3/opencv.js" type="text/javascript"></script>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
     canvas { margin-top: 20px; border: 2px solid #555; }
@@ -15,12 +15,16 @@
 
 <input type="file" id="fileInput" accept="image/*">
 <br/>
+<button id="findContoursBtn" disabled>Find Contours</button>
+<br/>
 <canvas id="canvasOutput"></canvas>
 
 <script type="text/javascript">
 let imgElement = document.getElementById('fileInput');
+let findContoursBtn = document.getElementById('findContoursBtn');
 let canvas = document.getElementById('canvasOutput');
 let ctx = canvas.getContext('2d');
+let originalImg = null;
 
 // Wait until OpenCV.js is ready
 cv['onRuntimeInitialized'] = () => {
@@ -34,69 +38,93 @@ cv['onRuntimeInitialized'] = () => {
                     canvas.width = img.width;
                     canvas.height = img.height;
                     ctx.drawImage(img, 0, 0);
-                    
-                    let src = cv.imread(canvas);
-                    let dst = src.clone();
-                    
-                    // Convert to grayscale
-                    let gray = new cv.Mat();
-                    cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
-                    
-                    // Blur to reduce noise
-                    let blurred = new cv.Mat();
-                    cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0, 0, cv.BORDER_DEFAULT);
-                    
-                    // Canny edge detection
-                    let edges = new cv.Mat();
-                    cv.Canny(blurred, edges, 30, 120);
-
-                    // Find contours
-                    let contours = new cv.MatVector();
-                    let hierarchy = new cv.Mat();
-                    cv.findContours(edges, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
-
-                    let columns = [];
-
-                    for (let i = 0; i < contours.size(); ++i) {
-                        let cnt = contours.get(i);
-                        let peri = cv.arcLength(cnt, true);
-                        let approx = new cv.Mat();
-                        cv.approxPolyDP(cnt, approx, 0.02 * peri, true);
-
-                        if (approx.rows === 4) {
-                            let rect = cv.boundingRect(approx);
-                            let area = cv.contourArea(cnt);
-                            let aspectRatio = rect.height / rect.width;
-                            
-                            // Filters: Area and Aspect Ratio tuned for OMR columns
-                            if (area > 50000 && area < 300000 && aspectRatio > 2.0 && aspectRatio < 6.0) {
-                                columns.push(rect);
-                            }
-                        }
-                    }
-
-                    // Sort by x (left to right)
-                    columns.sort((a, b) => a.x - b.x);
-
-                    // Draw rectangles
-                    for (let rect of columns) {
-                        let point1 = new cv.Point(rect.x, rect.y);
-                        let point2 = new cv.Point(rect.x + rect.width, rect.y + rect.height);
-                        cv.rectangle(dst, point1, point2, [255, 0, 0, 255], 5);
-                    }
-
-                    // Show result
-                    cv.imshow('canvasOutput', dst);
-
-                    // Clean up
-                    src.delete(); dst.delete(); gray.delete(); blurred.delete();
-                    edges.delete(); contours.delete(); hierarchy.delete();
+                    originalImg = img;
+                    findContoursBtn.disabled = false; // Enable the "Find Contours" button
                 }
                 img.src = ev.target.result;
             }
             reader.readAsDataURL(file);
         }
     });
+
+    // Event listener for the "Find Contours" button
+    findContoursBtn.addEventListener('click', () => {
+        if (originalImg) {
+            processImage();
+        }
+    });
+}
+
+// Process the image (edge detection, contour finding, and drawing)
+function processImage() {
+    let src = cv.imread(canvas);
+    let dst = src.clone();
+
+    // Convert to grayscale
+    let gray = new cv.Mat();
+    cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+
+    // Blur to reduce noise
+    let blurred = new cv.Mat();
+    cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0, 0, cv.BORDER_DEFAULT);
+
+    // Canny edge detection
+    let edges = new cv.Mat();
+    cv.Canny(blurred, edges, 30, 120);
+
+    // Find contours
+    let contours = new cv.MatVector();
+    let hierarchy = new cv.Mat();
+    cv.findContours(edges, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+    let columns = [];
+
+    // Process each contour
+    for (let i = 0; i < contours.size(); ++i) {
+        let cnt = contours.get(i);
+        let peri = cv.arcLength(cnt, true);
+        let approx = new cv.Mat();
+        cv.approxPolyDP(cnt, approx, 0.02 * peri, true);
+
+        if (approx.rows === 4) {
+            let rect = cv.boundingRect(approx);
+            let area = cv.contourArea(cnt);
+            let aspectRatio = rect.height / rect.width;
+
+            // Filters: Area and Aspect Ratio tuned for OMR columns
+            if (area > 50000 && area < 300000 && aspectRatio > 2.0 && aspectRatio < 6.0) {
+                columns.push(rect);
+            }
+        }
+    }
+
+    // Sort by x (left to right)
+    columns.sort((a, b) => a.x - b.x);
+
+    // Draw rectangles
+    for (let rect of columns) {
+        let point1 = new cv.Point(rect.x, rect.y);
+        let point2 = new cv.Point(rect.x + rect.width, rect.y + rect.height);
+        cv.rectangle(dst, point1, point2, [255, 0, 0, 255], 5);
+    }
+
+    // Show result on canvas
+    cv.imshow('canvasOutput', dst);
+
+    // Clean up
+    src.delete(); dst.delete(); gray.delete(); blurred.delete();
+    edges.delete(); contours.delete(); hierarchy.delete();
+
+    // Attempt to download processed image if something went wrong
+    try {
+        let dataUrl = canvas.toDataURL('image/jpeg');
+        let link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'processed_image.jpg';
+        link.click();
+    } catch (err) {
+        alert('Error processing the image. Attempting to download.');
+    }
 }
 </script>
 
