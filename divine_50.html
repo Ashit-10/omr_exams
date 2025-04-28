@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMR sheet</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <style>
+        .loader {
+            border: 4px solid #f3f3f3;
+            /* Light grey */
+            border-top: 4px solid #3498db;
+            /* Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            margin-top: 15px;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+
+        .loader1 {
+            border: 4px solid #f3f3f3;
+            /* Light grey */
+            border-top: 4px solid #3498db;
+            /* Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 5px solid rgba(147, 116, 231, 0.1);
+            border-top-color: #2b16e4;
+            animation: spin 1s linear infinite;
+        }
+
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #f0f0f0;
+        }
+
+        video {
+            /* width: calc(100% - 50%); */
+            /* height: 70vh; */
+            width: 180px;
+            height: 480px;
+            margin: 0 calc(100% - 160px)/2;
+            margin-top: -20px;
+            object-fit: cover;
+            border: 2px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: 0.4s;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #uploadedImageContainer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #uploadedImage {
+            max-width: 300px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+
+        #overlayBox {
+            display: none;
+            position: absolute;
+            border: 4px solid rgb(41, 238, 74);
+            /* Customize border style */
+            width: 180px;
+            /* Adjust size as needed */
+            height: 440px;
+            /* Adjust size as needed */
+            pointer-events: none;
+            /* Ensures the box doesn't interfere with clicking the video */
+            top: 52px;
+            left: calc(50% - 90px);
+            transform: translate((-50%));
+        }
+
+        #overlayBox1 {
+            display: none;
+            position: absolute;
+            border: 3px solid rgb(153, 240, 14);
+            /* Customize border style */
+            width: 50px;
+            /* Adjust size as needed */
+            height: 50px;
+            /* Adjust size as needed */
+            pointer-events: none;
+            /* Ensures the box doesn't interfere with clicking the video */
+            top: 40px;
+            left: calc(50% - 85px);
+            transform: translate((-50%));
+        }
+
+        #overlayBox2 {
+            display: none;
+            position: absolute;
+            border: 3px solid rgb(153, 240, 14);
+            /* Customize border style */
+            width: 50px;
+            /* Adjust size as needed */
+            height: 50px;
+            /* Adjust size as needed */
+            pointer-events: none;
+            /* Ensures the box doesn't interfere with clicking the video */
+            top: 40px;
+            left: calc(50% + 30px);
+            transform: translate((-50%));
+        }
+
+        #overlayBox3 {
+            display: none;
+            position: absolute;
+            border: 3px solid rgb(153, 240, 14);
+            /* Customize border style */
+            width: 50px;
+            /* Adjust size as needed */
+            height: 50px;
+            /* Adjust size as needed */
+            pointer-events: none;
+            /* Ensures the box doesn't interfere with clicking the video */
+            top: 455px;
+            left: calc(50% - 85px);
+            transform: translate((-50%));
+        }
+
+        #overlayBox4 {
+            display: none;
+            position: absolute;
+            border: 3px solid rgb(153, 240, 14);
+            /* Customize border style */
+            width: 50px;
+            /* Adjust size as needed */
+            height: 50px;
+            /* Adjust size as needed */
+            pointer-events: none;
+            /* Ensures the box doesn't interfere with clicking the video */
+            top: 455px;
+            left: calc(50% + 30px);
+            transform: translate((-50%));
+        }
+
+        .overlayText {
+            position: absolute;
+            top: 40%;
+            left: calc(50% - 55px);
+            /* Adjust position to the right of the box */
+            transform: translateY(-50%) rotate(90deg);
+            /* Rotate text vertically */
+            color: rgb(0, 0, 0);
+            font-size: 30px;
+            z-index: 1;
+            /* Ensure the text appears above the video */
+            white-space: nowrap;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            /* Prevent text from wrapping */
+        }
+
+        /* Keyframe animation for sparkling effect */
+        @keyframes sparkle {
+            100% {
+                border-color: rgba(35, 228, 67, 1);
+            }
+        }
+
+        /* Apply animation to overlay boxes */
+        #overlayBox1,
+        #overlayBox2,
+        #overlayBox3,
+        #overlayBox4 {
+            animation: sparkle 1s infinite alternate;
+        }
+
+        .green-border {
+            border-color: green !important;
+        }
+
+
+        /* Add this style for the loader */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            /* semi-transparent white */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            /* make sure it's above everything */
+        }
+
+        .modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+
+        /* Style the input field */
+        #rollNumberInput {
+            width: 60%;
+            /* Adjust width to fit next to buttons */
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        #remove1 button {
+            margin-right: 10px;
+            /* Add margin to separate buttons */
+        }
+
+
+        .warning {
+            color: red;
+            display: none;
+        }
+
+        #flashlightButton {
+            margin-left: 10px;
+            /* Add some margin to separate the buttons */
+        }
+
+        #myForm {
+            display: inline-flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #chek {
+            width: 30px;
+            height: 30px;
+        }
+
+        #chek2 {
+            width: 30px;
+            height: 30px;
+        }
+
+        .controls {
+            width: calc(100% - 30px);
+            margin: 5px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .controls1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .controls2 {
+            width: calc(100% - 30px);
+            margin: 0 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #selectedImage {
+            display: none;
+            width: 80vw;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #progressBar {
+            height: 50px;
+        }
+
+        .compressionSize {
+            position: absolute;
+            top: 55%;
+            left: calc(80% - 10px);
+            z-index: 2;
+            font-weight: bold;
+
+        }
+
+        #comp1 {
+            top: calc(55% - 50px);
+        }
+
+        #comp2 {
+            top: calc(55% - 30px);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            /* Light gray slider background */
+            transition: .4s;
+            border-radius: 28px;
+        }
+
+        .slider:before {
+            position: absolute;
+
+            content: "switch";
+            font-size: 15px;
+            opacity: 0.5;
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 2px 2px 5px #b0b0b0,
+                -2px -2px 5px #ffffff;
+            /* Neomorphic shadow */
+        }
+
+        input:checked+.slider {
+            background-color: #4CAF50;
+            content: "";
+            opacity: 1;
+            /* Green slider when checked */
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+            opacity: 1;
+            content: "";
+        }
+
+        #switcher {
+            position: absolute;
+            top: calc(15%);
+            width: 60px;
+        }
+
+        #comp3 {
+            top: calc(-80%);
+            left: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h1>OMR sheet evaluator
+    </h1>
+
+    <div id="cameraContainer">
+        <div id="false-div"></div>
+        <img id="selectedImage">
+        <div id="wholeCamera1">
+            <video id="video" playsinline autoplay></video>
+            <div id="switcher" class="compressionSize">
+                <p id="comp3" class="compressionSize">Camera</p>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="switchCameraToggle" onclick="switchCameraMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <p id="comp1" class="compressionSize">Image</p>
+            <p id="comp2" class="compressionSize">quality</p>
+            <select id="qualityValue" class="compressionSize">
+                <option value="0.1">0.1</option>
+                <option value="0.2">0.2</option>
+                <option value="0.3">0.3</option>
+                <option value="0.4">0.4</option>
+                <option value="0.5">0.5</option>
+                <option value="0.6">0.6</option>
+                <option value="0.7">0.7</option>
+                <option value="0.8" selected>0.8</option>
+                <option value="0.9">0.9</option>
+                <option value="1.0">1.0</option>
+            </select>
+            <div class="overlayText">
+                <p> Put the qr codes inside the box</p> <!-- Text over -->
+                <p>&nbsp;TOP</p>
+            </div> <!-- Text over -->
+            <div id="overlayBox"></div>
+            <div id="overlayBox2"></div>
+            <div id="overlayBox3"></div>
+            <div id="overlayBox4"></div>
+            <div id="overlayBox1"></div> <!-- Empty square -->
+        </div>
+    </div>
+    <div class="controls">
+        <div id="remove1">
+            <div class="controls1" id="wholeCamera2">
+
+                <button id="flashlightButton">Flashlight</button>
+                <button id="capture-btn">Capture</button>
+                <button id="downloadButton" onclick="saveImage()">Save</button>
+            </div>
+            <!-- <a id="downloadButton" download="capture.png">Download</a> -->
+            <div class="loader1" id="loader1"></div>
+            <br>
+
+            <form id="myForm">
+                <!-- Add the input field next to the capture and cancel buttons -->
+                <input type="text" id="rollNumberInput" placeholder="Roll No (Optional)  ">
+                <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
+                Image is darker <input id="chek" type="checkbox" name="option" value="shadow">
+            </form>
+        </div>
+
+        <div id="remove2">
+            <input type="file" id="fileInput">
+            <br>
+            <div class="controls1">
+
+                <button onclick="window.location.reload()">Cancel</button>
+                <button onclick="sendImage()">Check result</button>
+            </div>
+            <div class="loader" id="loader"></div>
+            <!-- Add loader overlay -->
+            <div class="loader-overlay" id="loaderOverlay" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <br>
+                <br>
+                <div id="progressContainer">
+                    <progress id="progressBar" value="0" max="100" style="width: 80vw;"></progress>
+                </div>
+                <p id="fileSizeDisplay">...</p>
+            </div>
+            <br><br><br><br>
+        </div>
+    </div>
+    <br><br><br><br>
+    <br><br><br><br>
+
+    <script>
+        var isOriginalSize = false;
+
+        function saveSize(idk) {
+            localStorage.setItem('isOriginalSize', idk);
+        }
+
+        function loadSize() {
+            var loadSizedata = localStorage.getItem('isOriginalSize');
+            if (loadSizedata === 'false') {
+                document.getElementById("switchCameraToggle").checked = false;
+                isOriginalSize = false;
+            } else {
+                document.getElementById("switchCameraToggle").checked = true;
+                isOriginalSize = true;
+            }
+            switchCameraMode();
+        }
+
+        function switchCameraMode() {
+            var video = document.getElementById('video');
+            var overBox1 = document.getElementById('overlayBox1');
+            var overBox2 = document.getElementById('overlayBox2');
+            var overBox3 = document.getElementById('overlayBox3');
+            var overBox4 = document.getElementById('overlayBox4');
+            if (isOriginalSize) {
+                video.style.height = "480px";
+                video.style.width = "280px";
+                overBox1.style.left = "calc(15%)";
+                overBox2.style.left = "calc(72%)";
+                overBox3.style.left = "calc(15%)";
+                overBox4.style.left = "calc(72%)";
+                saveSize(true);
+            } else {
+                video.style.height = "480px"; // small
+                video.style.width = "180px";
+                overBox1.style.left = "calc(50% - 85px)";
+                overBox2.style.left = "calc(50% + 30px)";
+                overBox3.style.left = "calc(50% - 85px)";
+                overBox4.style.left = "calc(50% + 30px)";
+                saveSize(false);
+            }
+            isOriginalSize = !isOriginalSize;
+        }
+
+
+
+
+        // Load the saved size when the page loads
+        document.addEventListener('DOMContentLoaded', loadSize);
+
+        // Function to save the selected option to local storage
+        function saveSelection() {
+            var select = document.getElementById('qualityValue');
+            var selectedColor = select.value;
+            localStorage.setItem('quality', selectedColor);
+        }
+
+        // Function to load the saved selection from local storage
+        function loadSelection() {
+            var select = document.getElementById('qualityValue');
+            var savedColor = localStorage.getItem('quality');
+            if (savedColor) {
+                select.value = savedColor;
+            }
+        }
+
+        // Load the selection when the page loads
+        document.addEventListener('DOMContentLoaded', loadSelection);
+
+        // Add an event listener to save the selection whenever it changes
+        document.getElementById('qualityValue').addEventListener('change', saveSelection);
+
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById('selectedImage');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('wholeCamera1').style.display = 'none';
+                    document.getElementById('wholeCamera2').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        var isCheckboxChecked = document.getElementById('chek').checked;
+        console.log(isCheckboxChecked);
+
+
+        // Function to remove animation from overlay boxes
+        function stopSparkling() {
+            document.getElementById('overlayBox1').style.animation = 'none';
+            document.getElementById('overlayBox2').style.animation = 'none';
+            document.getElementById('overlayBox3').style.animation = 'none';
+            document.getElementById('overlayBox4').style.animation = 'none';
+            // Apply green border to overlay boxes
+            document.getElementById('overlayBox1').classList.add('green-border');
+            document.getElementById('overlayBox2').classList.add('green-border');
+            document.getElementById('overlayBox3').classList.add('green-border');
+            document.getElementById('overlayBox4').classList.add('green-border');
+        }
+
+        let lastUpdateId = 0;
+        let videoStream;
+        let isPageVisible = true;
+
+        let isSending = false;
+        var send_id = 0;
+        var coordinates_reply_id = 0;
+        let captured_photo;
+
+        const messagesDiv = document.getElementById('cameraContainer');
+        const messagesDiv1 = document.getElementById('remove1');
+        const messagesDiv2 = document.getElementById('remove2');
+        const falseDiv = document.getElementById('false-div');
+
+        const botToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+        const chatId = '-1001774957665';
+        const TELEGRAM_API_URL = `https://api.telegram.org/bot${botToken}`;
+        const correctKey = 'ashit';
+
+        let rollNumber = ''; // Variable to store the roll number
+
+
+        // const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0';
+        // const telegramChatId = '-1001774957665';
+
+        function sendImage() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            video.pause(); // Pause the video stream
+            stopCamera();
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('photo', file);
+
+                // Append caption to FormData
+                var caption = document.getElementById('rollNumberInput').value;
+                var is_shadow = document.getElementById('chek').checked;
+                if (is_shadow) {
+                    formData.append('caption', caption + ' dark');
+                } else {
+                    formData.append('caption', caption);
+                }
+                const loaderOverlay = document.getElementById('loaderOverlay');
+                loaderOverlay.style.display = 'flex'; // Display loader overlay
+                loaderOverlay.style.flexDirection = 'column';
+                var filesizeDisplay = document.getElementById('fileSizeDisplay');
+
+                var fileSizeInKB = (file.size / 1024).toFixed(2);
+                filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
+
+
+                const falseDiv = document.getElementById('false-div');
+                if (falseDiv) {
+                    falseDiv.parentNode.removeChild(falseDiv);
+                }
+
+                // Initialize XMLHttpRequest
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, true);
+
+                // Track upload progress
+                xhr.upload.addEventListener('progress', function (e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        document.getElementById('progressBar').value = percentComplete;
+                    }
+                });
+
+                // Handle response
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) { // Done
+                        if (xhr.status === 200) { // Success
+                            const data = JSON.parse(xhr.responseText);
+
+                            // Hide loader overlay
+                            loaderOverlay.style.display = 'none';
+
+                            // Display the photo sent by the bot
+                            send_id = data.result.message_id;
+                            photo_file_id = data.result.photo[data.result.photo.length - 1].file_id;
+                            fetch(`${TELEGRAM_API_URL}/getFile?file_id=${photo_file_id}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    captured_photo = `https://api.telegram.org/file/bot${botToken}/${data.result.file_path}`;
+                                });
+
+                            // Show "Processing..." message
+                            displayMessage('Processing... It may take 3-5 seconds');
+                            // Add spinning circle loading indicator
+                            loadingIndicator.className = 'spinner'; // Apply appropriate CSS class for spinning circle
+                            loadingIndicator.style.position = 'absolute';
+                            loadingIndicator.style.top = '30%';
+                            loadingIndicator.style.left = '44%';
+                            loadingIndicator.style.transform = 'translate(-50%, -50%)';
+                            document.body.appendChild(loadingIndicator);
+
+                            // Add back button in the middle of the device screen
+                            backButton.innerText = 'Back';
+                            backButton.style.position = 'absolute';
+                            backButton.style.top = '50%';
+                            backButton.style.left = '50%';
+                            backButton.style.transform = 'translate(-50%, -50%)';
+                            backButton.addEventListener('click', function () {
+                                location.reload();
+                            });
+                            document.body.appendChild(backButton);
+                        } else { // Error
+                            // Hide loader overlay
+                            loaderOverlay.style.display = 'none';
+                            alert('Failed to send image');
+                        }
+                    }
+                };
+
+                // Send form data
+                xhr.send(formData);
+            } else {
+                alert('Please select an image to send');
+            }
+        }
+
+        function displayMessage(text, current_id, og_id) {
+            const messageElement = document.createElement('div');
+            backButton.style.display = 'none';
+            messageElement.classList.add('message');
+            messageElement.style.fontSize = '20px'; // Set font size to 20px
+            messageElement.style.fontWeight = 'bold'; // Set font weight to bold
+
+            try {
+                falseDiv.parentNode.removeChild(falseDiv);
+            } catch (error) {
+                console.log(error.message);
+            }
+
+            // Check if text is "processing", then set text alignment to center
+            if (text.trim().toLowerCase() === "processing...") {
+                console.log(text);
+                messageElement.style.marginLeft = 'auto';
+                messageElement.style.marginRight = 'auto';
+            } else {
+                messageElement.style.textAlign = 'left';
+                // Replace \n with <br> for line breaks
+                console.log(text);
+                text = text.replace(/\n/g, '<br>');
+                text = text.replace('\t', '<pre>');
+            }
+
+            messagesDiv.innerHTML = ''; // Clear older messages
+            messagesDiv1.innerHTML = ''; // Clear older messages1
+            messagesDiv2.innerHTML = ''; // Clear older messages2
+            messageElement.innerHTML = text;
+            messagesDiv.appendChild(messageElement);
+
+            if (text.toLowerCase().includes("still save it ?")) {
+                // Create overlay button
+                const overlayButton = document.createElement('button');
+                overlayButton.innerText = 'Save';
+                overlayButton.style.position = 'fixed';
+                overlayButton.style.top = '50%';
+                overlayButton.style.left = '50%';
+                overlayButton.style.transform = 'translate(-50%, -50%)';
+                overlayButton.style.padding = '10px 20px';
+                overlayButton.style.fontSize = '18px';
+                overlayButton.style.cursor = 'pointer';
+                overlayButton.style.zIndex = '1000'; // Ensure the button is on top
+
+                // Add event listener to the button
+                overlayButton.addEventListener('click', async () => {
+                    const replyToMessageId = current_id
+                    await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: '/save',
+                            reply_to_message_id: replyToMessageId
+                        })
+                    });
+                    console.log(caption);
+                });
+
+                document.body.appendChild(overlayButton);
+            }
+            if (text.toLowerCase().includes("error")) {
+                coordinates_reply_id = og_id;
+                const errorButton = document.createElement('button');
+                errorButton.innerText = 'Click here to select QR code manually';
+                errorButton.addEventListener('click', function () {
+                    window.location.href = 'qr_selector.html?filename=' + encodeURIComponent(captured_photo) + '&&replyid=' + encodeURIComponent(coordinates_reply_id);
+                });
+                messageElement.appendChild(errorButton);
+            }
+            if (!isSending) {
+                loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
+            }
+        }
+
+
+        async function displayDocument(fileId, caption = '') {
+            try {
+                const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
+                const data = await response.json();
+                if (data.ok) {
+                    backButton.style.display = 'none';
+                    const filePath = data.result.file_path;
+                    const documentUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+                    messagesDiv.innerHTML = ''; // Clear older messages
+                    messagesDiv1.innerHTML = ''; // Clear older messages1
+                    messagesDiv2.innerHTML = ''; // Clear older messages2
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    if (caption) {
+                        const captionElement = document.createElement('p');
+                        captionElement.innerHTML = caption.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
+                        captionElement.style.fontSize = '20px'; // Set font size to 20px
+                        captionElement.style.fontWeight = 'bold'; // Set font weight to bold
+                        captionElement.style.textAlign = 'left'; // Align text to the left
+                        messageElement.appendChild(captionElement);
+                    }
+
+                    // Check document type and create appropriate element
+                    if (filePath.endsWith('.pdf')) {
+                        const iframe = document.createElement('iframe');
+                        iframe.src = documentUrl;
+                        iframe.style.width = '100vw';
+                        iframe.style.height = '100vh';
+                        messageElement.appendChild(iframe);
+                    } else if (filePath.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+                        const img = document.createElement('img');
+                        img.src = documentUrl;
+                        img.alt = 'Telegram Document';
+                        img.style.width = '100vw';
+                        messageElement.appendChild(img);
+                    } else if (filePath.endsWith('.txt')) {
+                        const response = await fetch(documentUrl);
+                        const text = await response.text();
+                        const pre = document.createElement('pre');
+                        pre.textContent = text;
+                        pre.style.whiteSpace = 'pre-wrap';
+                        messageElement.appendChild(pre);
+                    } else if (filePath.endsWith('.webm')) {
+                        const video = document.createElement('video');
+                        video.src = documentUrl;
+                        video.controls = true;
+                        video.style.width = '100vw';
+                        messageElement.appendChild(video);
+                    } else if (filePath.endsWith('.tgs')) {
+                        const unsupportedMessage = document.createElement('p');
+                        unsupportedMessage.textContent = 'TGS (Telegram Animated Stickers) are not supported for direct display.';
+                        messageElement.appendChild(unsupportedMessage);
+                    } else {
+                        const unsupportedMessage = document.createElement('p');
+                        unsupportedMessage.textContent = 'Unsupported document type.';
+                        messageElement.appendChild(unsupportedMessage);
+                    }
+
+                    messagesDiv.appendChild(messageElement);
+                    if (!isSending) {
+                        loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
+                    }
+                }
+            } catch (error) {
+                console.error('Error displaying document:', error);
+            }
+        }
+
+
+
+        async function displayPhoto(fileId, caption = '', current_id, og_id, old_caption) {
+            try {
+                const response = await fetch(`${TELEGRAM_API_URL}/getFile?file_id=${fileId}`);
+                const data = await response.json();
+                if (data.ok) {
+                    backButton.style.display = 'none';
+                    const filePath = data.result.file_path;
+                    const photoUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
+                    messagesDiv.innerHTML = ''; // Clear older messages
+                    messagesDiv1.innerHTML = ''; // Clear older messages1
+                    messagesDiv2.innerHTML = ''; // Clear older messages2
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    messageElement.className = 'controls2';
+
+                    if (caption) {
+                        const captionElement = document.createElement('p');
+                        const styledText = caption.replace(/(Correct: )(\d+)/g, '$1<span style="font-size: 40px;">$2</span>');
+                        captionElement.innerHTML = styledText.replace(/\n/g, '<br>'); // Replace \n with <br> for line breaks
+                        captionElement.style.fontSize = '13px'; // Set font size to 20px
+                        captionElement.style.fontWeight = 'bold'; // Set font weight to bold
+                        captionElement.style.textAlign = 'left'; // Align text to the left
+                        captionElement.style.paddingLeft = '10px';
+                        messageElement.appendChild(captionElement);
+
+                        if (caption.toLowerCase().includes("still save it ?")) {
+                            const overlayButton = document.createElement('button');
+                            overlayButton.innerText = 'Save';
+
+                            const savespinner = document.createElement('div');
+                            savespinner.id = 'save-spinner';
+                            savespinner.style.display = 'none'; // Initially hidden
+                            savespinner.innerHTML = '<div class="save-loader-spinner"></div>';
+                            overlayButton.appendChild(savespinner);
+
+                            overlayButton.addEventListener('click', async () => {
+                                savespinner.style.display = 'inline-block'; // Show spinner
+                                overlayButton.innerText = 'Saving...'; // Change button text
+                                overlayButton.disabled = true; // Disable button
+                                const replyToMessageId = current_id;
+                                await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        chat_id: chatId,
+                                        text: '/save',
+                                        reply_to_message_id: replyToMessageId
+                                    })
+                                });
+                                console.log(caption);
+                            });
+
+                            messageElement.appendChild(overlayButton);
+                        }
+                    }
+
+                    const img = document.createElement('img');
+                    img.src = photoUrl;
+                    img.alt = 'Telegram Photo';
+                    img.style.marginTop = '20px';
+                    img.style.width = '90vw'; // Set width to 100% of the viewport's width
+                    messageElement.appendChild(img);
+                    messagesDiv.appendChild(messageElement);
+
+                    // Add input field and button for updating roll number
+                    const rollInputContainer = document.createElement('div');
+                    rollInputContainer.style.marginTop = '10px';
+                    const checkContainer = document.createElement('div');
+                    checkContainer.style.marginTop = '10px';
+
+                    const rollInput = document.createElement('input');
+                    rollInput.type = 'number';
+                    rollInput.max = '99';
+                    rollInput.placeholder = 'Enter roll no';
+                    rollInput.style.marginRight = '10px';
+                    rollInput.style.marginLeft = '20px';
+                    rollInput.style.width = '35%';
+
+                    const updateButton = document.createElement('button');
+                    updateButton.innerText = 'Update Roll No';
+                    updateButton.style.padding = '10px 20px';
+                    updateButton.style.fontSize = '18px';
+                    updateButton.style.cursor = 'pointer';
+                    updateButton.style.width = '55%';
+                    updateButton.style.display = 'none';
+                    updateButton.style.display = 'inline';
+                    // Create the checkbox input element
+                    const checkbox2 = document.createElement('input');
+                    checkbox2.type = 'checkbox';
+                    checkbox2.id = 'chek2';
+
+                    // Create a label for the checkbox
+                    const label = document.createElement('label');
+                    label.htmlFor = 'chek2';
+                    label.textContent = 'Image is darker';
+                    label.style.marginRight = '20px';
+                    label.style.fontSize = '30px';
+
+                    let up_roll_data;
+                    up_roll_data = rollNumber;
+
+                    if (old_caption && old_caption.includes("dark")) {
+                        checkbox2.checked = true;
+                    } else {
+                        checkbox2.checked = false;
+                    }
+
+                    updateButton.addEventListener('click', async () => {
+                        const rollNumber = rollInput.value;
+                        if (rollNumber && rollNumber <= 99 && rollNumber > 0) {
+                            updateButton.innerText = 'Updating...'; // Change button text
+                            if (old_caption && old_caption.includes(rollNumber)) {
+                                alert('Please enter a new roll number, different from old roll number!');
+                                updateButton.innerText = 'Update Roll No'; // Change button text
+
+                            } else {
+                                updateButton.disabled = true; // Disable button
+                                // const replyToMessageId = current_id;
+
+                                var darkcap = document.getElementById('chek2').checked;
+                                console.log(darkcap, 'darkcap');
+                                if (darkcap) {
+                                    up_roll_data = rollNumber + ' dark';
+                                } else {
+                                    up_roll_data = rollNumber;
+                                }
+
+                                console.log(og_id);
+                                console.log(up_roll_data);
+                                await fetch(`${TELEGRAM_API_URL}/editMessageCaption`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        chat_id: chatId,
+                                        message_id: og_id,
+                                        caption: up_roll_data
+                                    })
+                                });
+                            }
+                        } else {
+                            alert('Please enter a valid roll number (1-99).');
+                        }
+                    });
+
+                    rollInputContainer.appendChild(rollInput);
+                    rollInputContainer.appendChild(updateButton);
+                    messageElement.appendChild(rollInputContainer);
+                    checkContainer.appendChild(label);
+                    checkContainer.appendChild(checkbox2);
+                    messageElement.appendChild(checkContainer)
+
+                    if (!isSending) {
+                        loaderOverlay.style.display = 'none'; // Hide loading logo after message is displayed
+                    }
+                    if (caption.toLowerCase().includes("error")) {
+                        coordinates_reply_id = og_id;
+                        const errorButton = document.createElement('button');
+                        errorButton.innerText = 'Click here to select QR code manually';
+                        errorButton.addEventListener('click', function () {
+                            window.location.href = 'qr_selector.html?filename=' + encodeURIComponent(captured_photo) + '&&replyid=' + encodeURIComponent(coordinates_reply_id);
+                        });
+                        messageElement.appendChild(errorButton);
+                    }
+
+                    const backButton1 = document.createElement('button');
+                    // Add back button in the middle of the device screen
+                    backButton1.innerText = 'Back';
+                    backButton1.addEventListener('click', function () {
+                        location.reload();
+                    });
+                    messageElement.appendChild(backButton1);
+                    const br3 = document.createElement('br');
+                    const br4 = document.createElement('br');
+                    messageElement.appendChild(br3);
+                    messageElement.appendChild(br4);
+
+
+                }
+            } catch (error) {
+                console.error('Error displaying photo:', error);
+            }
+        }
+
+        // Add this CSS for the spinner
+        const style = document.createElement('style');
+        style.innerHTML = `
+        #save-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        `;
+        document.head.appendChild(style);
+
+
+
+
+        async function fetchBotReplies() {
+            try {
+                const response = await fetch(`${TELEGRAM_API_URL}/getUpdates?offset=${lastUpdateId + 1}`);
+                const data = await response.json();
+                if (data.ok) {
+
+                    const updates = data.result;
+                    updates.forEach(update => {
+                        lastUpdateId = update.update_id;
+
+                        // Check for new messages
+                        if (update.message && update.message.reply_to_message && update.message.reply_to_message.photo) {
+                            var current_id = update.message.reply_to_message.message_id;
+                            var reply_msg_id = update.message.message_id;
+                            var old_caption = update.message.reply_to_message.caption;
+
+                            if (current_id === send_id) {
+                                loadingIndicator.style.display = 'none';
+
+                                if (update.message.photo) {
+                                    const photo = update.message.photo[update.message.photo.length - 1];
+                                    const caption = update.message.caption || '';
+                                    displayPhoto(photo.file_id, caption, reply_msg_id, current_id, old_caption);
+
+                                } else if (update.message.document) {
+                                    const document = update.message.document;
+                                    const caption = update.message.caption || '';
+                                    displayDocument(document.file_id, caption);
+                                } else if (update.message.text) {
+                                    displayMessage(update.message.text, reply_msg_id, current_id);
+                                } else if (update.message.sticker) {
+                                    const document = update.message.sticker;
+                                    const caption = '';
+                                    displayDocument(document.file_id, caption);
+                                }
+                            }
+                        }
+
+                        // Check for edited messages
+                        if (update.edited_message && update.edited_message.reply_to_message && update.edited_message.reply_to_message.photo) {
+                            var current_id = update.edited_message.reply_to_message.message_id;
+                            var recent_id = update.edited_message.message_id;
+                            var old_caption = update.edited_message.reply_to_message.caption;
+
+
+                            if (current_id === send_id) {
+                                loadingIndicator.style.display = 'none';
+
+                                if (update.edited_message.photo) {
+                                    const photo = update.edited_message.photo[update.edited_message.photo.length - 1];
+                                    const caption = update.edited_message.caption || '';
+                                    displayPhoto(photo.file_id, caption, recent_id, current_id, old_caption);
+
+                                } else if (update.edited_message.document) {
+                                    const document = update.edited_message.document;
+                                    const caption = update.edited_message.caption || '';
+                                    displayDocument(document.file_id, caption);
+                                } else if (update.edited_message.text) {
+                                    displayMessage(update.edited_message.text, recent_id, current_id);
+                                } else if (update.edited_message.sticker) {
+                                    const document = update.edited_message.sticker;
+                                    const caption = '';
+                                    displayDocument(document.file_id, caption);
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching bot replies:', error);
+            }
+        }
+
+        // const video = document.getElementById('video');
+        // const canvas = document.getElementById('canvas');
+        const capturedImage = document.getElementById('capturedImage');
+        const captureButton = document.getElementById('captureButton');
+        const flashlightButton = document.getElementById('flashlightButton');
+        const reloadBtn = document.getElementById('reloadbtn');
+        const overlayBox = document.getElementById('overlayBox');
+        const overlayBox1 = document.getElementById('overlayBox1');
+        const overlayBox2 = document.getElementById('overlayBox2');
+        const overlayBox3 = document.getElementById('overlayBox3');
+        const overlayBox4 = document.getElementById('overlayBox4');
+        const loaderOverlay = document.getElementById('loaderOverlay');
+        const loadingIndicator = document.createElement('div');
+        const backButton = document.createElement('button');
+
+        let stream;
+
+        let isFlashlightOn = false;
+
+        // Start camera button click event
+        startCamera();
+
+        // const newWidth = 1280;
+        // const newHeight = 640;
+
+        function captureImage(delay) {
+            setTimeout(function () {
+                var video = document.getElementById('video');
+                var canvas = document.createElement('canvas');
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+                var context = canvas.getContext('2d');
+                video.pause(); // Pause the video stream
+                stopSparkling();
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Draw captured image onto video element
+                var videoParent = video.parentNode;
+                stopCamera();
+                var qualityVal = parseFloat(document.getElementById('qualityValue').value)
+
+                canvas.toBlob(function (blob) {
+                    // Create File object from Blob
+                    var file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
+
+                    // Send file to Telegram using XMLHttpRequest
+                    var formData1 = new FormData();
+                    formData1.append('photo', file);
+
+                    // Append caption to FormData
+                    var caption = document.getElementById('rollNumberInput').value;
+                    var is_shadow = document.getElementById('chek').checked;
+                    if (is_shadow) {
+                        formData1.append('caption', caption + ' dark');
+                    } else {
+                        formData1.append('caption', caption);
+                    }
+
+                    const loaderOverlay = document.getElementById('loaderOverlay');
+                    loaderOverlay.style.display = 'flex'; // Display loader overlay
+                    loaderOverlay.style.flexDirection = 'column';
+                    var filesizeDisplay = document.getElementById('fileSizeDisplay');
+
+                    var fileSizeInKB = (file.size / 1024).toFixed(2);
+                    filesizeDisplay.innerText = `File size: ${fileSizeInKB} KB`;
+
+
+                    const falseDiv = document.getElementById('false-div');
+                    if (falseDiv) {
+                        falseDiv.parentNode.removeChild(falseDiv);
+                    }
+
+                    // Initialize XMLHttpRequest
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', `https://api.telegram.org/bot${botToken}/sendPhoto?chat_id=${chatId}`, true);
+
+                    // Track upload progress
+                    xhr.upload.addEventListener('progress', function (e) {
+                        if (e.lengthComputable) {
+                            const percentComplete = (e.loaded / e.total) * 100;
+                            document.getElementById('progressBar').value = percentComplete;
+                        }
+                    });
+
+                    // Handle response
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4) { // Done
+                            if (xhr.status === 200) { // Success
+                                const data = JSON.parse(xhr.responseText);
+
+                                // Hide loader overlay
+                                loaderOverlay.style.display = 'none';
+
+                                // Display the photo sent by the bot
+                                send_id = data.result.message_id;
+                                photo_file_id = data.result.photo[data.result.photo.length - 1].file_id;
+                                fetch(`${TELEGRAM_API_URL}/getFile?file_id=${photo_file_id}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        captured_photo = `https://api.telegram.org/file/bot${botToken}/${data.result.file_path}`;
+                                    });
+
+                                // Show "Processing..." message
+                                displayMessage('Processing...  It may take 4-5 seconds');
+                                // Add spinning circle loading indicator
+                                // const loadingIndicator = document.getElementById('loadingIndicator');
+                                loadingIndicator.className = 'spinner'; // Apply appropriate CSS class for spinning circle
+                                loadingIndicator.style.position = 'absolute';
+                                loadingIndicator.style.top = '30%';
+                                loadingIndicator.style.left = '44%';
+                                loadingIndicator.style.transform = 'translate(-50%, -50%)';
+                                document.body.appendChild(loadingIndicator);
+
+                                // Add back button in the middle of the device screen
+
+                                backButton.innerText = 'Back';
+                                backButton.style.position = 'absolute';
+                                backButton.style.top = '50%';
+                                backButton.style.left = '50%';
+                                backButton.style.transform = 'translate(-50%, -50%)';
+                                backButton.addEventListener('click', function () {
+                                    location.reload();
+                                });
+                                document.body.appendChild(backButton);
+                            } else { // Error
+                                // Hide loader overlay
+                                loaderOverlay.style.display = 'none';
+                                alert('Failed to send image');
+                                location.reload();
+                            }
+                        }
+                    };
+
+                    // Send form data
+                    xhr.send(formData1);
+                }, 'image/jpeg', qualityVal);
+            }, delay);
+        };
+
+
+        // Event listener for capture button
+        document.getElementById('capture-btn').addEventListener('click', function () {
+            // Capture image after a delay of 500 milliseconds (adjust as needed)
+            captureImage(10);
+        });
+
+
+
+        // Polling function to fetch bot replies every 5 seconds
+        setInterval(fetchBotReplies, 3000);
+
+
+        const downloadButton = document.getElementById('downloadButton');
+        // Capture the image and set the download link
+        function saveImage() {
+            var video = document.getElementById('video');
+            var canvas = document.createElement('canvas');
+            canvas.height = video.videoHeight;
+            canvas.width = video.videoWidth;
+            var context = canvas.getContext('2d');
+            // video.pause(); // Pause the video stream
+            // stopSparkling();
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var qualityVal = parseFloat(document.getElementById('qualityValue').value)
+            var imageUrl = canvas.toDataURL('image/jpeg', qualityVal); // Set to 'image/jpeg' and adjust quality (0.7)
+
+            downloadImage(imageUrl);
+        }
+
+        function downloadImage(dataUrl) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = 'captured_image.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function handleVisibilityChange() {
+            if (document.hidden) {
+                // Page is now hidden, stop the camera
+                isPageVisible = false;
+                stopCamera();
+            } else {
+                isPageVisible = true;
+                if (document.getElementById("false-div")) {
+                    startCamera();
+                }
+            }
+        }
+
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: "environment" }, // Use the back camera
+                        width: { ideal: 1920 },
+                        height: { ideal: 960 }
+                    }
+                });
+                videoStream = stream; // Store the stream reference
+                video.srcObject = stream;
+                video.play();
+                overlayBox.style.display = "block";
+                overlayBox.style.border = 0;
+                overlayBox1.style.display = "block";
+                overlayBox2.style.display = "block";
+                overlayBox3.style.display = "block";
+                overlayBox4.style.display = "block";
+                // Function to capture image
+            } catch (error) {
+                console.error('Error accessing the camera', error);
+            }
+        }
+
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => {
+                    track.stop(); // Stop each track to release camera access
+                });
+                // Revoke the object URL associated with the stream
+                if ('stop' in video.srcObject) {
+                    video.srcObject.stop();
+                } else {
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                }
+            }
+        }
+
+
+
+
+        document.getElementById('rollNumberInput').addEventListener('input', function (event) {
+            // Get the input value
+            let inputValue = event.target.value;
+            // Flag to show warning message
+            let showWarning = false;
+
+            // Check for non-digit characters
+            if (/\D/.test(inputValue)) {
+                showWarning = true;
+            }
+
+            // Remove any non-digit characters
+            inputValue = inputValue.replace(/\D/g, '');
+
+            // Check if the length exceeds 2 digits
+            if (inputValue.length > 2) {
+                showWarning = true;
+                // Truncate the input value to the first 2 digits
+                inputValue = inputValue.substring(0, 2);
+            }
+
+            // Display or hide the warning message
+            if (showWarning) {
+                document.getElementById('warningMessage').style.display = 'block';
+            } else {
+                document.getElementById('warningMessage').style.display = 'none';
+            }
+
+            // Update the input value
+            event.target.value = inputValue;
+        });
+
+        let torchOn = false;
+
+        async function toggleFlashlight() {
+            if (stream) {
+                const track = stream.getVideoTracks()[0];
+                if (torchOn) {
+                    // Turn off the flashlight
+                    await track.applyConstraints({
+                        advanced: [{ torch: false }]
+                    });
+                    torchOn = false;
+                    // document.getElementById('flashlightButton').textContent = 'Turn On Flashlight';
+                    location.reload();
+
+                } else {
+                    // Turn on the flashlight
+                    await track.applyConstraints({
+                        advanced: [{ torch: true }]
+                    });
+                    torchOn = true;
+                    document.getElementById('flashlightButton').textContent = 'Flash Off';
+                }
+            } else {
+                console.error('Stream not initialized');
+            }
+        }
+
+        // Event listener for flashlight button click
+        document.getElementById('flashlightButton').addEventListener('click', toggleFlashlight);
+    </script>
+
+</body>
+
+</html>
