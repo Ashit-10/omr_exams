@@ -510,7 +510,7 @@
 
             <form id="myForm">
                 <!-- Add the input field next to the capture and cancel buttons -->
-                <input type="text" id="rollNumberInput" placeholder="Roll No (Optional)  ">
+                <input type="text" id="rollNumberInput" placeholder="Name  ">
                 <div id="warningMessage" class="warning">Only integers up to 2 digits are allowed.</div>
                 Image is darker <input id="chek" type="checkbox" name="option" value="shadow">
             </form>
@@ -1430,37 +1430,37 @@
 
 
 
-        document.getElementById('rollNumberInput').addEventListener('input', function (event) {
-            // Get the input value
-            let inputValue = event.target.value;
-            // Flag to show warning message
-            let showWarning = false;
+        // document.getElementById('rollNumberInput').addEventListener('input', function (event) {
+        //     // Get the input value
+        //     let inputValue = event.target.value;
+        //     // Flag to show warning message
+        //     let showWarning = false;
 
-            // Check for non-digit characters
-            if (/\D/.test(inputValue)) {
-                showWarning = true;
-            }
+        //     // Check for non-digit characters
+        //     if (/\D/.test(inputValue)) {
+        //         showWarning = true;
+        //     }
 
-            // Remove any non-digit characters
-            inputValue = inputValue.replace(/\D/g, '');
+        //     // Remove any non-digit characters
+        //     inputValue = inputValue.replace(/\D/g, '');
 
-            // Check if the length exceeds 2 digits
-            if (inputValue.length > 2) {
-                showWarning = true;
-                // Truncate the input value to the first 2 digits
-                inputValue = inputValue.substring(0, 2);
-            }
+        //     // Check if the length exceeds 2 digits
+        //     if (inputValue.length > 2) {
+        //         showWarning = true;
+        //         // Truncate the input value to the first 2 digits
+        //         inputValue = inputValue.substring(0, 2);
+        //     }
 
-            // Display or hide the warning message
-            if (showWarning) {
-                document.getElementById('warningMessage').style.display = 'block';
-            } else {
-                document.getElementById('warningMessage').style.display = 'none';
-            }
+        //     // Display or hide the warning message
+        //     if (showWarning) {
+        //         document.getElementById('warningMessage').style.display = 'block';
+        //     } else {
+        //         document.getElementById('warningMessage').style.display = 'none';
+        //     }
 
-            // Update the input value
-            event.target.value = inputValue;
-        });
+        //     // Update the input value
+        //     event.target.value = inputValue;
+        // });
 
         let torchOn = false;
 
