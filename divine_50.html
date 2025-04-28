@@ -1366,13 +1366,24 @@
         }
 
         function downloadImage(dataUrl) {
-            const link = document.createElement('a');
-            link.href = dataUrl;
-            link.download = 'captured_image.jpg';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+    const input = document.getElementById('rollNumberInput');
+    const rollNumber = input.value.trim(); // Get and trim input value
+
+    const link = document.createElement('a');
+    link.href = dataUrl;
+
+    // Set the filename conditionally
+    if (rollNumber) {
+        link.download = `OMR_${rollNumber}.jpg`;
+    } else {
+        link.download = 'OMR.jpg';
+    }
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 
         function handleVisibilityChange() {
             if (document.hidden) {
