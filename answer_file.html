@@ -426,11 +426,12 @@
 
         const shouldDownload = confirm('Do you want to download the file too?');
         if (shouldDownload) {
-            const blob = formData.get('document'); // Assuming 'document' is the file field name
+            const originalFile = formData.get('document'); // your uploaded file
+            const blob = new Blob([await originalFile.text()], { type: originalFile.type });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'answer_key.txt'; // Change this to your desired file name
+            a.download = 'answer_key.txt'; // Now it will download exactly as 'answer_key.txt'
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -445,6 +446,7 @@
 } finally {
     loadingOverlay.style.display = 'none';
 }
+
 
             }
 
