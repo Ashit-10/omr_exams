@@ -1228,41 +1228,39 @@ video.style.height = `${180 / aspectRatio}px`;
 
         function captureImage(delay) {
             setTimeout(function () {
-                var video = document.getElementById('video');
-              var rect = video.getBoundingClientRect();  // visible size on screen
+                const video = document.getElementById('video');
+        const rect = video.getBoundingClientRect();
 
-        // Calculate scale between actual video stream and visible size
-        var scaleX = video.videoWidth / rect.width;
-        var scaleY = video.videoHeight / rect.height;
+        const actualWidth = video.videoWidth;
+        const actualHeight = video.videoHeight;
 
-                var canvas = document.createElement('canvas');
-        canvas.width = rect.width;
-        canvas.height = rect.height;
-        var context = canvas.getContext('2d');
+        const displayWidth = video.clientWidth;
+        const displayHeight = video.clientHeight;
 
-              
+        // Proportion of visible area in relation to actual stream
+        const cropWidth = actualWidth * (rect.width / displayWidth);
+        const cropHeight = actualHeight * (rect.height / displayHeight);
+
+        // Center crop
+        const cropX = (actualWidth - cropWidth) / 2;
+        const cropY = (actualHeight - cropHeight) / 2;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = cropWidth;
+        canvas.height = cropHeight;
+        const ctx = canvas.getContext('2d');
+
+        video.pause();
+        stopSparkling();
+
+        // Draw only visible portion
+        ctx.drawImage(
+            video,
+            cropX, cropY, cropWidth, cropHeight,  // source: crop area
+            0, 0, cropWidth, cropHeight           // destination: full canvas
+        );
                 
-                video.pause(); // Pause the video stream
-                stopSparkling();
-              //  context.drawImage(video, 0, 0, canvas.width, canvas.height);
-// Capture only the visible portion
-        // Calculate crop width based on visible area
-const cropWidth = video.videoWidth * (rect.width / video.clientWidth);
-const cropHeight = video.videoHeight * (rect.height / video.clientHeight);
-
-// Calculate starting point (center crop)
-const cropX = (video.videoWidth - cropWidth) / 2;
-const cropY = (video.videoHeight - cropHeight) / 2;
-
-// Now draw only the cropped center portion
-context.drawImage(
-    video,
-    cropX, cropY,         // source crop start
-    cropWidth, cropHeight, // source crop size
-    0, 0,                 // destination start
-    canvas.width, canvas.height // destination size
-);
-
+            
                 // Draw captured image onto video element
              //   var videoParent = video.parentNode;
                 stopCamera();
@@ -1382,19 +1380,40 @@ context.drawImage(
         const downloadButton = document.getElementById('downloadButton');
         // Capture the image and set the download link
         function saveImage() {
-            var video = document.getElementById('video');
-            var canvas = document.createElement('canvas');
-            canvas.height = video.videoHeight;
-            canvas.width = video.videoWidth;
-            var context = canvas.getContext('2d');
-            // video.pause(); // Pause the video stream
-            // stopSparkling();
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            var qualityVal = parseFloat(document.getElementById('qualityValue').value)
-            var imageUrl = canvas.toDataURL('image/jpeg', qualityVal); // Set to 'image/jpeg' and adjust quality (0.7)
+    const video = document.getElementById('video');
+    const rect = video.getBoundingClientRect();
 
-            downloadImage(imageUrl);
-        }
+    const actualWidth = video.videoWidth;
+    const actualHeight = video.videoHeight;
+
+    const displayWidth = video.clientWidth;
+    const displayHeight = video.clientHeight;
+
+    // Proportional crop dimensions
+    const cropWidth = actualWidth * (rect.width / displayWidth);
+    const cropHeight = actualHeight * (rect.height / displayHeight);
+
+    // Crop from center
+    const cropX = (actualWidth - cropWidth) / 2;
+    const cropY = (actualHeight - cropHeight) / 2;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = cropWidth;
+    canvas.height = cropHeight;
+    const context = canvas.getContext('2d');
+
+    context.drawImage(
+        video,
+        cropX, cropY, cropWidth, cropHeight, // source crop
+        0, 0, cropWidth, cropHeight          // destination size
+    );
+
+    const qualityVal = parseFloat(document.getElementById('qualityValue').value);
+    const imageUrl = canvas.toDataURL('image/jpeg', qualityVal);
+
+    downloadImage(imageUrl);
+}
+
 
         function downloadImage(dataUrl) {
             const link = document.createElement('a');
