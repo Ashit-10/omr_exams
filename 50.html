@@ -1246,13 +1246,23 @@ video.style.height = `${180 / aspectRatio}px`;
                 stopSparkling();
               //  context.drawImage(video, 0, 0, canvas.width, canvas.height);
 // Capture only the visible portion
-        context.drawImage(
-            video,
-            0, 0,  // source x, y
-            video.videoWidth, video.videoHeight,  // source width and height
-            0, 0,  // destination x, y
-            canvas.width, canvas.height  // destination width and height
-        );
+        // Calculate crop width based on visible area
+const cropWidth = video.videoWidth * (rect.width / video.clientWidth);
+const cropHeight = video.videoHeight * (rect.height / video.clientHeight);
+
+// Calculate starting point (center crop)
+const cropX = (video.videoWidth - cropWidth) / 2;
+const cropY = (video.videoHeight - cropHeight) / 2;
+
+// Now draw only the cropped center portion
+context.drawImage(
+    video,
+    cropX, cropY,         // source crop start
+    cropWidth, cropHeight, // source crop size
+    0, 0,                 // destination start
+    canvas.width, canvas.height // destination size
+);
+
                 // Draw captured image onto video element
              //   var videoParent = video.parentNode;
                 stopCamera();
