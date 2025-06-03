@@ -571,6 +571,7 @@
             if (isOriginalSize) {
                 video.style.height = "480px";
                 video.style.width = "280px";
+                
                 overBox1.style.left = "calc(15%)";
                 overBox2.style.left = "calc(72%)";
                 overBox3.style.left = "calc(15%)";
@@ -579,6 +580,10 @@
             } else {
                 video.style.height = "480px"; // small
                 video.style.width = "180px";
+                const aspectRatio = video.videoWidth / video.videoHeight;
+video.style.width = '180px';
+video.style.height = `${180 / aspectRatio}px`;
+
                 overBox1.style.left = "calc(50% - 85px)";
                 overBox2.style.left = "calc(50% + 30px)";
                 overBox3.style.left = "calc(50% - 85px)";
