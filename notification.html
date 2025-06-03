@@ -1,59 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Web Notification Demo</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding-top: 100px;
-    }
-    button {
-      font-size: 18px;
-      padding: 10px 20px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Notification Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        #status {
+            margin-top: 20px;
+            color: green;
+        }
+    </style>
 </head>
 <body>
+    <h1>Web Notification Test</h1>
+    <button onclick="requestPermission()">🔓 Allow Notification</button>
+    <br><br>
+    <button onclick="simulateProcessing()">📣 Simulate OMR Result</button>
 
-  <h1>Web Notification Example</h1>
-  <button onclick="showNotification()">Send Notification</button>
+    <div id="status"></div>
 
-  <script>
-    // Request permission on page load
-    document.addEventListener("DOMContentLoaded", function () {
-      if ("Notification" in window) {
-        Notification.requestPermission().then(function (permission) {
-          console.log("Notification permission:", permission);
-        });
-      }
-    });
+    <script>
+        let lastImage = "";
 
-    // Function to show notification
-    function showNotification() {
-      if (!("Notification" in window)) {
-        alert("This browser does not support desktop notifications.");
-        return;
-      }
+        function requestPermission() {
+            if (Notification.permission === "granted") {
+                alert("Permission already granted!");
+            } else {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === "granted") {
+                        alert("Notification permission granted!");
+                    } else {
+                        alert("Notification permission denied.");
+                    }
+                });
+            }
+        }
 
-      if (Notification.permission === "granted") {
-        const notification = new Notification("✅ Task Complete!", {
-          body: "You clicked the notification button."
-         // icon: "https://cdn-icons-png.flaticon.com/512/190/190411.png" // Optional icon
-        });
+        function showNotification(title, body) {
+            if (Notification.permission === "granted") {
+                new Notification(title, { body });
+            } else {
+                console.log("Notification blocked.");
+            }
+        }
 
-        // Optional click handler
-        notification.onclick = function () {
-          window.open("https://www.google.com");
-        };
+        function simulateProcessing() {
+            // Simulate a new result every time the button is clicked
+            const filename = "OMR_" + Math.floor(Math.random() * 1000) + ".jpg";
 
-      } else {
-        alert("Notification permission not granted.");
-      }
-    }
-  </script>
-
+            if (filename !== lastImage) {
+                lastImage = filename;
+                document.getElementById("status").innerText = "Processed new file: " + filename;
+                showNotification("New OMR Result", "Processed: " + filename);
+            }
+        }
+    </script>
 </body>
 </html>
