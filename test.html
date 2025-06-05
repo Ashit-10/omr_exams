@@ -215,6 +215,24 @@
                 setSet();
                 displayNewOMRSheet();
             }
+            const savedData = localStorage.getItem('omrAnswers');
+if (!filename && savedData) {
+    try {
+        const parsedData = JSON.parse(savedData);
+        processJSON(parsedData);
+    } catch (e) {
+        console.error("Failed to parse saved OMR data", e);
+    }
+}
+function bindAutoSaveListeners() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+            updateQuestionColors();
+            autoSave();
+        });
+    });
+}
+
 function autoSave() {
     const questions = document.querySelectorAll('.question');
     const autoData = {};
@@ -264,6 +282,8 @@ document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                     questionContainer.appendChild(questionDiv);
                 }
                 updateQuestionColors();
+                bindAutoSaveListeners();
+
             }
 
             function processJSON(data) {
@@ -274,6 +294,8 @@ document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                     }
                 }
                 displayQuestions();
+                bindAutoSaveListeners();
+
             }
 
             function displayQuestions() {
@@ -284,6 +306,8 @@ document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
                 });
                 addNewQuestion();
                 updateQuestionColors();
+                bindAutoSaveListeners();
+
             }
 
             function createQuestionElement(index, selectedOptions = []) {
