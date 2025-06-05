@@ -215,6 +215,26 @@
                 setSet();
                 displayNewOMRSheet();
             }
+function autoSave() {
+    const questions = document.querySelectorAll('.question');
+    const autoData = {};
+    userInput.length = 0;
+
+    questions.forEach((question, index) => {
+        const selected = Array.from(question.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.value);
+        if (selected.length > 0) {
+            autoData[index + 1] = selected;
+        }
+        userInput[index] = selected;
+    });
+
+    // Update localStorage and textarea
+    localStorage.setItem('omrAnswers', JSON.stringify(autoData));
+    document.getElementById('jsonData').value = JSON.stringify(autoData, null, 2);
+}
+document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', autoSave);
+});
 
             function setSet() {
                 if (filename) {
