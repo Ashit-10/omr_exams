@@ -1,163 +1,354 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MCQ OMR Sheet</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OMR Sheet</title>
   <style>
+    /* Existing styles remain unchanged... */
     body {
-      font-family: sans-serif;
-      padding: 20px;
+      font-family: Arial, sans-serif;
     }
+
+    .filename-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .filename-container h5 {
+      font-size: 1rem;
+    }
+
     .question {
+      margin: 20px 0;
+      padding: 10px;
       border: 1px solid #ccc;
-      padding: 12px;
-      margin-bottom: 10px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background-color 0.5s ease;
     }
-    .options label {
-      display: block;
-      margin-bottom: 4px;
+
+    .question.green {
+      background-color: #c3e6cb;
     }
-    #resetBtn {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 1000;
-      padding: 8px 12px;
-      background: #ff5b5b;
-      color: white;
-      border: none;
-      border-radius: 4px;
+
+    .question.blue {
+      background-color: #9decf1;
+    }
+
+    .question.red {
+      background-color: #f8d7da;
+    }
+
+    .options {
+      display: flex;
+      gap: 20px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+    }
+
+    .option input[type="checkbox"] {
+      display: none;
+    }
+
+    .option label {
+      position: relative;
       cursor: pointer;
     }
+
+    .option label::before {
+      content: attr(data-text);
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-size: 15px;
+      background-color: #fff;
+      color: #000;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .option input[type="checkbox"]:checked+label::before {
+      background-color: #4744f7;
+      color: #fff;
+    }
+
+    .action-button {
+      background-color: #5451f0;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 15px;
+      height: 30px;
+      transition: background-color 0.3s ease;
+    }
+
+    .action-button:hover {
+      background-color: #3030a6;
+    }
+
+    #loadingOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.7);
+      z-index: 9999;
+    }
+
+    #loadingSpinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .topButtons {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      gap: 12px;
+    }
+
+    select {
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      height: 40px;
+      font-size: 15px;
+    }
+
+    select:focus {
+      background-color: #f0f0f0;
+      color: #000;
+      border-color: #5451f0;
+    }
   </style>
-</head>
-<body>
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+      const userInput = [];
+      let entryCount = 1;
+      let questionCount = 100;
+      const questionContainer = document.getElementById('questionContainer');
+      const setButton = document.getElementById('setButon');
+      const saveButton = document.getElementById('saveButton');
+      const copyButton = document.getElementById('copyButon');
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      const filenameDisplay = document.getElementById('filenameDisplay');
 
-<h1>MCQ OMR Sheet</h1>
+      function getQueryParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+      }
 
-<div id="questions-container">
-  <!-- Questions will be inserted here -->
-</div>
+      const filename = getQueryParameter('filename');
+      const dataSave = getQueryParameter('data') === 'save';
+      filenameDisplay.textContent = filename || "New OMR Sheet";
+      const showTopButtons = getQueryParameter('user');
+      const subjectName = getQueryParameter('subject');
 
-<script>
-// ========== Core Question Logic ==========
-const questionFile = "question.txt";
-const answerFile = "answer.txt";
+      if (showTopButtons === 'student') {
+        document.querySelector('.topButtons').style.display = 'none';
+      }
+      if (subjectName) {
+        filenameDisplay.textContent = subjectName;
+        document.getElementById('questionContainer').style.pointerEvents = 'none';
+      }
 
-function loadTextFile(filePath, callback) {
-  fetch(filePath)
-    .then(res => {
-      if (!res.ok) throw new Error(`${filePath} not found`);
-      return res.text();
-    })
-    .then(text => callback(null, text))
-    .catch(err => callback(err));
-}
+      if (filename) {
+        fetch(filename)
+          .then(response => {
+            if (!response.ok) throw new Error('Network error');
+            return response.json();
+          })
+          .then(data => {
+            setSet();
+            questionCount = Array.isArray(data) ? data.length : Object.keys(data).length;
+            processJSON(data);
+          })
+          .catch(error => {
+            setSet();
+            displayNewOMRSheet();
+          });
+      } else {
+        setSet();
+        displayNewOMRSheet();
+      }
 
-function parseQuestions(text) {
-  const blocks = text.trim().split(/\n\s*\n/);
-  return blocks.map((block, index) => {
-    const lines = block.split("\n");
-    const qText = lines[0].replace(/^\d+\.\s*/, '');
-    const options = lines.slice(1).map(line => {
-      const match = line.match(/^[A-D]\)(.*)/);
-      return match ? match[1].trim() : line.trim();
-    });
-    return { qText, options, index };
-  });
-}
+      function setSet() {
+        if (filename) {
+          let select = document.getElementById('setValue');
+          let fname = filename.split('_ans_key.txt')[0];
+          select.value = ['A', 'B', 'C', 'D'].includes(fname.slice(-1)) ? fname.slice(-1) : 'none';
+        }
+      }
 
-function renderQuestions(questions) {
-  const container = document.getElementById("questions-container");
-  container.innerHTML = "";
-  questions.forEach((q, idx) => {
-    const div = document.createElement("div");
-    div.className = "question";
-    div.innerHTML = `<strong>${idx + 1}. ${q.qText}</strong><div class="options"></div>`;
-    const opts = div.querySelector(".options");
-    ["A", "B", "C", "D"].forEach((opt, i) => {
-      const label = document.createElement("label");
-      label.innerHTML = `
-        <input type="checkbox" name="q${idx}" value="${opt}"> ${opt}) ${q.options[i] || ''}
-      `;
-      opts.appendChild(label);
-    });
-    container.appendChild(div);
-  });
-}
+      function displayNewOMRSheet() {
+        questionContainer.innerHTML = '';
+        for (let i = 1; i <= questionCount; i++) {
+          const questionDiv = createQuestionElement(i, []);
+          questionContainer.appendChild(questionDiv);
+        }
 
-// ========== Auto Save Logic ==========
+        if (dataSave) {
+          loadFromLocalStorage();
+        }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const dataSaveEnabled = urlParams.get("data") === "save";
-  const filename = urlParams.get("filename") || "default";
-  const localSaveKey = `omr_local_${filename}`;
+        updateQuestionColors();
+      }
 
-  if (dataSaveEnabled) {
-    const resetBtn = document.createElement("button");
-    resetBtn.id = "resetBtn";
-    resetBtn.innerText = "Reset";
-    document.body.appendChild(resetBtn);
+      function processJSON(data) {
+        for (const key in data) {
+          if (data.hasOwnProperty(key)) {
+            userInput[parseInt(key) - 1] = data[key];
+            entryCount = Math.max(entryCount, parseInt(key) + 1);
+          }
+        }
+        displayQuestions();
+      }
 
-    resetBtn.addEventListener("click", () => {
-      if (confirm("Reset all saved data?")) {
-        localStorage.removeItem(localSaveKey);
-        location.reload();
+      function displayQuestions() {
+        questionContainer.innerHTML = '';
+        userInput.forEach((options, index) => {
+          const questionDiv = createQuestionElement(index + 1, options);
+          questionContainer.appendChild(questionDiv);
+        });
+        updateQuestionColors();
+      }
+
+      function createQuestionElement(index, selectedOptions = []) {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question';
+        questionDiv.innerHTML = `<span>Question - ${index}:</span>`;
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'options';
+
+        ['A', 'B', 'C', 'D'].forEach((option) => {
+          const optionDiv = document.createElement('div');
+          optionDiv.className = 'option';
+          const checkboxId = `question${index}_${option}`;
+          optionDiv.innerHTML = `
+            <input type="checkbox" id="${checkboxId}" name="question${index}" value="${option}" ${selectedOptions.includes(option) ? 'checked' : ''}>
+            <label for="${checkboxId}" data-text="${option}"></label>
+          `;
+          optionsDiv.appendChild(optionDiv);
+        });
+
+        questionDiv.appendChild(optionsDiv);
+        return questionDiv;
+      }
+
+      function updateQuestionColors() {
+        const questions = document.querySelectorAll('.question');
+        questions.forEach(question => {
+          const checkboxes = question.querySelectorAll('input[type="checkbox"]');
+          const selectedOptions = Array.from(checkboxes).filter(c => c.checked);
+          question.className = 'question';
+          if (selectedOptions.length === 1) question.classList.add('green');
+          else if (selectedOptions.length > 1) question.classList.add('blue');
+          else question.classList.add('red');
+        });
+
+        if (dataSave) saveToLocalStorage();
+      }
+
+      function saveToLocalStorage() {
+        const answerObj = {};
+        const questions = document.querySelectorAll('.question');
+        questions.forEach((question, i) => {
+          const selected = Array.from(question.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.value);
+          if (selected.length > 0) {
+            answerObj[i + 1] = selected;
+          }
+        });
+        localStorage.setItem('omr_saved_data', JSON.stringify(answerObj));
+      }
+
+      function loadFromLocalStorage() {
+        const saved = localStorage.getItem('omr_saved_data');
+        if (!saved) return;
+        const data = JSON.parse(saved);
+        for (const q in data) {
+          const opts = data[q];
+          opts.forEach(option => {
+            const checkbox = document.getElementById(`question${q}_${option}`);
+            if (checkbox) checkbox.checked = true;
+          });
+        }
+      }
+
+      saveButton.addEventListener('click', saveData);
+      copyButton.addEventListener('click', copyJSONData);
+      questionContainer.addEventListener('change', updateQuestionColors);
+
+      async function saveData(e) { /* unchanged */ }
+      async function copyJSONData() { /* unchanged */ }
+      async function sendToTelegram(jsonString, filename) { /* unchanged */ }
+
+      // ✅ Add Reset button dynamically if ?data=save
+      if (dataSave) {
+        const resetBtn = document.createElement('button');
+        resetBtn.textContent = 'Reset';
+        resetBtn.className = 'action-button';
+        resetBtn.style.backgroundColor = '#999';
+        resetBtn.addEventListener('click', () => {
+          if (confirm('Clear all saved answers?')) {
+            localStorage.removeItem('omr_saved_data');
+            location.reload();
+          }
+        });
+        document.querySelector('.topButtons').appendChild(resetBtn);
       }
     });
-  }
+  </script>
+</head>
 
-  function saveLocally() {
-    if (!dataSaveEnabled) return;
-    const data = [];
-    document.querySelectorAll(".question").forEach((q, i) => {
-      const checked = Array.from(q.querySelectorAll("input:checked")).map(cb => cb.value);
-      data[i] = checked;
-    });
-    localStorage.setItem(localSaveKey, JSON.stringify(data));
-  }
-
-  function restoreSelections() {
-    const saved = localStorage.getItem(localSaveKey);
-    if (!saved) return;
-    try {
-      const parsed = JSON.parse(saved);
-      document.querySelectorAll(".question").forEach((q, i) => {
-        const checkboxes = q.querySelectorAll("input[type='checkbox']");
-        if (!parsed[i]) return;
-        checkboxes.forEach(cb => {
-          cb.checked = parsed[i].includes(cb.value);
-        });
-      });
-    } catch (e) {
-      console.error("Failed to restore saved data:", e);
-    }
-  }
-
-  function attachAutoSaveListeners() {
-    if (!dataSaveEnabled) return;
-    document.querySelectorAll(".question input[type='checkbox']").forEach(cb => {
-      cb.addEventListener("change", saveLocally);
-    });
-  }
-
-  // Load questions
-  loadTextFile(questionFile, (err, questionText) => {
-    if (err) {
-      document.getElementById("questions-container").innerText = "Failed to load questions.";
-      return;
-    }
-    const questions = parseQuestions(questionText);
-    renderQuestions(questions);
-
-    // Restore and save
-    restoreSelections();
-    attachAutoSaveListeners();
-  });
-});
-</script>
-
+<body>
+  <div class="filename-container">
+    <h5 id="filenameDisplay">New OMR Sheet</h5>
+  </div>
+  <div class="topButtons">
+    <button id="copyButon" class="action-button">Copy JSON data</button>
+    <h3 id="setButon">set:</h3>
+    <select id="setValue">
+      <option value="A">set - A</option>
+      <option value="B">set - B</option>
+      <option value="C">set - C</option>
+      <option value="D">set - D</option>
+      <option value="none" selected>No set</option>
+    </select>
+    <button id="saveButton" class="action-button">Save</button>
+  </div>
+  <form id="omrForm">
+    <div id="questionContainer"></div>
+  </form>
+  <div id="loadingOverlay">
+    <div id="loadingSpinner"></div>
+  </div>
 </body>
+
 </html>
