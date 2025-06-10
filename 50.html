@@ -1,238 +1,275 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OMR Sheet Evaluator</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      background-color: black;
-      color: white;
-      font-family: sans-serif;
-      height: 100%;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Answer Sheet Viewer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
 
-    #wrap {
-      position: relative;
-      width: 180px;
-      height: 480px;
-      border: 4px solid white;
-      box-sizing: content-box;
-    }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
 
-    video, canvas, #resultImg {
-      width: 180px;
-      height: 480px;
-      object-fit: cover;
-      display: block;
-    }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
 
-    .overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      pointer-events: none;
-    }
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-left: 6px solid #ccc;
+            background-color: #fdfdfd;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
 
-    .qr-box {
-      border: 2px solid lime;
-      width: 30px;
-      height: 30px;
-      position: absolute;
-    }
+        .question p {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
 
-    .qr-tl { top: 10px; left: 10px; }
-    .qr-tr { top: 10px; right: 10px; }
-    .qr-bl { bottom: 10px; left: 10px; }
-    .qr-br { bottom: 10px; right: 10px; }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            padding-left: 5px;
+            color: #444;
+        }
 
-    .controls {
-      margin-top: 10px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+        .green {
+            border-left-color: #27ae60;
+            background-color: #eafaf1;
+        }
 
-    button {
-      font-size: 16px;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      background: white;
-      color: black;
-      cursor: pointer;
-    }
+        .blue {
+            border-left-color: #2980b9;
+            background-color: #ecf5fc;
+        }
 
-    #canvas, #resultImg {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
+        .red {
+            border-left-color: #c0392b;
+            background-color: #fdecea;
+        }
 
-    #fullImageView {
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain;
-      background: black;
-    }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
 
-    #errorMessage {
-      color: red;
-      font-size: 18px;
-      margin-top: 20px;
-    }
+        .action-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    #processingOverlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: black;
-      color: white;
-      font-size: 22px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
+        .action-button:hover {
+            background-color: #2980b9;
+        }
 
-    #capturedDisplay {
-      max-height: 80vh;
-      width: auto;
-      margin-bottom: 20px;
-    }
-  </style>
+        #result-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .question-number {
+            font-size: 1.1em;
+            margin-right: 6px;
+            color: #555;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 15px;
+                padding: 15px 20px;
+            }
+
+            .action-button {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h2>Answer Sheet Viewer</h2>
+        <div id="questions-container"></div>
 
-  <div id="wrap">
-    <video id="video" autoplay playsinline muted></video>
-    <canvas id="canvas"></canvas>
-    <img id="resultImg" />
-    <div class="overlay" id="overlay">
-      <div class="qr-box qr-tl"></div>
-      <div class="qr-box qr-tr"></div>
-      <div class="qr-box qr-bl"></div>
-      <div class="qr-box qr-br"></div>
+        <div class="button-container">
+            <button id="saveButton" class="action-button">Save</button>
+            <button id="resetButton" class="action-button">Reset</button> <!-- ✅ Reset Button Added -->
+        </div>
+
+        <div id="result-container"></div>
     </div>
-  </div>
 
-  <div class="controls">
-    <button id="flashBtn">🔦 Flash</button>
-    <button id="captureBtn">📸 Capture</button>
-    <button id="nextBtn" style="display:none;">🔁 Next</button>
-    <button id="refreshBtn" style="display:none;">🔄 Refresh</button>
-  </div>
+    <script>
+        const questionsContainer = document.getElementById('questions-container');
+        const saveButton = document.getElementById('saveButton');
+        const resetButton = document.getElementById('resetButton');
+        const resultContainer = document.getElementById('result-container');
 
-  <div id="errorMessage"></div>
+        function getQueryParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
 
-  <div id="processingOverlay">
-    <img id="capturedDisplay" />
-    🔄 Processing the file…
-  </div>
+        const filename = getQueryParameter('filename');
+        const autoSaveEnabled = getQueryParameter('data') === 'save';
+        const localSaveKey = `omrData_${filename || 'default'}`;
 
-  <script>
-  let stream = null;
-  let torchOn = false;
+        function createQuestionElement(questionText, options, index) {
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question');
 
-  const video = document.getElementById("video");
-  const canvas = document.getElementById("canvas");
-  const resultImg = document.getElementById("resultImg");
-  const flashBtn = document.getElementById("flashBtn");
-  const captureBtn = document.getElementById("captureBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const refreshBtn = document.getElementById("refreshBtn");
-  const overlay = document.getElementById("overlay");
-  const errorMessage = document.getElementById("errorMessage");
-  const processingOverlay = document.getElementById("processingOverlay");
-  const capturedDisplay = document.getElementById("capturedDisplay");
+            const questionP = document.createElement('p');
+            questionP.innerHTML = `<span class="question-number">${index + 1}.</span> ${questionText}`;
+            questionDiv.appendChild(questionP);
 
-  async function startCamera() {
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } }
-      });
-      video.srcObject = stream;
-      video.play();
-    } catch (e) {
-      alert("Camera access denied.");
-    }
-  }
+            options.forEach((option, optIndex) => {
+                const label = document.createElement('label');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = `question${index}`;
+                checkbox.value = option;
 
-  async function toggleFlash() {
-    try {
-      if (!stream) return;
-      const track = stream.getVideoTracks()[0];
-      await track.applyConstraints({
-        advanced: [{ torch: !torchOn }]
-      });
-      torchOn = !torchOn;
-      flashBtn.textContent = torchOn ? "Flash Off" : "🔦 Flash";
-    } catch (e) {
-      alert("Flash not supported.");
-    }
-  }
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(` ${option}`));
+                questionDiv.appendChild(label);
+            });
 
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        stream = null;
-      }
-    }
-  });
+            questionsContainer.appendChild(questionDiv);
+        }
 
-  function showControls(mode) {
-    // Modes: "initial", "processing", "result", "error"
-    flashBtn.style.display = (mode === "initial") ? "inline-block" : "none";
-    captureBtn.style.display = (mode === "initial") ? "inline-block" : "none";
-    refreshBtn.style.display = (mode === "initial" || mode === "processing") ? "inline-block" : "none";
-    nextBtn.style.display = (mode === "result" || mode === "error") ? "inline-block" : "none";
-  }
+        function updateQuestionColors() {
+            const questions = document.querySelectorAll('.question');
+            const tempInput = [];
 
-  captureBtn.onclick = () => {
-    errorMessage.textContent = "";
-    showControls("processing");
+            questions.forEach((question, index) => {
+                const checkboxes = question.querySelectorAll('input[type="checkbox"]');
+                const selectedOptions = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(cb => cb.value);
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+                if (selectedOptions.length === 1) {
+                    question.classList.add('green');
+                    question.classList.remove('blue', 'red');
+                } else if (selectedOptions.length > 1) {
+                    question.classList.add('blue');
+                    question.classList.remove('green', 'red');
+                } else {
+                    question.classList.add('red');
+                    question.classList.remove('green', 'blue');
+                }
 
-    stream.getTracks().forEach(t => t.stop());
-    video.style.display = "none";
-    overlay.style.display = "none";
+                tempInput[index] = selectedOptions;
+            });
 
-    const imageDataURL = canvas.toDataURL("image/jpeg");
-    capturedDisplay.src = imageDataURL;
-    processingOverlay.style.display = "flex";
+            // ✅ Auto save to localStorage if enabled
+            if (autoSaveEnabled) {
+                localStorage.setItem(localSaveKey, JSON.stringify(tempInput));
+            }
+        }
 
-    // simulate processing delay
-    setTimeout(() => {
-      processingOverlay.style.display = "none";
-      resultImg.src = imageDataURL;
-      resultImg.id = "fullImageView";
-      document.body.innerHTML = "";
-      document.body.appendChild(resultImg);
-      document.body.appendChild(nextBtn);
-      showControls("result");
-    }, 2000); // 2s fake delay for testing
-  };
+        function processJSON(userInput) {
+            questionsContainer.innerHTML = '';
 
-  flashBtn.onclick = toggleFlash;
-  refreshBtn.onclick = () => location.reload();
-  nextBtn.onclick = () => location.reload();
+            userInput.forEach((answers, index) => {
+                createQuestionElement("Question " + (index + 1), ["A", "B", "C", "D"], index);
+            });
 
-  startCamera();
-  showControls("initial");
-  </script>
+            const questionDivs = document.querySelectorAll('.question');
+            userInput.forEach((answers, index) => {
+                const checkboxes = questionDivs[index].querySelectorAll('input[type="checkbox"]');
+                answers.forEach(ans => {
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.value === ans) {
+                            checkbox.checked = true;
+                        }
+                    });
+                });
+            });
 
+            updateQuestionColors();
+
+            // Add listeners to checkboxes to update colors and save
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', updateQuestionColors);
+            });
+        }
+
+        function getUserSelections() {
+            const selections = [];
+            const questionDivs = document.querySelectorAll('.question');
+
+            questionDivs.forEach(question => {
+                const selected = Array.from(question.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+                selections.push(selected);
+            });
+
+            return selections;
+        }
+
+        saveButton.addEventListener('click', () => {
+            const userInput = getUserSelections();
+            const blob = new Blob([JSON.stringify(userInput, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename || 'answer_key.json';
+            a.click();
+        });
+
+        // ✅ Reset button clears saved data
+        resetButton.addEventListener('click', () => {
+            if (confirm("Are you sure you want to clear all saved data?")) {
+                localStorage.removeItem(localSaveKey);
+                location.reload();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (filename) {
+                fetch(filename)
+                    .then(response => response.json())
+                    .then(data => {
+                        // ✅ Load from localStorage if available
+                        if (autoSaveEnabled) {
+                            const savedData = localStorage.getItem(localSaveKey);
+                            if (savedData) {
+                                try {
+                                    const parsed = JSON.parse(savedData);
+                                    processJSON(parsed);
+                                    return;
+                                } catch (e) {
+                                    console.error("Error parsing saved data:", e);
+                                }
+                            }
+                        }
+
+                        processJSON(data);
+                    })
+                    .catch(error => {
+                        console.error('Error loading the JSON file:', error);
+                    });
+            }
+        });
+    </script>
 </body>
 </html>
