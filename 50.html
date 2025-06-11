@@ -305,9 +305,140 @@
       copyButton.addEventListener('click', copyJSONData);
       questionContainer.addEventListener('change', updateQuestionColors);
 
-      async function saveData(e) { /* unchanged */ }
-      async function copyJSONData() { /* unchanged */ }
-      async function sendToTelegram(jsonString, filename) { /* unchanged */ }
+      async function saveData(e) {
+                e.preventDefault();
+
+                const questions = document.querySelectorAll('.question');
+                let lastSelectedIndex = -1;
+
+                userInput.length = 0;
+
+                for (let i = 0; i < questions.length; i++) {
+                    const question = questions[i];
+                    const selectedOptions = Array.from(question.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.value);
+                    if (selectedOptions.length > 0) {
+                        lastSelectedIndex = i;
+                    }
+                    userInput[i] = selectedOptions;
+                }
+
+                for (let i = 0; i <= lastSelectedIndex; i++) {
+                    if (userInput[i].length === 0) {
+                        alert(`Please select at least one option for Question ${i + 1}.`);
+                        return;
+                    }
+                }
+
+                const jsonOutput = {};
+                userInput.forEach((entry, index) => {
+                    if (entry.length > 0) {
+                        jsonOutput[index + 1] = entry;
+                    }
+                });
+
+                const jsonString = JSON.stringify(jsonOutput, null, 2);
+                loadingOverlay.style.display = 'block';
+
+                await sendToTelegram(jsonString, filename || 'OMR_Sheet.json');
+            }
+
+            async function copyJSONData() {
+                const jsonOutput = {};
+                userInput.forEach((entry, index) => {
+                    if (entry.length > 0) {
+                        jsonOutput[index + 1] = entry;
+                    }
+                });
+
+                const jsonString = JSON.stringify(jsonOutput, null, 2);
+                try {
+                    await navigator.clipboard.writeText(jsonString);
+                    alert('JSON data copied to clipboard!');
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                }
+            }
+
+            async function sendToTelegram(jsonString, filename) {
+                var newFilename = filename;
+                var select = document.getElementById('setValue');
+                var selectedSet = select.value;
+                if (selectedSet != 'none') {
+                    let parts = filename.split('_ans_key.txt');
+                    let fname = parts[0];
+                    if (fname.endsWith("A")) {
+                        fname = fname.slice(0, -2);
+                    } else if (fname.endsWith("B")) {
+                        fname = fname.slice(0, -2);
+
+                    } else if (fname.endsWith("C")) {
+                        fname = fname.slice(0, -2);
+
+                    } else if (fname.endsWith("D")) {
+                        fname = fname.slice(0, -2);
+                    }
+                    newFilename = fname + "_" + selectedSet + "_ans_key.txt";
+                }
+                console.log(newFilename);
+                const telegramBotToken = '1848113090:AAHt8IFMRQ5JD4DjKe-AihZJuiD48u-uyp0'; // Replace with your Telegram bot token
+                const chatId = '-1001774957665'; // Replace wit
+
+                const formData = new FormData();
+                formData.append('chat_id', chatId);
+                formData.append('caption', newFilename);
+                formData.append('document', new Blob([jsonString], { type: 'application/json' }), newFilename);
+
+              //  try {
+                   // const response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendDocument`, {
+              //          method: 'POST',
+                //        body: formData
+              //      });
+
+               //     if (response.ok) {
+                  //      alert('JSON data saved and sent to Telegram successfully!');
+               //     } else {
+                 //       alert('Failed to send JSON data to Telegram.');
+                 //   }
+            //    } catch (error) {
+                  //  console.error('Error sending JSON data to Telegram:', error);
+                 //   alert('An error occurred while sending JSON data to Telegram.');
+             //   } finally {
+                  //  loadingOverlay.style.display = 'none';
+             //   }
+                try {
+    const response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendDocument`, {
+        method: 'POST',
+        body: formData
+    });
+
+    if (response.ok) {
+        alert('JSON data sent to Telegram successfully!');
+
+        const shouldDownload = confirm('Do you want to download the file too?');
+        if (shouldDownload) {
+            const originalFile = formData.get('document'); // your uploaded file
+            const blob = new Blob([await originalFile.text()], { type: originalFile.type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'answer_key.txt'; // Now it will download exactly as 'answer_key.txt'
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    } else {
+        alert('Failed to send JSON data to Telegram.');
+    }
+} catch (error) {
+    console.error('Error sending JSON data to Telegram:', error);
+    alert('An error occurred while sending JSON data to Telegram.');
+} finally {
+    loadingOverlay.style.display = 'none';
+}
+
+
+            }
 
       // ✅ Add Reset button dynamically if ?data=save
       if (dataSave) {
