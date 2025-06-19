@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Weekly Exam Marks Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table, th, td {
+      border: 1px solid #888;
+      border-collapse: collapse;
+      padding: 6px 10px;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+    }
+    input {
+      width: 90%;
+    }
+    .btn {
+      margin: 5px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>📝 Weekly Exam Marks Manager</h2>
+
+<button class="btn" onclick="addStudent()">➕ Add Student</button>
+<button class="btn" onclick="addTest()">📆 Add Test</button>
+<button class="btn" onclick="downloadJSON()">⬇️ Download Data</button>
+<input type="file" id="fileInput" style="display: none;" onchange="loadJSONFile(event)"/>
+
+<table id="marksTable"></table>
+
+<script>
+let data = {
+  tests: [], // array of test names like "Week 1"
+  students: [] // array of student objects { name, roll, marks: { testName: { math, english } } }
+};
+
+function renderTable() {
+  const table = document.getElementById('marksTable');
+  table.innerHTML = '';
+  
+  let header = '<tr><th>Roll No</th><th>Name</th>';
+  data.tests.forEach(test => {
+    header += `<th>${test}<br>Math</th><th>${test}<br>English</th>`;
+  });
+  header += '<th>Action</th></tr>';
+  table.innerHTML = header;
+
+  data.students.forEach((student, i) => {
+    let row = `<tr>
+      <td>${student.roll}</td>
+      <td>${student.name}</td>`;
+    data.tests.forEach(test => {
+      const marks = student.marks[test] || { math: '', english: '' };
+      row += `
+        <td><input value="${marks.math}" onchange="updateMark(${i}, '${test}', 'math', this.value)"></td>
+        <td><input value="${marks.english}" onchange="updateMark(${i}, '${test}', 'english', this.value)"></td>`;
+    });
+    row += `<td><button onclick="deleteStudent(${i})">🗑️</button></td></tr>`;
+    table.innerHTML += row;
+  });
+}
+
+function addStudent() {
+  const name = prompt("Enter student name:");
+  const roll = prompt("Enter roll number:");
+  if (name && roll) {
+    data.students.push({ name, roll, marks: {} });
+    renderTable();
+  }
+}
+
+function deleteStudent(index) {
+  if (confirm("Are you sure to delete this student?")) {
+    data.students.splice(index, 1);
+    renderTable();
+  }
+}
+
+function addTest() {
+  const testName = prompt("Enter test name (e.g. Week 3):");
+  if (testName && !data.tests.includes(testName)) {
+    data.tests.push(testName);
+    renderTable();
+  } else {
+    alert("Invalid or duplicate test name!");
+  }
+}
+
+function updateMark(studentIndex, test, subject, value) {
+  if (!data.students[studentIndex].marks[test]) {
+    data.students[studentIndex].marks[test] = { math: '', english: '' };
+  }
+  data.students[studentIndex].marks[test][subject] = value;
+}
+
+function downloadJSON() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'exam_marks.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function loadJSONFile(event) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      data = JSON.parse(e.target.result);
+      renderTable();
+    } catch (e) {
+      alert("Invalid JSON file!");
+    }
+  };
+  reader.readAsText(event.target.files[0]);
+}
+
+window.onload = () => {
+  if (confirm("Do you want to load existing data?")) {
+    document.getElementById('fileInput').click();
+  } else {
+    renderTable();
+  }
+};
+</script>
+
+</body>
+</html>
