@@ -4,7 +4,7 @@ B) Kerala
 C) Arunachal Pradesh  
 D) Madhya Pradesh  
 
-2. Which of the following statements about the "Tropic of Cancer" is correct?  \b1. It is one of the five principal latitudinal lines on the Earth's surface.  \n2. Rajasthan is the only state in India where both the Tropic of Cancer and the Tropic of Capricorn pass.  
+2. Which of the following statements about the "Tropic of Cancer" is correct?  \n1. It is one of the five principal latitudinal lines on the Earth's surface.  \n2. Rajasthan is the only state in India where both the Tropic of Cancer and the Tropic of Capricorn pass.  
 A) Only Statement 1  
 B) Only Statement 2  
 C) Both 1 and 2  
@@ -178,7 +178,7 @@ B) Plane mirror
 C) Parabolic mirror  
 D) Concave mirror  
 
-31. Match the following scientific discoveries with their scientists:  \nA. Gravity  \nB. Radioactivity  \nC. Theory of Relativity  \nD. Electromagnetic Waves  \!1. Isaac Newton  \n2. Marie Curie  \n3. Albert Einstein  \n4. James Clerk Maxwell  
+31. Match the following scientific discoveries with their scientists:  \nA. Gravity  \nB. Radioactivity  \nC. Theory of Relativity  \nD. Electromagnetic Waves  \n1 . Isaac Newton  \n2. Marie Curie  \n3. Albert Einstein  \n4. James Clerk Maxwell  
 A) A-1, B-2, C-3, D-4  
 B) A-2, B-3, C-4, D-1  
 C) A-4, B-3, C-1, D-2  
