@@ -12,13 +12,14 @@
     };
 
     window.onload = function() {
-      let code = location.pathname.split("/").pop().replace(".html","");
-      if (links[code]) {
-        window.location.href = links[code];
-      } else {
-        document.body.innerHTML = "<h2>Link not found</h2>";
-      }
+    // get after "?" in URL
+    let code = location.search.substring(1); 
+    if (links[code]) {
+      window.location.href = links[code];
+    } else {
+      document.body.innerHTML = "<h2>Link not found</h2>";
     }
+  }
   </script>
 </head>
 <body>
