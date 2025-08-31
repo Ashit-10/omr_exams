@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+  <script>
+    const links = {
+      "a": "https://ashit-10.github.io/omr_exams/mock_test2?file=mock_test/class-10/English/north-east_festivals&&subject=Festivals%20of%20North-east%20India&&shuffle=true",
+      "b": "https://another.com/page-2",
+      "yt": "https://youtube.com/",
+      "gh": "https://github.com/"
+    };
+
+    window.onload = function() {
+      let code = location.pathname.split("/").pop().replace(".html","");
+      if (links[code]) {
+        window.location.href = links[code];
+      } else {
+        document.body.innerHTML = "<h2>Link not found</h2>";
+      }
+    }
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>
