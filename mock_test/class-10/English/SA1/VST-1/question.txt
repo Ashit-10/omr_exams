@@ -249,7 +249,7 @@ B) ability
 C) enable  
 D) unable  
 
-43. Your handwriting is not legible. A single word for the underlined words will be ___  
+43. Your handwriting is <u>not legible</u>. A single word for the underlined words will be ___  
 A) ineligible  
 B) unlegible  
 C) mislegible  
