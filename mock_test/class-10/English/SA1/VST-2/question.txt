@@ -222,10 +222,10 @@ C) Lencho who looked at the sky knew his fields intimately.
 D) Lencho, who knew his field intimately, looked at the sky.  
 
 38. If you had come in time, you would have seen the match.  
-(A) have arrived  
-(B) had arrived  
-(C) would arrive  
-(D) arrived  
+A) have arrived  
+B) had arrived  
+C) would arrive  
+D) arrived  
 
 39. Only education can bring about _____ ability.  
 A) of  
