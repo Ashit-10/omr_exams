@@ -1,147 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RESULTS</title>
 <style>
-  html,body{height:100%;}
-  body{
-    margin:0;
-    background:#ffffff;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    font-family: "Times New Roman", Times, serif;
-    color:#000;
-    font-size:14px;
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #000;
+    margin: 20px;
   }
-  .page{
-    width:820px;
-    margin:18px auto 40px;
+  a {
+    text-decoration: none;
+    color: #0000ee;
   }
-  .breadcrumb{
-    margin:0 0 6px 0;
-    font-size:13px;
-    color:#000;
+  a:hover {
+    text-decoration: underline;
   }
-  .breadcrumb a{ color:#0000EE; text-decoration:none; }
-  .breadcrumb a:hover{text-decoration:underline}
-  table.main{
-    width:100%;
-    border-collapse:collapse;
-    border:1px solid #6f6f6f;
-    box-sizing:border-box;
+  .top-link {
+    margin-bottom: 8px;
   }
-  table.main td{
-    border:1px solid #6f6f6f;
-    padding:8px 10px;
-    vertical-align:top;
-    line-height:1.12;
+  table.outer {
+    border-collapse: collapse;
+    width: 750px;
+    border: 1px solid #999;
   }
-  td.left{
-    font-weight:700;
-    background:#cfe3fb;
-    width:32%;
-    white-space:nowrap;
+  table.outer td {
+    border: 1px solid #999;
+    padding: 5px 8px 5px 8px;
+    vertical-align: middle;
   }
-  td.right{ font-weight:400; }
-  .subjects{ width:100%; border-collapse:collapse; }
-  .subjects td{ border:1px solid #6f6f6f; padding:6px 6px; text-align:center; }
-  .subjects .head{ font-weight:700; background:#cfe3fb; }
-  td.remark-label{
-    font-weight:700;
-    background:#cfe3fb;
-    width:20%;
-    vertical-align:middle;
+  table.outer td.label {
+    font-weight: bold;
+    background-color: #d3dce9;
+    width: 180px;
+    white-space: nowrap;
   }
-  .actions{ margin-top:10px; }
-  .actions a{ color:#0000EE; text-decoration:none; margin-right:18px; font-size:14px; }
-  .actions a:hover{text-decoration:underline}
-  .disclaimer{
-    margin-top:14px;
-    font-size:11px;
-    text-align:justify;
-    color:#000;
+  table.inner {
+    border-collapse: collapse;
+    margin-top: 8px;
+    margin-left: 10px;
   }
-  @media print{
-    body{margin:0}
-    .actions{display:none}
+  table.inner td, table.inner th {
+    border: 1px solid #999;
+    padding: 5px 8px;
+    text-align: center;
+    font-weight: normal;
+    white-space: nowrap;
+  }
+  table.inner th {
+    font-weight: bold;
+    background-color: #e2e9fd;
+  }
+  .header {
+    font-weight: bold;
+    padding-left: 8px;
+  }
+  .group-label {
+    font-weight: bold;
+    text-align: center;
+    background-color: #d3dce9;
+    width: 550px;
+  }
+  .remarks {
+    border: 1px solid #999;
+    margin-top: 10px;
+    width: 750px;
+    font-size: 11px;
+  }
+  .remarks td {
+    border: 1px solid #999;
+    padding: 5px 8px;
+    vertical-align: top;
+  }
+  .remarks .remark-num {
+    font-weight: bold;
+    width: 110px;
+    white-space: nowrap;
+    background-color: #d3dce9;
+  }
+  .footer {
+    margin-top: 15px;
+    font-size: 9px;
+    color: #555;
+    width: 750px;
+  }
+  .footer a {
+    color: #0000ee;
+    font-size: 11px;
+    float: right;
+    margin-left: 10px;
+  }
+  .clearfix::after {
+    content: "";
+    display: block;
+    clear: both;
   }
 </style>
 </head>
 <body>
-  <div class="page">
-    <p class="breadcrumb"><a href="#">Home</a> » RESULTS</p>
 
-    <table class="main" role="presentation">
-      <tr><td colspan="2" style="height:18px; background:#ffffff; border:1px solid #6f6f6f;"></td></tr>
+<div class="top-link"><a href="#">Home</a> » RESULTS</div>
 
-      <tr>
-        <td class="left">Hall Ticket Number :</td>
-        <td class="right">Y23ED141105</td>
-      </tr>
-      <tr>
-        <td class="left">Student Name :</td>
-        <td class="right">ASHIT KUMAR PANIGRAHI</td>
-      </tr>
-      <tr>
-        <td class="left">Father Name:</td>
-        <td class="right">SHISIRA KUMAR PANIGRAHI</td>
-      </tr>
-      <tr>
-        <td class="left">COURSE:</td>
-        <td class="right">B.ED., II SEMESTER REGULAR EXAMINATIONS OCTOBER-2023</td>
-      </tr>
-      <tr>
-        <td class="left">Object Code:</td>
-        <td class="right"></td>
-      </tr>
-      <tr>
-        <td class="left">Group:</td>
-        <td class="right">PHYSICAL SCIENCE &amp; MATHEMATICS</td>
-      </tr>
-      <tr>
-        <td colspan="2" style="padding:0;">
-          <table class="subjects" role="presentation">
-            <tr>
-              <td class="head">Subject Code</td>
-              <td class="head">Marks Obtained</td>
-            </tr>
-            <tr><td>EDS2116</td><td>66P</td></tr>
-            <tr><td>EDS2216</td><td>68P</td></tr>
-            <tr><td>EDS2316</td><td>40P</td></tr>
-            <tr><td>EDS2416</td><td>33P</td></tr>
-            <tr><td>EDSP2519</td><td>125P</td></tr>
-            <tr><td>EDSP2619</td><td>25P</td></tr>
-            <tr><td>EDSP2719</td><td>25P</td></tr>
-            <tr><td>EDSP2819</td><td>25P</td></tr>
-            <tr><td>EDSP2919</td><td>25P</td></tr>
-            <tr><td>EDSP21019</td><td>25P</td></tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td class="remark-label">Remark 1</td>
-        <td>Last Date to Apply Revaluation Date : 01/03/2024, To Submission to P.G Co-Ordinator Last Date : 04/03/2024</td>
-      </tr>
-      <tr>
-        <td class="remark-label">Remark 2</td>
-        <td>Revaluation Fee Per Each Paper : Rs. 1550/-, Xerox Copy/Personal Verification fee per each paper Rs: 1820/-</td>
-      </tr>
-      <tr>
-        <td class="remark-label">Remark 3</td>
-        <td>Student Name/Father Name verify, as per S.S.C, if any correction inform within 7 days.</td>
-      </tr>
-    </table>
+<table class="outer" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="label">Hall Ticket Number :</td>
+    <td>Y23ED141105</td>
+  </tr>
+  <tr>
+    <td class="label">Student Name :</td>
+    <td>ASHIT KUMAR PANIGRAHI</td>
+  </tr>
+  <tr>
+    <td class="label">Father Name:</td>
+    <td>SHISIRA KUMAR PANIGRAHI</td>
+  </tr>
+  <tr>
+    <td class="label">COURSE:</td>
+    <td>B.ED., II SEMESTER REGULAR EXAMINATIONS OCTOBER-2023</td>
+  </tr>
+  <tr>
+    <td class="label">Object Code:</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="label">Group:</td>
+    <td class="group-label">PHYSICAL SCIENCE &amp; MATHEMATICS</td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding:0; border:none;">
+      <table class="inner" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <th>Subject Code</th>
+          <th>Marks Obtained</th>
+        </tr>
+        <tr><td>EDS2116</td><td>66P</td></tr>
+        <tr><td>EDS2216</td><td>68P</td></tr>
+        <tr><td>EDS2316</td><td>40P</td></tr>
+        <tr><td>EDS2416</td><td>33P</td></tr>
+        <tr><td>EDSP2519</td><td>125P</td></tr>
+        <tr><td>EDSP2619</td><td>25P</td></tr>
+        <tr><td>EDSP2719</td><td>25P</td></tr>
+        <tr><td>EDSP2819</td><td>25P</td></tr>
+        <tr><td>EDSP2919</td><td>25P</td></tr>
+        <tr><td>EDSP21019</td><td>25P</td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
 
-    <div class="actions">
-      <a href="#" onclick="window.print(); return false;">Print result</a>
-      <a href="#">Back</a>
-    </div>
+<table class="remarks" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="remark-num">Remark 1</td>
+    <td>Last Date to Apply Revaluation Date : 01/03/2024, To Submission to P.G Co-Ordinator Last Date : 04/03/2024</td>
+  </tr>
+  <tr>
+    <td class="remark-num">Remark 2</td>
+    <td>Revaluation Fee Per Each Paper : Rs. 1550/-, Xerox Copy/Personal Verification fee per each paper Rs: 1820/-</td>
+  </tr>
+  <tr>
+    <td class="remark-num">Remark 3</td>
+    <td>Student Name/Father Name verify, as per S.S.C, if any correction inform with in 7 days.</td>
+  </tr>
+</table>
 
-    <div class="disclaimer">
-      Disclaimer : nagarjununiversity.ac.in/anu.ac.in is not responsible for any inadvertent error that may have crept in the results being published on NET. The results published on net are for the immediate information to the examinees. This does not constitute to be a legal document. While all efforts have been made to make the information available on this website as authentic as possible, any staff /person will not be responsible for any loss to persons caused by any shortcoming, defect or inaccuracy in the information available on website.
-    </div>
-  </div>
+<div class="clearfix" style="width:750px; margin-top:8px;">
+  <a href="#" onclick="window.print();return false;">Print result</a>
+  <a href="#" style="float:right;">Back</a>
+</div>
+
+<div class="footer" style="width:750px; margin-top:12px; font-size:9px; color:#555;">
+  <p><small>Disclaimer : nagarjunauniversity.ac.in/anu.ac.in is not responsible for any inadvertent error that may have crept in the results being published on NET. The results published on net are for the immediate information to the examinees. This does not constitute to be a legal document. While all efforts have been made to make the information available on this website as authentic as possible any staff /persons will not be responsible for any loss to persons caused by any shortcoming, defect or inaccuracy on the information available on website.</small></p>
+</div>
+
 </body>
 </html>
