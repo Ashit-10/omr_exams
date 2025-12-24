@@ -3,35 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Online Test System</title>
+<title>Pro Online Test System</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-body { background-color: #fff; overflow-x: hidden; }
+body { background-color: #fff; overflow-x: hidden; touch-action: none; }
 .test-container { padding: 20px; position: relative; min-height: 100vh; }
-.question-box { border: 1px solid #ddd; border-radius: 8px; padding: 15px; background-color: #fafafa; position: relative; z-index: 1; }
-.option-label { display: flex; padding: 12px; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; margin-bottom: 10px; background: white; }
+.question-box { border: 1px solid #ddd; border-radius: 12px; padding: 20px; background-color: #fafafa; position: relative; z-index: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+.option-label { display: flex; padding: 14px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; margin-bottom: 12px; background: white; transition: 0.2s; }
 .options input[type="radio"] { display: none; }
 
-/* Control Panel Z-Index Fix */
+/* Fixed Controls - Higher Z-Index */
 .controls-overlay {
-  position: sticky; top: 10px; z-index: 1001; 
-  background: rgba(255,255,255,0.9); padding: 10px; border-radius: 8px; border: 1px solid #ccc;
+  position: sticky; top: 10px; z-index: 2000; 
+  background: white; padding: 12px; border-radius: 10px; border: 1px solid #dee2e6;
 }
 
 #notification {
   position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
-  padding: 10px 20px; color: white; display: none; font-weight: bold; z-index: 2000;
+  padding: 10px 25px; color: white; display: none; font-weight: bold; z-index: 3000; border-radius: 50px;
 }
-.correct { background: green; }
-.incorrect { background: red; }
+.correct { background: #28a745; }
+.incorrect { background: #dc3545; }
 
 /* Canvas Layer */
 #drawing-canvas {
   position: absolute; top: 0; left: 0;
   pointer-events: none; z-index: 500;
+  image-rendering: auto; /* Ensures smooth crisp lines */
 }
 .canvas-active { pointer-events: auto !important; }
+
+.tool-active { border: 2px solid #000 !important; background-color: #e9ecef !important; }
 </style>
 </head>
 
@@ -40,19 +43,19 @@ body { background-color: #fff; overflow-x: hidden; }
 <div class="test-container" id="main-container">
   <canvas id="drawing-canvas"></canvas>
 
-  <div class="controls-overlay mb-3 shadow-sm">
-    <div class="d-flex flex-wrap align-items-center gap-3">
-        <button id="pen-toggle" class="btn btn-outline-dark" onclick="togglePen()">Pen: OFF</button>
-        <button class="btn btn-outline-danger" onclick="clearCanvas()">Clear</button>
+  <div class="controls-overlay shadow mb-4">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <button id="pen-btn" class="btn btn-outline-dark btn-sm" onclick="setTool('pen')">Pen: OFF</button>
+        <button id="eraser-btn" class="btn btn-outline-secondary btn-sm" onclick="setTool('eraser')">Eraser</button>
+        <button class="btn btn-danger btn-sm" onclick="clearCanvas()">Clear All</button>
+        
+        <div class="vr mx-2"></div>
+
+        <input type="color" id="pen-color" value="#0000ff" class="form-control form-control-color form-control-sm border-0">
         
         <div class="d-flex align-items-center gap-2">
-            <label class="small fw-bold">Color:</label>
-            <input type="color" id="pen-color" value="#ff0000" class="form-control form-control-color form-control-sm">
-        </div>
-
-        <div class="d-flex align-items-center gap-2">
-            <label class="small fw-bold">Size:</label>
-            <input type="range" id="pen-size" min="1" max="15" value="3" class="form-range" style="width:100px;">
+            <span class="small fw-bold">Size:</span>
+            <input type="range" id="pen-size" min="1" max="20" value="3" class="form-range" style="width:80px;">
         </div>
 
         <div class="ms-auto">
@@ -64,8 +67,8 @@ body { background-color: #fff; overflow-x: hidden; }
   <div id="questions-container"></div>
 
   <div class="d-flex justify-content-between mt-4 pb-5">
-    <button class="btn btn-secondary px-4" onclick="prevQuestion()">Previous</button>
-    <button class="btn btn-primary px-4" onclick="nextQuestion()">Next</button>
+    <button class="btn btn-outline-secondary px-4" onclick="prevQuestion()">Previous</button>
+    <button class="btn btn-primary px-5 fw-bold" onclick="nextQuestion()">Next</button>
   </div>
 </div>
 
@@ -79,83 +82,116 @@ let currentQuestionIndex = 0;
 const canvas = document.getElementById('drawing-canvas');
 const ctx = canvas.getContext('2d');
 let drawing = false;
-let penEnabled = false;
+let currentTool = 'off'; // 'off', 'pen', 'eraser'
 
-// Setup Canvas Size
+// High-DPI Resolution Setup (Ultra Clear Strokes)
 function setupCanvas() {
-    canvas.width = document.documentElement.scrollWidth;
-    canvas.height = document.documentElement.scrollHeight;
+    const rect = document.getElementById('main-container').getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    
+    // Set display size
+    canvas.style.width = document.documentElement.scrollWidth + 'px';
+    canvas.style.height = document.documentElement.scrollHeight + 'px';
+    
+    // Set actual internal resolution
+    canvas.width = document.documentElement.scrollWidth * dpr;
+    canvas.height = document.documentElement.scrollHeight * dpr;
+    
+    // Scale context to match DPR
+    ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 }
 
-function togglePen() {
-    penEnabled = !penEnabled;
-    const btn = document.getElementById('pen-toggle');
-    if (penEnabled) {
-        btn.innerText = "Pen: ON";
-        btn.className = "btn btn-dark";
+function setTool(tool) {
+    const penBtn = document.getElementById('pen-btn');
+    const eraserBtn = document.getElementById('eraser-btn');
+    
+    if (tool === 'pen') {
+        if (currentTool === 'pen') {
+            currentTool = 'off';
+            penBtn.innerText = "Pen: OFF";
+            penBtn.classList.remove('btn-dark');
+            canvas.classList.remove('canvas-active');
+        } else {
+            currentTool = 'pen';
+            penBtn.innerText = "Pen: ON";
+            penBtn.classList.add('btn-dark');
+            eraserBtn.classList.remove('tool-active');
+            canvas.classList.add('canvas-active');
+        }
+    } else if (tool === 'eraser') {
+        currentTool = 'eraser';
         canvas.classList.add('canvas-active');
-    } else {
-        btn.innerText = "Pen: OFF";
-        btn.className = "btn btn-outline-dark";
-        canvas.classList.remove('canvas-active');
+        eraserBtn.classList.add('tool-active');
+        penBtn.classList.remove('btn-dark');
+        penBtn.innerText = "Pen: OFF";
     }
 }
 
 function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const dpr = window.devicePixelRatio || 1;
+    ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
 }
 
-// Drawing Logic
+// Coordinate Handling
 function getPos(e) {
     const rect = canvas.getBoundingClientRect();
     const clientX = e.clientX || (e.touches && e.touches[0].clientX);
     const clientY = e.clientY || (e.touches && e.touches[0].clientY);
     return {
-        x: clientX - rect.left,
-        y: clientY - rect.top
+        x: clientX + window.scrollX,
+        y: clientY + window.scrollY
     };
 }
 
 function startDrawing(e) {
-    if(!penEnabled) return;
+    if(currentTool === 'off') return;
     drawing = true;
     const pos = getPos(e);
     ctx.beginPath();
-    ctx.strokeStyle = document.getElementById('pen-color').value;
-    ctx.lineWidth = document.getElementById('pen-size').value;
-    ctx.lineCap = 'round';
+    
+    if (currentTool === 'eraser') {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineWidth = document.getElementById('pen-size').value * 4; // Eraser a bit bigger
+    } else {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = document.getElementById('pen-color').value;
+        ctx.lineWidth = document.getElementById('pen-size').value;
+    }
+    
     ctx.moveTo(pos.x, pos.y);
 }
 
 function draw(e) {
-    if (!drawing || !penEnabled) return;
+    if (!drawing || currentTool === 'off') return;
     const pos = getPos(e);
     ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
 }
 
-function stopDrawing() { drawing = false; }
+function stopDrawing() { 
+    drawing = false; 
+    ctx.closePath();
+}
 
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mouseup', stopDrawing);
+window.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('touchstart', (e) => { startDrawing(e); e.preventDefault(); }, {passive: false});
 canvas.addEventListener('touchmove', (e) => { draw(e); e.preventDefault(); }, {passive: false});
 canvas.addEventListener('touchend', stopDrawing);
 
-// ---------- LOAD DATA ----------
+// ---------- CORE LOGIC ----------
 const urlParams = new URLSearchParams(window.location.search);
 const fileLoc = urlParams.get('file');
-const questionsFile = fileLoc + "/question.txt";
-const answersFile = fileLoc + "/answer.txt";
 
-fetch(questionsFile)
+fetch(fileLoc + "/question.txt")
 .then(r => r.text())
-.then(qText => fetch(answersFile).then(r => r.json()).then(ans => ({qText, ans})))
+.then(qText => fetch(fileLoc + "/answer.txt").then(r => r.json()).then(ans => ({qText, ans})))
 .then(({qText, ans}) => {
   const lines = qText.split('\n').filter(l => l.trim() !== '');
-  let q = null;
-  let list = [];
+  let q = null, list = [];
   lines.forEach(line => {
     if (/^\d+\./.test(line)) {
       if (q) list.push(q);
@@ -171,7 +207,7 @@ fetch(questionsFile)
     correct: ans[i+1].map(x => x.charCodeAt(0) - 65)
   }));
   renderQuestions();
-  setTimeout(setupCanvas, 500); // Wait for render to set height
+  setTimeout(setupCanvas, 800);
 });
 
 function renderQuestions() {
@@ -181,11 +217,11 @@ function renderQuestions() {
     const box = document.createElement("div");
     box.className = "question-box";
     box.style.display = qi === 0 ? "block" : "none";
-    box.innerHTML = `<b>Question ${qi+1}</b><br>${q.question}<ul class="options mt-3 list-unstyled"></ul>`;
+    box.innerHTML = `<h5 class="mb-3">Question ${qi+1}</h5><p class="fs-5">${q.question}</p><ul class="options mt-3 list-unstyled"></ul>`;
     const ul = box.querySelector(".options");
     q.options.forEach((opt, oi) => {
       const li = document.createElement("li");
-      li.innerHTML = `<label class="option-label"><input type="radio" name="q-${qi}">${String.fromCharCode(65+oi)}) ${opt}</label>`;
+      li.innerHTML = `<label class="option-label"><input type="radio" name="q-${qi}"><span class="fw-bold me-2">${String.fromCharCode(65+oi)})</span> ${opt}</label>`;
       li.querySelector("input").addEventListener("change", () => handleAnswer(qi, oi, li.querySelector(".option-label")));
       ul.appendChild(li);
     });
@@ -211,17 +247,12 @@ function handleAnswer(qi, oi, label) {
 
 function showQuestion(i) {
   const boxes = document.querySelectorAll(".question-box");
-  boxes.forEach((box, idx) => box.style.display = idx === i ? "block" : "none");
+  boxes.forEach((box, idx) => box.style.display = idx === i ? "block" : "none');
   currentQuestionIndex = i;
 }
 
-function nextQuestion() {
-  if (currentQuestionIndex < questions.length - 1) showQuestion(currentQuestionIndex + 1);
-}
-
-function prevQuestion() {
-  if (currentQuestionIndex > 0) showQuestion(currentQuestionIndex - 1);
-}
+function nextQuestion() { if (currentQuestionIndex < questions.length - 1) showQuestion(currentQuestionIndex + 1); }
+function prevQuestion() { if (currentQuestionIndex > 0) showQuestion(currentQuestionIndex - 1); }
 
 function showNotification(msg, cls) {
   const n = document.getElementById("notification");
