@@ -3,38 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Online Test System</title>
+<title>Smart Board Test System</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <style>
-body { background-color: #fff; overflow-x: hidden; touch-action: none; }
-.test-container { padding: 20px; position: relative; min-height: 100vh; }
-.question-box { border: 1px solid #ddd; border-radius: 12px; padding: 20px; background-color: #fafafa; position: relative; z-index: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-.option-label { display: flex; padding: 14px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; margin-bottom: 12px; background: white; transition: 0.2s; }
+body { background-color: #fcfcfc; overflow-x: hidden; touch-action: none; font-family: sans-serif; }
+.test-container { padding: 20px; position: relative; min-height: 100vh; z-index: 1; }
+
+/* Question Box styling */
+.question-box { 
+    border: 1px solid #ddd; 
+    border-radius: 15px; 
+    padding: 25px; 
+    background-color: #fff; 
+    margin-top: 60px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 10; /* Keep text above canvas until pen is on */
+}
+
+.option-label { 
+    display: flex; 
+    padding: 15px; 
+    border: 2px solid #f0f0f0; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    margin-bottom: 12px; 
+    background: #fff;
+}
 .options input[type="radio"] { display: none; }
 
-/* Fixed Controls - Higher Z-Index */
-.controls-overlay {
-  position: sticky; top: 10px; z-index: 2000; 
-  background: white; padding: 12px; border-radius: 10px; border: 1px solid #dee2e6;
+/* Floating Smart Menu */
+.smart-menu-container {
+  position: fixed; bottom: 30px; left: 30px; z-index: 2000;
+  display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 15px;
+}
+#fab-main {
+  width: 60px; height: 60px; border-radius: 50%; background: #222; color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 28px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: none; cursor: pointer;
+}
+.toolbox-panel {
+  background: white; padding: 15px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  display: none; flex-direction: column; gap: 15px; border: 1px solid #eee; width: 200px;
 }
 
-#notification {
-  position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
-  padding: 10px 25px; color: white; display: none; font-weight: bold; z-index: 3000; border-radius: 50px;
-}
-.correct { background: #28a745; }
-.incorrect { background: #dc3545; }
+/* Canvas Logic */
+#drawing-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 500; }
+.canvas-active { pointer-events: auto !important; z-index: 1500 !important; }
 
-/* Canvas Layer */
-#drawing-canvas {
-  position: absolute; top: 0; left: 0;
-  pointer-events: none; z-index: 500;
-  image-rendering: auto; /* Ensures smooth crisp lines */
-}
-.canvas-active { pointer-events: auto !important; }
-
-.tool-active { border: 2px solid #000 !important; background-color: #e9ecef !important; }
+#score-tag { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+.tool-btn-active { background-color: #000 !important; color: #fff !important; }
 </style>
 </head>
 
@@ -43,106 +63,92 @@ body { background-color: #fff; overflow-x: hidden; touch-action: none; }
 <div class="test-container" id="main-container">
   <canvas id="drawing-canvas"></canvas>
 
-  <div class="controls-overlay shadow mb-4">
-    <div class="d-flex flex-wrap align-items-center gap-2">
-        <button id="pen-btn" class="btn btn-outline-dark btn-sm" onclick="setTool('pen')">Pen: OFF</button>
-        <button id="eraser-btn" class="btn btn-outline-secondary btn-sm" onclick="setTool('eraser')">Eraser</button>
-        <button class="btn btn-danger btn-sm" onclick="clearCanvas()">Clear All</button>
-        
-        <div class="vr mx-2"></div>
+  <div id="score-tag">
+    <span id="score-banner" class="badge bg-dark p-2 fs-6">Score: 0</span>
+  </div>
 
-        <input type="color" id="pen-color" value="#0000ff" class="form-control form-control-color form-control-sm border-0">
-        
-        <div class="d-flex align-items-center gap-2">
-            <span class="small fw-bold">Size:</span>
-            <input type="range" id="pen-size" min="1" max="20" value="3" class="form-range" style="width:80px;">
+  <div class="smart-menu-container">
+    <button id="fab-main" onclick="toggleMenu()"><i class="bi bi-pencil-fill"></i></button>
+    <div id="toolbox" class="toolbox-panel">
+        <div class="d-flex gap-1">
+            <button id="btn-pen" class="btn btn-sm btn-outline-dark w-50" onclick="setTool('pen')">Pen</button>
+            <button id="btn-eraser" class="btn btn-sm btn-outline-dark w-50" onclick="setTool('eraser')">Eraser</button>
         </div>
-
-        <div class="ms-auto">
-            <span id="score-banner" class="badge bg-primary fs-6">Score: 0</span>
+        <div>
+            <label class="small fw-bold">Color</label>
+            <input type="color" id="pen-color" value="#0000ff" class="form-control form-control-color w-100 border-0">
         </div>
+        <div>
+            <label class="small fw-bold">Thickness</label>
+            <input type="range" id="pen-size" min="1" max="30" value="4" class="form-range">
+        </div>
+        <button class="btn btn-sm btn-danger w-100" onclick="clearCanvas()">Clear All</button>
     </div>
   </div>
 
-  <div id="questions-container"></div>
+  <div id="questions-container" class="container">
+      <div class="text-center mt-5">Loading Questions...</div>
+  </div>
 
-  <div class="d-flex justify-content-between mt-4 pb-5">
-    <button class="btn btn-outline-secondary px-4" onclick="prevQuestion()">Previous</button>
-    <button class="btn btn-primary px-5 fw-bold" onclick="nextQuestion()">Next</button>
+  <div class="container d-flex justify-content-between mt-5 pb-5">
+    <button class="btn btn-outline-dark px-4" onclick="prevQuestion()">Prev</button>
+    <button class="btn btn-dark px-5" onclick="nextQuestion()">Next</button>
   </div>
 </div>
-
-<div id="notification"></div>
 
 <script>
 let questions = [];
 let score = 0;
 let currentQuestionIndex = 0;
-
 const canvas = document.getElementById('drawing-canvas');
 const ctx = canvas.getContext('2d');
 let drawing = false;
-let currentTool = 'off'; // 'off', 'pen', 'eraser'
+let currentTool = 'off';
 
-// High-DPI Resolution Setup (Ultra Clear Strokes)
+function toggleMenu() {
+    const box = document.getElementById('toolbox');
+    const isVisible = box.style.display === 'flex';
+    box.style.display = isVisible ? 'none' : 'flex';
+    if (!isVisible && currentTool === 'off') setTool('pen');
+    if (isVisible) setTool('off');
+}
+
+function setTool(tool) {
+    currentTool = tool;
+    document.getElementById('btn-pen').classList.remove('tool-btn-active');
+    document.getElementById('btn-eraser').classList.remove('tool-btn-active');
+    if (tool !== 'off') {
+        canvas.classList.add('canvas-active');
+        document.getElementById('btn-' + tool).classList.add('tool-btn-active');
+    } else {
+        canvas.classList.remove('canvas-active');
+    }
+}
+
+// Crisp Stroke Logic
 function setupCanvas() {
-    const rect = document.getElementById('main-container').getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    
-    // Set display size
-    canvas.style.width = document.documentElement.scrollWidth + 'px';
-    canvas.style.height = document.documentElement.scrollHeight + 'px';
-    
-    // Set actual internal resolution
-    canvas.width = document.documentElement.scrollWidth * dpr;
-    canvas.height = document.documentElement.scrollHeight * dpr;
-    
-    // Scale context to match DPR
+    const fullHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = fullHeight + 'px';
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = fullHeight * dpr;
     ctx.scale(dpr, dpr);
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 }
 
-function setTool(tool) {
-    const penBtn = document.getElementById('pen-btn');
-    const eraserBtn = document.getElementById('eraser-btn');
-    
-    if (tool === 'pen') {
-        if (currentTool === 'pen') {
-            currentTool = 'off';
-            penBtn.innerText = "Pen: OFF";
-            penBtn.classList.remove('btn-dark');
-            canvas.classList.remove('canvas-active');
-        } else {
-            currentTool = 'pen';
-            penBtn.innerText = "Pen: ON";
-            penBtn.classList.add('btn-dark');
-            eraserBtn.classList.remove('tool-active');
-            canvas.classList.add('canvas-active');
-        }
-    } else if (tool === 'eraser') {
-        currentTool = 'eraser';
-        canvas.classList.add('canvas-active');
-        eraserBtn.classList.add('tool-active');
-        penBtn.classList.remove('btn-dark');
-        penBtn.innerText = "Pen: OFF";
-    }
-}
-
 function clearCanvas() {
-    const dpr = window.devicePixelRatio || 1;
-    ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
 }
 
-// Coordinate Handling
 function getPos(e) {
-    const rect = canvas.getBoundingClientRect();
     const clientX = e.clientX || (e.touches && e.touches[0].clientX);
     const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-    return {
-        x: clientX + window.scrollX,
-        y: clientY + window.scrollY
-    };
+    return { x: clientX + window.scrollX, y: clientY + window.scrollY };
 }
 
 function startDrawing(e) {
@@ -150,16 +156,14 @@ function startDrawing(e) {
     drawing = true;
     const pos = getPos(e);
     ctx.beginPath();
-    
     if (currentTool === 'eraser') {
         ctx.globalCompositeOperation = 'destination-out';
-        ctx.lineWidth = document.getElementById('pen-size').value * 4; // Eraser a bit bigger
+        ctx.lineWidth = document.getElementById('pen-size').value * 4;
     } else {
         ctx.globalCompositeOperation = 'source-over';
         ctx.strokeStyle = document.getElementById('pen-color').value;
         ctx.lineWidth = document.getElementById('pen-size').value;
     }
-    
     ctx.moveTo(pos.x, pos.y);
 }
 
@@ -170,45 +174,46 @@ function draw(e) {
     ctx.stroke();
 }
 
-function stopDrawing() { 
-    drawing = false; 
-    ctx.closePath();
-}
-
+window.addEventListener('mouseup', () => drawing = false);
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
-window.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('touchstart', (e) => { startDrawing(e); e.preventDefault(); }, {passive: false});
 canvas.addEventListener('touchmove', (e) => { draw(e); e.preventDefault(); }, {passive: false});
-canvas.addEventListener('touchend', stopDrawing);
 
-// ---------- CORE LOGIC ----------
+// ---------- DATA LOADING ----------
 const urlParams = new URLSearchParams(window.location.search);
 const fileLoc = urlParams.get('file');
 
-fetch(fileLoc + "/question.txt")
-.then(r => r.text())
-.then(qText => fetch(fileLoc + "/answer.txt").then(r => r.json()).then(ans => ({qText, ans})))
-.then(({qText, ans}) => {
-  const lines = qText.split('\n').filter(l => l.trim() !== '');
-  let q = null, list = [];
-  lines.forEach(line => {
-    if (/^\d+\./.test(line)) {
-      if (q) list.push(q);
-      q = { question: line.replace(/^\d+\.\s*/, ""), options: [] };
-    } else if (/^[A-D]\)/.test(line)) {
-      q.options.push(line.replace(/^[A-D]\)\s*/, ""));
-    }
-  });
-  if (q) list.push(q);
-  questions = list.map((q, i) => ({
-    question: q.question,
-    options: q.options,
-    correct: ans[i+1].map(x => x.charCodeAt(0) - 65)
-  }));
-  renderQuestions();
-  setTimeout(setupCanvas, 800);
-});
+if (!fileLoc) {
+    document.getElementById('questions-container').innerHTML = "<div class='alert alert-danger'>Error: No file parameter in URL. (Use ?file=foldername)</div>";
+} else {
+    Promise.all([
+        fetch(fileLoc + "/question.txt").then(r => r.text()),
+        fetch(fileLoc + "/answer.txt").then(r => r.json())
+    ])
+    .then(([qText, ans]) => {
+        const lines = qText.split('\n').filter(l => l.trim() !== '');
+        let q = null, list = [];
+        lines.forEach(line => {
+            if (/^\d+\./.test(line)) {
+                if (q) list.push(q);
+                q = { question: line.replace(/^\d+\.\s*/, ""), options: [] };
+            } else if (/^[A-D]\)/.test(line)) {
+                q.options.push(line.replace(/^[A-D]\)\s*/, ""));
+            }
+        });
+        if (q) list.push(q);
+        questions = list.map((q, i) => ({
+            question: q.question, options: q.options,
+            correct: ans[i+1].map(x => x.charCodeAt(0) - 65)
+        }));
+        renderQuestions();
+        setupCanvas();
+    })
+    .catch(err => {
+        document.getElementById('questions-container').innerHTML = "<div class='alert alert-danger'>Failed to load files. Check folder path.</div>";
+    });
+}
 
 function renderQuestions() {
   const container = document.getElementById("questions-container");
@@ -217,48 +222,35 @@ function renderQuestions() {
     const box = document.createElement("div");
     box.className = "question-box";
     box.style.display = qi === 0 ? "block" : "none";
-    box.innerHTML = `<h5 class="mb-3">Question ${qi+1}</h5><p class="fs-5">${q.question}</p><ul class="options mt-3 list-unstyled"></ul>`;
-    const ul = box.querySelector(".options");
+    box.innerHTML = `<h5 class='text-muted'>Question ${qi+1}/${questions.length}</h5><p class='fs-4 mt-3'>${q.question}</p><div class='options-list mt-4'></div>`;
+    const optDiv = box.querySelector(".options-list");
     q.options.forEach((opt, oi) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<label class="option-label"><input type="radio" name="q-${qi}"><span class="fw-bold me-2">${String.fromCharCode(65+oi)})</span> ${opt}</label>`;
-      li.querySelector("input").addEventListener("change", () => handleAnswer(qi, oi, li.querySelector(".option-label")));
-      ul.appendChild(li);
+      const label = document.createElement("label");
+      label.className = "option-label";
+      label.innerHTML = `<input type="radio" name="q-${qi}"><span class='fw-bold me-3'>${String.fromCharCode(65+oi)})</span> ${opt}`;
+      label.querySelector("input").addEventListener("change", () => {
+          const correct = q.correct.includes(oi);
+          document.querySelectorAll(`input[name="q-${qi}"]`).forEach(i => i.disabled = true);
+          if(correct) { label.style.borderColor = "#2ecc71"; label.style.background="#f0fff4"; score++; }
+          else { label.style.borderColor = "#e74c3c"; label.style.background="#fff5f5"; }
+          document.getElementById('score-banner').innerText = "Score: " + score;
+      });
+      optDiv.appendChild(label);
     });
     container.appendChild(box);
   });
 }
 
-function handleAnswer(qi, oi, label) {
-  const correct = questions[qi].correct.includes(oi);
-  document.querySelectorAll(`input[name="q-${qi}"]`).forEach(r => r.disabled = true);
-  if (correct) {
-    label.style.background = "#d4edda";
-    label.style.borderColor = "#28a745";
-    score++;
-    showNotification("Correct!", "correct");
-  } else {
-    label.style.background = "#f8d7da";
-    label.style.borderColor = "#dc3545";
-    showNotification("Incorrect", "incorrect");
-  }
-  document.getElementById("score-banner").innerText = `Score: ${score}`;
-}
-
 function showQuestion(i) {
-  const boxes = document.querySelectorAll(".question-box");
-  boxes.forEach((box, idx) => box.style.display = idx === i ? "block" : "none');
-  currentQuestionIndex = i;
+    const boxes = document.querySelectorAll(".question-box");
+    if(boxes[i]) {
+        boxes.forEach(b => b.style.display = "none");
+        boxes[i].style.display = "block";
+        currentQuestionIndex = i;
+    }
 }
-
 function nextQuestion() { if (currentQuestionIndex < questions.length - 1) showQuestion(currentQuestionIndex + 1); }
 function prevQuestion() { if (currentQuestionIndex > 0) showQuestion(currentQuestionIndex - 1); }
-
-function showNotification(msg, cls) {
-  const n = document.getElementById("notification");
-  n.innerText = msg; n.className = cls; n.style.display = "block";
-  setTimeout(() => n.style.display = "none", 1000);
-}
 
 window.addEventListener('resize', setupCanvas);
 </script>
