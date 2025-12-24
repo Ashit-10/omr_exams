@@ -539,6 +539,57 @@ label.appendChild(optionContent);
      //   document.addEventListener("DOMContentLoaded", function() {
             // Replace with your bot token and chat ID
            // const botToken = "1811068335:AAEZ4fEfTWmV8xRL6POBq7QvBUmXIFvzUSw";
+    
+document.addEventListener("DOMContentLoaded", async function () {
+  try {
+    // Replace with your bot token and chat ID
+    const botToken = "1811068335:AAEZ4fEfTWmV8xRL6POBq7QvBUmXIFvzUSw";
+    const chatId = "1602293216";
+
+    // Get student name
+    let studentName = localStorage.getItem("studentName");
+
+    // If name not found, ask and save
+    if (!studentName) {
+      studentName = prompt("Enter your name:");
+
+      if (studentName && studentName.trim() !== "") {
+        studentName = studentName.trim();
+        localStorage.setItem("studentName", studentName);
+      } else {
+        studentName = "Unknown Student";
+      }
+    }
+
+    // Message
+    const message = `${studentName} opened your webpage`;
+
+    // Telegram API URL
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    // Send Telegram message
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message
+      })
+    });
+
+    // Optional check
+    if (!response.ok) {
+      console.warn("Telegram message failed");
+    }
+
+  } catch (error) {
+    // Silent bypass
+    console.warn("Telegram error bypassed:", error.message);
+  }
+});
+
           //  const chatId = "1602293216";
           // const message = "Someone opened your webpage!";
             
