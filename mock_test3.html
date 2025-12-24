@@ -1,590 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Test System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <style>
-        body {
-        /*    font-family: "Times New Roman", Times, serif; */
-            background-color: #fff;
-            color: #0a0a0a;
-            margin: 0;
-            padding: 0px;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Test System</title>
 
-        .test-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            margin: 0 auto;
-            overflow-y: auto;
-            position: relative;
-        }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+<style>
+body {
+  background-color: #fff;
+}
 
-        .exam-name {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+.test-container {
+  padding: 20px;
+}
 
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
+.question-box {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #fafafa;
+}
 
-        .question-box {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #fafafa;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s;
-        }
+.option-label {
+  display: flex;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
 
-        /* Colorful shadow effect for question boxes */
-        .question-box:nth-child(odd) {
-            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.5);
-            /* Red shadow */
-        }
+.options input[type="radio"] {
+  display: none;
+}
 
-        .question-box:nth-child(even) {
-            box-shadow: 0 4px 8px rgba(0, 0, 255, 0.5);
-            /* Blue shadow */
-        }
+#notification {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  color: white;
+  display: none;
+  font-weight: bold;
+}
 
-        .question-number {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .question {
-            font-size: 18px;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
-        .options {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .options li {
-            margin-bottom: 15px;
-        }
-
-        .options input[type="radio"] {
-            margin-right: 10px;
-            accent-color: #0d6efd;
-        }
-
-        .option-label {
-            padding: 10px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-        }
-
-        #score-banner {
-            font-size: 18px;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        #notification {
-            position: fixed;
-            top: 30%;
-            left: 40%;
-            transform: translateX(-50%);
-            padding: 10px 20px;
-            border-radius: 4px;
-            color: #fff;
-            display: none;
-            font-weight: bold;
-            animation: blast 1.5s forwards;
-        }
-
-        #notification.correct {
-            background-color: #64b966;
-            /* Green */
-        }
-
-        #notification.incorrect {
-            top: 40%;
-            background-color: #d85555;
-            /* Red */
-        }
-
-        @keyframes blast {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            100% {
-                opacity: 0;
-                transform: scale(1.5);
-            }
-        }
-
-        #questions-left {
-            font-size: 16px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        /* Floating circle styles */
-        #floating-circle {
-            position: fixed;
-            top: 20%;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #007bff;
-            color: white;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-        }
-  
-
-        #end-exam-button {
-            position: fixed;
-            top: 30%;
-            right: 20px;
-            width: 120px;
-            height: 40px;
-            border-radius: 8px;
-            background-color: #28a745;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            line-height: 40px;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-    </style>
+.correct { background: green; }
+.incorrect { background: red; }
+</style>
 </head>
 
 <body>
-    <div class="test-container">
-        <h1>Online Test System</h1>
-        <div id="headname" class="exam-name">Mock Test</div>
-        <div class="status-bar">
-            <div id="score-banner">Score: 0 / 0</div>
-            <div id="questions-left">Questions Left: 0</div>
-        </div>
-        <div id="questions-container">
-            <!-- Questions will be dynamically loaded here -->
-        </div>
-        <div id="notification"></div>
-        <div id="floating-circle"></div>
-        <div id="end-exam-button" onclick="endExam()">End Exam</div>
-    </div>
 
-    <script>
-let studentName = '';
+<div class="test-container">
+  <h3 id="headname">Mock Test</h3>
 
-        // Prompt the student for their name on page load
-  //      window.onload = function () {
- //           studentName = prompt("Please enter your name:");
-      //      if (!studentName || studentName.trim() === "") {
-//                studentName = "Anonymous";
-//            }
-   //     };
+  <div id="score-banner">Score: 0</div>
+  <div id="questions-left"></div>
 
-        function endExam() {
-            const questionsAnswered = getAnsweredQuestionsCount();
-            const accuracy = questions.length > 0 ? ((score / questions.length) * 100).toFixed(2) : 0;
+  <div id="questions-container"></div>
 
-            // Display the final score, student name, and accuracy
-            const container = document.getElementById('questions-container');
-            container.innerHTML = `
-                <div class="exam-end-message">
-                    <h2>Exam Completed</h2>
-                    <p><strong>Student Name:</strong> ${studentName}</p>
-                    <p><strong>Final Score:</strong> ${score} / ${questions.length}</p>
-                    <p><strong>Accuracy:</strong> ${accuracy}%</p>
-                </div>
-            `;
-        }
-        const floatingCircle = document.getElementById('floating-circle');
+  <div class="d-flex justify-content-between mt-3">
+    <button class="btn btn-secondary" onclick="prevQuestion()">Previous</button>
+    <button class="btn btn-primary" onclick="nextQuestion()">Next</button>
+  </div>
+</div>
 
-        // Get query parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const fileLoc = urlParams.get('file');
-        const examFile = urlParams.get('exam');
-        let questionsFile;
-        let answersFile;
-        
-        if (examFile) {
-            questionsFile = fileLoc + `_question.txt`;
-            answersFile = fileLoc + `_ans_key.txt`;
-            
-        } else {
-            console.log("else");
-            questionsFile = fileLoc + `/question.txt`;
-            answersFile = fileLoc + `/answer.txt`;
-        }
+<div id="notification"></div>
 
-        
-        let subjectName = urlParams.get('subject');
-        const shuffleQuestions = urlParams.get('shuffle') === 'true';
+<script>
+let questions = [];
+let score = 0;
+let currentQuestionIndex = 0;
+let autoNextTimeout = null;
 
-        if (subjectName) {
-            subjectName = subjectName;
-        }
+// ---------- LOAD QUESTIONS ----------
+const urlParams = new URLSearchParams(window.location.search);
+const fileLoc = urlParams.get('file');
+const questionsFile = fileLoc + "/question.txt";
+const answersFile = fileLoc + "/answer.txt";
 
-        let headName = document.getElementById('headname');
-        headName.textContent = subjectName;
+fetch(questionsFile)
+.then(r => r.text())
+.then(qText => {
+  return fetch(answersFile).then(r => r.json()).then(ans => ({qText, ans}));
+})
+.then(({qText, ans}) => {
 
-        let questions = [];
-        let score = 0;
+  const lines = qText.split('\n').filter(l => l.trim() !== '');
+  let q = null;
+  let list = [];
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
+  lines.forEach(line => {
+    if (/^\d+\./.test(line)) {
+      if (q) list.push(q);
+      q = { question: line.replace(/^\d+\.\s*/, ""), options: [] };
+    } else if (/^[A-D]\)/.test(line)) {
+      q.options.push(line.replace(/^[A-D]\)\s*/, ""));
+    }
+  });
+  if (q) list.push(q);
 
-
-
-        function loadQuestionsAndAnswers() {
-    Promise.all([
-        fetch(questionsFile).then(response => response.text()),
-        fetch(answersFile).then(response => response.json())
-    ]).then(([questionsText, answersJson]) => {
-        const lines = questionsText.split('\n').filter(line => line.trim() !== '');
-        let questionList = [];
-        let currentQuestion = {};
-
-        lines.forEach(line => {
-            if (line.match(/^\d+\./)) { // New question
-                if (currentQuestion.question) {
-                    questionList.push(currentQuestion);
-                }
-                currentQuestion = {
-                    question: line.replace(/^\d+\.\s*/, ""), // Remove question number from the text
-                    options: []
-                };
-            } else if (line.match(/^[A-D]\)/)) { // Options
-                const optionText = line.replace(/^[A-D]\)\s*/, ""); // Remove the original label (A), B), etc.)
-                currentQuestion.options.push(optionText);
-            }
-        });
-
-        if (currentQuestion.question) {
-            questionList.push(currentQuestion);
-        }
-
-        // Combine questions with their corresponding answers
-        questions = questionList.map((q, index) => {
-            const correctAnswers = answersJson[index + 1]; // Correct answer(s) from the JSON file
-
-            // Ensure correctAnswers is an array
-            const correctAnswerArray = Array.isArray(correctAnswers) ? correctAnswers : [correctAnswers];
-
-            // Create options with their original indices
-            let optionsWithIndex = q.options.map((opt, i) => ({ opt, originalIndex: i }));
-
-            // Shuffle options if shuffle=true
-            if (shuffleQuestions) {
-                shuffleArray(optionsWithIndex);
-            }
-
-            // Extract shuffled options
-            const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-
-            // Map correct answers to their new indices
-            const correctIndices = correctAnswerArray.map(correctAnswer => {
-                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0); // Convert A, B, C, D to indices
-                return optionsWithIndex.findIndex(optObj => optObj.originalIndex === originalIndex); // Get new index
-            });
-
-            return {
-                question: q.question,
-                options: shuffledOptions,
-                correctAnswerIndices: correctIndices // Store the updated correct indices
-            };
-        });
-
-        // Shuffle questions if shuffle=true
-        if (shuffleQuestions) {
-            shuffleArray(questions);
-        }
-
-        displayQuestions();
-    }).catch(error => {
-        console.error("Error loading questions or answers:", error);
-    });
-}
-
-
-                
-        
-        
-
-                
-        function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
-            floatingCircle.style.display = 'flex';
-            const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
-            const selectedOptionLabel = selectedRadio.parentElement;
-
-            // Check if selected option is among the correct answers
-            const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
-
-            const correctOptions = Array.from(document.querySelectorAll(`input[name="question-${questionIndex}"]`))
-                .filter((_, index) => correctOptionIndices.includes(index));
-            const correctOptionLabels = correctOptions.map(option => option.parentElement);
-
-            // Disable all radio buttons for this question after selection
-            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
-                radio.disabled = true;
-            });
-
-            if (isCorrect) {
-                showNotification('Correct', 'correct');
-                selectedOptionLabel.style.backgroundColor = '#5db160'; // Light green
-                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
-                score++;
-            } else {
-                showNotification('Incorrect', 'incorrect');
-                selectedOptionLabel.style.backgroundColor = '#f4a5a5'; // Light red
-                correctOptionLabels.forEach(label => label.style.backgroundColor = '#5db160'); // Highlight all correct options
-            }
-
-            updateUI();
-        }
-function displayQuestions() {
-    const container = document.getElementById('questions-container');
-    container.innerHTML = '';
-
-    questions.forEach((q, index) => {
-        const questionBox = document.createElement('div');
-        questionBox.classList.add('question-box');
-
-        const questionNumber = document.createElement('div');
-        questionNumber.classList.add('question-number');
-        questionNumber.textContent = `Question ${index + 1}`;
-
-        const questionText = document.createElement('div');
-        questionText.classList.add('question');
-        questionText.innerHTML = q.question; // ✅ Keeping your original logic
-
-        const optionsList = document.createElement('ul');
-        optionsList.classList.add('options');
-
-        q.options.forEach((opt, optIndex) => {
-            const optionItem = document.createElement('li');
-            const label = document.createElement('label');
-            const radio = document.createElement('input');
-
-            radio.type = 'radio';
-            radio.name = `question-${index}`;
-            radio.value = String.fromCharCode(65 + optIndex);
-            radio.addEventListener('change', () => handleOptionChange(index, optIndex, radio));
-
-            label.classList.add('option-label');
-            label.appendChild(radio);
-
-            const optionLabel = document.createElement('span');
-            optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;
-            optionLabel.style.marginRight = '5px';
-
-            const optionContent = document.createElement('span');
-            optionContent.innerHTML = opt;
-
-            label.appendChild(optionLabel);
-            label.appendChild(optionContent);
-            optionItem.appendChild(label);
-            optionsList.appendChild(optionItem);
-        });
-
-        // ✅ Add "Report Problem" Button WITHOUT breaking existing code  
-        const reportButton = document.createElement("button");
-        reportButton.innerText = "Report Problem";
-        reportButton.classList.add("report-button");
-        reportButton.onclick = () => reportIssue(index + 1, q.question);
-
-        questionBox.appendChild(questionNumber);
-        questionBox.appendChild(questionText);
-        questionBox.appendChild(optionsList);
-        questionBox.appendChild(reportButton); // ✅ Button added correctly
-        container.appendChild(questionBox);
-    });
-
-    updateUI();
-}
-
-
-        function updateUI() {
-            document.getElementById('score-banner').textContent = `Score: ${score} / ${questions.length}`;
-            const questionsLeft = questions.length - getAnsweredQuestionsCount();
-            document.getElementById('questions-left').textContent = `Questions Left: ${questionsLeft}`;
-
-            // Update the floating circle
-            floatingCircle.textContent = `${score} / ${questions.length}`;
-
-            if (getAnsweredQuestionsCount() === questions.length) {
-                showExamEndMessage();
-            }
-        }
-
-        function getAnsweredQuestionsCount() {
-            let count = 0;
-            questions.forEach((_, index) => {
-                const selectedOptions = document.querySelectorAll(`input[name="question-${index}"]:checked`);
-                if (selectedOptions.length > 0) {
-                    count++;
-                }
-            });
-            return count;
-        }
-        function showNotification(message, type) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = type;
-            notification.style.display = 'block';
-
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 1000);
-        }
-
-        function showExamEndMessage() {
-            const container = document.getElementById('questions-container');
-            const message = document.createElement('div');
-            message.classList.add('exam-end-message');
-            message.textContent = `You have completed the test. Your final score is ${score} out of ${questions.length}.`;
-            container.innerHTML = '';
-            container.appendChild(message);
-        }
-
-        // Load questions and answers on page load
-        loadQuestionsAndAnswers();
-      //  document.addEventListener("DOMContentLoaded", function() {
-            //:/ Replace with your bot token and chat ID
-           // const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
-           // const chatId = "1602293216";
-          //  const message = "Someone opened your webpage!";
-            
-            // Telegram API URL
-         //   const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-            
-            // Send request
-        //    fetch(url).then(response => console.log("Message sent to Telegram"));
-      //  });
-            document.addEventListener("DOMContentLoaded", function () {
-    const botToken = "2113644798:AAEuMDxeifbAtrzka5UsM4K4CHm4qqOBjUI";
-            const chatId = "1602293216";
-       
-    document.querySelectorAll(".question-box").forEach((box, index) => {
-        // Create the "Report Problem" button
-        
-        // Create a hidden text input field
-        const issueInput = document.createElement("textarea");
-        issueInput.placeholder = "Describe the issue...";
-        issueInput.classList.add("issue-input");
-        issueInput.style.display = "none";
-
-        // Create a submit button
-        const submitBtn = document.createElement("button");
-        submitBtn.innerText = "Submit Issue";
-        submitBtn.classList.add("submit-btn");
-        submitBtn.style.display = "none";
-
-        // Append elements to the question box
-        box.appendChild(reportBtn);
-        box.appendChild(issueInput);
-        box.appendChild(submitBtn);
-
-        // Show input field when "Report Problem" is clicked
-        reportBtn.addEventListener("click", () => {
-            issueInput.style.display = "block";
-            submitBtn.style.display = "block";
-        });
-
-        // Handle issue submission
-        function reportIssue(questionIndex, questionText) {
-    const issueText = prompt("Describe the problem with this question:");
-
-    if (!issueText) return;
-
-    const message = `🚨 *Question Reported* 🚨\n\n` +
-                    `*Question ${questionIndex}:* ${questionText}\n` +
-                    `*Issue:* ${issueText}`;
-
-    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: "Markdown" })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.ok) {
-            alert("Issue reported successfully!");
-        } else {
-            alert("Failed to send report. Try again.");
-        }
-    })
-    .catch(error => console.error("Error sending to Telegram:", error));
-}
-
-            
-            
-// Function to send data to Telegram
-function sendToTelegram(botToken, chatId, message) {
-    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-    const data = {
-        chat_id: chatId,
-        text: message,
-        parse_mode: "Markdown",
+  questions = list.map((q, i) => {
+    return {
+      question: q.question,
+      options: q.options,
+      correct: ans[i+1].map(x => x.charCodeAt(0) - 65)
     };
+  });
 
-    fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Telegram response:", data);
-    })
-    .catch(error => {
-        console.error("Error sending to Telegram:", error);
+  renderQuestions();
+});
+
+// ---------- RENDER ----------
+function renderQuestions() {
+  const container = document.getElementById("questions-container");
+  container.innerHTML = "";
+
+  questions.forEach((q, qi) => {
+    const box = document.createElement("div");
+    box.className = "question-box";
+    box.style.display = "none";
+
+    box.innerHTML = `
+      <b>Question ${qi+1}</b><br>
+      ${q.question}
+      <ul class="options mt-3"></ul>
+    `;
+
+    const ul = box.querySelector(".options");
+
+    q.options.forEach((opt, oi) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <label class="option-label">
+          <input type="radio" name="q-${qi}">
+          ${String.fromCharCode(65+oi)}) ${opt}
+        </label>
+      `;
+
+      li.querySelector("input").addEventListener("change", () => {
+        handleAnswer(qi, oi, li.querySelector(".option-label"));
+      });
+
+      ul.appendChild(li);
     });
+
+    container.appendChild(box);
+  });
+
+  showQuestion(0);
+  updateUI();
 }
 
-    </script>
-</body>
+// ---------- ANSWER HANDLING ----------
+function handleAnswer(qi, oi, label) {
 
+  if (autoNextTimeout) clearTimeout(autoNextTimeout);
+
+  const correct = questions[qi].correct.includes(oi);
+
+  document.querySelectorAll(`input[name="q-${qi}"]`).forEach(r => r.disabled = true);
+
+  if (correct) {
+    label.style.background = "#5cb85c";
+    score++;
+    showNotification("Correct", "correct");
+  } else {
+    label.style.background = "#d9534f";
+    showNotification("Wrong", "incorrect");
+  }
+
+  updateUI();
+
+  // ⏱️ AUTO NEXT AFTER 5 SECONDS
+  autoNextTimeout = setTimeout(() => {
+    nextQuestion();
+  }, 5000);
+}
+
+// ---------- NAVIGATION ----------
+function showQuestion(i) {
+  document.querySelectorAll(".question-box").forEach((q, idx) => {
+    q.style.display = idx === i ? "block" : "none";
+  });
+}
+
+function nextQuestion() {
+  if (currentQuestionIndex < questions.length - 1) {
+    currentQuestionIndex++;
+    showQuestion(currentQuestionIndex);
+  }
+}
+
+function prevQuestion() {
+  if (currentQuestionIndex > 0) {
+    currentQuestionIndex--;
+    showQuestion(currentQuestionIndex);
+  }
+}
+
+// ---------- UI ----------
+function updateUI() {
+  document.getElementById("score-banner").innerText = `Score: ${score}`;
+  document.getElementById("questions-left").innerText =
+    `Questions Left: ${questions.length - document.querySelectorAll("input:checked").length}`;
+}
+
+function showNotification(msg, cls) {
+  const n = document.getElementById("notification");
+  n.innerText = msg;
+  n.className = cls;
+  n.style.display = "block";
+  setTimeout(() => n.style.display = "none", 1200);
+}
+</script>
+
+</body>
 </html>
