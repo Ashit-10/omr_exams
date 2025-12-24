@@ -7,28 +7,31 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-body { background-color: #fff; }
-.test-container { padding: 20px; position: relative; }
-.question-box { border: 1px solid #ddd; border-radius: 8px; padding: 15px; background-color: #fafafa; }
-.option-label { display: flex; padding: 12px; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; margin-bottom: 10px; }
+body { background-color: #fff; overflow-x: hidden; }
+.test-container { padding: 20px; position: relative; min-height: 100vh; }
+.question-box { border: 1px solid #ddd; border-radius: 8px; padding: 15px; background-color: #fafafa; position: relative; z-index: 1; }
+.option-label { display: flex; padding: 12px; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; margin-bottom: 10px; background: white; }
 .options input[type="radio"] { display: none; }
 
+/* Control Panel Z-Index Fix */
+.controls-overlay {
+  position: sticky; top: 10px; z-index: 1001; 
+  background: rgba(255,255,255,0.9); padding: 10px; border-radius: 8px; border: 1px solid #ccc;
+}
+
 #notification {
-  position: fixed; top: 40%; left: 50%; transform: translateX(-50%);
-  padding: 10px 20px; color: white; display: none; font-weight: bold; z-index: 1000;
+  position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
+  padding: 10px 20px; color: white; display: none; font-weight: bold; z-index: 2000;
 }
 .correct { background: green; }
 .incorrect { background: red; }
 
-/* Canvas Styling */
+/* Canvas Layer */
 #drawing-canvas {
-  position: absolute;
-  top: 0; left: 0;
-  pointer-events: none; /* Default off */
-  z-index: 500;
+  position: absolute; top: 0; left: 0;
+  pointer-events: none; z-index: 500;
 }
-.canvas-active { pointer-events: auto !important; cursor: crosshair; }
-.controls-row { gap: 10px; }
+.canvas-active { pointer-events: auto !important; }
 </style>
 </head>
 
@@ -37,24 +40,32 @@ body { background-color: #fff; }
 <div class="test-container" id="main-container">
   <canvas id="drawing-canvas"></canvas>
 
-  <h3 id="headname">Mock Test</h3>
-
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <div id="score-banner">Score: 0</div>
-        <div id="questions-left"></div>
-    </div>
-    <div class="controls-row d-flex">
+  <div class="controls-overlay mb-3 shadow-sm">
+    <div class="d-flex flex-wrap align-items-center gap-3">
         <button id="pen-toggle" class="btn btn-outline-dark" onclick="togglePen()">Pen: OFF</button>
-        <button class="btn btn-outline-danger" onclick="clearCanvas()">Clear Pen</button>
+        <button class="btn btn-outline-danger" onclick="clearCanvas()">Clear</button>
+        
+        <div class="d-flex align-items-center gap-2">
+            <label class="small fw-bold">Color:</label>
+            <input type="color" id="pen-color" value="#ff0000" class="form-control form-control-color form-control-sm">
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <label class="small fw-bold">Size:</label>
+            <input type="range" id="pen-size" min="1" max="15" value="3" class="form-range" style="width:100px;">
+        </div>
+
+        <div class="ms-auto">
+            <span id="score-banner" class="badge bg-primary fs-6">Score: 0</span>
+        </div>
     </div>
   </div>
 
   <div id="questions-container"></div>
 
-  <div class="d-flex justify-content-between mt-3">
-    <button class="btn btn-secondary" onclick="prevQuestion()">Previous</button>
-    <button class="btn btn-primary" onclick="nextQuestion()">Next</button>
+  <div class="d-flex justify-content-between mt-4 pb-5">
+    <button class="btn btn-secondary px-4" onclick="prevQuestion()">Previous</button>
+    <button class="btn btn-primary px-4" onclick="nextQuestion()">Next</button>
   </div>
 </div>
 
@@ -65,18 +76,15 @@ let questions = [];
 let score = 0;
 let currentQuestionIndex = 0;
 
-// ---------- PEN / STYLUS LOGIC ----------
 const canvas = document.getElementById('drawing-canvas');
 const ctx = canvas.getContext('2d');
 let drawing = false;
 let penEnabled = false;
 
+// Setup Canvas Size
 function setupCanvas() {
-    canvas.width = document.getElementById('main-container').offsetWidth;
-    canvas.height = document.getElementById('main-container').offsetHeight;
-    ctx.lineWidth = 3;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = 'red';
+    canvas.width = document.documentElement.scrollWidth;
+    canvas.height = document.documentElement.scrollHeight;
 }
 
 function togglePen() {
@@ -97,32 +105,45 @@ function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// Mouse/Touch Events
-canvas.addEventListener('mousedown', startDrawing);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mouseup', stopDrawing);
-canvas.addEventListener('touchstart', (e) => { startDrawing(e.touches[0]); e.preventDefault(); });
-canvas.addEventListener('touchmove', (e) => { draw(e.touches[0]); e.preventDefault(); });
-canvas.addEventListener('touchend', stopDrawing);
+// Drawing Logic
+function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+    };
+}
 
 function startDrawing(e) {
     if(!penEnabled) return;
     drawing = true;
+    const pos = getPos(e);
     ctx.beginPath();
-    ctx.moveTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+    ctx.strokeStyle = document.getElementById('pen-color').value;
+    ctx.lineWidth = document.getElementById('pen-size').value;
+    ctx.lineCap = 'round';
+    ctx.moveTo(pos.x, pos.y);
 }
 
 function draw(e) {
     if (!drawing || !penEnabled) return;
-    ctx.lineTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+    const pos = getPos(e);
+    ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
 }
 
 function stopDrawing() { drawing = false; }
 
-window.addEventListener('resize', setupCanvas);
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('touchstart', (e) => { startDrawing(e); e.preventDefault(); }, {passive: false});
+canvas.addEventListener('touchmove', (e) => { draw(e); e.preventDefault(); }, {passive: false});
+canvas.addEventListener('touchend', stopDrawing);
 
-// ---------- LOAD QUESTIONS ----------
+// ---------- LOAD DATA ----------
 const urlParams = new URLSearchParams(window.location.search);
 const fileLoc = urlParams.get('file');
 const questionsFile = fileLoc + "/question.txt";
@@ -130,14 +151,11 @@ const answersFile = fileLoc + "/answer.txt";
 
 fetch(questionsFile)
 .then(r => r.text())
-.then(qText => {
-  return fetch(answersFile).then(r => r.json()).then(ans => ({qText, ans}));
-})
+.then(qText => fetch(answersFile).then(r => r.json()).then(ans => ({qText, ans})))
 .then(({qText, ans}) => {
   const lines = qText.split('\n').filter(l => l.trim() !== '');
   let q = null;
   let list = [];
-
   lines.forEach(line => {
     if (/^\d+\./.test(line)) {
       if (q) list.push(q);
@@ -147,30 +165,23 @@ fetch(questionsFile)
     }
   });
   if (q) list.push(q);
-
-  questions = list.map((q, i) => {
-    return {
-      question: q.question,
-      options: q.options,
-      correct: ans[i+1].map(x => x.charCodeAt(0) - 65)
-    };
-  });
-
+  questions = list.map((q, i) => ({
+    question: q.question,
+    options: q.options,
+    correct: ans[i+1].map(x => x.charCodeAt(0) - 65)
+  }));
   renderQuestions();
-  setupCanvas(); // Initialize canvas size after questions render
+  setTimeout(setupCanvas, 500); // Wait for render to set height
 });
 
-// ---------- RENDER ----------
 function renderQuestions() {
   const container = document.getElementById("questions-container");
   container.innerHTML = "";
-
   questions.forEach((q, qi) => {
     const box = document.createElement("div");
     box.className = "question-box";
-    box.style.display = "none";
-    box.innerHTML = `<b>Question ${qi+1}</b><br>${q.question}<ul class="options mt-3"></ul>`;
-
+    box.style.display = qi === 0 ? "block" : "none";
+    box.innerHTML = `<b>Question ${qi+1}</b><br>${q.question}<ul class="options mt-3 list-unstyled"></ul>`;
     const ul = box.querySelector(".options");
     q.options.forEach((opt, oi) => {
       const li = document.createElement("li");
@@ -180,63 +191,45 @@ function renderQuestions() {
     });
     container.appendChild(box);
   });
-  showQuestion(0);
-  updateUI();
 }
 
-// ---------- ANSWER HANDLING ----------
 function handleAnswer(qi, oi, label) {
   const correct = questions[qi].correct.includes(oi);
   document.querySelectorAll(`input[name="q-${qi}"]`).forEach(r => r.disabled = true);
-
   if (correct) {
-    label.style.background = "#5cb85c";
+    label.style.background = "#d4edda";
+    label.style.borderColor = "#28a745";
     score++;
-    showNotification("Correct", "correct");
+    showNotification("Correct!", "correct");
   } else {
-    label.style.background = "#d9534f";
-    showNotification("Wrong", "incorrect");
+    label.style.background = "#f8d7da";
+    label.style.borderColor = "#dc3545";
+    showNotification("Incorrect", "incorrect");
   }
-  updateUI();
-  // Timer removed here - user must click "Next" manually
+  document.getElementById("score-banner").innerText = `Score: ${score}`;
 }
 
-// ---------- NAVIGATION ----------
 function showQuestion(i) {
-  document.querySelectorAll(".question-box").forEach((q, idx) => {
-    q.style.display = idx === i ? "block" : "none";
-  });
-  // Optional: clear drawings when switching questions
-  // clearCanvas(); 
+  const boxes = document.querySelectorAll(".question-box");
+  boxes.forEach((box, idx) => box.style.display = idx === i ? "block" : "none");
+  currentQuestionIndex = i;
 }
 
 function nextQuestion() {
-  if (currentQuestionIndex < questions.length - 1) {
-    currentQuestionIndex++;
-    showQuestion(currentQuestionIndex);
-  }
+  if (currentQuestionIndex < questions.length - 1) showQuestion(currentQuestionIndex + 1);
 }
 
 function prevQuestion() {
-  if (currentQuestionIndex > 0) {
-    currentQuestionIndex--;
-    showQuestion(currentQuestionIndex);
-  }
-}
-
-function updateUI() {
-  document.getElementById("score-banner").innerText = `Score: ${score}`;
-  document.getElementById("questions-left").innerText =
-    `Questions Left: ${questions.length - document.querySelectorAll("input:checked").length}`;
+  if (currentQuestionIndex > 0) showQuestion(currentQuestionIndex - 1);
 }
 
 function showNotification(msg, cls) {
   const n = document.getElementById("notification");
-  n.innerText = msg;
-  n.className = cls;
-  n.style.display = "block";
-  setTimeout(() => n.style.display = "none", 1200);
+  n.innerText = msg; n.className = cls; n.style.display = "block";
+  setTimeout(() => n.style.display = "none", 1000);
 }
+
+window.addEventListener('resize', setupCanvas);
 </script>
 </body>
 </html>
