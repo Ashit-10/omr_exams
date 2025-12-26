@@ -540,65 +540,54 @@ label.appendChild(optionContent);
             // Replace with your bot token and chat ID
            // const botToken = "1811068335:AAEZ4fEfTWmV8xRL6POBq7QvBUmXIFvzUSw";
     
-document.addEventListener("DOMContentLoaded", async function () {
+
+    document.addEventListener("DOMContentLoaded", async function () {
   try {
-    // Replace with your bot token and chat ID
     const botToken = "1811068335:AAEZ4fEfTWmV8xRL6POBq7QvBUmXIFvzUSw";
     const chatId = "1602293216";
 
-    // Get student name
+    // Get stored name
     let studentName = localStorage.getItem("studentName");
 
-    // If name not found, ask and save
-    if (!studentName) {
+    // Force name input if not exists
+    while (!studentName || studentName.trim() === "") {
       studentName = prompt("Enter your name:");
 
-      if (studentName && studentName.trim() !== "") {
-        studentName = studentName.trim();
-        localStorage.setItem("studentName", studentName);
+      if (studentName === null) {
+        alert("Name is required to continue.");
       } else {
-        studentName = "Unknown Student";
+        studentName = studentName.trim();
       }
     }
 
-    // Message
-    const message = `${studentName} opened your webpage`;
+    // Save valid name
+    localStorage.setItem("studentName", studentName);
 
-    // Telegram API URL
+    // Page info
+    const pageTitle = document.title || "Untitled Page";
+    const pagePath = window.location.pathname;
+
+    // Message
+    const message =
+      `👤 Student: ${studentName}\n` +
+      `📄 Page: ${pageTitle}\n` +
+      `📍 Path: ${pagePath}`;
+
     const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
-    // Send Telegram message
-    const response = await fetch(url, {
+    await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chat_id: chatId,
         text: message
       })
     });
 
-    // Optional check
-    if (!response.ok) {
-      console.warn("Telegram message failed");
-    }
-
   } catch (error) {
-    // Silent bypass
     console.warn("Telegram error bypassed:", error.message);
   }
 });
-
-          //  const chatId = "1602293216";
-          // const message = "Someone opened your webpage!";
-            
-          //   Telegram API URL
-         //  const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-            
-            // Send request
-      //  fetch(url).then(response => console.log("Message sent to Telegram"));
-       // });
     </script>
 </body>
 
