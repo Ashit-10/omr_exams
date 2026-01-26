@@ -1370,14 +1370,28 @@ video.style.height = `${180 / aspectRatio}px`;
             downloadImage(imageUrl);
         }
 
+     //   function downloadImage(dataUrl) {
+         //   const link = document.createElement('a');
+           // link.href = dataUrl;
+         //   link.download = 'OMR_sheet.jpg';
+         //   document.body.appendChild(link);
+         //   link.click();
+         //   document.body.removeChild(link);
+      //  }
+
+        
         function downloadImage(dataUrl) {
-            const link = document.createElement('a');
-            link.href = dataUrl;
-            link.download = 'OMR_sheet.jpg';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+    const link = document.createElement('a');
+
+    const timeStamp = Date.now().toString().slice(-4); 
+// last 4 digits only
+    link.href = dataUrl;
+    link.download = `OMR_sheet_${timeStamp}.jpg`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
         function handleVisibilityChange() {
             if (document.hidden) {
