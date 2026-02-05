@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMR Result Portal | Neon</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #00f2ff; /* Initial color */
+            --bg: #050505;
+            --card-bg: #111;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: --accent 2s;
+        }
+
+        /* Animated Grid Background */
+        .grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg);
+            animation: gridMove 10s linear infinite;
+            z-index: -1;
+            top: -50%;
+        }
+
+        @keyframes gridMove {
+            from { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            to { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+        }
+
+        /* Top Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 20px;
+            display: flex;
+            gap: 15px;
+            background: rgba(255,255,255,0.05);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-bar a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .nav-bar a:hover {
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent);
+        }
+
+        /* Main Content */
+        .main-container {
+            text-align: center;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+        }
+
+        .highlight {
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent);
+            transition: all 0.5s ease;
+        }
+
+        /* Cyber Buttons */
+        .card-stack {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .cyber-card {
+            background: var(--card-bg);
+            border: 1px solid #222;
+            padding: 40px;
+            width: 280px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.4s;
+            position: relative;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .cyber-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+        }
+
+        .cyber-card i {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            transition: 0.5s;
+        }
+
+        .cyber-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .cyber-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Footer Ticker */
+        .footer-ticker {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid #222;
+            padding: 15px;
+            background: #000;
+        }
+
+        marquee {
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--accent);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="grid"></div>
+
+    <nav class="nav-bar">
+        <a href="age_calculater.html">Age</a>
+        <a href="practice_test.html">Mock</a>
+        <a href="materials.html">Study</a>
+        <a href="login.html">Admin</a>
+    </nav>
+
+    <div class="main-container">
+        <h1>OMR <span class="highlight">Results</span></h1>
+        
+        <div class="card-stack">
+            <a href="mvm.html" class="cyber-card">
+                <i class="fas fa-school"></i>
+                <h3>MVM</h3>
+                <p>Ankurabandha Division</p>
+            </a>
+
+            <a href="wsc.html" class="cyber-card">
+                <i class="fas fa-university"></i>
+                <h3>WSC</h3>
+                <p>Siko Campus</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer-ticker">
+        <marquee scrollamount="8">
+            <i class="fas fa-bolt"></i> SYSTEM READY: LATEST EXAM DATA UPLOADED — <span class="highlight">CLICK ON YOUR INSTITUTION TO PROCEED</span> — NEW STUDY PDFS AVAILABLE IN THE MATERIALS SECTION — 
+        </marquee>
+    </div>
+
+    <script>
+        // Automatic Color Cycling Logic
+        const neonColors = [
+            '#00f2ff', // Cyan
+            '#bc13fe', // Purple
+            '#fe019a', // Pink
+            '#04d9ff', // Sky
+            '#7dff00'  // Lime
+        ];
+        let colorIndex = 0;
+
+        function cycleNeonColors() {
+            const nextColor = neonColors[colorIndex];
+            
+            // Apply the color to CSS Variable
+            document.documentElement.style.setProperty('--accent', nextColor);
+            
+            // Update hover shadows dynamically
+            const cards = document.querySelectorAll('.cyber-card');
+            cards.forEach(card => {
+                card.style.boxShadow = `0 0 30px ${nextColor}1A`; // 1A is low opacity hex
+            });
+
+            colorIndex = (colorIndex + 1) % neonColors.length;
+        }
+
+        // Cycle color every 3 seconds
+        setInterval(cycleNeonColors, 3000);
+        cycleNeonColors(); // Initial call
+    </script>
+</body>
+</html>
