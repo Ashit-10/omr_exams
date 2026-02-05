@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMR Exam Results | Portal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #1e1b4b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glass Card Container */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Animated Buttons */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .result-btn {
+            position: relative;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 18px 24px;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .result-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .result-btn i {
+            font-size: 0.9rem;
+            opacity: 0.6;
+            transition: transform 0.3s;
+        }
+
+        .result-btn:hover i {
+            transform: translateX(5px);
+            opacity: 1;
+        }
+
+        /* Navigation Menu */
+        .nav-trigger {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 100;
+            cursor: pointer;
+            background: var(--glass);
+            padding: 12px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .nav-trigger:hover {
+            background: var(--primary);
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 80px 30px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 90;
+            border-left: 1px solid var(--glass-border);
+        }
+
+        .side-menu.active {
+            right: 0;
+        }
+
+        .side-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
+        }
+
+        .side-menu a:hover {
+            color: var(--primary);
+            padding-left: 10px;
+        }
+
+        /* Ticker */
+        .ticker-wrap {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            padding: 12px;
+        }
+
+        .ticker-content {
+            white-space: nowrap;
+            animation: scroll 20s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .ticker-content a {
+            color: #818cf8;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-trigger" onclick="toggleMenu()">
+        <i class="fas fa-bars" id="menu-icon"></i>
+    </div>
+
+    <div class="side-menu" id="side-menu">
+        <a href="age_calculater.html"><i class="fas fa-calculator"></i> Age Calculator</a>
+        <a href="login.html"><i class="fas fa-user-shield"></i> Admin Login</a>
+        <a href="practice_test.html"><i class="fas fa-edit"></i> Mock Test</a>
+        <a href="materials.html"><i class="fas fa-book"></i> Study Materials</a>
+    </div>
+
+    <div class="glass-card" onclick="closeMenu()">
+        <h1>Portal Results</h1>
+        <p class="subtitle">Select your institution to view OMR results</p>
+        
+        <div class="btn-group">
+            <a href="mvm.html" class="result-btn">
+                <span>MVM, Ankurabandha</span>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            <a href="wsc.html" class="result-btn">
+                <span>WSC, Siko</span>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="ticker-wrap">
+        <div class="ticker-content">
+            <a href="https://ashit.xyz/materials" target="_blank">
+                <i class="fas fa-info-circle"></i> NEW: Latest study materials and PDF notes for 2026 exams are now available! Click here to download.
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('side-menu');
+            const icon = document.getElementById('menu-icon');
+            menu.classList.toggle('active');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        }
+
+        function closeMenu() {
+            const menu = document.getElementById('side-menu');
+            const icon = document.getElementById('menu-icon');
+            if(menu.classList.contains('active')) {
+                menu.classList.remove('active');
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-times');
+            }
+        }
+    </script>
+</body>
+</html>
