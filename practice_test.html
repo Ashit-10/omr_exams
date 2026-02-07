@@ -257,8 +257,7 @@
                 document.getElementById("loader").style.display = "none";
             });
         });
-    const botToken = "1811068335:AAEZ4fEfTWmV8xRL6POBq7QvBUmXIFvzUSw";
-    const chatId = "1602293216";
+    
 
     // Ask for student name once and store in localStorage
     function askStudentName() {
@@ -277,21 +276,33 @@
 
     // Function to send data to Telegram when a link is clicked
     function sendToTelegram(event) {
-        event.preventDefault(); // Prevent immediate redirection
-        
-        const studentName = askStudentName();
-        if (!studentName) return;
+    event.preventDefault(); // Prevent immediate redirection
+    
+    const studentName = askStudentName();
+    if (!studentName) return;
 
-        const link = event.target.href;
-        const subject = new URL(link).searchParams.get("subject");
+    const link = event.currentTarget.href; // Use currentTarget for better reliability
+    const subject = new URL(link).searchParams.get("subject") || "Unknown Subject";
 
-        const message = `📌 *Student:* ${studentName}%0A📝 *Clicked:* ${subject}%0A🔗 [Open Link](${link})`;
-        const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}&parse_mode=Markdown&disable_web_page_preview=true`;
+    // 1. Your Pipedream Webhook URL
+    const pipedreamUrl = "https://eoyr9drmlzd21qu.m.pipedream.net";
 
-        fetch(telegramUrl)
-            .then(() => window.location.href = link) // Redirect after sending message
-            .catch(err => console.error("Telegram Error:", err));
-    }
+    // 2. Send the data to Pipedream
+    // We send name and subject so Pipedream can use them in the message
+    fetch(`${pipedreamUrl}?name=${encodeURIComponent(studentName)}&subject=${encodeURIComponent(subject)}`, {
+        method: 'POST',
+        mode: 'no-cors' // Keeps it silent and avoids CORS issues
+    })
+    .then(() => {
+        // Redirect the user to the actual link after a tiny delay
+        window.location.href = link;
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        window.location.href = link; // Redirect anyway if it fails
+    });
+}
+
 </script>
 
 </body>
