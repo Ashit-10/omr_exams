@@ -190,7 +190,7 @@ B) Whirlwind
 C) Cyclone
 D) Tornado
 
-33. Gandhiji’s Persian teacher was not strict. Single word:
+33. Gandhiji’s Persian teacher was <u>not strict</u>. Single word:
 A) Vivacity
 B) Disciplinarian
 C) Lenient
@@ -274,7 +274,7 @@ B) Give over
 C) Give on
 D) Give up
 
-47. “I asked Radha how she felt.” The underlined part is ————— clause.
+47. “I asked Radha <u>how she felt</u>.” The underlined part is ————— clause.
 A) Relative clause
 B) Noun clause
 C) Adverb clause
