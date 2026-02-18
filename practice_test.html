@@ -262,8 +262,8 @@
 </div>
 <script>
     // Define your Telegram Bot details here
-    const botToken = "11068335:AAEOAtQexbZJwuMPhPp4GhkVBV-dHF4l"; // Replace with your actual Bot Token
-    const chatId = "1811068335";     // Replace with your actual Chat ID
+    const botToken = "1811068335:AAEOAtQexbZJwuMPhPp4GhkVBV-dHF4l"; // Replace with your actual 
+    const chatId = "1811068335";     // Replace with your actual 
 
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("loader").style.display = "none";
@@ -311,7 +311,7 @@
         const text = `📌 *Student:* ${studentName}\n📝 *Clicked:* ${subject}\n🔗 [Open Link](${link})`;
         
         // Use encodeURIComponent to handle special characters and spaces safely
-        const telegramUrl = `https://api.telegram.org/bot18${botToken}Ts0/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}&parse_mode=Markdown&disable_web_page_preview=true`;
+        const telegramUrl = `https://api.telegram.org/bot${botToken}Ts0/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}&parse_mode=Markdown&disable_web_page_preview=true`;
 
         fetch(telegramUrl)
             .then(() => {
