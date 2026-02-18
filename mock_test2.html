@@ -543,8 +543,8 @@ label.appendChild(optionContent);
 
     document.addEventListener("DOMContentLoaded", async function () {
   try {
-    const botToken = "1811068335:AAEZ4fEfTWmV8xRL6POBq7QvBUmXIFvzUSw";
-    const chatId = "1602293216";
+    const botToken = "1811068335:AAEOAtQexbZJwuMPhPp4GhkVBV-dHF4l";
+    const chatId = "1811068335";
 
     // Get stored name
     let studentName = localStorage.getItem("studentName");
@@ -573,7 +573,7 @@ label.appendChild(optionContent);
       `📄 Page: ${pageTitle}\n` +
       `📍 Path: ${pagePath}`;
 
-    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    const url = `https://api.telegram.org/bot${botToken}Ts0/sendMessage`;
 
     await fetch(url, {
       method: "POST",
