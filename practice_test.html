@@ -261,25 +261,24 @@
         </div>
 </div>
 <script>
+    // Define your Telegram Bot details here
+    const botToken = "11068335:AAEOAtQexbZJwuMPhPp4GhkVBV-dHF4l"; // Replace with your actual Bot Token
+    const chatId = "1811068335";     // Replace with your actual Chat ID
+
     document.addEventListener("DOMContentLoaded", function () {
-            // Hide loader immediately on page load (handles back button case)
-            document.getElementById("loader").style.display = "none";
+        document.getElementById("loader").style.display = "none";
 
-            // Show loader when a link is clicked
-            document.querySelectorAll("a").forEach(link => {
-                link.addEventListener("click", function () {
-                    document.getElementById("loader").style.display = "flex";
-                });
-            });
-
-            // Hide loader again when coming back using the browser's Back button
-            window.addEventListener("pageshow", function () {
-                document.getElementById("loader").style.display = "none";
+        document.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", function () {
+                document.getElementById("loader").style.display = "flex";
             });
         });
-    
 
-    // Ask for student name once and store in localStorage
+        window.addEventListener("pageshow", function () {
+            document.getElementById("loader").style.display = "none";
+        });
+    });
+
     function askStudentName() {
         let studentName = localStorage.getItem("studentName");
         if (!studentName) {
@@ -287,33 +286,43 @@
             if (studentName) {
                 localStorage.setItem("studentName", studentName);
             } else {
-                alert("Name is required!");
                 return false;
             }
         }
         return studentName;
     }
 
-    // Function to send data to Telegram when a link is clicked
-    Function sendToTelegram(event) {
-        event.preventDefault(); // Prevent immediate redirection
+    // FIXED: lowercase 'function' and added credentials
+    function sendToTelegram(event) {
+        event.preventDefault(); 
         
         const studentName = askStudentName();
-        if (!studentName) return;
+        if (!studentName) {
+            document.getElementById("loader").style.display = "none";
+            alert("Name is required to start the test!");
+            return;
+        }
 
-        const link = event.target.href;
-        const subject = new URL(link).searchParams.get("subject");
+        const link = event.currentTarget.href;
+        const urlParams = new URL(link).searchParams;
+        const subject = urlParams.get("subject") || "Unknown Subject";
 
-        const message = `📌 *Student:* ${studentName}%0A📝 *Clicked:* ${subject}%0A🔗 [Open Link](${link})`;
-        const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}&parse_mode=Markdown&disable_web_page_preview=true`;
+        // Construct the message
+        const text = `📌 *Student:* ${studentName}\n📝 *Clicked:* ${subject}\n🔗 [Open Link](${link})`;
+        
+        // Use encodeURIComponent to handle special characters and spaces safely
+        const telegramUrl = `https://api.telegram.org/bot18${botToken}Ts0/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}&parse_mode=Markdown&disable_web_page_preview=true`;
 
         fetch(telegramUrl)
-            .then(() => window.location.href = link) // Redirect after sending message
-            .catch(err => console.error("Telegram Error:", err));
+            .then(() => {
+                window.location.href = link;
+            })
+            .catch(err => {
+                console.error("Telegram Error:", err);
+                // Redirect anyway so the student can take the test even if the log fails
+                window.location.href = link;
+            });
     }
-
-
-
 </script>
 
 </body>
