@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Formatter Pro</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 20px; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        textarea { width: 100%; height: 180px; margin-bottom: 15px; padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; resize: vertical; box-sizing: border-box; }
+        .btn-group { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+        button { padding: 10px 18px; cursor: pointer; border: none; border-radius: 6px; font-weight: 600; transition: 0.2s; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-warning { background-color: #ffc107; color: #212529; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        .question-box { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #e0e0e0; position: relative; }
+        .question-box:hover { border-color: #007bff; }
+        .question-content { width: 100%; min-height: 60px; padding: 8px; margin-top: 10px; white-space: pre-wrap; outline: none; border: 1px dashed #ccc; border-radius: 4px; }
+        .delete-btn { position: absolute; top: 10px; right: 10px; padding: 4px 8px; font-size: 11px; }
+        .footer-tools { margin-top: 30px; padding-top: 15px; border-top: 2px solid #eee; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Quiz Formatter Tool</h2>
+    <textarea id="rawInput" placeholder="Paste your raw questions here (English or Odia numbers)..."></textarea>
+    
+    <div class="btn-group">
+        <button class="btn-primary" onclick="parseQuestions()">1. Parse Questions</button>
+        <button class="btn-warning" onclick="formatToMCQ()">2. Fix MCQ Layout</button>
+        <button class="btn-success" onclick="shuffleQuestions()">Shuffle Questions</button>
+    </div>
+
+    <div id="questionsContainer"></div>
+
+    <div class="footer-tools" id="footerTools" style="display:none;">
+        <button class="btn-secondary" onclick="renumberQuestions()">Auto-Renumber</button>
+        <button class="btn-primary" onclick="copyFormattedText()" style="background-color: #6f42c1;">Copy All to Clipboard</button>
+        <button class="btn-danger" onclick="clearAll()">Clear All</button>
+    </div>
+</div>
+
+<script>
+    let questionsArray = [];
+
+    function parseQuestions() {
+        const rawText = document.getElementById('rawInput').value;
+        if(!rawText.trim()) return alert("Please paste some text first!");
+        
+        // Split by English (1.) or Odia (୧.) numbers at the start of a line
+        const questionBlocks = rawText.split(/\n(?=[0-9୧-୯]+\.)/);
+        
+        questionsArray = questionBlocks
+            .map(q => q.trim())
+            .filter(q => q.length > 0)
+            .map((q, index) => ({ text: q }));
+
+        renderQuestions();
+        document.getElementById('footerTools').style.display = 'block';
+    }
+
+    function formatToMCQ() {
+        questionsArray = questionsArray.map(q => {
+            let t = q.text;
+            // 1. Clean up brackets around letters: (A) -> A)
+            t = t.replace(/\(([A-D])\)/gi, '$1)');
+            // 2. Put each option A), B), C), D) on a new line
+            t = t.replace(/([A-D]\))/g, '\n$1');
+            // 3. Remove multiple blank lines
+            t = t.replace(/\n\s*\n/g, '\n');
+            return { text: t.trim() };
+        });
+        renderQuestions();
+    }
+
+    function renderQuestions() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = '';
+        questionsArray.forEach((q, index) => {
+            const box = document.createElement('div');
+            box.className = 'question-box';
+            box.innerHTML = `
+                <button class="btn-danger delete-btn" onclick="deleteQuestion(${index})">Remove</button>
+                <div class="question-content" contenteditable="true" oninput="updateQuestion(${index}, this.innerText)">${q.text}</div>
+            `;
+            container.appendChild(box);
+        });
+    }
+
+    function updateQuestion(index, newText) {
+        questionsArray[index].text = newText;
+    }
+
+    function deleteQuestion(index) {
+        questionsArray.splice(index, 1);
+        renderQuestions();
+    }
+
+    function renumberQuestions() {
+        questionsArray.forEach((q, index) => {
+            // Replaces the leading number (Odia or English) with current index
+            q.text = q.text.replace(/^[0-9୧-୯]+\./, `${index + 1}.`);
+        });
+        renderQuestions();
+    }
+
+    function shuffleQuestions() {
+        for (let i = questionsArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [questionsArray[i], questionsArray[j]] = [questionsArray[j], questionsArray[i]];
+        }
+        renumberQuestions();
+    }
+
+    function copyFormattedText() {
+        const finalText = questionsArray.map(q => q.text).join('\n\n');
+        navigator.clipboard.writeText(finalText).then(() => {
+            alert('Formatted questions copied!');
+        });
+    }
+
+    function clearAll() {
+        if(confirm("Are you sure?")) {
+            questionsArray = [];
+            renderQuestions();
+            document.getElementById('rawInput').value = '';
+            document.getElementById('footerTools').style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
