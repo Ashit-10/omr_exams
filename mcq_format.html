@@ -31,7 +31,7 @@
 </head>
 <body>
 
-<h2>MCQ Formatter (Your Format)</h2>
+<h2>MCQ Formatter (Your Exact Format)</h2>
 
 <textarea id="input" placeholder="Paste your MCQs here..."></textarea>
 <button onclick="formatMCQ()">Format</button>
@@ -49,14 +49,20 @@ function formatMCQ() {
     // Convert (A) → A)
     text = text.replace(/\((A|B|C|D)\)/g, "$1)");
 
-    // Remove extra spaces
-    text = text.replace(/\n\s*\n/g, "\n");
+    // Remove extra blank lines everywhere
+    text = text.replace(/\n{2,}/g, "\n");
 
-    // Add line break before options
-    text = text.replace(/(A\))/g, "\n$1");
-    text = text.replace(/(B\))/g, "\n$1");
-    text = text.replace(/(C\))/g, "\n$1");
-    text = text.replace(/(D\))/g, "\n$1");
+    // Ensure options start on new lines
+    text = text.replace(/ ?(A\))/g, "\nA)");
+    text = text.replace(/ ?(B\))/g, "\nB)");
+    text = text.replace(/ ?(C\))/g, "\nC)");
+    text = text.replace(/ ?(D\))/g, "\nD)");
+
+    // Remove extra space before options
+    text = text.replace(/\n\s+/g, "\n");
+
+    // Add ONE blank line before each new question number
+    text = text.replace(/\n(\d+\.)/g, "\n\n$1");
 
     document.getElementById("output").textContent = text.trim();
 }
