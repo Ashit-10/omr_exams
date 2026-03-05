@@ -58,10 +58,7 @@
 
     <div class="input-container">
         <button class="copy-btn" onclick="copyRawInput()">Copy</button>
-        <textarea id="inputText" placeholder="Paste your questions here... 
-Example:
-1. What is 2+2?
-A) 3 B) 4 C) 5 D) 6"></textarea>
+        <textarea id="inputText" placeholder="Paste your questions here..."></textarea>
     </div>
 
     <label for="numQuestions">Number of Questions:</label>
@@ -85,58 +82,55 @@ A) 3 B) 4 C) 5 D) 6"></textarea>
             });
         }
 
-        // UPDATED: Now shuffles both questions AND internal options
         function shuffleQuestions() {
             const inputText = document.getElementById('inputText').value;
             const numQuestions = parseInt(document.getElementById('numQuestions').value, 10);
             
-            // Extract whole blocks (Question + Options)
+            // Extract whole blocks
             const questionBlocks = extractQuestions(inputText);
-            
-            // Filter out empty/short blocks
             const filteredBlocks = questionBlocks.filter(q => q.length >= 5);
             
-            // Shuffle the order of the questions
+            // Shuffle question order
             const randomizedBlocks = shuffleArray(filteredBlocks).slice(0, numQuestions);
             
-            // Process each block to shuffle its options and re-number
+            // Process each block (Shuffle options + re-number)
+            // Joined with \n to ensure no extra line space between question numbers
             const finalOutput = randomizedBlocks.map((block, index) => {
                 return processAndShuffleOptions(block, index + 1);
-            }).join('\n\n');
+            }).join('\n');
 
             document.getElementById('shuffledQuestions').innerText = finalOutput;
         }
 
-        // NEW: Handles the internal option shuffling logic
         function processAndShuffleOptions(block, newNumber) {
-            // Remove the original leading number (e.g., "1. ")
+            // Remove the original number
             const cleanBlock = block.replace(/^\d+[\.\)]\s*/, '');
             
-            // Regex to identify options (A, B, C, D followed by . or ) )
-            // It splits the string while keeping the delimiters to identify text vs labels
+            // Regex to split by option markers (A, B, C, D)
             const optionRegex = /\s*[\(\[]?([A-D])[\)\]\.]\s*/g;
-            
             const segments = cleanBlock.split(optionRegex);
             
-            // segments[0] is the question stem
             const questionStem = segments[0].trim();
             
-            // Extract the actual text of the options (every 2nd element after the split)
+            // Extract option text
             let optionsText = [];
             for (let i = 2; i < segments.length; i += 2) {
-                if(segments[i].trim()) optionsText.push(segments[i].trim());
+                if(segments[i] && segments[i].trim()) {
+                    optionsText.push(segments[i].trim());
+                }
             }
 
-            // Shuffle the options if they exist
+            // Shuffle options
             if (optionsText.length > 0) {
                 optionsText = shuffleArray(optionsText);
             }
 
             // Re-apply labels
-            const labels = ['A)', 'B)', 'C)', 'D)', 'E)', 'F)'];
+            const labels = ['A)', 'B)', 'C)', 'D)', 'E)'];
             const formattedOptions = optionsText.map((text, i) => `${labels[i]} ${text}`).join('   ');
 
-            return `${newNumber}. ${questionStem}\n${formattedOptions}`;
+            // Returns question and options on one line or two without blank lines
+            return `${newNumber}. ${questionStem} ${formattedOptions}`;
         }
 
         function extractQuestions(text) {
@@ -152,7 +146,7 @@ A) 3 B) 4 C) 5 D) 6"></textarea>
                     }
                     currentQuestion = line;
                 } else {
-                    currentQuestion += '\n' + line;
+                    currentQuestion += ' ' + line.trim(); // Combine lines to prevent mid-question breaks
                 }
             });
 
@@ -164,7 +158,7 @@ A) 3 B) 4 C) 5 D) 6"></textarea>
         }
 
         function shuffleArray(array) {
-            const newArr = [...array]; // Work on a copy
+            const newArr = [...array];
             for (let i = newArr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
@@ -184,7 +178,7 @@ A) 3 B) 4 C) 5 D) 6"></textarea>
         function printShuffledQuestions() {
             const shuffledQuestions = document.getElementById('shuffledQuestions').innerText;
             const printWindow = window.open('', '', 'height=600,width=800');
-            printWindow.document.write('<pre style="font-family: Times New Roman, serif; font-size: 16px; line-height: 1.5; white-space: pre-wrap;">' + shuffledQuestions + '</pre>');
+            printWindow.document.write('<pre style="font-family: Times New Roman, serif; font-size: 16px; line-height: 1.2; white-space: pre-wrap;">' + shuffledQuestions + '</pre>');
             printWindow.document.close();
             printWindow.focus();
             printWindow.print();
