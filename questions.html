@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shuffle Questions</title>
+    <title>Shuffle Questions & Options</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,11 +54,14 @@
     </style>
 </head>
 <body>
-    <h1>Shuffle Questions</h1>
+    <h1>Shuffle Questions & Options</h1>
 
     <div class="input-container">
         <button class="copy-btn" onclick="copyRawInput()">Copy</button>
-        <textarea id="inputText" placeholder="Paste your questions here..."></textarea>
+        <textarea id="inputText" placeholder="Paste your questions here... 
+Example:
+1. What is 2+2?
+A) 3 B) 4 C) 5 D) 6"></textarea>
     </div>
 
     <label for="numQuestions">Number of Questions:</label>
@@ -82,18 +85,62 @@
             });
         }
 
+        // UPDATED: Now shuffles both questions AND internal options
         function shuffleQuestions() {
             const inputText = document.getElementById('inputText').value;
             const numQuestions = parseInt(document.getElementById('numQuestions').value, 10);
-            const questions = extractQuestions(inputText);
-            const filteredQuestions = questions.filter(q => q.length >= 10);
-            const shuffledQuestions = shuffleArray(filteredQuestions).slice(0, numQuestions);
-            const formattedQuestions = formatQuestions(shuffledQuestions);
-            document.getElementById('shuffledQuestions').innerText = formattedQuestions;
+            
+            // Extract whole blocks (Question + Options)
+            const questionBlocks = extractQuestions(inputText);
+            
+            // Filter out empty/short blocks
+            const filteredBlocks = questionBlocks.filter(q => q.length >= 5);
+            
+            // Shuffle the order of the questions
+            const randomizedBlocks = shuffleArray(filteredBlocks).slice(0, numQuestions);
+            
+            // Process each block to shuffle its options and re-number
+            const finalOutput = randomizedBlocks.map((block, index) => {
+                return processAndShuffleOptions(block, index + 1);
+            }).join('\n\n');
+
+            document.getElementById('shuffledQuestions').innerText = finalOutput;
+        }
+
+        // NEW: Handles the internal option shuffling logic
+        function processAndShuffleOptions(block, newNumber) {
+            // Remove the original leading number (e.g., "1. ")
+            const cleanBlock = block.replace(/^\d+[\.\)]\s*/, '');
+            
+            // Regex to identify options (A, B, C, D followed by . or ) )
+            // It splits the string while keeping the delimiters to identify text vs labels
+            const optionRegex = /\s*[\(\[]?([A-D])[\)\]\.]\s*/g;
+            
+            const segments = cleanBlock.split(optionRegex);
+            
+            // segments[0] is the question stem
+            const questionStem = segments[0].trim();
+            
+            // Extract the actual text of the options (every 2nd element after the split)
+            let optionsText = [];
+            for (let i = 2; i < segments.length; i += 2) {
+                if(segments[i].trim()) optionsText.push(segments[i].trim());
+            }
+
+            // Shuffle the options if they exist
+            if (optionsText.length > 0) {
+                optionsText = shuffleArray(optionsText);
+            }
+
+            // Re-apply labels
+            const labels = ['A)', 'B)', 'C)', 'D)', 'E)', 'F)'];
+            const formattedOptions = optionsText.map((text, i) => `${labels[i]} ${text}`).join('   ');
+
+            return `${newNumber}. ${questionStem}\n${formattedOptions}`;
         }
 
         function extractQuestions(text) {
-            const questionPattern = /^\d+\.\s|\d+\s\./;
+            const questionPattern = /^\d+[\.\)]/gm;
             const lines = text.split('\n');
             const questions = [];
             let currentQuestion = '';
@@ -117,15 +164,12 @@
         }
 
         function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
+            const newArr = [...array]; // Work on a copy
+            for (let i = newArr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
             }
-            return array;
-        }
-
-        function formatQuestions(questions) {
-            return questions.map((q, index) => `${index + 1}. ${q.replace(/^\d+\.\s|\d+\s\./, '')}`).join('\n');
+            return newArr;
         }
 
         function copyToClipboard() {
@@ -140,8 +184,9 @@
         function printShuffledQuestions() {
             const shuffledQuestions = document.getElementById('shuffledQuestions').innerText;
             const printWindow = window.open('', '', 'height=600,width=800');
-            printWindow.document.write('<pre style="font-family: Times New Roman, serif; font-size: 16px; line-height: 1.5;">' + shuffledQuestions + '</pre>');
+            printWindow.document.write('<pre style="font-family: Times New Roman, serif; font-size: 16px; line-height: 1.5; white-space: pre-wrap;">' + shuffledQuestions + '</pre>');
             printWindow.document.close();
+            printWindow.focus();
             printWindow.print();
         }
 
