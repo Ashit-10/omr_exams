@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGNOU ID Card Processor</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">ID Card PDF Merger</h1>
+        <p class="text-sm text-gray-600 mb-6">Upload your ID card PDF to place it into the official format.</p>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Step 1: Upload ID Card PDF</label>
+                <input type="file" id="idCardInput" accept=".pdf" 
+                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"/>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Step 2: Upload Format Template PDF</label>
+                <input type="file" id="templateInput" accept=".pdf" 
+                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"/>
+            </div>
+
+            <button id="processBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-400" disabled>
+                Generate & Download A4 PDF
+            </button>
+        </div>
+
+        <div id="status" class="mt-4 text-center text-sm font-medium"></div>
+    </div>
+
+    <script>
+        const idCardInput = document.getElementById('idCardInput');
+        const templateInput = document.getElementById('templateInput');
+        const processBtn = document.getElementById('processBtn');
+        const status = document.getElementById('status');
+
+        // Enable button only when both files are selected
+        [idCardInput, templateInput].forEach(input => {
+            input.addEventListener('change', () => {
+                processBtn.disabled = !(idCardInput.files[0] && templateInput.files[0]);
+            });
+        });
+
+        processBtn.addEventListener('click', async () => {
+            try {
+                status.innerText = "Processing... Please wait.";
+                status.className = "mt-4 text-center text-sm font-medium text-blue-600";
+
+                const idFile = await idCardInput.files[0].arrayBuffer();
+                const templateFile = await templateInput.files[0].arrayBuffer();
+
+                // Load PDFs
+                const { PDFDocument, degrees } = PDFLib;
+                const idDoc = await PDFDocument.load(idFile);
+                const templateDoc = await PDFDocument.load(templateFile);
+
+                // Embed the first page of the ID card
+                const [embeddedPage] = await templateDoc.embedPdf(idDoc, [0]);
+                const idDims = embeddedPage.scale(1);
+
+                const pages = templateDoc.getPages();
+                const firstPage = pages[0];
+                const { width, height } = firstPage.getSize();
+
+                // Logic: Ensure long side is down (Landscape orientation for the card)
+                let rotation = 0;
+                let finalWidth = 243; // Standard display width in PDF points (~85mm)
+                let finalHeight = (idDims.height / idDims.width) * finalWidth;
+
+                if (idDims.height > idDims.width) {
+                    rotation = -90;
+                    // Swap dimensions for portrait-to-landscape correction
+                    finalHeight = 243;
+                    finalWidth = (idDims.width / idDims.height) * finalHeight;
+                }
+
+                [span_2](start_span)// Place the ID card[span_2](end_span)
+                // Coordinates: x: 175 is roughly centered on an A4, y: 535 is top-mid section
+                firstPage.drawPage(embeddedPage, {
+                    x: 175, 
+                    y: 535,
+                    width: finalWidth,
+                    height: finalHeight,
+                    rotate: degrees(rotation),
+                });
+
+                // Export and Download
+                const pdfBytes = await templateDoc.save();
+                const blob = new Blob([pdfBytes], { type: "application/pdf" });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = "IGNOU_Practical_Record.pdf";
+                link.click();
+
+                status.innerText = "Success! PDF Downloaded.";
+                status.className = "mt-4 text-center text-sm font-medium text-green-600";
+
+            } catch (error) {
+                console.error(error);
+                status.innerText = "Error processing PDFs. Check console.";
+                status.className = "mt-4 text-center text-sm font-medium text-red-600";
+            }
+        });
+    </script>
+</body>
+</html>
