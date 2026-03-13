@@ -3,108 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGNOU ID Card Processor</title>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <title>ID Card Auto-Merge</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
-        <h1 class="text-2xl font-bold text-gray-800 mb-2">ID Card PDF Merger</h1>
-        <p class="text-sm text-gray-600 mb-6">Upload your ID card PDF to place it into the official format.</p>
-
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Step 1: Upload ID Card PDF</label>
-                <input type="file" id="idCardInput" accept=".pdf" 
-                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"/>
+    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-slate-800">IGNOU PDF Processor</h1>
+            <p class="text-slate-500 text-sm mt-1">Extracts ID and places it into A4 Format</p>
+        </div>
+        
+        <div class="space-y-5">
+            <div class="relative group border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:bg-slate-50 transition-all">
+                <input type="file" id="userInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
+                <div id="uploadUI">
+                    <div class="text-slate-400 mb-2">
+                        <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    </div>
+                    <span class="text-sm font-medium text-slate-600 block" id="fileLabel">Upload ID Card (PDF/Image)</span>
+                </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Step 2: Upload Format Template PDF</label>
-                <input type="file" id="templateInput" accept=".pdf" 
-                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer"/>
-            </div>
-
-            <button id="processBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-400" disabled>
-                Generate & Download A4 PDF
+            <button id="processBtn" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 active:scale-95 transition-all disabled:bg-slate-300 shadow-lg shadow-indigo-100">
+                Generate A4 Document
             </button>
         </div>
 
-        <div id="status" class="mt-4 text-center text-sm font-medium"></div>
+        <div id="status" class="mt-4 text-center text-sm font-semibold hidden"></div>
     </div>
 
     <script>
-        const idCardInput = document.getElementById('idCardInput');
-        const templateInput = document.getElementById('templateInput');
+        const { PDFDocument, degrees } = PDFLib;
+        
+        // UPDATE THIS URL to your actual GitHub Raw URL
+        // Example: https://raw.githubusercontent.com/username/repo/main/id_card_format.pdf
+        const TEMPLATE_URL = "id_card_format.pdf"; 
+
+        const userInput = document.getElementById('userInput');
+        const fileLabel = document.getElementById('fileLabel');
         const processBtn = document.getElementById('processBtn');
         const status = document.getElementById('status');
 
-        // Enable button only when both files are selected
-        [idCardInput, templateInput].forEach(input => {
-            input.addEventListener('change', () => {
-                processBtn.disabled = !(idCardInput.files[0] && templateInput.files[0]);
-            });
+        userInput.addEventListener('change', (e) => {
+            if(e.target.files[0]) fileLabel.innerText = "Selected: " + e.target.files[0].name;
         });
 
+        function updateStatus(msg, type = 'info') {
+            status.innerText = msg;
+            status.className = `mt-4 text-center text-sm font-semibold ${type === 'error' ? 'text-red-500' : 'text-indigo-600'}`;
+            status.classList.remove('hidden');
+        }
+
         processBtn.addEventListener('click', async () => {
+            const file = userInput.files[0];
+            if (!file) return updateStatus("Please select a file first", 'error');
+
             try {
-                status.innerText = "Processing... Please wait.";
-                status.className = "mt-4 text-center text-sm font-medium text-blue-600";
+                updateStatus("Downloading template & processing...");
+                
+                // 1. Fetch the template from your GitHub/Local Repo
+                const templateResponse = await fetch(TEMPLATE_URL);
+                if (!templateResponse.ok) throw new Error("Could not find id_card_format.pdf in repo.");
+                const templateBuffer = await templateResponse.arrayBuffer();
 
-                const idFile = await idCardInput.files[0].arrayBuffer();
-                const templateFile = await templateInput.files[0].arrayBuffer();
-
-                // Load PDFs
-                const { PDFDocument, degrees } = PDFLib;
-                const idDoc = await PDFDocument.load(idFile);
-                const templateDoc = await PDFDocument.load(templateFile);
-
-                // Embed the first page of the ID card
-                const [embeddedPage] = await templateDoc.embedPdf(idDoc, [0]);
-                const idDims = embeddedPage.scale(1);
-
-                const pages = templateDoc.getPages();
-                const firstPage = pages[0];
+                // 2. Load documents
+                const templateDoc = await PDFDocument.load(templateBuffer);
+                const firstPage = templateDoc.getPages()[0];
                 const { width, height } = firstPage.getSize();
 
-                // Logic: Ensure long side is down (Landscape orientation for the card)
+                let idObject, idDims;
+
+                // 3. Handle PDF or Image input
+                if (file.type === "application/pdf") {
+                    const idBuffer = await file.arrayBuffer();
+                    const idDoc = await PDFDocument.load(idBuffer);
+                    [idObject] = await templateDoc.embedPdf(idDoc, [0]);
+                    idDims = idObject.scale(1);
+                } else {
+                    const imgBuffer = await file.arrayBuffer();
+                    idObject = file.type.includes('png') ? await templateDoc.embedPng(imgBuffer) : await templateDoc.embedJpg(imgBuffer);
+                    idDims = idObject.scale(1);
+                }
+
+                // 4. Orientation Logic (Long side down)
                 let rotation = 0;
-                let finalWidth = 243; // Standard display width in PDF points (~85mm)
-                let finalHeight = (idDims.height / idDims.width) * finalWidth;
+                let drawW = 245; 
+                let drawH = (idDims.height / idDims.width) * drawW;
 
                 if (idDims.height > idDims.width) {
                     rotation = -90;
-                    // Swap dimensions for portrait-to-landscape correction
-                    finalHeight = 243;
-                    finalWidth = (idDims.width / idDims.height) * finalHeight;
+                    drawH = 245;
+                    drawW = (idDims.width / idDims.height) * drawH;
                 }
 
-                [span_2](start_span)// Place the ID card[span_2](end_span)
-                // Coordinates: x: 175 is roughly centered on an A4, y: 535 is top-mid section
-                firstPage.drawPage(embeddedPage, {
-                    x: 175, 
-                    y: 535,
-                    width: finalWidth,
-                    height: finalHeight,
+                // 5. Drawing parameters
+                const drawParams = {
+                    x: (width / 2) - (drawW / 2) + (rotation !== 0 ? drawW : 0),
+                    [span_1](start_span)y: height - 280, // Positioned in the "Practical Record" slot[span_1](end_span)
+                    width: drawW,
+                    height: drawH,
                     rotate: degrees(rotation),
-                });
+                };
 
-                // Export and Download
+                if (file.type === "application/pdf") {
+                    firstPage.drawPage(idObject, drawParams);
+                } else {
+                    firstPage.drawImage(idObject, drawParams);
+                }
+
+                // 6. Save and Download
                 const pdfBytes = await templateDoc.save();
                 const blob = new Blob([pdfBytes], { type: "application/pdf" });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = "IGNOU_Practical_Record.pdf";
+                link.download = "Completed_Practical_Format.pdf";
                 link.click();
 
-                status.innerText = "Success! PDF Downloaded.";
-                status.className = "mt-4 text-center text-sm font-medium text-green-600";
-
-            } catch (error) {
-                console.error(error);
-                status.innerText = "Error processing PDFs. Check console.";
-                status.className = "mt-4 text-center text-sm font-medium text-red-600";
+                updateStatus("Success! File Downloaded.");
+            } catch (err) {
+                console.error(err);
+                updateStatus(err.message, 'error');
             }
         });
     </script>
