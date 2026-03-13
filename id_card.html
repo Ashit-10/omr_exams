@@ -3,128 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ID Card Layout Tester</title>
+    <title>ID Card Auto-Crop & Paste</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full border border-gray-200">
-        <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-800">ID Merger Tester</h1>
-            <p class="text-gray-500 text-sm mt-2">Upload your ID and Format to merge</p>
+    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-slate-800">IGNOU ID Processor</h1>
+            <p class="text-slate-500 text-sm mt-1">Automatic A4 Layout Generator</p>
         </div>
-
-        <div class="space-y-6">
-            <div>
-                <label class="block text-xs font-bold text-gray-700 uppercase mb-2">1. Student ID (PDF or Image)</label>
-                <input type="file" id="idInput" accept="application/pdf,image/*" 
-                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-gray-200 rounded-lg"/>
+        
+        <div class="space-y-5">
+            <div class="relative group border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:bg-slate-50 transition-all">
+                <input type="file" id="userInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
+                <div id="uploadUI">
+                    <span class="text-sm font-medium text-slate-600 block" id="fileLabel">Click to Upload Student ID (PDF/Image)</span>
+                </div>
             </div>
 
-            <div>
-                <label class="block text-xs font-bold text-gray-700 uppercase mb-2">2. ID Card Format (PDF)</label>
-                <input type="file" id="formatInput" accept="application/pdf" 
-                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer border border-gray-200 rounded-lg"/>
+            <div id="manualFormatSection" class="hidden animate-pulse">
+                <label class="block text-xs font-bold text-red-600 mb-2">SECURITY ALERT: Please manually select 'id_card_format.pdf'</label>
+                <input type="file" id="manualFormatInput" accept="application/pdf" class="text-xs w-full"/>
             </div>
 
             <button id="processBtn" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 active:scale-95 transition-all shadow-lg">
-                Generate & Preview
+                Generate A4 Document
             </button>
         </div>
 
-        <div id="status" class="mt-6 text-center text-sm font-medium hidden p-3 rounded-lg"></div>
+        <div id="status" class="mt-4 text-center text-sm font-semibold hidden p-3 rounded-lg"></div>
     </div>
 
     <script>
-        // Accessing PDFLib components
         const { PDFDocument, degrees } = PDFLib;
+        const TEMPLATE_PATH = "id_card_format.pdf"; 
 
-        const idInput = document.getElementById('idInput');
-        const formatInput = document.getElementById('formatInput');
+        const userInput = document.getElementById('userInput');
+        const fileLabel = document.getElementById('fileLabel');
         const processBtn = document.getElementById('processBtn');
         const status = document.getElementById('status');
+        const manualFormatInput = document.getElementById('manualFormatInput');
+        const manualFormatSection = document.getElementById('manualFormatSection');
 
-        function showStatus(msg, isError = false) {
+        userInput.addEventListener('change', (e) => {
+            if(e.target.files[0]) fileLabel.innerText = "ID Selected: " + e.target.files[0].name;
+        });
+
+        function updateStatus(msg, isError = false) {
             status.innerText = msg;
-            status.className = `mt-6 text-center text-sm font-medium p-3 rounded-lg ${isError ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`;
+            status.className = `mt-4 text-center text-sm font-semibold p-3 rounded-lg ${isError ? 'bg-red-50 text-red-600' : 'bg-indigo-50 text-indigo-600'}`;
             status.classList.remove('hidden');
         }
 
-        processBtn.addEventListener('click', async () => {
-            if (!idInput.files[0] || !formatInput.files[0]) {
-                return showStatus("Please upload both files.", true);
+        async function getTemplate() {
+            try {
+                // Try to fetch automatically (works on GitHub Pages/Server)
+                const response = await fetch(TEMPLATE_PATH);
+                if (!response.ok) throw new Error("Local fetch blocked");
+                return await response.arrayBuffer();
+            } catch (e) {
+                // Fallback for local file testing (file://)
+                manualFormatSection.classList.remove('hidden');
+                if (manualFormatInput.files[0]) {
+                    return await manualFormatInput.files[0].arrayBuffer();
+                }
+                throw new Error("Local Security: Please select 'id_card_format.pdf' manually below.");
             }
+        }
+
+        processBtn.addEventListener('click', async () => {
+            const userFile = userInput.files[0];
+            if (!userFile) return updateStatus("Please select your ID Card first.", true);
 
             try {
-                showStatus("Merging files... please wait.");
+                updateStatus("Step 1: Loading Template...");
+                const templateBytes = await getTemplate();
                 
-                // 1. Load the Format Template
-                const formatBytes = await formatInput.files[0].arrayBuffer();
-                const templateDoc = await PDFDocument.load(formatBytes);
+                const templateDoc = await PDFDocument.load(templateBytes);
                 const firstPage = templateDoc.getPages()[0];
                 const { width, height } = firstPage.getSize();
 
-                // 2. Load the Student ID
-                const idFile = idInput.files[0];
+                updateStatus("Step 2: Processing ID Card...");
                 let idObject, idDims;
 
-                if (idFile.type === "application/pdf") {
-                    const idBytes = await idFile.arrayBuffer();
+                if (userFile.type === "application/pdf") {
+                    const idBytes = await userFile.arrayBuffer();
                     const idDoc = await PDFDocument.load(idBytes);
-                    // Embed the first page of the student ID
                     [idObject] = await templateDoc.embedPdf(idDoc, [0]);
                     idDims = idObject.scale(1);
                 } else {
-                    const imgBytes = await idFile.arrayBuffer();
-                    idObject = idFile.type.includes('png') ? 
-                        await templateDoc.embedPng(imgBytes) : 
-                        await templateDoc.embedJpg(imgBytes);
+                    const imgBytes = await userFile.arrayBuffer();
+                    idObject = userFile.type.includes('png') ? await templateDoc.embedPng(imgBytes) : await templateDoc.embedJpg(imgBytes);
                     idDims = idObject.scale(1);
                 }
 
-                // 3. Handle Orientation (Long side down)
-                // We ensure the width is the longer side for the layout
+                [span_1](start_span)// Orientation logic: Long side down[span_1](end_span)
                 let rotation = 0;
-                let targetWidth = 245; // Width in PDF points (~86mm)
-                let targetHeight = (idDims.height / idDims.width) * targetWidth;
+                let drawW = 245; 
+                let drawH = (idDims.height / idDims.width) * drawW;
 
                 if (idDims.height > idDims.width) {
-                    rotation = -90; 
-                    targetHeight = 245;
-                    targetWidth = (idDims.width / idDims.height) * targetHeight;
+                    rotation = -90;
+                    drawH = 245;
+                    drawW = (idDims.width / idDims.height) * drawH;
                 }
 
-                // 4. Coordinates for Placement
-                // cite: 2 (Template includes specific text fields like 'ENROLMENT NO' and 'NAME')
+                [span_2](start_span)// Correct Placement for the "PRACTICAL RECORD ID CARD" section[span_2](end_span)
                 const drawParams = {
-                    x: (width / 2) - (targetWidth / 2) + (rotation !== 0 ? targetWidth : 0),
-                    [span_0](start_span)y: height - 280, // Placing in the ID Card rectangle area[span_0](end_span)
-                    width: targetWidth,
-                    height: targetHeight,
+                    x: (width / 2) - (drawW / 2) + (rotation !== 0 ? drawW : 0),
+                    [span_3](start_span)y: height - 280, // Positioned above Course Code/Enrollment No[span_3](end_span)
+                    width: drawW,
+                    height: drawH,
                     rotate: degrees(rotation),
                 };
 
-                // 5. Draw ID onto Format
-                if (idFile.type === "application/pdf") {
+                if (userFile.type === "application/pdf") {
                     firstPage.drawPage(idObject, drawParams);
                 } else {
                     firstPage.drawImage(idObject, drawParams);
                 }
 
-                // 6. Save and Download
-                const pdfBytes = await templateDoc.save();
-                const blob = new Blob([pdfBytes], { type: "application/pdf" });
+                updateStatus("Step 3: Generating Final PDF...");
+                const finalBytes = await templateDoc.save();
+                
+                const blob = new Blob([finalBytes], { type: "application/pdf" });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = "Final_ID_Document.pdf";
+                link.download = "Completed_Practical_Format.pdf";
                 link.click();
 
-                showStatus("Success! File downloaded.");
+                updateStatus("Success! Check your downloads.");
 
             } catch (err) {
-                console.error("Layout Error:", err);
-                showStatus("Error: " + err.message, true);
+                updateStatus(err.message, true);
             }
         });
     </script>
