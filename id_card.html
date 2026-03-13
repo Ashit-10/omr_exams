@@ -9,10 +9,10 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
 
-    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full">
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full border border-gray-200">
         <div class="text-center mb-8">
             <h1 class="text-2xl font-bold text-gray-800">ID Merger Tester</h1>
-            <p class="text-gray-500 text-sm mt-2">Upload both files to test the alignment</p>
+            <p class="text-gray-500 text-sm mt-2">Upload your ID and Format to merge</p>
         </div>
 
         <div class="space-y-6">
@@ -28,7 +28,7 @@
                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer border border-gray-200 rounded-lg"/>
             </div>
 
-            <button id="processBtn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 active:scale-95 transition-all shadow-lg">
+            <button id="processBtn" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 active:scale-95 transition-all shadow-lg">
                 Generate & Preview
             </button>
         </div>
@@ -37,6 +37,7 @@
     </div>
 
     <script>
+        // Accessing PDFLib components
         const { PDFDocument, degrees } = PDFLib;
 
         const idInput = document.getElementById('idInput');
@@ -52,73 +53,77 @@
 
         processBtn.addEventListener('click', async () => {
             if (!idInput.files[0] || !formatInput.files[0]) {
-                return showStatus("Please upload both files to proceed.", true);
+                return showStatus("Please upload both files.", true);
             }
 
             try {
-                showStatus("Processing...");
+                showStatus("Merging files... please wait.");
                 
-                [span_3](start_span)// Load the Format Template[span_3](end_span)
+                // 1. Load the Format Template
                 const formatBytes = await formatInput.files[0].arrayBuffer();
                 const templateDoc = await PDFDocument.load(formatBytes);
                 const firstPage = templateDoc.getPages()[0];
                 const { width, height } = firstPage.getSize();
 
-                [span_4](start_span)// Load the Student ID[span_4](end_span)
+                // 2. Load the Student ID
                 const idFile = idInput.files[0];
                 let idObject, idDims;
 
                 if (idFile.type === "application/pdf") {
                     const idBytes = await idFile.arrayBuffer();
                     const idDoc = await PDFDocument.load(idBytes);
+                    // Embed the first page of the student ID
                     [idObject] = await templateDoc.embedPdf(idDoc, [0]);
                     idDims = idObject.scale(1);
                 } else {
                     const imgBytes = await idFile.arrayBuffer();
-                    idObject = idFile.type.includes('png') ? await templateDoc.embedPng(imgBytes) : await templateDoc.embedJpg(imgBytes);
+                    idObject = idFile.type.includes('png') ? 
+                        await templateDoc.embedPng(imgBytes) : 
+                        await templateDoc.embedJpg(imgBytes);
                     idDims = idObject.scale(1);
                 }
 
-                // Automatic Rotation Logic: Ensure long side is down
+                // 3. Handle Orientation (Long side down)
+                // We ensure the width is the longer side for the layout
                 let rotation = 0;
-                let targetW = 245; // Fixed width for the ID rectangle in points
-                let targetH = (idDims.height / idDims.width) * targetW;
+                let targetWidth = 245; // Width in PDF points (~86mm)
+                let targetHeight = (idDims.height / idDims.width) * targetWidth;
 
                 if (idDims.height > idDims.width) {
-                    rotation = -90; // Rotate portrait to landscape
-                    targetH = 245;
-                    targetW = (idDims.width / idDims.height) * targetH;
+                    rotation = -90; 
+                    targetHeight = 245;
+                    targetWidth = (idDims.width / idDims.height) * targetHeight;
                 }
 
-                [span_5](start_span)// Coordinates for "PRACTICAL RECORD ID CARD" space[span_5](end_span)
-                // Centered horizontally, positioned near the top-mid section
+                // 4. Coordinates for Placement
+                // cite: 2 (Template includes specific text fields like 'ENROLMENT NO' and 'NAME')
                 const drawParams = {
-                    x: (width / 2) - (targetW / 2) + (rotation !== 0 ? targetW : 0),
-                    y: height - 280, 
-                    width: targetW,
-                    height: targetH,
+                    x: (width / 2) - (targetWidth / 2) + (rotation !== 0 ? targetWidth : 0),
+                    [span_0](start_span)y: height - 280, // Placing in the ID Card rectangle area[span_0](end_span)
+                    width: targetWidth,
+                    height: targetHeight,
                     rotate: degrees(rotation),
                 };
 
-                // Apply to the template
+                // 5. Draw ID onto Format
                 if (idFile.type === "application/pdf") {
                     firstPage.drawPage(idObject, drawParams);
                 } else {
                     firstPage.drawImage(idObject, drawParams);
                 }
 
-                // Save and Download
+                // 6. Save and Download
                 const pdfBytes = await templateDoc.save();
                 const blob = new Blob([pdfBytes], { type: "application/pdf" });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = "Merged_ID_Format.pdf";
+                link.download = "Final_ID_Document.pdf";
                 link.click();
 
-                showStatus("Success! Your PDF is downloading.");
+                showStatus("Success! File downloaded.");
 
             } catch (err) {
-                console.error(err);
+                console.error("Layout Error:", err);
                 showStatus("Error: " + err.message, true);
             }
         });
