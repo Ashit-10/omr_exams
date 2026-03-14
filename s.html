@@ -121,10 +121,10 @@
                 const enroll = document.getElementById('enrollInput').value;
                 const course = document.getElementById('courseInput').value;
 
-                const textStyle = { size: 12, font: font, color: rgb(0, 0, 0) };
+                const textStyle = { size: 18, font: font, color: rgb(0, 0, 0) };
 
                 // Change x and y below to align with your PDF's blank lines
-                a4Page.drawText(name,   { x: 150, y: 350, ...textStyle });
+                a4Page.drawText(name,   { x: 175, y: 338, ...textStyle });
                 a4Page.drawText(enroll, { x: 150, y: 325, ...textStyle });
                 a4Page.drawText(course, { x: 150, y: 300, ...textStyle });
 
