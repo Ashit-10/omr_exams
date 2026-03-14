@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGNOU ID Generator - Auto Crop</title>
+    <title>IGNOU ID Generator - Fixed Crop</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
 
     <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-slate-200">
-        <h1 class="text-xl font-bold text-center text-slate-800 mb-2">IGNOU Practical Record</h1>
-        <p class="text-slate-500 text-center text-sm mb-6">Upload your ID to auto-fill the template</p>
+        <h1 class="text-xl font-bold text-center text-slate-800 mb-6">IGNOU Practical Record</h1>
         
         <div class="space-y-4">
             <div class="relative group border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:bg-slate-50 transition-all">
                 <input type="file" id="idInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
                 <div id="uploadUI">
-                    <span class="text-sm font-medium text-slate-600 block" id="fileLabel">Drop Student ID PDF/Image here</span>
+                    <span class="text-sm font-medium text-slate-600 block" id="fileLabel">Upload ID Card</span>
                 </div>
             </div>
 
-            <button id="processBtn" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg">
+            <button id="processBtn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg">
                 Generate A4 PDF
             </button>
         </div>
@@ -44,7 +43,7 @@
 
         function updateStatus(msg, isErr = false) {
             status.innerText = msg;
-            status.className = `mt-4 p-2 rounded text-center text-sm ${isErr ? 'text-red-600 bg-red-50' : 'text-indigo-600 bg-indigo-50'}`;
+            status.className = `mt-4 p-2 rounded text-center text-sm ${isErr ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50'}`;
             status.classList.remove('hidden');
         }
 
@@ -52,9 +51,9 @@
             if (!idInput.files[0]) return updateStatus("Please select your ID Card.", true);
 
             try {
-                updateStatus("Step 1: Loading Template...");
+                updateStatus("Step 1: Fetching Template...");
                 const response = await fetch(TEMPLATE_URL);
-                if (!response.ok) throw new Error("Template 'Id_card_format.pdf' not found.");
+                if (!response.ok) throw new Error("Template file not found.");
                 const formatBytes = await response.arrayBuffer();
 
                 const templateDoc = await PDFDocument.load(formatBytes);
@@ -62,20 +61,20 @@
                 const { width: a4W } = a4Page.getSize();
 
                 const idFile = idInput.files[0];
-                let idDims, idObject;
+                let idObject, idDims;
 
-                updateStatus("Step 2: Processing ID & Cropping...");
+                updateStatus("Step 2: Cropping & Aligning...");
 
                 if (idFile.type === "application/pdf") {
                     const idBytes = await idFile.arrayBuffer();
                     const srcDoc = await PDFDocument.load(idBytes);
                     const srcPage = srcDoc.getPages()[0];
-
-                    // --- SIMPLE AUTO-CROP LOGIC ---
-                    // IGNOU IDs in PDFs often have large white margins. 
-                    // We shrink the crop box to the center area where the ID usually sits.
+                    
+                    // FORCE CROP: IGNOU IDs are usually at the top of the A4 download
+                    // We crop to just the ID area (approx top half, centered)
                     const { width, height } = srcPage.getSize();
-                    srcPage.setCropBox(width * 0.1, height * 0.2, width * 0.8, height * 0.6);
+                    // This creates a box around the actual ID card area
+                    srcPage.setCropBox(20, height - 300, width - 40, 280); 
 
                     const embeddedPages = await templateDoc.embedPdf(srcDoc, [0]);
                     idObject = embeddedPages[0];
@@ -86,28 +85,28 @@
                     idDims = { width: idObject.width, height: idObject.height };
                 }
 
-                // DIMENSION & ROTATION LOGIC
+                // FIXED LOGIC: Only rotate if the CROPPED result is still vertical
+                // For IGNOU IDs, they are almost always wider than they are tall (Horizontal)
                 let rotation = 0;
-                const targetHeight = 200; // As requested
+                const targetHeight = 200;
                 let drawW, drawH;
 
-                if (idDims.height > idDims.width) {
-                    // It's Vertical -> Rotate -90 degrees
+                // If height is significantly greater than width, it's vertical
+                if (idDims.height > idDims.width * 1.1) {
                     rotation = -90;
-                    drawH = (idDims.width / idDims.height) * targetHeight;
                     drawW = targetHeight;
+                    drawH = (idDims.width / idDims.height) * targetHeight;
                 } else {
-                    // It's Horizontal
+                    rotation = 0;
                     drawH = targetHeight;
                     drawW = (idDims.width / idDims.height) * targetHeight;
                 }
 
-                // PLACEMENT LOGIC
-                // x: centered, y: 550
+                // CENTERING & PLACEMENT (y = 550)
                 const xPos = (a4W / 2) - (drawW / 2) + (rotation !== 0 ? drawW : 0);
                 const yPos = 550;
 
-                const drawOptions = {
+                const config = {
                     x: xPos,
                     y: yPos,
                     width: drawW,
@@ -116,20 +115,20 @@
                 };
 
                 if (idFile.type === "application/pdf") {
-                    a4Page.drawPage(idObject, drawOptions);
+                    a4Page.drawPage(idObject, config);
                 } else {
-                    a4Page.drawImage(idObject, drawOptions);
+                    a4Page.drawImage(idObject, config);
                 }
 
-                updateStatus("Step 3: Generating Final PDF...");
+                updateStatus("Step 3: Saving...");
                 const pdfBytes = await templateDoc.save();
                 const blob = new Blob([pdfBytes], { type: "application/pdf" });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = `Practical_Sheet_${Date.now()}.pdf`;
+                link.download = "IGNOU_Practical_Record.pdf";
                 link.click();
 
-                updateStatus("Success! Check your downloads.");
+                updateStatus("Success!");
 
             } catch (err) {
                 console.error(err);
