@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGNOU ID Generator</title>
+    <title>IGNOU ID Generator - Auto Crop</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
 
     <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-slate-200">
-        <h1 class="text-xl font-bold text-center text-slate-800 mb-6">IGNOU Practical Record Generator</h1>
+        <h1 class="text-xl font-bold text-center text-slate-800 mb-2">IGNOU Practical Record</h1>
+        <p class="text-slate-500 text-center text-sm mb-6">Upload your ID to auto-fill the template</p>
         
         <div class="space-y-4">
             <div class="relative group border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:bg-slate-50 transition-all">
                 <input type="file" id="idInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
                 <div id="uploadUI">
-                    <span class="text-sm font-medium text-slate-600 block" id="fileLabel">Upload Student ID (PDF/Image)</span>
+                    <span class="text-sm font-medium text-slate-600 block" id="fileLabel">Drop Student ID PDF/Image here</span>
                 </div>
             </div>
 
-            <button id="processBtn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg">
+            <button id="processBtn" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg">
                 Generate A4 PDF
             </button>
         </div>
@@ -30,8 +31,6 @@
 
     <script>
         const { PDFDocument, degrees } = PDFLib;
-        
-      //  [span_0](start_span)// This MUST match your local/GitHub filename exactly[span_0](end_span)
         const TEMPLATE_URL = "Id_card_format.pdf"; 
 
         const idInput = document.getElementById('idInput');
@@ -45,7 +44,7 @@
 
         function updateStatus(msg, isErr = false) {
             status.innerText = msg;
-            status.className = `mt-4 p-2 rounded text-center text-sm ${isErr ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50'}`;
+            status.className = `mt-4 p-2 rounded text-center text-sm ${isErr ? 'text-red-600 bg-red-50' : 'text-indigo-600 bg-indigo-50'}`;
             status.classList.remove('hidden');
         }
 
@@ -53,25 +52,33 @@
             if (!idInput.files[0]) return updateStatus("Please select your ID Card.", true);
 
             try {
-                updateStatus("Step 1: Fetching Template...");
+                updateStatus("Step 1: Loading Template...");
                 const response = await fetch(TEMPLATE_URL);
-                if (!response.ok) throw new Error("Template file 'Id_card_format.pdf' not found. Check filename case.");
+                if (!response.ok) throw new Error("Template 'Id_card_format.pdf' not found.");
                 const formatBytes = await response.arrayBuffer();
 
-                updateStatus("Step 2: Processing Layout...");
                 const templateDoc = await PDFDocument.load(formatBytes);
                 const a4Page = templateDoc.getPages()[0];
-                const { width: a4W, height: a4H } = a4Page.getSize();
+                const { width: a4W } = a4Page.getSize();
 
                 const idFile = idInput.files[0];
-                let idObject, idDims;
+                let idDims, idObject;
+
+                updateStatus("Step 2: Processing ID & Cropping...");
 
                 if (idFile.type === "application/pdf") {
                     const idBytes = await idFile.arrayBuffer();
-                    const idDoc = await PDFDocument.load(idBytes);
-                    // FIXED: embedPdf returns an array. We take index 0.
-                    const embeddedPages = await templateDoc.embedPdf(idDoc, [0]);
-                    idObject = embeddedPages[0]; 
+                    const srcDoc = await PDFDocument.load(idBytes);
+                    const srcPage = srcDoc.getPages()[0];
+
+                    // --- SIMPLE AUTO-CROP LOGIC ---
+                    // IGNOU IDs in PDFs often have large white margins. 
+                    // We shrink the crop box to the center area where the ID usually sits.
+                    const { width, height } = srcPage.getSize();
+                    srcPage.setCropBox(width * 0.1, height * 0.2, width * 0.8, height * 0.6);
+
+                    const embeddedPages = await templateDoc.embedPdf(srcDoc, [0]);
+                    idObject = embeddedPages[0];
                     idDims = { width: idObject.width, height: idObject.height };
                 } else {
                     const imgBytes = await idFile.arrayBuffer();
@@ -79,46 +86,54 @@
                     idDims = { width: idObject.width, height: idObject.height };
                 }
 
-                // ROTATION & DIMENSION LOGIC
+                // DIMENSION & ROTATION LOGIC
                 let rotation = 0;
-                const fixedHeight = 160; 
-                let finalH = fixedHeight;
-                let finalW = (idDims.width / idDims.height) * fixedHeight;
+                const targetHeight = 200; // As requested
+                let drawW, drawH;
 
-                // Rotate ONLY if vertical
                 if (idDims.height > idDims.width) {
+                    // It's Vertical -> Rotate -90 degrees
                     rotation = -90;
-                    finalW = fixedHeight; 
-                    finalH = (idDims.width / idDims.height) * finalW;
+                    drawH = (idDims.width / idDims.height) * targetHeight;
+                    drawW = targetHeight;
+                } else {
+                    // It's Horizontal
+                    drawH = targetHeight;
+                    drawW = (idDims.width / idDims.height) * targetHeight;
                 }
 
-              //  [span_1](start_span)// PLACEMENT: Centered horizontally, positioned above form fields[span_1](end_span)
-                const xPos = (a4W / 2) - (finalW / 2) + (rotation !== 0 ? finalW : 0);
-                const yPos = 520; 
+                // PLACEMENT LOGIC
+                // x: centered, y: 550
+                const xPos = (a4W / 2) - (drawW / 2) + (rotation !== 0 ? drawW : 0);
+                const yPos = 550;
+
+                const drawOptions = {
+                    x: xPos,
+                    y: yPos,
+                    width: drawW,
+                    height: drawH,
+                    rotate: degrees(rotation)
+                };
 
                 if (idFile.type === "application/pdf") {
-                    a4Page.drawPage(idObject, {
-                        x: xPos, y: yPos, width: finalW, height: finalH, rotate: degrees(rotation)
-                    });
+                    a4Page.drawPage(idObject, drawOptions);
                 } else {
-                    a4Page.drawImage(idObject, {
-                        x: xPos, y: yPos, width: finalW, height: finalH, rotate: degrees(rotation)
-                    });
+                    a4Page.drawImage(idObject, drawOptions);
                 }
 
-                updateStatus("Step 3: Finalizing PDF...");
+                updateStatus("Step 3: Generating Final PDF...");
                 const pdfBytes = await templateDoc.save();
                 const blob = new Blob([pdfBytes], { type: "application/pdf" });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = "Completed_Practical_Format.pdf";
+                link.download = `Practical_Sheet_${Date.now()}.pdf`;
                 link.click();
 
-                updateStatus("Success! File Downloaded.");
+                updateStatus("Success! Check your downloads.");
 
             } catch (err) {
                 console.error(err);
-                updateStatus(err.message, true);
+                updateStatus("Error: " + err.message, true);
             }
         });
     </script>
