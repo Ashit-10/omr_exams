@@ -31,7 +31,7 @@
     <script>
         const { PDFDocument, degrees } = PDFLib;
         
-        // This MUST match the filename in your GitHub repo exactly
+        [span_0](start_span)// This MUST match your local/GitHub filename exactly[span_0](end_span)
         const TEMPLATE_URL = "Id_card_format.pdf"; 
 
         const idInput = document.getElementById('idInput');
@@ -55,7 +55,7 @@
             try {
                 updateStatus("Step 1: Fetching Template...");
                 const response = await fetch(TEMPLATE_URL);
-                if (!response.ok) throw new Error("Template file not found in repo.");
+                if (!response.ok) throw new Error("Template file 'Id_card_format.pdf' not found. Check filename case.");
                 const formatBytes = await response.arrayBuffer();
 
                 updateStatus("Step 2: Processing Layout...");
@@ -69,44 +69,55 @@
                 if (idFile.type === "application/pdf") {
                     const idBytes = await idFile.arrayBuffer();
                     const idDoc = await PDFDocument.load(idBytes);
-                    [idObject] = await templateDoc.embedPdf(idDoc, [0]);
-                    idDims = idObject.scale(1);
+                    // FIXED: embedPdf returns an array. We take index 0.
+                    const embeddedPages = await templateDoc.embedPdf(idDoc, [0]);
+                    idObject = embeddedPages[0]; 
+                    idDims = { width: idObject.width, height: idObject.height };
                 } else {
                     const imgBytes = await idFile.arrayBuffer();
                     idObject = idFile.type.includes('png') ? await templateDoc.embedPng(imgBytes) : await templateDoc.embedJpg(imgBytes);
-                    idDims = idObject.scale(1);
+                    idDims = { width: idObject.width, height: idObject.height };
                 }
 
+                // ROTATION & DIMENSION LOGIC
                 let rotation = 0;
                 const fixedHeight = 160; 
                 let finalH = fixedHeight;
                 let finalW = (idDims.width / idDims.height) * fixedHeight;
 
+                // Rotate ONLY if vertical
                 if (idDims.height > idDims.width) {
                     rotation = -90;
                     finalW = fixedHeight; 
                     finalH = (idDims.width / idDims.height) * finalW;
                 }
 
-                // Precision placement based on your sample image
-                a4Page.drawPage(idObject, {
-                    x: (a4W / 2) - (finalW / 2) + (rotation !== 0 ? finalW : 0),
-                    y: 520, 
-                    width: finalW,
-                    height: finalH,
-                    rotate: degrees(rotation),
-                });
+                [span_1](start_span)// PLACEMENT: Centered horizontally, positioned above form fields[span_1](end_span)
+                const xPos = (a4W / 2) - (finalW / 2) + (rotation !== 0 ? finalW : 0);
+                const yPos = 520; 
 
+                if (idFile.type === "application/pdf") {
+                    a4Page.drawPage(idObject, {
+                        x: xPos, y: yPos, width: finalW, height: finalH, rotate: degrees(rotation)
+                    });
+                } else {
+                    a4Page.drawImage(idObject, {
+                        x: xPos, y: yPos, width: finalW, height: finalH, rotate: degrees(rotation)
+                    });
+                }
+
+                updateStatus("Step 3: Finalizing PDF...");
                 const pdfBytes = await templateDoc.save();
                 const blob = new Blob([pdfBytes], { type: "application/pdf" });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = "Final_Practical_Format.pdf";
+                link.download = "Completed_Practical_Format.pdf";
                 link.click();
 
-                updateStatus("Success! Check your downloads.");
+                updateStatus("Success! File Downloaded.");
 
             } catch (err) {
+                console.error(err);
                 updateStatus(err.message, true);
             }
         });
