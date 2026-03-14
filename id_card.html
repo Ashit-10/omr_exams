@@ -3,33 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ID Card Auto-Crop & Paste</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <title>IGNOU ID Generator</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200">
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-bold text-slate-800">IGNOU ID Processor</h1>
-            <p class="text-slate-500 text-sm mt-1">Automatic A4 Layout Generator</p>
-        </div>
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-slate-200">
+        <h1 class="text-xl font-bold text-center text-slate-800 mb-6">IGNOU Practical Record Generator</h1>
         
-        <div class="space-y-5">
+        <div class="space-y-4">
             <div class="relative group border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:bg-slate-50 transition-all">
-                <input type="file" id="userInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
+                <input type="file" id="idInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
                 <div id="uploadUI">
-                    <span class="text-sm font-medium text-slate-600 block" id="fileLabel">Click to Upload Student ID (PDF/Image)</span>
+                    <span class="text-sm font-medium text-slate-600 block" id="fileLabel">Upload Student ID (PDF/Image)</span>
                 </div>
             </div>
 
-            <div id="manualFormatSection" class="hidden animate-pulse">
-                <label class="block text-xs font-bold text-red-600 mb-2">SECURITY ALERT: Please manually select 'id_card_format.pdf'</label>
-                <input type="file" id="manualFormatInput" accept="application/pdf" class="text-xs w-full"/>
-            </div>
-
-            <button id="processBtn" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 active:scale-95 transition-all shadow-lg">
-                Generate A4 Document
+            <button id="processBtn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg">
+                Generate A4 PDF
             </button>
         </div>
 
@@ -38,100 +30,78 @@
 
     <script>
         const { PDFDocument, degrees } = PDFLib;
-        const TEMPLATE_PATH = "Id_card_format.pdf"; 
+        
+        // This MUST match the filename in your GitHub repo exactly
+        const TEMPLATE_URL = "Id_card_format.pdf"; 
 
-        const userInput = document.getElementById('userInput');
+        const idInput = document.getElementById('idInput');
         const fileLabel = document.getElementById('fileLabel');
         const processBtn = document.getElementById('processBtn');
         const status = document.getElementById('status');
-        const manualFormatInput = document.getElementById('manualFormatInput');
-        const manualFormatSection = document.getElementById('manualFormatSection');
 
-        userInput.addEventListener('change', (e) => {
-            if(e.target.files[0]) fileLabel.innerText = "ID Selected: " + e.target.files[0].name;
+        idInput.addEventListener('change', (e) => {
+            if(e.target.files[0]) fileLabel.innerText = "Selected: " + e.target.files[0].name;
         });
 
-        function updateStatus(msg, isError = false) {
+        function updateStatus(msg, isErr = false) {
             status.innerText = msg;
-            status.className = `mt-4 text-center text-sm font-semibold p-3 rounded-lg ${isError ? 'bg-red-50 text-red-600' : 'bg-indigo-50 text-indigo-600'}`;
+            status.className = `mt-4 p-2 rounded text-center text-sm ${isErr ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50'}`;
             status.classList.remove('hidden');
         }
 
-        async function getTemplate() {
-            try {
-                // Try to fetch automatically (works on GitHub Pages/Server)
-                const response = await fetch(TEMPLATE_PATH);
-                if (!response.ok) throw new Error("Local fetch blocked");
-                return await response.arrayBuffer();
-            } catch (e) {
-                // Fallback for local file testing (file://)
-                manualFormatSection.classList.remove('hidden');
-                if (manualFormatInput.files[0]) {
-                    return await manualFormatInput.files[0].arrayBuffer();
-                }
-                throw new Error("Local Security: Please select 'id_card_format.pdf' manually below.");
-            }
-        }
-
         processBtn.addEventListener('click', async () => {
-            const userFile = userInput.files[0];
-            if (!userFile) return updateStatus("Please select your ID Card first.", true);
+            if (!idInput.files[0]) return updateStatus("Please select your ID Card.", true);
 
             try {
-                updateStatus("Step 1: Loading Template...");
-                const templateBytes = await getTemplate();
-                
-                const templateDoc = await PDFDocument.load(templateBytes);
-                const firstPage = templateDoc.getPages()[0];
-                const { width, height } = firstPage.getSize();
+                updateStatus("Step 1: Fetching Template...");
+                const response = await fetch(TEMPLATE_URL);
+                if (!response.ok) throw new Error("Template file not found in repo.");
+                const formatBytes = await response.arrayBuffer();
 
-                updateStatus("Step 2: Processing ID Card...");
+                updateStatus("Step 2: Processing Layout...");
+                const templateDoc = await PDFDocument.load(formatBytes);
+                const a4Page = templateDoc.getPages()[0];
+                const { width: a4W, height: a4H } = a4Page.getSize();
+
+                const idFile = idInput.files[0];
                 let idObject, idDims;
 
-                if (userFile.type === "application/pdf") {
-                    const idBytes = await userFile.arrayBuffer();
+                if (idFile.type === "application/pdf") {
+                    const idBytes = await idFile.arrayBuffer();
                     const idDoc = await PDFDocument.load(idBytes);
                     [idObject] = await templateDoc.embedPdf(idDoc, [0]);
                     idDims = idObject.scale(1);
                 } else {
-                    const imgBytes = await userFile.arrayBuffer();
-                    idObject = userFile.type.includes('png') ? await templateDoc.embedPng(imgBytes) : await templateDoc.embedJpg(imgBytes);
+                    const imgBytes = await idFile.arrayBuffer();
+                    idObject = idFile.type.includes('png') ? await templateDoc.embedPng(imgBytes) : await templateDoc.embedJpg(imgBytes);
                     idDims = idObject.scale(1);
                 }
 
-              // [span_1](start_span)// Orientation logic: Long side down[span_1](end_span)
                 let rotation = 0;
-                let drawW = 245; 
-                let drawH = (idDims.height / idDims.width) * drawW;
+                const fixedHeight = 160; 
+                let finalH = fixedHeight;
+                let finalW = (idDims.width / idDims.height) * fixedHeight;
 
                 if (idDims.height > idDims.width) {
                     rotation = -90;
-                    drawH = 245;
-                    drawW = (idDims.width / idDims.height) * drawH;
+                    finalW = fixedHeight; 
+                    finalH = (idDims.width / idDims.height) * finalW;
                 }
 
-              //  [span_2](start_span)// Correct Placement for the "PRACTICAL RECORD ID CARD" section[span_2](end_span)
-                const drawParams = {
-                    x: (width / 2) - (drawW / 2) + (rotation !== 0 ? drawW : 0),
-                    y: height - 280, // Positioned above Course Code/Enrollment No[span_3](end_span)
-                    width: drawW,
-                    height: drawH,
+                // Precision placement based on your sample image
+                a4Page.drawPage(idObject, {
+                    x: (a4W / 2) - (finalW / 2) + (rotation !== 0 ? finalW : 0),
+                    y: 520, 
+                    width: finalW,
+                    height: finalH,
                     rotate: degrees(rotation),
-                };
+                });
 
-                if (userFile.type === "application/pdf") {
-                    firstPage.drawPage(idObject, drawParams);
-                } else {
-                    firstPage.drawImage(idObject, drawParams);
-                }
-
-                updateStatus("Step 3: Generating Final PDF...");
-                const finalBytes = await templateDoc.save();
-                
-                const blob = new Blob([finalBytes], { type: "application/pdf" });
+                const pdfBytes = await templateDoc.save();
+                const blob = new Blob([pdfBytes], { type: "application/pdf" });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = "Completed_Practical_Format.pdf";
+                link.download = "Final_Practical_Format.pdf";
                 link.click();
 
                 updateStatus("Success! Check your downloads.");
