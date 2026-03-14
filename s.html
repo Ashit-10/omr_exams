@@ -28,7 +28,7 @@
             <div class="relative border-2 border-dashed border-blue-300 rounded-xl p-6 text-center hover:bg-blue-50 transition-all">
                 <input type="file" id="idInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
                 <div id="uploadUI">
-                    <span class="text-blue-600 font-bold text-sm block" id="fileLabel">Upload Student ID</span>
+                    <span class="text-blue-600 font-bold text-sm block" id="fileLabel">Upload Student ID *</span>
                 </div>
             </div>
 
@@ -133,11 +133,11 @@
 
                 // Change x and y below to align with your PDF's blank lines
                 a4Page.drawText(courseCode,   { x: 178, y: 329, ...textStyle });
-                a4Page.drawText(programCode, { x: 185, y: 193, ...textStyle });
-                a4Page.drawText(course, { x: 178, y: 150, ...textStyle });
+                a4Page.drawText(programCode, { x: 185, y: 293, ...textStyle });
+                a4Page.drawText(course, { x: 178, y: 250, ...textStyle });
                 a4Page.drawText(enroll,   { x: 184, y: 210, ...textStyle });
-                a4Page.drawText(name, { x: 165, y: 170, ...textStyle });
-                a4Page.drawText(contactNo, { x: 175, y: 130, ...textStyle });
+                a4Page.drawText(name, { x: 165, y: 180, ...textStyle });
+                a4Page.drawText(contactNo, { x: 175, y: 170, ...textStyle });
 
 
                 // --- 3. DOWNLOAD ---
