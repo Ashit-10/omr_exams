@@ -129,14 +129,14 @@
                 const contactNo = document.getElementById('contactNo').value;
 
                 
-                const textStyle = { size: 18, font: font, color: rgb(0, 0, 0) };
+                const textStyle = { size: 20, font: font, color: rgb(0, 0, 0) };
 
                 // Change x and y below to align with your PDF's blank lines
-                a4Page.drawText(courseCode,   { x: 181, y: 329, ...textStyle });
-                a4Page.drawText(programCode, { x: 200, y: 296, ...textStyle });
+                a4Page.drawText(courseCode,   { x: 184, y: 330, ...textStyle });
+                a4Page.drawText(programCode, { x: 210, y: 296, ...textStyle });
                 a4Page.drawText(course, { x: 181, y: 260, ...textStyle });
-                a4Page.drawText(enroll,   { x: 189, y: 225, ...textStyle });
-                a4Page.drawText(name, { x: 146, y: 185, ...textStyle });
+                a4Page.drawText(enroll,   { x: 189, y: 224, ...textStyle });
+                a4Page.drawText(name, { x: 138, y: 186, ...textStyle });
                 a4Page.drawText(contactNo, { x: 168, y: 154, ...textStyle });
 
 
