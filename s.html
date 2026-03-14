@@ -16,9 +16,13 @@
         
         <div class="space-y-4">
             <div class="grid grid-cols-1 gap-3">
-                <input type="text" id="nameInput" placeholder="Student Name" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="text" id="enrollInput" placeholder="Enrolment Number" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="text" id="courseInput" placeholder="Course Code" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="courceCode" placeholder="Student Name" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="programCode" placeholder="Enrolment Number" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="courseTitle" placeholder="Course Code" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+           <input type="text" id="enrollmentNo" placeholder="Student Name" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="nameInput" placeholder="Enrolment Number" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="contactNo" placeholder="Course Code" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            
             </div>
 
             <div class="relative border-2 border-dashed border-blue-300 rounded-xl p-6 text-center hover:bg-blue-50 transition-all">
@@ -118,15 +122,23 @@
                 // --- 2. PASTE TEXT DETAILS ---
                 // EDIT THESE VALUES TO ALIGN WITH YOUR DASHES
                 const name = document.getElementById('nameInput').value;
-                const enroll = document.getElementById('enrollInput').value;
-                const course = document.getElementById('courseInput').value;
+                const enroll = document.getElementById('enrollmentNo').value;
+                const course = document.getElementById('courseTitle').value;
+                const courseCode = document.getElementById('courceCode').value;
+                const programCode = document.getElementById('programCode').value;
+                const contactNo = document.getElementById('contactNo').value;
 
+                
                 const textStyle = { size: 18, font: font, color: rgb(0, 0, 0) };
 
                 // Change x and y below to align with your PDF's blank lines
-                a4Page.drawText(name,   { x: 175, y: 327, ...textStyle });
-                a4Page.drawText(enroll, { x: 190, y: 290, ...textStyle });
-                a4Page.drawText(course, { x: 150, y: 300, ...textStyle });
+                a4Page.drawText(courseCode,   { x: 175, y: 328, ...textStyle });
+                a4Page.drawText(programCode, { x: 150, y: 290, ...textStyle });
+                a4Page.drawText(course, { x: 150, y: 270, ...textStyle });
+                a4Page.drawText(enroll,   { x: 175, y: 250, ...textStyle });
+                a4Page.drawText(name, { x: 190, y: 220, ...textStyle });
+                a4Page.drawText(contactNo, { x: 150, y: 190, ...textStyle });
+
 
                 // --- 3. DOWNLOAD ---
                 const pdfBytes = await templateDoc.save();
