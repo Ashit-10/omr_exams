@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGNOU ID Generator - Auto Detect & Crop</title>
+    <title>IGNOU ID & Data Generator</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,20 +11,29 @@
 <body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
 
     <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200">
-        <h2 class="text-2xl font-bold text-slate-800 mb-2 text-center">ID Card Processor</h2>
-        <p class="text-slate-500 text-sm text-center mb-6">Auto-crops and aligns your ID perfectly</p>
+        <h2 class="text-2xl font-bold text-slate-800 mb-2 text-center">IGNOU practical record front page generator</h2>
+        <p class="text-slate-500 text-sm text-center mb-6">Enter details (optional) and upload ID card</p>
         
         <div class="space-y-4">
-            <div class="relative border-2 border-dashed border-blue-300 rounded-xl p-10 text-center hover:bg-blue-50 transition-all">
+            <div class="grid grid-cols-1 gap-3">
+                <input type="text" id="courceCode" placeholder="Course Code(optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="programCode" placeholder="Programme code (optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="courseTitle" placeholder="Course Title (optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+           <input type="text" id="enrollmentNo" placeholder="Enrollment Number (optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="nameInput" placeholder="Name (optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="contactNo" placeholder="Contact number (optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            
+            </div>
+
+            <div class="relative border-2 border-dashed border-blue-300 rounded-xl p-6 text-center hover:bg-blue-50 transition-all">
                 <input type="file" id="idInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
                 <div id="uploadUI">
-                    <span class="text-blue-600 font-bold block" id="fileLabel">Click to Upload Student ID</span>
-                    <span class="text-xs text-slate-400 mt-2 block">PDF or Image supported</span>
+                    <span class="text-blue-600 font-bold text-sm block" id="fileLabel">Upload Student ID *</span>
                 </div>
             </div>
 
             <button id="processBtn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-transform active:scale-95">
-                GENERATE FINAL PDF
+                GENERATE PDF
             </button>
         </div>
 
@@ -33,7 +42,7 @@
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-        const { PDFDocument, degrees } = PDFLib;
+        const { PDFDocument, degrees, rgb, StandardFonts } = PDFLib;
         const TEMPLATE_URL = "Id_card_format.pdf"; 
 
         const idInput = document.getElementById('idInput');
@@ -42,7 +51,7 @@
         const status = document.getElementById('status');
 
         idInput.addEventListener('change', (e) => {
-            if(e.target.files[0]) fileLabel.innerText = "File Selected: " + e.target.files[0].name;
+            if(e.target.files[0]) fileLabel.innerText = "Selected: " + e.target.files[0].name;
         });
 
         function updateStatus(msg, isErr = false) {
@@ -51,110 +60,96 @@
             status.classList.remove('hidden');
         }
 
-        // --- THE MAGIC: CROP WHITE SPACE FROM IMAGE/CANVAS ---
         async function getCroppedImage(file) {
             let canvas = document.createElement('canvas');
             let ctx = canvas.getContext('2d');
-
             if (file.type === "application/pdf") {
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
                 const page = await pdf.getPage(1);
-                const viewport = page.getViewport({ scale: 2.0 }); // High res
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
+                const viewport = page.getViewport({ scale: 2.0 });
+                canvas.width = viewport.width; canvas.height = viewport.height;
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
             } else {
                 const img = new Image();
                 img.src = URL.createObjectURL(file);
                 await new Promise(r => img.onload = r);
-                canvas.width = img.width;
-                canvas.height = img.height;
+                canvas.width = img.width; canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
             }
-
-            // Detect non-white pixels to find ID boundaries
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             let top = null, bottom = null, left = null, right = null;
-
             for (let y = 0; y < canvas.height; y++) {
                 for (let x = 0; x < canvas.width; x++) {
                     const idx = (y * canvas.width + x) * 4;
-                    // Check if pixel is NOT white/transparent
                     if (imgData[idx] < 250 || imgData[idx+1] < 250 || imgData[idx+2] < 250) {
-                        if (top === null) top = y;
-                        bottom = y;
+                        if (top === null) top = y; bottom = y;
                         if (left === null || x < left) left = x;
                         if (right === null || x > right) right = x;
                     }
                 }
             }
-
-            // Create a secondary canvas for the cropped result
             const cropCanvas = document.createElement('canvas');
-            const w = (right - left);
-            const h = (bottom - top);
-            cropCanvas.width = w;
-            cropCanvas.height = h;
+            const w = right - left, h = bottom - top;
+            cropCanvas.width = w; cropCanvas.height = h;
             cropCanvas.getContext('2d').drawImage(canvas, left, top, w, h, 0, 0, w, h);
-            
-            return {
-                dataUrl: cropCanvas.toDataURL('image/png'),
-                isVertical: h > w,
-                aspect: w / h
-            };
+            return { dataUrl: cropCanvas.toDataURL('image/png'), isVertical: h > w };
         }
 
         processBtn.addEventListener('click', async () => {
             if (!idInput.files[0]) return updateStatus("Please select your ID Card.", true);
 
             try {
-                updateStatus("Detecting ID Card boundary...");
+                updateStatus("Processing Image...");
                 const cropped = await getCroppedImage(idInput.files[0]);
-
-                updateStatus("Loading Template...");
                 const response = await fetch(TEMPLATE_URL);
-                const templateBytes = await response.arrayBuffer();
-                const templateDoc = await PDFDocument.load(templateBytes);
+                const templateDoc = await PDFDocument.load(await response.arrayBuffer());
                 const a4Page = templateDoc.getPages()[0];
-                const { width: a4W } = a4Page.getSize();
+                const font = await templateDoc.embedFont(StandardFonts.HelveticaBold);
 
+                // --- 1. PASTE ID CARD ---
                 const idImage = await templateDoc.embedPng(cropped.dataUrl);
+                const TARGET_W = 370; const TARGET_H = 225;
+                const ID_X = (a4Page.getWidth() - TARGET_W) / 2;
+                const ID_Y = 390;
 
-                // FIXED SETTINGS
-                const TARGET_W = 370;
-                const TARGET_H = 225;
-                const FIXED_X = (a4W - TARGET_W) / 2; // Perfectly Centered
-                const FIXED_Y = 390;
-
-                let drawOptions = {
-                    x: FIXED_X,
-                    y: FIXED_Y,
-                    width: TARGET_W,
-                    height: TARGET_H,
-                    rotate: degrees(0)
-                };
-
-                // Logic: If it's vertical, rotate it to horizontal
+                let drawOpts = { x: ID_X, y: ID_Y, width: TARGET_W, height: TARGET_H };
                 if (cropped.isVertical) {
-                    drawOptions.rotate = degrees(-90);
-                    drawOptions.x = FIXED_X + TARGET_W; // Pivot adjustment
+                    drawOpts.rotate = degrees(-90);
+                    drawOpts.x = ID_X + TARGET_W;
                 }
+                a4Page.drawImage(idImage, drawOpts);
 
-                a4Page.drawImage(idImage, drawOptions);
+                // --- 2. PASTE TEXT DETAILS ---
+                // EDIT THESE VALUES TO ALIGN WITH YOUR DASHES
+                const name = document.getElementById('nameInput').value;
+                const enroll = document.getElementById('enrollmentNo').value;
+                const course = document.getElementById('courseTitle').value;
+                const courseCode = document.getElementById('courceCode').value;
+                const programCode = document.getElementById('programCode').value;
+                const contactNo = document.getElementById('contactNo').value;
 
+                
+                const textStyle = { size: 20, font: font, color: rgb(0, 0, 0) };
+
+                // Change x and y below to align with your PDF's blank lines
+                a4Page.drawText(courseCode,   { x: 184, y: 330, ...textStyle });
+                a4Page.drawText(programCode, { x: 215, y: 296, ...textStyle });
+                a4Page.drawText(course, { x: 181, y: 260, ...textStyle });
+                a4Page.drawText(enroll,   { x: 189, y: 224, ...textStyle });
+                a4Page.drawText(name, { x: 130, y: 188, ...textStyle });
+                a4Page.drawText(contactNo, { x: 168, y: 154, ...textStyle });
+
+
+                // --- 3. DOWNLOAD ---
                 const pdfBytes = await templateDoc.save();
-                const blob = new Blob([pdfBytes], { type: "application/pdf" });
                 const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = "Processed_Practical_Record.pdf";
+                link.href = URL.createObjectURL(new Blob([pdfBytes], { type: "application/pdf" }));
+                link.download = "IGNOU_Practical_Sheet.pdf";
                 link.click();
-
-                updateStatus("Success! ID Cropped & Placed.");
+                updateStatus("Success!");
 
             } catch (err) {
-                console.error(err);
-                updateStatus("Processing failed. Please use a clearer file.", true);
+                updateStatus("Error: " + err.message, true);
             }
         });
     </script>
