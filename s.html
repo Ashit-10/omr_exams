@@ -1,29 +1,145 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Multiple Choice Questions</title>
-  <script>
-    const links = {
-      "fnei": "https://ashit-10.github.io/omr_exams/mock_test2?file=mock_test/class-10/English/north-east_festivals&&subject=Festivals%20of%20North-east%20India&&shuffle=true",
-      "geo11": "https://ashit-10.github.io/omr_exams/mock_test2?file=mock_test/class-9/geography/chapter-1&&subject=chapter-1&&shuffle=true",
-      "engsa1vst1": "https://ashit-10.github.io/omr_exams/mock_test2?file=mock_test/class-10/English/SA1/VST-1&&subject=English%20VST-1%20(SA1)&&shuffle=true",
-      "engsa1vst2": "https://ashit-10.github.io/omr_exams/mock_test2?file=mock_test/class-10/English/SA1/VST-2&&subject=English%20VST-2%20(SA1)&&shuffle=true",
-      "gh": "https://github.com/"
-    };
-
-    window.onload = function() {
-    // get after "?" in URL
-    let code = location.search.substring(1); 
-    if (links[code]) {
-      window.location.href = links[code];
-    } else {
-      document.body.innerHTML = "<h2>Link not found</h2>";
-    }
-  }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGNOU ID & Data Generator</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <p>Redirecting...</p>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-800 mb-2 text-center">Practical Record Tool</h2>
+        <p class="text-slate-500 text-sm text-center mb-6">Enter details and upload ID card</p>
+        
+        <div class="space-y-4">
+            <div class="grid grid-cols-1 gap-3">
+                <input type="text" id="nameInput" placeholder="Student Name" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="enrollInput" placeholder="Enrolment Number" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="courseInput" placeholder="Course Code" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+
+            <div class="relative border-2 border-dashed border-blue-300 rounded-xl p-6 text-center hover:bg-blue-50 transition-all">
+                <input type="file" id="idInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
+                <div id="uploadUI">
+                    <span class="text-blue-600 font-bold text-sm block" id="fileLabel">Upload Student ID</span>
+                </div>
+            </div>
+
+            <button id="processBtn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-transform active:scale-95">
+                GENERATE PDF
+            </button>
+        </div>
+
+        <div id="status" class="mt-4 text-center text-sm font-semibold hidden p-3 rounded-lg"></div>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        const { PDFDocument, degrees, rgb, StandardFonts } = PDFLib;
+        const TEMPLATE_URL = "Id_card_format.pdf"; 
+
+        const idInput = document.getElementById('idInput');
+        const fileLabel = document.getElementById('fileLabel');
+        const processBtn = document.getElementById('processBtn');
+        const status = document.getElementById('status');
+
+        idInput.addEventListener('change', (e) => {
+            if(e.target.files[0]) fileLabel.innerText = "Selected: " + e.target.files[0].name;
+        });
+
+        function updateStatus(msg, isErr = false) {
+            status.innerText = msg;
+            status.className = `mt-4 p-2 rounded text-center text-sm ${isErr ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50'}`;
+            status.classList.remove('hidden');
+        }
+
+        async function getCroppedImage(file) {
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+            if (file.type === "application/pdf") {
+                const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 2.0 });
+                canvas.width = viewport.width; canvas.height = viewport.height;
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+            } else {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                await new Promise(r => img.onload = r);
+                canvas.width = img.width; canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+            }
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            let top = null, bottom = null, left = null, right = null;
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const idx = (y * canvas.width + x) * 4;
+                    if (imgData[idx] < 250 || imgData[idx+1] < 250 || imgData[idx+2] < 250) {
+                        if (top === null) top = y; bottom = y;
+                        if (left === null || x < left) left = x;
+                        if (right === null || x > right) right = x;
+                    }
+                }
+            }
+            const cropCanvas = document.createElement('canvas');
+            const w = right - left, h = bottom - top;
+            cropCanvas.width = w; cropCanvas.height = h;
+            cropCanvas.getContext('2d').drawImage(canvas, left, top, w, h, 0, 0, w, h);
+            return { dataUrl: cropCanvas.toDataURL('image/png'), isVertical: h > w };
+        }
+
+        processBtn.addEventListener('click', async () => {
+            if (!idInput.files[0]) return updateStatus("Please select your ID Card.", true);
+
+            try {
+                updateStatus("Processing Image...");
+                const cropped = await getCroppedImage(idInput.files[0]);
+                const response = await fetch(TEMPLATE_URL);
+                const templateDoc = await PDFDocument.load(await response.arrayBuffer());
+                const a4Page = templateDoc.getPages()[0];
+                const font = await templateDoc.embedFont(StandardFonts.HelveticaBold);
+
+                // --- 1. PASTE ID CARD ---
+                const idImage = await templateDoc.embedPng(cropped.dataUrl);
+                const TARGET_W = 370; const TARGET_H = 225;
+                const ID_X = (a4Page.getWidth() - TARGET_W) / 2;
+                const ID_Y = 390;
+
+                let drawOpts = { x: ID_X, y: ID_Y, width: TARGET_W, height: TARGET_H };
+                if (cropped.isVertical) {
+                    drawOpts.rotate = degrees(-90);
+                    drawOpts.x = ID_X + TARGET_W;
+                }
+                a4Page.drawImage(idImage, drawOpts);
+
+                // --- 2. PASTE TEXT DETAILS ---
+                // EDIT THESE VALUES TO ALIGN WITH YOUR DASHES
+                const name = document.getElementById('nameInput').value;
+                const enroll = document.getElementById('enrollInput').value;
+                const course = document.getElementById('courseInput').value;
+
+                const textStyle = { size: 12, font: font, color: rgb(0, 0, 0) };
+
+                // Change x and y below to align with your PDF's blank lines
+                a4Page.drawText(name,   { x: 150, y: 350, ...textStyle });
+                a4Page.drawText(enroll, { x: 150, y: 325, ...textStyle });
+                a4Page.drawText(course, { x: 150, y: 300, ...textStyle });
+
+                // --- 3. DOWNLOAD ---
+                const pdfBytes = await templateDoc.save();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(new Blob([pdfBytes], { type: "application/pdf" }));
+                link.download = "IGNOU_Practical_Sheet.pdf";
+                link.click();
+                updateStatus("Success!");
+
+            } catch (err) {
+                updateStatus("Error: " + err.message, true);
+            }
+        });
+    </script>
 </body>
 </html>
