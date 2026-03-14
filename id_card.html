@@ -3,25 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGNOU ID Generator - Fixed Layout</title>
+    <title>IGNOU ID Generator - Auto Detect & Crop</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-slate-200">
-        <h1 class="text-xl font-bold text-center text-slate-800 mb-6">IGNOU Practical Record</h1>
+    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-800 mb-2 text-center">ID Card Processor</h2>
+        <p class="text-slate-500 text-sm text-center mb-6">Auto-crops and aligns your ID perfectly</p>
         
         <div class="space-y-4">
-            <div class="relative group border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:bg-slate-50 transition-all">
+            <div class="relative border-2 border-dashed border-blue-300 rounded-xl p-10 text-center hover:bg-blue-50 transition-all">
                 <input type="file" id="idInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
                 <div id="uploadUI">
-                    <span class="text-sm font-medium text-slate-600 block" id="fileLabel">Upload ID Card</span>
+                    <span class="text-blue-600 font-bold block" id="fileLabel">Click to Upload Student ID</span>
+                    <span class="text-xs text-slate-400 mt-2 block">PDF or Image supported</span>
                 </div>
             </div>
 
-            <button id="processBtn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg">
-                Generate PDF
+            <button id="processBtn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-transform active:scale-95">
+                GENERATE FINAL PDF
             </button>
         </div>
 
@@ -29,6 +32,7 @@
     </div>
 
     <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         const { PDFDocument, degrees } = PDFLib;
         const TEMPLATE_URL = "Id_card_format.pdf"; 
 
@@ -38,7 +42,7 @@
         const status = document.getElementById('status');
 
         idInput.addEventListener('change', (e) => {
-            if(e.target.files[0]) fileLabel.innerText = "Selected: " + e.target.files[0].name;
+            if(e.target.files[0]) fileLabel.innerText = "File Selected: " + e.target.files[0].name;
         });
 
         function updateStatus(msg, isErr = false) {
@@ -47,81 +51,110 @@
             status.classList.remove('hidden');
         }
 
+        // --- THE MAGIC: CROP WHITE SPACE FROM IMAGE/CANVAS ---
+        async function getCroppedImage(file) {
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+
+            if (file.type === "application/pdf") {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 2.0 }); // High res
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+            } else {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                await new Promise(r => img.onload = r);
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+            }
+
+            // Detect non-white pixels to find ID boundaries
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            let top = null, bottom = null, left = null, right = null;
+
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const idx = (y * canvas.width + x) * 4;
+                    // Check if pixel is NOT white/transparent
+                    if (imgData[idx] < 250 || imgData[idx+1] < 250 || imgData[idx+2] < 250) {
+                        if (top === null) top = y;
+                        bottom = y;
+                        if (left === null || x < left) left = x;
+                        if (right === null || x > right) right = x;
+                    }
+                }
+            }
+
+            // Create a secondary canvas for the cropped result
+            const cropCanvas = document.createElement('canvas');
+            const w = (right - left);
+            const h = (bottom - top);
+            cropCanvas.width = w;
+            cropCanvas.height = h;
+            cropCanvas.getContext('2d').drawImage(canvas, left, top, w, h, 0, 0, w, h);
+            
+            return {
+                dataUrl: cropCanvas.toDataURL('image/png'),
+                isVertical: h > w,
+                aspect: w / h
+            };
+        }
+
         processBtn.addEventListener('click', async () => {
             if (!idInput.files[0]) return updateStatus("Please select your ID Card.", true);
 
             try {
-                updateStatus("Processing...");
+                updateStatus("Detecting ID Card boundary...");
+                const cropped = await getCroppedImage(idInput.files[0]);
+
+                updateStatus("Loading Template...");
                 const response = await fetch(TEMPLATE_URL);
-                if (!response.ok) throw new Error("Template file not found.");
-                const formatBytes = await response.arrayBuffer();
-
-                const templateDoc = await PDFDocument.load(formatBytes);
+                const templateBytes = await response.arrayBuffer();
+                const templateDoc = await PDFDocument.load(templateBytes);
                 const a4Page = templateDoc.getPages()[0];
+                const { width: a4W } = a4Page.getSize();
 
-                const idFile = idInput.files[0];
-                let idObject, idDims;
+                const idImage = await templateDoc.embedPng(cropped.dataUrl);
 
-                if (idFile.type === "application/pdf") {
-                    const idBytes = await idFile.arrayBuffer();
-                    const srcDoc = await PDFDocument.load(idBytes);
-                    const srcPage = srcDoc.getPages()[0];
-                    
-                    // CROP: Focus on the top center where the ID is located
-                    const { width, height } = srcPage.getSize();
-                    srcPage.setCropBox(20, height - 300, width - 40, 280); 
+                // FIXED SETTINGS
+                const TARGET_W = 320;
+                const TARGET_H = 200;
+                const FIXED_X = (a4W - TARGET_W) / 2; // Perfectly Centered
+                const FIXED_Y = 550;
 
-                    const embeddedPages = await templateDoc.embedPdf(srcDoc, [0]);
-                    idObject = embeddedPages[0];
-                    idDims = { width: idObject.width, height: idObject.height };
-                } else {
-                    const imgBytes = await idFile.arrayBuffer();
-                    idObject = idFile.type.includes('png') ? await templateDoc.embedPng(imgBytes) : await templateDoc.embedJpg(imgBytes);
-                    idDims = { width: idObject.width, height: idObject.height };
-                }
-
-                // FIXED PARAMETERS
-                const FIXED_WIDTH = 320;
-                const FIXED_HEIGHT = 200;
-                const FIXED_X = 138; // Centered on A4 (approx)
-                const FIXED_Y = 550; // Your target Y coordinate
-
-                let rotation = 0;
-                let finalX = FIXED_X;
-
-                // Check if vertical (like your first sample)
-                if (idDims.height > idDims.width) {
-                    rotation = -90;
-                    // When rotating -90, we must offset X by the width to keep it in the box
-                    finalX = FIXED_X + FIXED_WIDTH; 
-                }
-
-                const drawOptions = {
-                    x: finalX,
+                let drawOptions = {
+                    x: FIXED_X,
                     y: FIXED_Y,
-                    width: FIXED_WIDTH,
-                    height: FIXED_HEIGHT,
-                    rotate: degrees(rotation)
+                    width: TARGET_W,
+                    height: TARGET_H,
+                    rotate: degrees(0)
                 };
 
-                if (idFile.type === "application/pdf") {
-                    a4Page.drawPage(idObject, drawOptions);
-                } else {
-                    a4Page.drawImage(idObject, drawOptions);
+                // Logic: If it's vertical, rotate it to horizontal
+                if (cropped.isVertical) {
+                    drawOptions.rotate = degrees(-90);
+                    drawOptions.x = FIXED_X + TARGET_W; // Pivot adjustment
                 }
+
+                a4Page.drawImage(idImage, drawOptions);
 
                 const pdfBytes = await templateDoc.save();
                 const blob = new Blob([pdfBytes], { type: "application/pdf" });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = "Completed_Practical.pdf";
+                link.download = "Processed_Practical_Record.pdf";
                 link.click();
 
-                updateStatus("Success! Downloaded.");
+                updateStatus("Success! ID Cropped & Placed.");
 
             } catch (err) {
                 console.error(err);
-                updateStatus("Error: " + err.message, true);
+                updateStatus("Processing failed. Please use a clearer file.", true);
             }
         });
     </script>
