@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGNOU ID Generator - Ultra HD</title>
+    <title>IGNOU ID Generator - Max Clarity</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,7 +20,7 @@
 
     <div id="loadingOverlay" class="fixed inset-0 bg-black/80 z-[100] flex flex-col items-center justify-center hidden text-center">
         <div class="loader mb-4"></div>
-        <p class="text-white font-bold text-sm px-6">Processing Ultra High-Resolution Image...<br><span class="text-xs font-normal text-gray-400">Rendering details, please wait.</span></p>
+        <p class="text-white font-bold text-sm px-6">Enhancing Resolution...<br><span class="text-xs font-normal text-gray-400">Rendering vector text for maximum clarity.</span></p>
     </div>
 
     <div id="cropSelectionModal" class="fixed inset-0 bg-black z-50 hidden flex flex-col">
@@ -31,11 +31,11 @@
         
         <div class="flex-grow flex flex-col items-center justify-center bg-gray-900 p-2 overflow-hidden">
             <div id="autoPreviewBox" class="flex flex-col items-center">
-                <p class="text-gray-400 text-[10px] mb-2 text-center text-yellow-500">Auto-crop is quick. For BEST quality, choose Manual Crop.</p>
+                <p class="text-gray-400 text-[10px] mb-2 text-center text-yellow-500 font-bold">PDF detected: Auto-crop usually provides best clarity.</p>
                 <img id="autoPreviewImg" class="max-h-[60vh] border-2 border-blue-500 rounded shadow-lg">
             </div>
             
-            <div id="cropperWrapper" class="hidden w-full h-full">
+            <div id="cropperWrapper" class="hidden w-full h-full flex items-center justify-center">
                 <img id="manualCropImg" style="display: block; max-width: 100%;">
             </div>
         </div>
@@ -43,10 +43,10 @@
         <div class="p-4 bg-white border-t">
             <div id="decisionButtons" class="grid grid-cols-2 gap-3">
                 <button onclick="useAutoCrop()" class="bg-green-600 text-white py-3 rounded-lg font-bold text-sm shadow-md">Proceed (Auto)</button>
-                <button onclick="startManualCrop()" class="bg-blue-100 text-blue-700 py-3 rounded-lg font-bold text-sm">Manual (High Res)</button>
+                <button onclick="startManualCrop()" class="bg-blue-100 text-blue-700 py-3 rounded-lg font-bold text-sm">Manual (Fix)</button>
             </div>
             <button id="saveManualBtn" class="hidden w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm shadow-lg">
-                SAVE IN FULL HD & PROCEED
+                FINISH & SAVE HD
             </button>
         </div>
     </div>
@@ -63,7 +63,7 @@
 
             <div class="relative border border-dashed border-blue-300 rounded-lg p-3 text-center bg-blue-50/50 mt-1">
                 <input type="file" id="idInput" accept="image/*,application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
-                <span class="text-blue-600 font-bold text-[11px]" id="fileLabel">Tap to Upload Student ID</span>
+                <span class="text-blue-600 font-bold text-[11px]" id="fileLabel">Upload PDF or Image ID</span>
             </div>
 
             <button id="processBtn" class="w-full bg-blue-600 text-white py-3.5 mt-2 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
@@ -74,7 +74,7 @@
 
     <div id="previewModal" class="fixed inset-0 bg-white z-[70] hidden flex flex-col">
         <div class="p-3 border-b flex justify-between items-center bg-slate-50">
-            <span class="font-bold text-sm">HD Preview</span>
+            <span class="font-bold text-sm">Document Preview</span>
             <button onclick="closePreview()" class="text-red-500 font-bold text-sm">Back</button>
         </div>
         <div class="flex-grow bg-slate-200">
@@ -101,44 +101,57 @@
         let currentPdfBlob = null;
         let finalCroppedDataUrl = null;
         let cropper = null;
-        let originalImageSrc = null;
+        let hdSourceDataUrl = null; // This replaces the originalImageSrc for PDFs
 
         idInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
             document.getElementById('loadingOverlay').classList.remove('hidden');
-            const reader = new FileReader();
-            reader.onload = async (re) => { 
-                originalImageSrc = re.target.result; 
-                const autoCropped = await getAutoCroppedImage(file);
-                finalCroppedDataUrl = autoCropped.dataUrl;
+            
+            try {
+                const result = await getFullQualitySourceAndAutoCrop(file);
+                hdSourceDataUrl = result.hdSource;
+                finalCroppedDataUrl = result.autoCrop;
+                
                 document.getElementById('autoPreviewImg').src = finalCroppedDataUrl;
+                
+                // UI Reset
                 autoPreviewBox.classList.remove('hidden');
                 cropperWrapper.classList.add('hidden');
                 decisionButtons.classList.remove('hidden');
                 saveManualBtn.classList.add('hidden');
                 cropSelectionModal.classList.remove('hidden');
+            } catch (err) {
+                alert("Error rendering PDF. Please ensure it's a valid file.");
+            } finally {
                 document.getElementById('loadingOverlay').classList.add('hidden');
-            };
-            reader.readAsDataURL(file);
+            }
         });
 
-        async function getAutoCroppedImage(file) {
+        async function getFullQualitySourceAndAutoCrop(file) {
             let canvas = document.createElement('canvas');
             let ctx = canvas.getContext('2d');
+            
             if (file.type === "application/pdf") {
                 const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
                 const page = await pdf.getPage(1);
-                const viewport = page.getViewport({ scale: 4.0 }); // 4x scale for PDF to Image conversion
-                canvas.width = viewport.width; canvas.height = viewport.height;
+                // 5.0 scale provides professional print-quality resolution (approx 360-400 DPI)
+                const viewport = page.getViewport({ scale: 5.0 });
+                canvas.width = viewport.width; 
+                canvas.height = viewport.height;
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
             } else {
                 const img = new Image();
                 img.src = URL.createObjectURL(file);
                 await new Promise(r => img.onload = r);
-                canvas.width = img.width; canvas.height = img.height;
+                canvas.width = img.width; 
+                canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
             }
+
+            const hdSource = canvas.toDataURL('image/png', 1.0);
+
+            // Auto-crop logic using the HD canvas
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             let top = null, bottom = null, left = null, right = null;
             for (let y = 0; y < canvas.height; y++) {
@@ -151,19 +164,22 @@
                     }
                 }
             }
+            
             const cropCanvas = document.createElement('canvas');
             const w = (right - left) || canvas.width;
             const h = (bottom - top) || canvas.height;
             cropCanvas.width = w; cropCanvas.height = h;
             const cropCtx = cropCanvas.getContext('2d');
-            cropCtx.imageSmoothingEnabled = false; // Prevent blurring during auto-extraction
+            cropCtx.imageSmoothingEnabled = false; 
             cropCtx.drawImage(canvas, left || 0, top || 0, w, h, 0, 0, w, h);
-            return { dataUrl: cropCanvas.toDataURL('image/png') };
+            
+            return { hdSource: hdSource, autoCrop: cropCanvas.toDataURL('image/png', 1.0) };
         }
 
         function useAutoCrop() {
             cropSelectionModal.classList.add('hidden');
-            fileLabel.innerText = "✓ ID Loaded";
+            fileLabel.innerText = "✓ HD Source Ready";
+            fileLabel.classList.add('text-green-600');
         }
 
         function startManualCrop() {
@@ -171,34 +187,33 @@
             decisionButtons.classList.add('hidden');
             cropperWrapper.classList.remove('hidden');
             saveManualBtn.classList.remove('hidden');
+            
             const image = document.getElementById('manualCropImg');
-            image.src = originalImageSrc;
+            image.src = hdSourceDataUrl; // Use the high-res snapshot
+            
             if (cropper) cropper.destroy();
             cropper = new Cropper(image, { 
                 aspectRatio: 1.6, 
                 viewMode: 1,
-                responsive: true,
+                autoCropArea: 0.9,
                 checkOrientation: false
             });
         }
 
         saveManualBtn.onclick = () => {
             document.getElementById('loadingOverlay').classList.remove('hidden');
-            
-            // ULTRA HD EXPORT SETTINGS
-            // pixelRatio: 4 generates a massive canvas from the selection
             setTimeout(() => {
+                // Export at full resolution from the HD source
                 finalCroppedDataUrl = cropper.getCroppedCanvas({
-                    imageSmoothingEnabled: true,
                     imageSmoothingQuality: 'high',
-                    pixelRatio: 4, 
+                    imageSmoothingEnabled: true,
                     fillColor: '#fff',
-                }).toDataURL('image/png');
+                }).toDataURL('image/png', 1.0);
                 
                 cropSelectionModal.classList.add('hidden');
-                fileLabel.innerText = "✓ HD ID Ready";
+                fileLabel.innerText = "✓ HD Manual Crop Saved";
                 document.getElementById('loadingOverlay').classList.add('hidden');
-            }, 100);
+            }, 50);
         };
 
         function cancelProcess() { cropSelectionModal.classList.add('hidden'); }
@@ -213,7 +228,6 @@
                 const page = templateDoc.getPages()[0];
                 const font = await templateDoc.embedFont(StandardFonts.HelveticaBold);
                 
-                // Lossless embedding
                 const idImage = await templateDoc.embedPng(finalCroppedDataUrl);
                 page.drawImage(idImage, { x: 112, y: 390, width: 370, height: 225 });
 
@@ -239,7 +253,7 @@
         document.getElementById('finalDownloadBtn').onclick = () => {
             const link = document.createElement('a');
             link.href = URL.createObjectURL(currentPdfBlob);
-            link.download = "IGNOU_FrontPage_HD.pdf";
+            link.download = "IGNOU_Final_HD.pdf";
             link.click();
         };
     </script>
