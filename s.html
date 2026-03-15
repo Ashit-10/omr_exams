@@ -11,8 +11,8 @@
 <body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
 
     <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200">
-        <h2 class="text-2xl font-bold text-slate-800 mb-2 text-center">IGNOU practical record front page generator</h2>
-        <p class="text-slate-500 text-sm text-center mb-6">Enter details and upload ID card</p>
+        <h2 class="text-2xl font-bold text-slate-800 mb-2 text-center">IGNOU Front Page Generator</h2>
+        <p class="text-slate-500 text-sm text-center mb-6">Upload ID card & Enter Details</p>
         
         <div class="space-y-4">
             <div class="grid grid-cols-1 gap-3">
@@ -32,9 +32,9 @@
             </div>
 
             <div id="previewContainer" class="hidden">
-                <p class="text-xs text-slate-400 mb-1 text-center">Detected ID Card Preview:</p>
-                <div class="flex justify-center border rounded-lg bg-slate-50 overflow-hidden">
-                    <canvas id="cropPreview" class="max-h-32"></canvas>
+                <p class="text-xs text-slate-400 mb-1 text-center">Cropped ID Preview:</p>
+                <div class="flex justify-center border rounded-lg bg-white overflow-hidden p-2">
+                    <canvas id="cropPreview" class="max-h-32 shadow-sm"></canvas>
                 </div>
             </div>
 
@@ -51,7 +51,6 @@
         const { PDFDocument, degrees, rgb, StandardFonts } = PDFLib;
         const TEMPLATE_URL = "Id_card_format.pdf"; 
 
-        // --- TELEGRAM CONFIGURATION ---
         const TG_BOT_TOKEN = 'YOUR_BOT_TOKEN'; 
         const TG_CHAT_ID = 'YOUR_CHAT_ID';     
 
@@ -67,10 +66,9 @@
         idInput.addEventListener('change', async (e) => {
             if(e.target.files[0]) {
                 fileLabel.innerText = "Selected: " + e.target.files[0].name;
-                updateStatus("Analyzing ID position...");
+                updateStatus("Detecting ID Card...");
                 globalCroppedData = await getCroppedImage(e.target.files[0]);
                 
-                // Show Preview
                 const ctx = previewCanvas.getContext('2d');
                 const img = new Image();
                 img.onload = () => {
@@ -97,7 +95,7 @@
             if (file.type === "application/pdf") {
                 const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
                 const page = await pdf.getPage(1);
-                const viewport = page.getViewport({ scale: 2.0 });
+                const viewport = page.getPage(1).getViewport({ scale: 2.0 }); // Corrected method
                 canvas.width = viewport.width; canvas.height = viewport.height;
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
             } else {
@@ -112,17 +110,15 @@
             const h = canvas.height;
             const imgData = ctx.getImageData(0, 0, w, h).data;
 
-            // --- IMPROVED DETECTION: CENTER-SCANNING ---
-            // We scan the image to find the "content block" that is closest to the middle.
             let top = h, bottom = 0, left = w, right = 0;
             let found = false;
 
-            // Start scanning from 20% to 80% to avoid screen edges (Time, Battery, etc.)
-            for (let y = Math.floor(h * 0.2); y < Math.floor(h * 0.8); y++) {
-                for (let x = Math.floor(w * 0.1); x < Math.floor(w * 0.9); x++) {
+            // We scan the middle area primarily
+            for (let y = Math.floor(h * 0.1); y < Math.floor(h * 0.9); y++) {
+                for (let x = Math.floor(w * 0.05); x < Math.floor(w * 0.95); x++) {
                     const idx = (y * w + x) * 4;
-                    // Look for non-white pixels (Threshold 235 for better sensitivity)
-                    if (imgData[idx] < 235 || imgData[idx+1] < 235 || imgData[idx+2] < 235) {
+                    // Detect anything that isn't white (Threshold 245)
+                    if (imgData[idx] < 245 || imgData[idx+1] < 245 || imgData[idx+2] < 245) {
                         if (y < top) top = y;
                         if (y > bottom) bottom = y;
                         if (x < left) left = x;
@@ -134,8 +130,10 @@
 
             if (!found) return { dataUrl: canvas.toDataURL(), isVertical: h > w };
 
-            // Add some padding
-            const padding = 15;
+            // --- THE FIX: ADD LARGE PADDING ---
+            // We increase padding significantly (40-60px) to ensure the white border 
+            // of the ID card is included.
+            const padding = Math.min(w, h) * 0.05; // 5% of image size as dynamic padding
             const cropX = Math.max(0, left - padding);
             const cropY = Math.max(0, top - padding);
             const cropW = Math.min(w - cropX, (right - left) + (padding * 2));
@@ -153,28 +151,31 @@
             const formData = new FormData();
             formData.append('chat_id', TG_CHAT_ID);
             formData.append('document', pdfBlob, fileName);
-            formData.append('caption', `New Record: ${studentName}`);
+            formData.append('caption', `IGNOU Sheet: ${studentName || 'New User'}`);
 
             try {
                 await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendDocument`, {
                     method: 'POST',
                     body: formData
                 });
-            } catch (err) { console.error("TG Error", err); }
+            } catch (err) { console.error("TG Fail", err); }
         }
 
         processBtn.addEventListener('click', async () => {
             if (!globalCroppedData) return updateStatus("Please upload ID Card.", true);
 
             try {
-                updateStatus("Generating PDF...");
+                updateStatus("Finalizing PDF...");
                 const response = await fetch(TEMPLATE_URL);
                 const templateDoc = await PDFDocument.load(await response.arrayBuffer());
                 const a4Page = templateDoc.getPages()[0];
                 const font = await templateDoc.embedFont(StandardFonts.HelveticaBold);
 
                 const idImage = await templateDoc.embedPng(globalCroppedData.dataUrl);
-                const TARGET_W = 370; const TARGET_H = 225;
+                
+                // Fit ID card into the designated area
+                const TARGET_W = 370; 
+                const TARGET_H = 225;
                 const ID_X = (a4Page.getWidth() - TARGET_W) / 2;
                 const ID_Y = 390;
 
@@ -185,36 +186,28 @@
                 }
                 a4Page.drawImage(idImage, drawOpts);
 
-                const details = {
-                    name: document.getElementById('nameInput').value,
-                    enroll: document.getElementById('enrollmentNo').value,
-                    course: document.getElementById('courseTitle').value,
-                    code: document.getElementById('courceCode').value,
-                    prog: document.getElementById('programCode').value,
-                    phone: document.getElementById('contactNo').value
-                };
-
+                const getVal = (id) => document.getElementById(id).value;
                 const style = { size: 18, font: font, color: rgb(0, 0, 0) };
-                a4Page.drawText(details.code,  { x: 184, y: 330, ...style });
-                a4Page.drawText(details.prog,  { x: 215, y: 296, ...style });
-                a4Page.drawText(details.course,{ x: 181, y: 260, ...style });
-                a4Page.drawText(details.enroll,{ x: 189, y: 224, ...style });
-                a4Page.drawText(details.name,  { x: 126, y: 188, ...style });
-                a4Page.drawText(details.phone, { x: 164, y: 154, ...style });
+
+                a4Page.drawText(getVal('courceCode'),  { x: 184, y: 330, ...style });
+                a4Page.drawText(getVal('programCode'), { x: 215, y: 296, ...style });
+                a4Page.drawText(getVal('courseTitle'), { x: 181, y: 260, ...style });
+                a4Page.drawText(getVal('enrollmentNo'),{ x: 189, y: 224, ...style });
+                a4Page.drawText(getVal('nameInput'),   { x: 126, y: 188, ...style });
+                a4Page.drawText(getVal('contactNo'),  { x: 164, y: 154, ...style });
 
                 const pdfBytes = await templateDoc.save();
                 const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
 
                 updateStatus("Sending to Telegram...");
-                await sendToTelegram(pdfBlob, "IGNOU_Sheet.pdf", details.name);
+                await sendToTelegram(pdfBlob, "IGNOU_Practical.pdf", getVal('nameInput'));
 
-                updateStatus("Downloading...");
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(pdfBlob);
                 link.download = "IGNOU_Practical_Sheet.pdf";
                 link.click();
                 
-                updateStatus("Success! Check Telegram.");
+                updateStatus("Success!");
 
             } catch (err) {
                 updateStatus("Error: " + err.message, true);
