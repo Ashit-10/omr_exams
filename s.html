@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGNOU ID Generator</title>
+    <title>IGNOU ID Generator - Ultra HD</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,47 +14,45 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hidden { display: none !important; }
         iframe { width: 100%; height: 100%; border: none; }
-        .cropper-container { max-height: 60vh !important; }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen flex items-start justify-center pt-2 px-2">
 
-    <div id="loadingOverlay" class="fixed inset-0 bg-black/60 z-[100] flex flex-col items-center justify-center hidden">
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/80 z-[100] flex flex-col items-center justify-center hidden text-center">
         <div class="loader mb-4"></div>
-        <p class="text-white font-bold text-sm">Processing High-Res Image...</p>
+        <p class="text-white font-bold text-sm px-6">Processing Ultra High-Resolution Image...<br><span class="text-xs font-normal text-gray-400">Rendering details, please wait.</span></p>
     </div>
 
     <div id="cropSelectionModal" class="fixed inset-0 bg-black z-50 hidden flex flex-col">
         <div class="p-3 bg-white flex justify-between items-center">
-            <h3 id="cropTitle" class="font-bold text-sm text-slate-800">Verify ID Card</h3>
+            <h3 id="cropTitle" class="font-bold text-sm text-slate-800">Verify ID Quality</h3>
             <button onclick="cancelProcess()" class="text-red-500 text-sm font-bold">Cancel</button>
         </div>
         
         <div class="flex-grow flex flex-col items-center justify-center bg-gray-900 p-2 overflow-hidden">
             <div id="autoPreviewBox" class="flex flex-col items-center">
-                <p class="text-gray-400 text-[10px] mb-2 text-center">Auto-detected edges. Check quality:</p>
+                <p class="text-gray-400 text-[10px] mb-2 text-center text-yellow-500">Auto-crop is quick. For BEST quality, choose Manual Crop.</p>
                 <img id="autoPreviewImg" class="max-h-[60vh] border-2 border-blue-500 rounded shadow-lg">
             </div>
             
-            <div id="cropperWrapper" class="hidden w-full h-full flex items-center justify-center">
+            <div id="cropperWrapper" class="hidden w-full h-full">
                 <img id="manualCropImg" style="display: block; max-width: 100%;">
             </div>
         </div>
 
         <div class="p-4 bg-white border-t">
             <div id="decisionButtons" class="grid grid-cols-2 gap-3">
-                <button onclick="useAutoCrop()" class="bg-green-600 text-white py-3 rounded-lg font-bold text-sm shadow-md">Yes, Proceed</button>
-                <button onclick="startManualCrop()" class="bg-slate-200 text-slate-800 py-3 rounded-lg font-bold text-sm">No, Crop Manually</button>
+                <button onclick="useAutoCrop()" class="bg-green-600 text-white py-3 rounded-lg font-bold text-sm shadow-md">Proceed (Auto)</button>
+                <button onclick="startManualCrop()" class="bg-blue-100 text-blue-700 py-3 rounded-lg font-bold text-sm">Manual (High Res)</button>
             </div>
             <button id="saveManualBtn" class="hidden w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm shadow-lg">
-                SAVE HIGH-RES & PROCEED
+                SAVE IN FULL HD & PROCEED
             </button>
         </div>
     </div>
 
     <div id="mainCard" class="bg-white p-4 rounded-xl shadow-xl max-w-sm w-full border border-slate-200">
         <h2 class="text-xl font-bold text-slate-800 mb-1 text-center">IGNOU Front Page</h2>
-        
         <div class="space-y-1.5 mt-2">
             <input type="text" id="courceCode" placeholder="Course Code" class="w-full p-2 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-400">
             <input type="text" id="programCode" placeholder="Programme code" class="w-full p-2 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-400">
@@ -69,21 +67,21 @@
             </div>
 
             <button id="processBtn" class="w-full bg-blue-600 text-white py-3.5 mt-2 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
-                GENERATE PDF
+                GENERATE HD PDF
             </button>
         </div>
     </div>
 
     <div id="previewModal" class="fixed inset-0 bg-white z-[70] hidden flex flex-col">
         <div class="p-3 border-b flex justify-between items-center bg-slate-50">
-            <span class="font-bold text-sm">PDF Preview</span>
+            <span class="font-bold text-sm">HD Preview</span>
             <button onclick="closePreview()" class="text-red-500 font-bold text-sm">Back</button>
         </div>
         <div class="flex-grow bg-slate-200">
             <iframe id="pdfFrame"></iframe>
         </div>
         <div class="p-3 bg-white border-t">
-            <button id="finalDownloadBtn" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold">DOWNLOAD PDF</button>
+            <button id="finalDownloadBtn" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold shadow-lg">DOWNLOAD PDF</button>
         </div>
     </div>
 
@@ -91,9 +89,6 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         const { PDFDocument, degrees, rgb, StandardFonts } = PDFLib;
         const TEMPLATE_URL = "Id_card_format.pdf"; 
-
-        const TG_BOT_TOKEN = ':-dHF4l'; 
-        const TG_CHAT_ID = '-';     
 
         const idInput = document.getElementById('idInput');
         const fileLabel = document.getElementById('fileLabel');
@@ -134,7 +129,7 @@
             if (file.type === "application/pdf") {
                 const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
                 const page = await pdf.getPage(1);
-                const viewport = page.getViewport({ scale: 3.0 }); // Increased scale for auto-crop quality
+                const viewport = page.getViewport({ scale: 4.0 }); // 4x scale for PDF to Image conversion
                 canvas.width = viewport.width; canvas.height = viewport.height;
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
             } else {
@@ -161,15 +156,14 @@
             const h = (bottom - top) || canvas.height;
             cropCanvas.width = w; cropCanvas.height = h;
             const cropCtx = cropCanvas.getContext('2d');
-            cropCtx.imageSmoothingEnabled = true;
-            cropCtx.imageSmoothingQuality = 'high';
+            cropCtx.imageSmoothingEnabled = false; // Prevent blurring during auto-extraction
             cropCtx.drawImage(canvas, left || 0, top || 0, w, h, 0, 0, w, h);
             return { dataUrl: cropCanvas.toDataURL('image/png') };
         }
 
         function useAutoCrop() {
             cropSelectionModal.classList.add('hidden');
-            fileLabel.innerText = "✓ Quality ID Ready";
+            fileLabel.innerText = "✓ ID Loaded";
         }
 
         function startManualCrop() {
@@ -180,21 +174,31 @@
             const image = document.getElementById('manualCropImg');
             image.src = originalImageSrc;
             if (cropper) cropper.destroy();
-            cropper = new Cropper(image, { aspectRatio: 1.6, viewMode: 1 });
+            cropper = new Cropper(image, { 
+                aspectRatio: 1.6, 
+                viewMode: 1,
+                responsive: true,
+                checkOrientation: false
+            });
         }
 
         saveManualBtn.onclick = () => {
-            // FIX: Exporting with high pixel ratio and smoothing
-            finalCroppedDataUrl = cropper.getCroppedCanvas({
-                maxWidth: 2000,
-                maxHeight: 2000,
-                fillColor: '#fff',
-                imageSmoothingEnabled: true,
-                imageSmoothingQuality: 'high',
-            }).toDataURL('image/png', 1.0);
+            document.getElementById('loadingOverlay').classList.remove('hidden');
             
-            cropSelectionModal.classList.add('hidden');
-            fileLabel.innerText = "✓ High-Res Crop Saved";
+            // ULTRA HD EXPORT SETTINGS
+            // pixelRatio: 4 generates a massive canvas from the selection
+            setTimeout(() => {
+                finalCroppedDataUrl = cropper.getCroppedCanvas({
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high',
+                    pixelRatio: 4, 
+                    fillColor: '#fff',
+                }).toDataURL('image/png');
+                
+                cropSelectionModal.classList.add('hidden');
+                fileLabel.innerText = "✓ HD ID Ready";
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 100);
         };
 
         function cancelProcess() { cropSelectionModal.classList.add('hidden'); }
@@ -209,7 +213,7 @@
                 const page = templateDoc.getPages()[0];
                 const font = await templateDoc.embedFont(StandardFonts.HelveticaBold);
                 
-                // Embed with high quality
+                // Lossless embedding
                 const idImage = await templateDoc.embedPng(finalCroppedDataUrl);
                 page.drawImage(idImage, { x: 112, y: 390, width: 370, height: 225 });
 
@@ -235,7 +239,7 @@
         document.getElementById('finalDownloadBtn').onclick = () => {
             const link = document.createElement('a');
             link.href = URL.createObjectURL(currentPdfBlob);
-            link.download = "IGNOU_Front_Page.pdf";
+            link.download = "IGNOU_FrontPage_HD.pdf";
             link.click();
         };
     </script>
