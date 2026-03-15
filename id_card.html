@@ -52,7 +52,7 @@
     </div>
 
     <div id="mainCard" class="bg-white p-4 rounded-xl shadow-xl max-w-sm w-full border border-slate-200">
-        <h2 class="text-xl font-bold text-slate-800 mb-1 text-center">IGNOU Front Page</h2>
+        <h2 class="text-xl font-bold text-slate-800 mb-1 text-center">IGNOU Front Page Generator</h2>
         <div class="space-y-1.5 mt-2">
             <input type="text" id="courceCode" placeholder="Course Code (optional)" class="w-full p-2 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-400">
             <input type="text" id="programCode" placeholder="Programme code (optional)" class="w-full p-2 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-400">
@@ -63,7 +63,7 @@
 
             <div class="relative border border-dashed border-blue-300 rounded-lg p-3 text-center bg-blue-50/50 mt-1">
                 <input type="file" id="idInput" accept="image/*,application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
-                <span class="text-blue-600 font-bold text-[11px]" id="fileLabel">Upload ID (PDF or Image)</span>
+                <span class="text-blue-600 font-bold text-[11px]" id="fileLabel">Upload ID (PDF or Image) **</span>
             </div>
 
             <button id="processBtn" class="w-full bg-blue-600 text-white py-3.5 mt-2 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
@@ -245,12 +245,12 @@
                 page.drawImage(idImage, { x: 125, y: 418, width: 340, height: 200 });
 
                 const fields = [
-                    { val: document.getElementById('courceCode').value, x: 184, y: 370 },
-                    { val: document.getElementById('programCode').value, x: 215, y: 336 },
-                    { val: document.getElementById('courseTitle').value, x: 181, y: 300 },
-                    { val: document.getElementById('enrollmentNo').value, x: 189, y: 264 },
-                    { val: document.getElementById('nameInput').value, x: 126, y: 228 },
-                    { val: document.getElementById('contactNo').value, x: 164, y: 194 }
+                    { val: document.getElementById('courceCode').value, x: 184, y: 355 },
+                    { val: document.getElementById('programCode').value, x: 215, y: 320 },
+                    { val: document.getElementById('courseTitle').value, x: 181, y: 275 },
+                    { val: document.getElementById('enrollmentNo').value, x: 189, y: 250 },
+                    { val: document.getElementById('nameInput').value, x: 126, y: 210 },
+                    { val: document.getElementById('contactNo').value, x: 164, y: 180 }
                 ];
                 fields.forEach(f => { if(f.val) page.drawText(f.val, { x: f.x, y: f.y, size: 20, font }); });
 
