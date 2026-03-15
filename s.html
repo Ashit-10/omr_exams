@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGNOU ID Generator - Max Clarity</title>
+    <title>IGNOU ID Generator - Ultra HD</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,7 +20,7 @@
 
     <div id="loadingOverlay" class="fixed inset-0 bg-black/80 z-[100] flex flex-col items-center justify-center hidden text-center">
         <div class="loader mb-4"></div>
-        <p class="text-white font-bold text-sm px-6">Enhancing Resolution...<br><span class="text-xs font-normal text-gray-400">Rendering vector text for maximum clarity.</span></p>
+        <p class="text-white font-bold text-sm px-6">Ultra-HD Rendering...<br><span class="text-xs font-normal text-gray-400">Processing vector-level clarity.</span></p>
     </div>
 
     <div id="cropSelectionModal" class="fixed inset-0 bg-black z-50 hidden flex flex-col">
@@ -31,7 +31,7 @@
         
         <div class="flex-grow flex flex-col items-center justify-center bg-gray-900 p-2 overflow-hidden">
             <div id="autoPreviewBox" class="flex flex-col items-center">
-                <p class="text-gray-400 text-[10px] mb-2 text-center text-yellow-500 font-bold">PDF detected: Auto-crop usually provides best clarity.</p>
+                <p class="text-yellow-500 text-[10px] mb-2 font-bold text-center">Auto-Detected (High Resolution)</p>
                 <img id="autoPreviewImg" class="max-h-[60vh] border-2 border-blue-500 rounded shadow-lg">
             </div>
             
@@ -42,11 +42,11 @@
 
         <div class="p-4 bg-white border-t">
             <div id="decisionButtons" class="grid grid-cols-2 gap-3">
-                <button onclick="useAutoCrop()" class="bg-green-600 text-white py-3 rounded-lg font-bold text-sm shadow-md">Proceed (Auto)</button>
-                <button onclick="startManualCrop()" class="bg-blue-100 text-blue-700 py-3 rounded-lg font-bold text-sm">Manual (Fix)</button>
+                <button onclick="useAutoCrop()" class="bg-green-600 text-white py-3 rounded-lg font-bold text-sm shadow-md">Looks Sharp</button>
+                <button onclick="startManualCrop()" class="bg-blue-100 text-blue-700 py-3 rounded-lg font-bold text-sm">Manual Re-Crop</button>
             </div>
             <button id="saveManualBtn" class="hidden w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm shadow-lg">
-                FINISH & SAVE HD
+                SAVE AS ULTRA-HD
             </button>
         </div>
     </div>
@@ -63,7 +63,7 @@
 
             <div class="relative border border-dashed border-blue-300 rounded-lg p-3 text-center bg-blue-50/50 mt-1">
                 <input type="file" id="idInput" accept="image/*,application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
-                <span class="text-blue-600 font-bold text-[11px]" id="fileLabel">Upload PDF or Image ID</span>
+                <span class="text-blue-600 font-bold text-[11px]" id="fileLabel">Upload ID (PDF or Image)</span>
             </div>
 
             <button id="processBtn" class="w-full bg-blue-600 text-white py-3.5 mt-2 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
@@ -74,7 +74,7 @@
 
     <div id="previewModal" class="fixed inset-0 bg-white z-[70] hidden flex flex-col">
         <div class="p-3 border-b flex justify-between items-center bg-slate-50">
-            <span class="font-bold text-sm">Document Preview</span>
+            <span class="font-bold text-sm">HD Preview</span>
             <button onclick="closePreview()" class="text-red-500 font-bold text-sm">Back</button>
         </div>
         <div class="flex-grow bg-slate-200">
@@ -101,7 +101,7 @@
         let currentPdfBlob = null;
         let finalCroppedDataUrl = null;
         let cropper = null;
-        let hdSourceDataUrl = null; // This replaces the originalImageSrc for PDFs
+        let hdSourceDataUrl = null;
 
         idInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
@@ -109,33 +109,34 @@
             document.getElementById('loadingOverlay').classList.remove('hidden');
             
             try {
-                const result = await getFullQualitySourceAndAutoCrop(file);
+                // RENDER SOURCE AT 500% SCALE FOR MAX RESOLUTION
+                const result = await getUltraHighQualityAutoCrop(file);
                 hdSourceDataUrl = result.hdSource;
                 finalCroppedDataUrl = result.autoCrop;
                 
                 document.getElementById('autoPreviewImg').src = finalCroppedDataUrl;
                 
-                // UI Reset
+                // UI Management
                 autoPreviewBox.classList.remove('hidden');
                 cropperWrapper.classList.add('hidden');
                 decisionButtons.classList.remove('hidden');
                 saveManualBtn.classList.add('hidden');
                 cropSelectionModal.classList.remove('hidden');
             } catch (err) {
-                alert("Error rendering PDF. Please ensure it's a valid file.");
+                alert("Processing failed. Please use a clear file.");
             } finally {
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }
         });
 
-        async function getFullQualitySourceAndAutoCrop(file) {
+        async function getUltraHighQualityAutoCrop(file) {
             let canvas = document.createElement('canvas');
             let ctx = canvas.getContext('2d');
             
             if (file.type === "application/pdf") {
                 const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
                 const page = await pdf.getPage(1);
-                // 5.0 scale provides professional print-quality resolution (approx 360-400 DPI)
+                // 5.0 is the "Golden Standard" for vector to raster clarity
                 const viewport = page.getViewport({ scale: 5.0 });
                 canvas.width = viewport.width; 
                 canvas.height = viewport.height;
@@ -144,20 +145,23 @@
                 const img = new Image();
                 img.src = URL.createObjectURL(file);
                 await new Promise(r => img.onload = r);
-                canvas.width = img.width; 
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
+                // For images, we keep native resolution or upscale if too small
+                const scaleFactor = Math.max(1, 2000 / img.width); 
+                canvas.width = img.width * scaleFactor; 
+                canvas.height = img.height * scaleFactor;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             }
 
             const hdSource = canvas.toDataURL('image/png', 1.0);
 
-            // Auto-crop logic using the HD canvas
+            // AUTO CROP LOGIC ON HD CANVAS
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             let top = null, bottom = null, left = null, right = null;
             for (let y = 0; y < canvas.height; y++) {
                 for (let x = 0; x < canvas.width; x++) {
                     const idx = (y * canvas.width + x) * 4;
-                    if (imgData[idx] < 245 || imgData[idx+1] < 245 || imgData[idx+2] < 245) {
+                    // Detect non-white content
+                    if (imgData[idx] < 240 || imgData[idx+1] < 240 || imgData[idx+2] < 240) {
                         if (top === null) top = y; bottom = y;
                         if (left === null || x < left) left = x;
                         if (right === null || x > right) right = x;
@@ -170,6 +174,8 @@
             const h = (bottom - top) || canvas.height;
             cropCanvas.width = w; cropCanvas.height = h;
             const cropCtx = cropCanvas.getContext('2d');
+            
+            // Disable smoothing for sharp text edges
             cropCtx.imageSmoothingEnabled = false; 
             cropCtx.drawImage(canvas, left || 0, top || 0, w, h, 0, 0, w, h);
             
@@ -178,7 +184,7 @@
 
         function useAutoCrop() {
             cropSelectionModal.classList.add('hidden');
-            fileLabel.innerText = "✓ HD Source Ready";
+            fileLabel.innerText = "✓ HD Auto-Crop Used";
             fileLabel.classList.add('text-green-600');
         }
 
@@ -189,7 +195,7 @@
             saveManualBtn.classList.remove('hidden');
             
             const image = document.getElementById('manualCropImg');
-            image.src = hdSourceDataUrl; // Use the high-res snapshot
+            image.src = hdSourceDataUrl; 
             
             if (cropper) cropper.destroy();
             cropper = new Cropper(image, { 
@@ -203,15 +209,16 @@
         saveManualBtn.onclick = () => {
             document.getElementById('loadingOverlay').classList.remove('hidden');
             setTimeout(() => {
-                // Export at full resolution from the HD source
+                // Exporting manual crop with high quality settings
                 finalCroppedDataUrl = cropper.getCroppedCanvas({
                     imageSmoothingQuality: 'high',
-                    imageSmoothingEnabled: true,
+                    imageSmoothingEnabled: true, // Smooth back only for manual re-scales
                     fillColor: '#fff',
                 }).toDataURL('image/png', 1.0);
                 
                 cropSelectionModal.classList.add('hidden');
-                fileLabel.innerText = "✓ HD Manual Crop Saved";
+                fileLabel.innerText = "✓ HD Manual Crop Used";
+                fileLabel.classList.add('text-green-600');
                 document.getElementById('loadingOverlay').classList.add('hidden');
             }, 50);
         };
@@ -220,7 +227,7 @@
         function closePreview() { document.getElementById('previewModal').classList.add('hidden'); }
 
         document.getElementById('processBtn').addEventListener('click', async () => {
-            if (!finalCroppedDataUrl) return alert("Verify ID card first");
+            if (!finalCroppedDataUrl) return alert("Please verify your ID card first!");
             document.getElementById('loadingOverlay').classList.remove('hidden');
             try {
                 const response = await fetch(TEMPLATE_URL);
@@ -251,9 +258,10 @@
         });
 
         document.getElementById('finalDownloadBtn').onclick = () => {
+            if(!currentPdfBlob) return;
             const link = document.createElement('a');
             link.href = URL.createObjectURL(currentPdfBlob);
-            link.download = "IGNOU_Final_HD.pdf";
+            link.download = "IGNOU_FrontPage_UltraHD.pdf";
             link.click();
         };
     </script>
