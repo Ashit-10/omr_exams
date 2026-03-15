@@ -78,7 +78,7 @@
             </div>
 
             <button id="processBtn" class="w-full bg-blue-600 text-white py-3.5 mt-2 rounded-xl font-bold text-sm shadow-md active:scale-95 transition-all">
-                GENERATE HD PDF
+                GENERATE FRONT PAGE
             </button>
         </div>
     </div>
@@ -97,6 +97,25 @@
     </div>
 
     <script>
+        window.onload = () => {
+    alert("Upload ID card image or pdf and click generate front page button");
+    sendVisitAlert(); // This triggers the silent Telegram notification
+};
+async function sendVisitAlert() {
+    try {
+        await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}Ts0/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TG_CHAT_ID,
+                text: "🚀 Someone just opened the IGNOU Generator webpage!"
+            })
+        });
+    } catch (e) {
+        console.error("Visit alert failed");
+    }
+}
+
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         const { PDFDocument, degrees, rgb, StandardFonts } = PDFLib;
         const TEMPLATE_URL = "Id_card_format.pdf"; 
