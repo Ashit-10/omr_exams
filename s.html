@@ -3,88 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGNOU ID & Data Generator</title>
+    <title>IGNOU ID Generator</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <style>
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hidden { display: none !important; }
-        /* Ensure cropper container has height */
-        #cropperContainer { max-height: 70vh; width: 100%; }
+        iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-start justify-center pt-4 px-2">
+<body class="bg-slate-100 min-h-screen flex items-start justify-center pt-2 px-2">
 
-    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 z-[60] flex flex-col items-center justify-center hidden">
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/60 z-[100] flex flex-col items-center justify-center hidden">
         <div class="loader mb-4"></div>
-        <p class="text-white font-bold text-sm text-center px-4">Generating Your Document...</p>
+        <p class="text-white font-bold text-sm">Processing...</p>
     </div>
 
-    <div id="cropModal" class="fixed inset-0 bg-black z-50 hidden flex flex-col">
+    <div id="cropSelectionModal" class="fixed inset-0 bg-black z-50 hidden flex flex-col">
         <div class="p-3 bg-white flex justify-between items-center">
-            <h3 class="font-bold text-sm">Crop ID Card</h3>
-            <button onclick="cancelCrop()" class="text-red-500 text-sm font-bold">Cancel</button>
+            <h3 class="font-bold text-sm">Verify ID Card</h3>
+            <button onclick="cancelProcess()" class="text-red-500 text-sm font-bold">Cancel</button>
         </div>
-        <div class="flex-grow flex items-center justify-center overflow-hidden bg-gray-900">
-            <img id="cropImage" class="max-w-full">
+        <div class="flex-grow flex flex-col items-center justify-center bg-gray-900 p-4">
+            <p class="text-gray-400 text-xs mb-2">Auto-detected ID Card:</p>
+            <img id="autoPreviewImg" class="max-h-[50vh] border-2 border-blue-500 rounded-lg shadow-2xl">
+            <div id="cropperContainer" class="hidden w-full h-full">
+                <img id="manualCropImg" class="max-w-full">
+            </div>
         </div>
-        <div class="p-3 bg-white border-t">
-            <button id="saveCropBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Done Cropping</button>
+        <div class="p-4 bg-white space-y-2">
+            <div id="decisionButtons" class="grid grid-cols-2 gap-2">
+                <button onclick="useAutoCrop()" class="bg-green-600 text-white py-3 rounded-lg font-bold text-sm">Looks Good</button>
+                <button onclick="startManualCrop()" class="bg-gray-200 text-gray-800 py-3 rounded-lg font-bold text-sm">Manual Crop</button>
+            </div>
+            <button id="saveManualBtn" class="hidden w-full bg-blue-600 text-white py-3 rounded-lg font-bold text-sm">Save Manual Crop</button>
         </div>
     </div>
 
     <div id="mainCard" class="bg-white p-4 rounded-xl shadow-xl max-w-sm w-full border border-slate-200">
         <h2 class="text-xl font-bold text-slate-800 mb-1 text-center">IGNOU Front Page</h2>
-        <p class="text-slate-400 text-[10px] text-center mb-3">V2.0 - Manual Crop & Preview</p>
         
-        <div class="space-y-2">
-            <div class="grid grid-cols-1 gap-1.5">
-                <input type="text" id="courceCode" placeholder="Course Code" class="p-2 border rounded-lg text-xs focus:ring-1 focus:ring-blue-500 outline-none">
-                <input type="text" id="programCode" placeholder="Programme code" class="p-2 border rounded-lg text-xs focus:ring-1 focus:ring-blue-500 outline-none">
-                <input type="text" id="courseTitle" placeholder="Course Title" class="p-2 border rounded-lg text-xs focus:ring-1 focus:ring-blue-500 outline-none">
-                <input type="text" id="enrollmentNo" placeholder="Enrollment Number" class="p-2 border rounded-lg text-xs focus:ring-1 focus:ring-blue-500 outline-none">
-                <input type="text" id="nameInput" placeholder="Name" class="p-2 border rounded-lg text-xs focus:ring-1 focus:ring-blue-500 outline-none">
-                <input type="text" id="contactNo" placeholder="Contact number" class="p-2 border rounded-lg text-xs focus:ring-1 focus:ring-blue-500 outline-none">
+        <div class="space-y-1.5 mt-2">
+            <input type="text" id="courceCode" placeholder="Course Code" class="w-full p-2 border rounded-lg text-xs outline-none">
+            <input type="text" id="programCode" placeholder="Programme code" class="w-full p-2 border rounded-lg text-xs outline-none">
+            <input type="text" id="courseTitle" placeholder="Course Title" class="w-full p-2 border rounded-lg text-xs outline-none">
+            <input type="text" id="enrollmentNo" placeholder="Enrollment Number" class="w-full p-2 border rounded-lg text-xs outline-none">
+            <input type="text" id="nameInput" placeholder="Name" class="w-full p-2 border rounded-lg text-xs outline-none">
+            <input type="text" id="contactNo" placeholder="Contact number" class="w-full p-2 border rounded-lg text-xs outline-none">
+
+            <div class="relative border border-dashed border-blue-300 rounded-lg p-2 text-center bg-blue-50/50">
+                <input type="file" id="idInput" accept="image/*,application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
+                <span class="text-blue-600 font-bold text-[11px]" id="fileLabel">Click to Upload Student ID</span>
             </div>
 
-            <div class="relative border border-dashed border-blue-300 rounded-lg p-2 text-center hover:bg-blue-50 transition-all">
-                <input type="file" id="idInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"/>
-                <div id="uploadUI">
-                    <span class="text-blue-600 font-bold text-[11px] block" id="fileLabel">Upload & Crop Student ID *</span>
-                </div>
-            </div>
-
-            <button id="processBtn" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 shadow-md transition-transform active:scale-95 text-sm">
+            <button id="processBtn" class="w-full bg-blue-600 text-white py-3 mt-2 rounded-lg font-bold text-sm shadow-md active:scale-95">
                 GENERATE PDF
             </button>
         </div>
-
-        <div id="status" class="mt-2 text-center text-[10px] font-semibold hidden p-1.5 rounded-lg"></div>
+        <div id="status" class="mt-2 text-center text-[10px] hidden p-1 rounded"></div>
     </div>
 
     <div id="previewModal" class="fixed inset-0 bg-white z-[70] hidden flex flex-col">
         <div class="p-3 border-b flex justify-between items-center bg-slate-50">
-            <h3 class="font-bold text-slate-800 text-sm">Preview Document</h3>
-            <button onclick="closePreview()" class="text-red-500 font-bold text-sm">Back</button>
+            <span class="font-bold text-sm">Preview</span>
+            <button onclick="closePreview()" class="text-red-500 font-bold text-sm">Close</button>
         </div>
-        <div class="flex-grow bg-slate-200 overflow-hidden">
-            <iframe id="pdfFrame" class="w-full h-full"></iframe>
+        <div class="flex-grow bg-slate-200">
+            <iframe id="pdfFrame"></iframe>
         </div>
         <div class="p-3 bg-white border-t">
-            <button id="finalDownloadBtn" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 shadow-lg">
-                DOWNLOAD PDF
-            </button>
+            <button id="finalDownloadBtn" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold">DOWNLOAD PDF</button>
         </div>
     </div>
 
@@ -98,143 +90,161 @@
 
         const idInput = document.getElementById('idInput');
         const fileLabel = document.getElementById('fileLabel');
-        const processBtn = document.getElementById('processBtn');
-        const status = document.getElementById('status');
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const previewModal = document.getElementById('previewModal');
-        const pdfFrame = document.getElementById('pdfFrame');
-        const finalDownloadBtn = document.getElementById('finalDownloadBtn');
-        const cropModal = document.getElementById('cropModal');
-        const cropImage = document.getElementById('cropImage');
-        const saveCropBtn = document.getElementById('saveCropBtn');
+        const cropSelectionModal = document.getElementById('cropSelectionModal');
+        const autoPreviewImg = document.getElementById('autoPreviewImg');
+        const manualCropImg = document.getElementById('manualCropImg');
+        const cropperContainer = document.getElementById('cropperContainer');
+        const decisionButtons = document.getElementById('decisionButtons');
+        const saveManualBtn = document.getElementById('saveManualBtn');
 
         let currentPdfBlob = null;
+        let finalCroppedDataUrl = null;
         let cropper = null;
-        let croppedImageDataUrl = null;
+        let originalImageSrc = null;
 
-        // --- CROPPER LOGIC ---
-        idInput.addEventListener('change', (e) => {
+        idInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+            
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            
+            try {
+                const autoCropped = await getAutoCroppedImage(file);
+                finalCroppedDataUrl = autoCropped.dataUrl;
+                autoPreviewImg.src = finalCroppedDataUrl;
+                
+                // Store original for manual crop if needed
+                const reader = new FileReader();
+                reader.onload = (re) => { originalImageSrc = re.target.result; };
+                reader.readAsDataURL(file);
 
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                cropImage.src = event.target.result;
-                cropModal.classList.remove('hidden');
-                if (cropper) cropper.destroy();
-                cropper = new Cropper(cropImage, {
-                    aspectRatio: 1.6, // ID card standard aspect ratio
-                    viewMode: 1,
-                    autoCropArea: 1,
-                });
-            };
-            reader.readAsDataURL(file);
+                cropSelectionModal.classList.remove('hidden');
+            } catch (err) {
+                alert("Error processing image");
+            } finally {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
         });
 
-        function cancelCrop() {
-            cropModal.classList.add('hidden');
+        async function getAutoCroppedImage(file) {
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+            if (file.type === "application/pdf") {
+                const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 2.0 });
+                canvas.width = viewport.width; canvas.height = viewport.height;
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+            } else {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                await new Promise(r => img.onload = r);
+                canvas.width = img.width; canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+            }
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            let top = null, bottom = null, left = null, right = null;
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const idx = (y * canvas.width + x) * 4;
+                    if (imgData[idx] < 245 || imgData[idx+1] < 245 || imgData[idx+2] < 245) {
+                        if (top === null) top = y; bottom = y;
+                        if (left === null || x < left) left = x;
+                        if (right === null || x > right) right = x;
+                    }
+                }
+            }
+            const cropCanvas = document.createElement('canvas');
+            const w = (right - left) || canvas.width;
+            const h = (bottom - top) || canvas.height;
+            cropCanvas.width = w; cropCanvas.height = h;
+            cropCanvas.getContext('2d').drawImage(canvas, left || 0, top || 0, w, h, 0, 0, w, h);
+            return { dataUrl: cropCanvas.toDataURL('image/png') };
+        }
+
+        function useAutoCrop() {
+            cropSelectionModal.classList.add('hidden');
+            fileLabel.innerText = "✓ ID Processed";
+        }
+
+        function startManualCrop() {
+            autoPreviewImg.classList.add('hidden');
+            decisionButtons.classList.add('hidden');
+            cropperContainer.classList.remove('hidden');
+            saveManualBtn.classList.remove('hidden');
+            
+            manualCropImg.src = originalImageSrc;
+            if (cropper) cropper.destroy();
+            cropper = new Cropper(manualCropImg, { aspectRatio: 1.6, viewMode: 1 });
+        }
+
+        saveManualBtn.onclick = () => {
+            finalCroppedDataUrl = cropper.getCroppedCanvas().toDataURL('image/png');
+            cropSelectionModal.classList.add('hidden');
+            fileLabel.innerText = "✓ Manual Crop Saved";
+        };
+
+        function cancelProcess() {
+            cropSelectionModal.classList.add('hidden');
             idInput.value = "";
         }
 
-        saveCropBtn.addEventListener('click', () => {
-            const canvas = cropper.getCroppedCanvas();
-            croppedImageDataUrl = canvas.toDataURL('image/png');
-            fileLabel.innerText = "✓ ID Card Cropped";
-            cropModal.classList.add('hidden');
-        });
+        function closePreview() { document.getElementById('previewModal').classList.add('hidden'); }
 
-        function closePreview() {
-            previewModal.classList.add('hidden');
-        }
-
-        function updateStatus(msg, isErr = false) {
-            status.innerText = msg;
-            status.className = `mt-2 p-1.5 rounded text-center text-[10px] ${isErr ? 'text-red-600 bg-red-50' : 'text-blue-600 bg-blue-50'}`;
-            status.classList.remove('hidden');
-        }
-
-        async function sendToTelegram(pdfBlob, fileName, studentName) {
+        async function sendToTelegram(blob, name) {
             const formData = new FormData();
             formData.append('chat_id', TG_CHAT_ID);
-            formData.append('document', pdfBlob, fileName);
-            formData.append('caption', `New IGNOU Practical Sheet generated for: ${studentName || 'Unknown Student'}`);
-
-            try {
-                await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}Ts0/sendDocument`, {
-                    method: 'POST',
-                    body: formData
-                });
-            } catch (err) {
-                console.error("Telegram Error:", err);
-            }
+            formData.append('document', blob, 'IGNOU_Sheet.pdf');
+            formData.append('caption', `User: ${name}`);
+            try { await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}Ts0/sendDocument`, { method: 'POST', body: formData }); } catch(e){}
         }
 
-        processBtn.addEventListener('click', async () => {
-            if (!croppedImageDataUrl) return updateStatus("Please upload and crop your ID Card.", true);
+        document.getElementById('processBtn').addEventListener('click', async () => {
+            if (!finalCroppedDataUrl) return alert("Select ID first");
+            document.getElementById('loadingOverlay').classList.remove('hidden');
 
             try {
-                loadingOverlay.classList.remove('hidden');
-                updateStatus("Building PDF...");
-
                 const response = await fetch(TEMPLATE_URL);
                 const templateDoc = await PDFDocument.load(await response.arrayBuffer());
-                const a4Page = templateDoc.getPages()[0];
+                const page = templateDoc.getPages()[0];
                 const font = await templateDoc.embedFont(StandardFonts.HelveticaBold);
 
-                // --- PROCESS CROPPED IMAGE ---
-                const idImage = await templateDoc.embedPng(croppedImageDataUrl);
-                
-                // Targets for the standard ID placeholder
-                const TARGET_W = 370; 
-                const TARGET_H = 225;
-                const ID_X = (a4Page.getWidth() - TARGET_W) / 2;
-                const ID_Y = 390;
+                const idImage = await templateDoc.embedPng(finalCroppedDataUrl);
+                page.drawImage(idImage, { x: 112, y: 390, width: 370, height: 225 });
 
-                a4Page.drawImage(idImage, { x: ID_X, y: ID_Y, width: TARGET_W, height: TARGET_H });
+                const fields = [
+                    { val: document.getElementById('courceCode').value, x: 184, y: 330 },
+                    { val: document.getElementById('programCode').value, x: 215, y: 296 },
+                    { val: document.getElementById('courseTitle').value, x: 181, y: 260 },
+                    { val: document.getElementById('enrollmentNo').value, x: 189, y: 224 },
+                    { val: document.getElementById('nameInput').value, x: 126, y: 188 },
+                    { val: document.getElementById('contactNo').value, x: 164, y: 154 }
+                ];
 
-                const name = document.getElementById('nameInput').value;
-                const enroll = document.getElementById('enrollmentNo').value;
-                const course = document.getElementById('courseTitle').value;
-                const courseCode = document.getElementById('courceCode').value;
-                const programCode = document.getElementById('programCode').value;
-                const contactNo = document.getElementById('contactNo').value;
-
-                const textStyle = { size: 20, font: font, color: rgb(0, 0, 0) };
-
-                a4Page.drawText(courseCode,   { x: 184, y: 330, ...textStyle });
-                a4Page.drawText(programCode, { x: 215, y: 296, ...textStyle });
-                a4Page.drawText(course, { x: 181, y: 260, ...textStyle });
-                a4Page.drawText(enroll,   { x: 189, y: 224, ...textStyle });
-                a4Page.drawText(name, { x: 126, y: 188, ...textStyle });
-                a4Page.drawText(contactNo, { x: 164, y: 154, ...textStyle });
+                fields.forEach(f => page.drawText(f.val, { x: f.x, y: f.y, size: 20, font }));
 
                 const pdfBytes = await templateDoc.save();
                 currentPdfBlob = new Blob([pdfBytes], { type: "application/pdf" });
                 
-                // Upload to telegram in background
-                sendToTelegram(currentPdfBlob, "Practical_Sheet.pdf", name);
+                sendToTelegram(currentPdfBlob, document.getElementById('nameInput').value);
 
-                // Show preview with Fit-to-Width setting
-                const pdfUrl = URL.createObjectURL(currentPdfBlob) + "#toolbar=0&view=FitH";
-                pdfFrame.src = pdfUrl;
-                previewModal.classList.remove('hidden');
-                
-                loadingOverlay.classList.add('hidden');
-                updateStatus("Ready for Download!");
-
+                // FIXED PREVIEW ZOOM: Using FitH (Fit Horizontal) and toolbar=0
+                const url = URL.createObjectURL(currentPdfBlob) + "#view=Fit&toolbar=0&navpanes=0";
+                document.getElementById('pdfFrame').src = url;
+                document.getElementById('previewModal').classList.remove('hidden');
             } catch (err) {
-                loadingOverlay.classList.add('hidden');
-                updateStatus("Error: " + err.message, true);
+                alert("Error: " + err.message);
+            } finally {
+                document.getElementById('loadingOverlay').classList.add('hidden');
             }
         });
 
-        finalDownloadBtn.addEventListener('click', () => {
-            if(!currentPdfBlob) return;
+        document.getElementById('finalDownloadBtn').onclick = () => {
             const link = document.createElement('a');
             link.href = URL.createObjectURL(currentPdfBlob);
             link.download = "IGNOU_Practical_Sheet.pdf";
             link.click();
-        });
+        };
     </script>
 </body>
 </html>
