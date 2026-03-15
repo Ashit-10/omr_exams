@@ -65,39 +65,67 @@
         }
 
         async function getCroppedImage(file) {
-            let canvas = document.createElement('canvas');
-            let ctx = canvas.getContext('2d');
-            if (file.type === "application/pdf") {
-                const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
-                const page = await pdf.getPage(1);
-                const viewport = page.getViewport({ scale: 2.0 });
-                canvas.width = viewport.width; canvas.height = viewport.height;
-                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-            } else {
-                const img = new Image();
-                img.src = URL.createObjectURL(file);
-                await new Promise(r => img.onload = r);
-                canvas.width = img.width; canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
+    let canvas = document.createElement('canvas');
+    let ctx = canvas.getContext('2d');
+    
+    if (file.type === "application/pdf") {
+        const pdf = await pdfjsLib.getDocument(await file.arrayBuffer()).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 2.0 });
+        canvas.width = viewport.width; canvas.height = viewport.height;
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+    } else {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        await new Promise(r => img.onload = r);
+        canvas.width = img.width; canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+    }
+
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    
+    // Define a "Safe Zone" to ignore phone status bars/toolbars (top 15% and bottom 15%)
+    const topMargin = Math.floor(canvas.height * 0.15);
+    const bottomMargin = Math.floor(canvas.height * 0.85);
+    const leftMargin = Math.floor(canvas.width * 0.05);
+    const rightMargin = Math.floor(canvas.width * 0.95);
+
+    let top = null, bottom = null, left = null, right = null;
+
+    // Scan only within the safe zone
+    for (let y = topMargin; y < bottomMargin; y++) {
+        for (let x = leftMargin; x < rightMargin; x++) {
+            const idx = (y * canvas.width + x) * 4;
+            const r = imgData[idx], g = imgData[idx+1], b = imgData[idx+2];
+            
+            // Check if pixel is dark enough to be part of the ID (Threshold 240)
+            if (r < 240 || g < 240 || b < 240) {
+                if (top === null) top = y; 
+                bottom = y;
+                if (left === null || x < left) left = x;
+                if (right === null || x > right) right = x;
             }
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-            let top = null, bottom = null, left = null, right = null;
-            for (let y = 0; y < canvas.height; y++) {
-                for (let x = 0; x < canvas.width; x++) {
-                    const idx = (y * canvas.width + x) * 4;
-                    if (imgData[idx] < 250 || imgData[idx+1] < 250 || imgData[idx+2] < 250) {
-                        if (top === null) top = y; bottom = y;
-                        if (left === null || x < left) left = x;
-                        if (right === null || x > right) right = x;
-                    }
-                }
-            }
-            const cropCanvas = document.createElement('canvas');
-            const w = right - left, h = bottom - top;
-            cropCanvas.width = w; cropCanvas.height = h;
-            cropCanvas.getContext('2d').drawImage(canvas, left, top, w, h, 0, 0, w, h);
-            return { dataUrl: cropCanvas.toDataURL('image/png'), isVertical: h > w };
         }
+    }
+
+    // Fallback if nothing found in safe zone
+    if (top === null) { top = 0; bottom = canvas.height; left = 0; right = canvas.width; }
+
+    // Add a small padding (10px) so the ID isn't cut too tight
+    const pad = 10;
+    const finalLeft = Math.max(0, left - pad);
+    const finalTop = Math.max(0, top - pad);
+    const finalWidth = Math.min(canvas.width, (right + pad) - finalLeft);
+    const finalHeight = Math.min(canvas.height, (bottom + pad) - finalTop);
+
+    const cropCanvas = document.createElement('canvas');
+    cropCanvas.width = finalWidth;
+    cropCanvas.height = finalHeight;
+    cropCanvas.getContext('2d').drawImage(canvas, finalLeft, finalTop, finalWidth, finalHeight, 0, 0, finalWidth, finalHeight);
+    
+    return { dataUrl: cropCanvas.toDataURL('image/png'), isVertical: finalHeight > finalWidth };
+}
+
 
         // Function to send file to Telegram
         async function sendToTelegram(pdfBlob, fileName, studentName) {
