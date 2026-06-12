@@ -1,0 +1,299 @@
+1. According to the World Health Organization (WHO), health is defined as a state of complete:
+A) Physical fitness and absence of physical pain
+B) Physical, mental, and social well-being
+C) Freedom from communicable disease and infection
+D) Financial, professional, and domestic security
+
+2. A student who experiences frequent headaches, feels lonely, and spends hours scrolling through social media is experiencing an imbalance in which health dimensions?
+A) Physical and economic well-being
+B) Physical, mental, and social well-being
+C) Biological and environmental health only
+D) Just mental health, as physical habits do not dictate health
+
+3. In traditional Indian health heritage, what term refers to the "daily routine" that helps maintain body constitution (prakriti)?
+A) Ritucharya
+B) Dinacharya
+C) Pranayama
+D) Ayurveda
+
+4. Which of the following describes "Ritucharya" as taught in our scientific heritage?
+A) Daily breathing exercises
+B) Seasonal routine to maintain health balance
+C) Handwashing rules for communities
+D) Food restriction during a pandemic
+
+5. True health according to ancient traditions is a balance of:
+A) Body, mind, and surroundings
+B) Medicines, wealth, and standard of living
+C) Genetic traits and modern medical interventions
+D) Physical exercises only
+
+6. Which of the following is an example of a subjective "symptom" that a patient feels but a doctor cannot directly see or measure?
+A) A high fever of 102°F
+B) A red skin rash
+C) Swelling in the leg
+D) Headache or tiredness
+
+7. Which of the following is considered a "sign" of a disease that can be externally measured or seen by others?
+A) Pain in the upper right abdomen
+B) Dizziness during exercise
+C) High body temperature measured on a thermometer
+D) A feeling of being lonely or upset
+
+8. What is the fundamental difference between signs and symptoms?
+A) Signs are what we feel; symptoms are what doctors measure
+B) Symptoms are what we feel; signs are what can be seen or measured
+C) Signs occur only in communicable diseases; symptoms occur in non-communicable diseases
+D) There is no difference; both describe the exact same clinical observation
+
+9. Spending too much time on mobile phones or other digital screens is an example of:
+A) A habit that improves mental alertness
+B) A habit that is not good for your health
+C) A necessary step to maintain social well-being
+D) A physical activity equivalent to outdoor sports
+
+10. What environmental factor is indicated by the acronym "AQI"?
+A) Air Quality Index
+B) Aquatic Quarantine Indicator
+C) Atmospheric Quality Inversion
+D) Acidic Quick Inspection
+
+11. High values of Air Quality Index (AQI) in cities caused by vehicles and factories can directly lead to:
+A) Obesity and high blood pressure
+B) Coughing or asthma
+C) Fecal-oral water contamination
+D) Vitamin D deficiency
+
+12. Healthy habits include all the following EXCEPT:
+A) Eating fast food and other junk food every day
+B) Eating a balanced diet with plenty of fruits and vegetables
+C) Staying physically active by playing outdoors, walking, or running
+D) Practicing yoga or simple breathing exercises like pranayama
+
+13. A disease is a condition that affects the:
+A) Genetic lineage of a family over three generations
+B) Normal working of the body or mind
+C) Financial status of the patient’s neighborhood
+D) Ability of an individual to utilize antibiotics
+
+14. Diseases that do not spread from one person to another are categorized as:
+A) Communicable diseases
+B) Non-communicable diseases
+C) Vector-borne outbreaks
+D) Contaminated diseases
+
+15. Which of the following lists contains ONLY non-communicable diseases?
+A) Cancer, diabetes, asthma
+B) Typhoid, dengue, influenza
+C) Chickenpox, measles, malaria
+D) Cholera, tuberculosis, common cold
+
+16. Non-communicable diseases are usually linked to which of the following?
+A) Pathogens like bacteria and viruses
+B) Lifestyle, diet, and/or environment
+C) Direct contact with an infected person's respiratory droplets
+D) Bites from biological insect vectors like mosquitoes
+
+17. All communicable diseases are caused by biological agents known as:
+A) Resistors
+B) Pathogens
+C) Deficiencies
+D) Symptoms
+
+18. Pathogens can enter our body through which of the following routes?
+A) The air we breathe
+B) Consuming contaminated food or water
+C) Direct contact like shaking hands
+D) All of the above
+
+19. Look at Fig. 3.4 ("Common methods of transmission of diseases"). An insect that carries a pathogen from an infected person to a healthy host is called a:
+A) Carrier host
+B) Vector
+C) Microbe
+D) Symbiont
+
+20. Which of the following diseases is spread through the air via respiratory droplets when an infected person coughs or sneezes?
+A) Cholera
+B) Typhoid
+C) Common cold and influenza
+D) Malaria
+
+21. What is the causal agent and primary site of infection for Common Cold?
+A) Bacteria; Intestine
+B) Virus; Respiratory tract
+C) Protozoa; Blood
+D) Worms; Liver
+
+22. A student develops a mild fever, an itchy skin rash, and blisters. The causal agent is a virus. Which disease does the student likely have?
+A) Typhoid
+B) Chickenpox
+C) Cholera
+D) Malaria
+
+23. According to Table 3.1, what is a key preventive measure to stop the spread of Chickenpox and Measles?
+A) Drinking boiled water
+B) Complete isolation of the patient
+C) Wearing a mask in crowded places
+D) Eradicating mosquito breeding grounds
+
+24. Which disease matches with its causal agent and site of infection according to the textbook?
+A) Tuberculosis : Bacteria : Lungs
+B) Hepatitis A : Bacteria : Intestine
+C) Typhoid : Virus : Respiratory tract
+D) Ascaris : Protozoa : Skin
+
+25. Diseases spread through contaminated water and food primarily target which organ system?
+A) Nervous system
+B) Respiratory system
+C) Digestive/Intestinal tract
+D) Circulatory system
+
+26. What are the prominent symptoms of Cholera as listed in Table 3.1?
+A) High fever, chills, and periodic sweating
+B) Diarrhea and dehydration
+C) Cough, fatigue, and night sweats
+D) Swelling of limbs and poor growth
+
+27. Hepatitis A is a disease that affects the ____________ and is caused by a ____________.
+A) Lungs; Bacteria
+B) Intestine; Worm
+C) Liver; Virus
+D) Blood; Protozoan
+
+28. Symptoms including jaundice, fatigue, fever, loss of appetite, nausea, and pain in the upper right abdomen point to which disease?
+A) Tuberculosis
+B) Hepatitis A
+C) Ascariasis
+D) Diabetes
+
+29. Typhoid is caused by a ____________ pathogen and can be prevented by ____________.
+A) Viral; using mosquito nets
+B) Bacterial; drinking boiled water and proper vaccination
+C) Protozoan; wearing long-sleeved clothes
+D) Fungal; avoiding direct skin contact
+
+30. Ascariasis is caused by ____________ which live as parasites in the human ____________.
+A) Bacteria; lungs
+B) Protozoa; blood
+C) Worms; intestine
+D) Viruses; liver
+
+31. Symptoms of Ascariasis include:
+A) Severe chest pain and coughing blood
+B) Jaundice and yellow eyes
+C) Worms in stool, loss of appetite, diarrhea, and anemia
+D) Dry skin, scaling, and skin rashes
+
+32. To prevent diseases like Typhoid, Cholera, and Ascariasis, which set of precautions is most effective?
+A) Avoid mosquito bites by using repellents
+B) Maintain personal hygiene, drink boiled water, and consume properly cooked food
+C) Wear masks in crowded places and isolate instantly
+D) Exercise daily and reduce sugar intake
+
+33. Malaria is caused by a ____________ and transmitted to humans via the bite of infected mosquitoes.
+A) Virus
+B) Bacteria
+C) Protozoa
+D) Worm
+
+34. Dengue fever (Breakbone fever) is caused by a ____________ and its symptoms include high fever, headache, muscle/joint pain, and nausea.
+A) Protozoa
+B) Virus
+C) Worm
+D) Fungus
+
+35. Which specific preventative measure targets vector-borne diseases like Malaria and Dengue?
+A) Boiling drinking water for 20 minutes
+B) Wearing long-sleeved clothes and preventing water stagnation around homes
+C) Avoiding the consumption of processed and sugary foods
+D) Taking antibiotics before traveling
+
+36. Lifestyle-related non-communicable diseases include:
+A) Influenza and measles
+B) Tuberculosis and cholera
+C) Obesity, diabetes, and high blood pressure
+D) Malaria and dengue
+
+37. Frequent urination, excessive thirst, weight loss, and slow healing of wounds are classic signs and symptoms of:
+A) Obesity
+B) High blood pressure
+C) Diabetes
+D) Goitre
+
+38. What type of disease is caused by a lack of specific nutrients in the diet, such as a lack of Iodine?
+A) Infectious diseases
+B) Deficiency diseases
+C) Vector-borne diseases
+D) Communicable respiratory tract diseases
+
+39. What will happen if a person takes an excess amount of Iodine over a long period?
+A) They will develop diabetes
+B) They will develop non-communicable lifestyle conditions
+C) They may suffer from health issues linked to nutrient excess
+D) They will become completely immune to all bacterial diseases
+
+40. To manage or prevent lifestyle-related diseases like obesity and high blood pressure, what is the suggested change?
+A) Increasing intake of fast food and sweets
+B) Eating a balanced diet and regular exercising
+C) Taking broad-spectrum antibiotics daily
+D) Complete environmental isolation in sterile clean rooms
+
+41. The natural or acquired ability of the human body to resist and fight off foreign pathogens is called:
+A) Sanitation
+B) Diagnosis
+C) Immunity
+D) Inoculation
+
+42. How does a vaccine prepare our body to fight off dangerous infections?
+A) It contains full-strength live germs that cure the disease instantly
+B) It provides a protective chemical layer over internal respiratory organs
+C) It introduces a harmless/weakened/dead part of the germ, training our immune system to recognize it
+D) It converts bacterial pathogens into harmless intestinal worms
+
+43. Who discovered the world's first successful vaccine using cowpox fluid to protect people against deadly smallpox?
+A) Alexander Fleming
+B) Edward Jenner
+C) Dr. Maharaj Kishan Bhan
+D) Dr. Kamal Ranadive
+
+44. Look at the chart tracking the eradication of smallpox in Fig. 3.4 (under scientific heritage). Smallpox was successfully declared eradicated worldwide in:
+A) 1950
+B) 1965
+C) 1979
+D) 2026
+
+45. Dr. Maharaj Kishan Bhan is globally recognized for his leadership in developing which innovative vaccine in India?
+A) Smallpox vaccine
+B) Rotavirus vaccine
+C) Penicillin antibiotic
+D) Malaria vaccine
+
+46. Who discovered the first life-saving antibiotic, Penicillin, in 1928 after noticing a green mould destroying bacteria?
+A) Edward Jenner
+B) Dr. Kamal Ranadive
+C) Alexander Fleming
+D) Dr. Maharaj Kishan Bhan
+
+47. Antibiotics are highly powerful medicines, but they are effective ONLY against infections caused by:
+A) Viruses
+B) Protozoa
+C) Worms
+D) Bacteria
+
+48. What major public health hazard occurs if people misuse antibiotics by taking them for common viral colds or stopping their doses early?
+A) The body stops producing blood cells
+B) Bacteria become resistant to the drugs, making treatments fail
+C) Viral strains mutate into non-communicable conditions
+D) Vaccines lose their safety profiles
+
+49. Look at the flowchart in Fig. 3.5(a) ("How antibiotic resistance spreads"). Antibiotic-resistant bacteria can spread to healthy people in communities through:
+A) Soil contaminated with manure containing resistant animal waste
+B) Close contact with patients who carry resistant strains in hospitals
+C) Consuming food products or crops exposed to resistant strains
+D) All of the above channels
+
+50. What core message is illustrated by the community-led sanitation campaign in Bhadrak district, Odisha?
+A) Building toilets and stopping open defecation drastically minimizes diarrheal diseases and infections
+B) Vaccines cannot function without an established drainage network
+C) Non-communicable cancer risks are eliminated by using filtered tap water
+D) Antibiotics should be mixed into community water networks to prevent disease outbreaks
