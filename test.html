@@ -5,108 +5,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RESULTS - Nagarjuna University</title>
     <style>
-        /* Base University Portal Styling */
+        /* Base page reset */
         body {
-            font-family: Verdana, Arial, Helvetica, sans-serif;
-            font-size: 12px;
-            color: #000000;
-            background-color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            color: #000;
+            background-color: #525659;
             margin: 0;
             padding: 20px;
         }
 
-        .page-wrapper {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 10px;
-        }
-
-        /* Top Admin Control Bar (Screen Only) */
-        .admin-controls {
-            background-color: #2c3e50;
+        /* Top controls for interactive actions */
+        .controls-bar {
+            max-width: 850px;
+            margin: 0 auto 15px auto;
+            background-color: #1e293b;
             color: #ffffff;
             padding: 10px 15px;
             border-radius: 4px;
-            margin-bottom: 20px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            align-items: center;
         }
 
-        .admin-controls button {
-            background-color: #27ae60;
-            color: white;
+        .controls-bar button {
+            background-color: #2563eb;
+            color: #ffffff;
             border: none;
             padding: 6px 14px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             cursor: pointer;
             border-radius: 3px;
-            margin-left: 8px;
+            margin-left: 5px;
         }
 
-        .admin-controls button.btn-print {
-            background-color: #2980b9;
+        .controls-bar button.add-btn {
+            background-color: #16a34a;
         }
 
-        .admin-controls button:hover {
+        .controls-bar button:hover {
             opacity: 0.9;
         }
 
-        /* Content Editable Visual Cue on Screen */
+        /* Editable Highlight Indicator */
         [contenteditable="true"] {
             outline: none;
-            transition: background 0.2s, box-shadow 0.2s;
         }
         [contenteditable="true"]:hover, 
         [contenteditable="true"]:focus {
-            background-color: #fffde7;
-            box-shadow: 0 0 0 1px #fbc02d;
+            background-color: #fef08a !important;
         }
 
-        /* Breadcrumb Header */
-        .breadcrumb {
+        /* Main Double-Lined Outer Outer Box Structure */
+        .outer-document-box {
+            max-width: 850px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border: 4px double #000000; /* Double line border encompassing entire content */
+            box-sizing: border-box;
+        }
+
+        /* Navigation Header */
+        .header-path {
             font-size: 13px;
             font-weight: bold;
-            color: #000080;
+            color: #000;
             margin-bottom: 20px;
         }
 
-        /* Student Details Layout */
-        .student-details-table {
+        /* Student Details Table Structure */
+        .student-info-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
 
-        .student-details-table td {
+        .student-info-table td {
             padding: 4px 0;
+            font-size: 13px;
+            color: #000;
             vertical-align: top;
-            font-size: 12px;
         }
 
-        .student-details-table td.label-col {
+        .student-info-table td.label-cell {
             font-weight: bold;
             width: 180px;
             white-space: nowrap;
         }
 
-        /* Subject Marks Table */
-        .marks-table {
+        /* Centered Compact Table with Double Lines on Every Cell */
+        .table-container {
             width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .marks-table {
             border-collapse: collapse;
-            margin-top: 15px;
-            margin-bottom: 20px;
+            width: 340px; /* Constrained centered width matching document layout */
         }
 
         .marks-table th, 
         .marks-table td {
-            border: 1px solid #000000;
-            padding: 5px 8px;
+            border: 4px double #000000; /* Exact double border lines on every box cell */
+            padding: 6px 10px;
             text-align: left;
-            font-size: 12px;
+            font-size: 13px;
+            color: #000;
         }
 
         .marks-table th {
@@ -114,227 +122,214 @@
             background-color: #ffffff;
         }
 
+        /* Table Action Buttons */
         .action-cell {
-            width: 60px;
-            text-align: center !important;
+            border: none !important;
+            padding-left: 10px !important;
+            width: 50px;
+            vertical-align: middle;
         }
 
-        .btn-delete-row {
-            background-color: #e74c3c;
-            color: white;
+        .delete-btn {
+            background-color: #dc2626;
+            color: #fff;
             border: none;
-            padding: 2px 6px;
-            font-size: 10px;
+            padding: 3px 6px;
+            font-size: 11px;
             cursor: pointer;
             border-radius: 2px;
         }
 
         /* Remarks Section */
-        .remarks-container {
-            margin-top: 15px;
-            margin-bottom: 20px;
-            font-size: 12px;
+        .remarks-block {
+            margin-top: 20px;
+            margin-bottom: 25px;
+            font-size: 13px;
             line-height: 1.5;
+            color: #000;
         }
 
-        .remark-item {
+        .remark-row {
             margin-bottom: 8px;
         }
 
-        .remark-heading {
+        .remark-title {
             font-weight: bold;
-            display: block;
         }
 
-        /* Standard Page Buttons */
-        .page-buttons {
-            margin-top: 15px;
-            margin-bottom: 20px;
-        }
-
-        .portal-btn {
-            background-color: #f0f0f0;
-            border: 1px solid #767676;
-            color: #000000;
-            padding: 2px 8px;
+        /* Disclaimer Footer Text */
+        .disclaimer-block {
             font-size: 11px;
-            font-family: Verdana, Arial, sans-serif;
-            cursor: pointer;
-            margin-right: 5px;
-            border-radius: 2px;
-        }
-
-        /* Disclaimer Section */
-        .disclaimer-text {
-            font-size: 11px;
-            line-height: 1.4;
-            color: #000000;
+            line-height: 1.45;
+            color: #000;
             text-align: justify;
-            margin-top: 20px;
-            border-top: 1px dotted #ccc;
-            padding-top: 10px;
         }
 
-        /* Exact Print Styles */
+        /* Print Settings Exact Output */
         @media print {
             body {
-                background: #ffffff;
+                background-color: #ffffff;
                 padding: 0;
                 margin: 0;
             }
-            .page-wrapper {
-                max-width: 100%;
-                width: 100%;
-                padding: 0;
-            }
+
             .no-print {
                 display: none !important;
             }
-            [contenteditable="true"] {
-                background-color: transparent !important;
+
+            .outer-document-box {
+                border: 4px double #000000 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 15px !important;
                 box-shadow: none !important;
             }
+
             .marks-table th, 
             .marks-table td {
-                border: 1px solid #000000 !important;
+                border: 4px double #000000 !important;
+            }
+
+            [contenteditable="true"] {
+                background-color: transparent !important;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Editor Toolbar (Hidden during print) -->
-    <div class="admin-controls no-print">
-        <span><strong>Result Page Editor</strong> (Click any text directly to edit)</span>
+    <!-- On-screen Editing Controls Bar -->
+    <div class="controls-bar no-print">
+        <span><strong>Live Editor:</strong> All text inside the double box is editable.</span>
         <div>
-            <button class="btn-add" onclick="addSubjectRow()">+ Add Row</button>
-            <button class="btn-print" onclick="window.print()">🖨️ Print Exact Page</button>
+            <button class="add-btn" onclick="addSubjectRow()">+ Add Row</button>
+            <button onclick="window.print()">🖨️ Print Document</button>
         </div>
     </div>
 
-    <div class="page-wrapper">
-        <!-- Breadcrumb Link -->
-        <div class="breadcrumb" contenteditable="true">Home » RESULTS</div>
+    <!-- Main Outer Single Double-Lined Box -->
+    <div class="outer-document-box">
 
-        <!-- Student Details Grid -->
-        <table class="student-details-table">
+        <!-- Header Path -->
+        <div class="header-path" contenteditable="true">Home » RESULTS</div>
+
+        <!-- Student Data -->
+        <table class="student-info-table">
             <tr>
-                <td class="label-col" contenteditable="true">Hall Ticket Number :</td>
+                <td class="label-cell" contenteditable="true">Hall Ticket Number :</td>
                 <td contenteditable="true">Y23ED146028</td>
             </tr>
             <tr>
-                <td class="label-col" contenteditable="true">Student Name :</td>
+                <td class="label-cell" contenteditable="true">Student Name :</td>
                 <td contenteditable="true">GURUPRASAD NAYAK</td>
             </tr>
             <tr>
-                <td class="label-col" contenteditable="true">Father Name:</td>
+                <td class="label-cell" contenteditable="true">Father Name:</td>
                 <td contenteditable="true">BISHWAMITRA NAYAK</td>
             </tr>
             <tr>
-                <td class="label-col" contenteditable="true">COURSE:</td>
+                <td class="label-cell" contenteditable="true">COURSE:</td>
                 <td contenteditable="true">B.ED., II SEMESTER REGULAR EXAMINATIONS OCTOBER-2023</td>
             </tr>
             <tr>
-                <td class="label-col" contenteditable="true">Object Code:</td>
+                <td class="label-cell" contenteditable="true">Object Code:</td>
                 <td contenteditable="true"></td>
             </tr>
             <tr>
-                <td class="label-col" contenteditable="true">Group:</td>
+                <td class="label-cell" contenteditable="true">Group:</td>
                 <td contenteditable="true">PHYSICAL SCIENCE & MATHEMATICS</td>
             </tr>
         </table>
 
-        <!-- Marks Table -->
-        <table class="marks-table" id="marksTable">
-            <thead>
-                <tr>
-                    <th contenteditable="true" style="width: 50%;">Subject Code</th>
-                    <th contenteditable="true" style="width: 50%;">Marks Obtained</th>
-                    <th class="no-print action-cell">Remove</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td contenteditable="true">EDS2116</td>
-                    <td contenteditable="true">57P</td>
-                    <td class="no-print action-cell"><button class="btn-delete-row" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true">EDS2216</td>
-                    <td contenteditable="true">67P</td>
-                    <td class="no-print action-cell"><button class="btn-delete-row" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true">EDS2316</td>
-                    <td contenteditable="true">27P</td>
-                    <td class="no-print action-cell"><button class="btn-delete-row" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true">EDS2416</td>
-                    <td contenteditable="true">29P</td>
-                    <td class="no-print action-cell"><button class="btn-delete-row" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true">EDSP2519</td>
-                    <td contenteditable="true">125P</td>
-                    <td class="no-print action-cell"><button class="btn-delete-row" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true">EDSP2619</td>
-                    <td contenteditable="true">25P</td>
-                    <td class="no-print action-cell"><button class="btn-delete-row" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true">EDSP2719</td>
-                    <td contenteditable="true">25P</td>
-                    <td class="no-print action-cell"><button class="btn-delete-row" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true">EDSP2819</td>
-                    <td contenteditable="true">25P</td>
-                    <td class="no-print action-cell"><button class="btn-delete-row" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true">EDSP2919</td>
-                    <td contenteditable="true">25P</td>
-                    <td class="no-print action-cell"><button class="btn-delete-row" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-                <tr>
-                    <td contenteditable="true">EDSP21019</td>
-                    <td contenteditable="true">23P</td>
-                    <td class="no-print action-cell"><button class="btn-delete-row" onclick="deleteRow(this)">Delete</button></td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- Centered Marks Table with Double Lines on Every Cell -->
+        <div class="table-container">
+            <table class="marks-table" id="marksTable">
+                <thead>
+                    <tr>
+                        <th contenteditable="true" style="width: 60%;">Subject Code</th>
+                        <th contenteditable="true" style="width: 40%;">Marks<br>Obtained</th>
+                        <th class="no-print action-cell"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td contenteditable="true">EDS2116</td>
+                        <td contenteditable="true">57P</td>
+                        <td class="no-print action-cell"><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">EDS2216</td>
+                        <td contenteditable="true">67P</td>
+                        <td class="no-print action-cell"><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">EDS2316</td>
+                        <td contenteditable="true">27P</td>
+                        <td class="no-print action-cell"><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">EDS2416</td>
+                        <td contenteditable="true">29P</td>
+                        <td class="no-print action-cell"><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">EDSP2519</td>
+                        <td contenteditable="true">125P</td>
+                        <td class="no-print action-cell"><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">EDSP2619</td>
+                        <td contenteditable="true">25P</td>
+                        <td class="no-print action-cell"><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">EDSP2719</td>
+                        <td contenteditable="true">25P</td>
+                        <td class="no-print action-cell"><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">EDSP2819</td>
+                        <td contenteditable="true">25P</td>
+                        <td class="no-print action-cell"><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">EDSP2919</td>
+                        <td contenteditable="true">25P</td>
+                        <td class="no-print action-cell"><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                    <tr>
+                        <td contenteditable="true">EDSP21019</td>
+                        <td contenteditable="true">23P</td>
+                        <td class="no-print action-cell"><button class="delete-btn" onclick="deleteRow(this)">Delete</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <!-- Remarks -->
-        <div class="remarks-container">
-            <div class="remark-item">
-                <span class="remark-heading" contenteditable="true">Remark 1</span>
+        <!-- Remarks Section -->
+        <div class="remarks-block">
+            <div class="remark-row">
+                <span class="remark-title" contenteditable="true">Remark 1 </span>
                 <span contenteditable="true">Last Date to Apply Revaluation Date : 01/03/2024, To Submission to P.G Co-Ordinator Last Date : 04/03/2024</span>
             </div>
-            <div class="remark-item">
-                <span class="remark-heading" contenteditable="true">Remark 2</span>
+            <div class="remark-row">
+                <span class="remark-title" contenteditable="true">Remark 2 </span>
                 <span contenteditable="true">Revaluation Fee Per Each Paper : Rs. 1550/-, Xerox Copy/Personal Verification fee per each paper Rs: 1820/-</span>
             </div>
-            <div class="remark-item">
-                <span class="remark-heading" contenteditable="true">Remark 3</span>
+            <div class="remark-row">
+                <span class="remark-title" contenteditable="true">Remark 3 </span>
                 <span contenteditable="true">Student Name/Father Name verify, as per S.S.C, if any correction inform with in 7 days.</span>
             </div>
         </div>
 
-        <!-- Web Portal Buttons -->
-        <div class="page-buttons no-print">
-            <button class="portal-btn" onclick="window.print()">Print result</button>
-            <button class="portal-btn">Back</button>
-        </div>
-
-        <!-- Disclaimer -->
-        <div class="disclaimer-text" contenteditable="true">
+        <!-- Disclaimer Block -->
+        <div class="disclaimer-block" contenteditable="true">
             Disclaimer : nagarjunauniversity.ac.in/anu.ac.in is not responsible for any inadvertent error that may have crept in the results being published on NET. The results published on net are for the immediate information to the examinees. This does not constitute to be a legal document. While all efforts have been made to make the information available on this website as authentic as possible,any staff /persons will not be responsible for any loss to persons caused by any shortcoming, defect or inaccuracy in the information available on website.
         </div>
+
     </div>
 
+    <!-- Dynamic Row Management Script -->
     <script>
         function addSubjectRow() {
             const tableBody = document.getElementById("marksTable").getElementsByTagName('tbody')[0];
@@ -350,11 +345,11 @@
             
             const cell3 = newRow.insertCell(2);
             cell3.className = "no-print action-cell";
-            cell3.innerHTML = '<button class="btn-delete-row" onclick="deleteRow(this)">Delete</button>';
+            cell3.innerHTML = '<button class="delete-btn" onclick="deleteRow(this)">Delete</button>';
         }
 
-        function deleteRow(buttonElement) {
-            const row = buttonElement.closest('tr');
+        function deleteRow(btnElement) {
+            const row = btnElement.closest('tr');
             row.parentNode.removeChild(row);
         }
     </script>
