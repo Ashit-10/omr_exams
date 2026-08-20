@@ -7,9 +7,25 @@
 
 <style>
 @page{size:A4 portrait;margin:0}
+
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:#eee;color:#000}
-body{font-family:"Times New Roman",Times,serif;font-size:12pt}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:#eee;
+  color:#000
+}
+
+body{
+  font-family:"Times New Roman",Times,serif;
+  font-size:12pt;
+  padding-bottom:100px
+}
+
+/* =========================
+   TOP TOOLBAR
+   ========================= */
 
 .editor-bar{
   position:sticky;
@@ -17,9 +33,9 @@ body{font-family:"Times New Roman",Times,serif;font-size:12pt}
   z-index:9999;
   display:flex;
   align-items:center;
-  gap:7px;
+  gap:10px;
   flex-wrap:wrap;
-  padding:9px 10px;
+  padding:12px;
   background:#222;
   color:#fff;
   font-family:Arial,sans-serif;
@@ -28,24 +44,98 @@ body{font-family:"Times New Roman",Times,serif;font-size:12pt}
 
 .editor-bar button{
   border:0;
-  border-radius:4px;
-  padding:7px 10px;
+  border-radius:6px;
+  padding:12px 16px;
+  min-height:48px;
   background:#fff;
   color:#111;
-  font-weight:600;
+  font-weight:700;
+  font-size:16px;
   cursor:pointer
 }
 
-.editor-bar button:hover{background:#e9e9e9}
-.editor-bar button:disabled{opacity:.6;cursor:wait}
-.editor-bar .hint{font-size:12px;opacity:.8;margin-left:auto}
-#fontState{font-weight:bold;min-width:56px;text-align:center}
+.editor-bar button:hover{
+  background:#e9e9e9
+}
+
+.editor-bar button:disabled{
+  opacity:.6;
+  cursor:wait
+}
+
+.editor-bar .hint{
+  font-size:13px;
+  opacity:.8;
+  margin-left:auto
+}
+
+#fontState{
+  font-weight:bold;
+  min-width:65px;
+  text-align:center;
+  font-size:15px
+}
+
+/* =========================
+   LARGE DELETE BUTTON
+   ========================= */
+
+.delete-bar{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:10000;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+
+  background:#222;
+  box-shadow:0 -3px 12px #0005
+}
+
+#deleteSelected{
+  width:min(92vw,520px);
+  min-height:78px;
+
+  border:0;
+  border-radius:12px;
+
+  background:#d71919;
+  color:#fff;
+
+  font-family:Arial,sans-serif;
+  font-size:27px;
+  font-weight:900;
+
+  cursor:pointer;
+
+  box-shadow:0 3px 0 #9c0000
+}
+
+#deleteSelected:active{
+  transform:translateY(2px);
+  box-shadow:none
+}
+
+#deleteSelected:disabled{
+  background:#777;
+  box-shadow:none;
+  opacity:.7
+}
+
+/* =========================
+   PAGE
+   ========================= */
 
 .page{
   width:210mm;
   min-height:297mm;
   margin:10mm auto 15mm;
-  padding:0 10mm 9mm;
+  padding:0 10mm 30mm;
   background:#fff;
   box-shadow:0 0 14px #0002;
   position:relative
@@ -58,7 +148,14 @@ body{font-family:"Times New Roman",Times,serif;font-size:12pt}
   padding-top:1mm
 }
 
-.breadcrumb a{color:#00e;text-decoration:underline}
+.breadcrumb a{
+  color:#00e;
+  text-decoration:underline
+}
+
+/* =========================
+   MAIN TABLE
+   ========================= */
 
 table.result-main{
   width:100%;
@@ -76,10 +173,29 @@ table.result-main{
   height:7.1mm
 }
 
-.label,.remark-label{width:27.3%;font-weight:bold}
-.value,.remark-value{width:72.7%}
+.label,
+.remark-label{
+  width:27.3%;
+  font-weight:bold
+}
 
-.header-row{position:relative}
+.value,
+.remark-value{
+  width:72.7%
+}
+
+/* =========================
+   HEADER ROWS
+   ========================= */
+
+.header-row{
+  position:relative;
+  cursor:pointer
+}
+
+/* =========================
+   SUBJECT TABLE
+   ========================= */
 
 .subject-holder{
   padding:2px!important;
@@ -109,15 +225,33 @@ table.subject-table{
 .subject-table th{
   font-weight:bold;
   height:8mm;
-  line-height:3.8mm;
-  position:relative
+  line-height:3.8mm
 }
 
-.subject-col{width:75%}
-.marks-col{width:25%}
+.subject-col{
+  width:75%
+}
 
-.remark-value{line-height:4.2mm}
-.bottom-space{height:8mm}
+.marks-col{
+  width:25%
+}
+
+.subject-row{
+  position:relative;
+  cursor:pointer
+}
+
+.remark-value{
+  line-height:4.2mm
+}
+
+/* =========================
+   OTHER CONTENT
+   ========================= */
+
+.bottom-space{
+  height:8mm
+}
 
 .links{
   text-align:right;
@@ -140,6 +274,10 @@ table.subject-table{
   text-align:justify
 }
 
+/* =========================
+   EDITABLE TEXT
+   ========================= */
+
 [contenteditable=true]{
   outline:none;
   cursor:text
@@ -150,93 +288,69 @@ table.subject-table{
   outline-offset:1px
 }
 
-/* Red delete / blue add controls */
-.row-tools{
-  display:none;
-  position:absolute;
-  right:-15mm;
-  top:50%;
-  transform:translateY(-50%);
-  gap:2px;
-  z-index:100
+/* =========================
+   SELECTED ROW
+   ========================= */
+
+.delete-selected{
+  outline:4px solid #e00000!important;
+  outline-offset:-2px
 }
 
-.header-row:hover>.row-tools{display:inline-flex}
+/* =========================
+   MOBILE
+   ========================= */
 
-.row-tools button{
-  border:0;
-  border-radius:3px;
-  padding:2px 5px;
-  color:#fff;
-  cursor:pointer;
-  font:11px Arial,sans-serif
+@media(max-width:700px){
+
+  .editor-bar{
+    gap:7px;
+    padding:10px 8px
+  }
+
+  .editor-bar button{
+    flex:1 1 auto;
+    min-height:54px;
+    padding:12px 13px;
+    font-size:16px
+  }
+
+  #fontState{
+    display:none
+  }
+
+  .hint{
+    display:none
+  }
+
+  .page{
+    margin:5mm auto 20mm
+  }
+
+  #deleteSelected{
+    min-height:82px;
+    font-size:27px
+  }
 }
 
-.row-tools .add{background:#2878d0}
-.row-tools .delete{background:#d33}
-
-.subject-row{
-  position:relative
-}
-
-.subject-row:hover .row-tools{
-  display:inline-flex
-}
-
-.subject-row .row-tools{
-  right:-13mm
-}
-
-/* Delete button for individual cells */
-.cell-tools{
-  display:none;
-  position:absolute;
-  right:-11mm;
-  top:50%;
-  transform:translateY(-50%);
-  z-index:100
-}
-
-.editable-cell{
-  position:relative
-}
-
-.editable-cell:hover .cell-tools{
-  display:block
-}
-
-.cell-tools button{
-  border:0;
-  border-radius:3px;
-  padding:2px 5px;
-  color:#fff;
-  background:#d33;
-  cursor:pointer;
-  font:11px Arial,sans-serif
-}
-
-/* Header-cell delete buttons */
-.header-cell{
-  position:relative
-}
-
-.header-cell:hover .cell-tools{
-  display:block
-}
-
-/* Selection formatting helper */
-.bold-on{font-weight:bold!important}
+/* =========================
+   PRINT
+   ========================= */
 
 @media print{
+
   html,body{
-    background:#fff!important
+    background:#fff!important;
+    padding:0!important
   }
 
   .editor-bar,
-  .row-tools,
-  .cell-tools,
-  .section-tools{
+  .delete-bar{
     display:none!important
+  }
+
+  .delete-selected{
+    outline:none!important
   }
 
   .page{
@@ -271,164 +385,184 @@ table.subject-table{
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 
 <body>
 
+<!-- =========================
+     TOP TOOLBAR
+     ========================= -->
+
 <div class="editor-bar">
-  <button onclick="addHeaderRow()">＋ Add Header Box</button>
-  <button onclick="addSubject()">＋ Add Subject Box</button>
-  <button onclick="boldSelection()"><b>B</b> Bold / Unbold</button>
+
+  <button onclick="addHeaderRow()">
+    ＋ Add Header Box
+  </button>
+
+  <button onclick="addSubject()">
+    ＋ Add Subject Box
+  </button>
+
+  <button onclick="boldSelection()">
+    <b>B</b> Bold / Unbold
+  </button>
+
   <span id="fontState">Text</span>
-  <button id="downloadPDF" onclick="downloadPDF()">Download PDF</button>
-  <button onclick="window.print()">🖨 Print</button>
-  <span class="hint">Click text to edit • Hover a box for + / × • Select text and press Bold</span>
+
+  <button id="downloadPDF" onclick="downloadPDF()">
+    Download PDF
+  </button>
+
+  <button onclick="window.print()">
+    🖨 Print
+  </button>
+
+  <span class="hint">
+    Tap a box to select it • Use DELETE at bottom
+  </span>
+
 </div>
+
+
+<!-- =========================
+     LARGE DELETE BUTTON
+     ========================= -->
+
+<div class="delete-bar">
+
+  <button
+    id="deleteSelected"
+    onclick="deleteSelectedItem()"
+    disabled
+  >
+    🗑 DELETE SELECTED
+  </button>
+
+</div>
+
+
+<!-- =========================
+     RESULT PAGE
+     ========================= -->
 
 <div class="page" id="page">
 
   <div class="breadcrumb">
-    <a contenteditable="true">Home</a> » 
+    <a contenteditable="true">Home</a>
+    »
     <span contenteditable="true">RESULTS</span>
   </div>
 
+
   <table class="result-main" id="resultMain">
+
     <colgroup>
       <col style="width:27.3%">
       <col style="width:72.7%">
     </colgroup>
 
+
+    <!-- =========================
+         HEADER ROWS
+         ========================= -->
+
     <tbody id="headerRows">
 
+      <!-- Fixed blank spacing row -->
       <tr class="header-row" data-fixed="true">
-        <td colspan="2">
-          &nbsp;
-          <span class="row-tools">
-            <button class="add" onclick="addHeaderAfter(this)">＋</button>
-            <button class="delete" onclick="deleteHeader(this)">×</button>
-          </span>
-        </td>
+        <td colspan="2">&nbsp;</td>
       </tr>
 
+
       <tr class="header-row">
-        <td class="label editable-cell" contenteditable="true">
+
+        <td class="label" contenteditable="true">
           Hall Ticket Number :
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <td class="value editable-cell" contenteditable="true">
+
+        <td class="value" contenteditable="true">
           Y23ED146028
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <span class="row-tools">
-          <button class="add" onclick="addHeaderAfter(this)">＋</button>
-          <button class="delete" onclick="deleteHeader(this)">×</button>
-        </span>
+
       </tr>
 
+
       <tr class="header-row">
-        <td class="label editable-cell" contenteditable="true">
+
+        <td class="label" contenteditable="true">
           Student Name :
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <td class="value editable-cell" contenteditable="true">
+
+        <td class="value" contenteditable="true">
           GURUPRASAD NAYAK
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <span class="row-tools">
-          <button class="add" onclick="addHeaderAfter(this)">＋</button>
-          <button class="delete" onclick="deleteHeader(this)">×</button>
-        </span>
+
       </tr>
 
+
       <tr class="header-row">
-        <td class="label editable-cell" contenteditable="true">
+
+        <td class="label" contenteditable="true">
           Father Name:
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <td class="value editable-cell" contenteditable="true">
+
+        <td class="value" contenteditable="true">
           BISHWAMITRA NAYAK
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <span class="row-tools">
-          <button class="add" onclick="addHeaderAfter(this)">＋</button>
-          <button class="delete" onclick="deleteHeader(this)">×</button>
-        </span>
+
       </tr>
 
+
       <tr class="header-row">
-        <td class="label editable-cell" contenteditable="true">
+
+        <td class="label" contenteditable="true">
           COURSE:
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <td class="value editable-cell" contenteditable="true">
+
+        <td class="value" contenteditable="true">
           B.ED., II SEMESTER REGULAR EXAMINATIONS OCTOBER-2023
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <span class="row-tools">
-          <button class="add" onclick="addHeaderAfter(this)">＋</button>
-          <button class="delete" onclick="deleteHeader(this)">×</button>
-        </span>
+
       </tr>
 
+
       <tr class="header-row">
-        <td class="label editable-cell" contenteditable="true">
+
+        <td class="label" contenteditable="true">
           Object Code:
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <td class="value editable-cell" contenteditable="true">
+
+        <td class="value" contenteditable="true">
           &nbsp;
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <span class="row-tools">
-          <button class="add" onclick="addHeaderAfter(this)">＋</button>
-          <button class="delete" onclick="deleteHeader(this)">×</button>
-        </span>
+
       </tr>
 
+
       <tr class="header-row">
-        <td class="label editable-cell" contenteditable="true">
+
+        <td class="label" contenteditable="true">
           Group:
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <td class="value editable-cell" contenteditable="true">
+
+        <td class="value" contenteditable="true">
           PHYSICAL SCIENCE &amp; MATHEMATICS
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-        <span class="row-tools">
-          <button class="add" onclick="addHeaderAfter(this)">＋</button>
-          <button class="delete" onclick="deleteHeader(this)">×</button>
-        </span>
+
       </tr>
 
     </tbody>
 
+
+    <!-- =========================
+         SUBJECTS + REMARKS
+         ========================= -->
+
     <tbody>
 
       <tr>
+
         <td colspan="2" class="subject-holder">
 
           <table class="subject-table">
@@ -438,411 +572,595 @@ table.subject-table{
               <col class="marks-col">
             </colgroup>
 
+
             <thead>
+
               <tr>
-                <th class="editable-cell" contenteditable="true">
+
+                <th contenteditable="true">
                   Subject Code
-                  <span class="cell-tools">
-                    <button onclick="deleteCell(this)">×</button>
-                  </span>
                 </th>
 
-                <th class="editable-cell" contenteditable="true">
+                <th contenteditable="true">
                   Marks<br>Obtained
-                  <span class="cell-tools">
-                    <button onclick="deleteCell(this)">×</button>
-                  </span>
                 </th>
+
               </tr>
+
             </thead>
+
 
             <tbody id="subjectRows">
 
               <tr class="subject-row">
-                <td contenteditable="true">EDS2116</td>
+
+                <td contenteditable="true">
+                  EDS2116
+                </td>
+
                 <td contenteditable="true" class="marks-cell">
                   57P
-                  <span class="row-tools">
-                    <button class="add" onclick="addAfter(this)">＋</button>
-                    <button class="delete" onclick="deleteRow(this)">×</button>
-                  </span>
                 </td>
+
               </tr>
 
+
               <tr class="subject-row">
-                <td contenteditable="true">EDS2216</td>
+
+                <td contenteditable="true">
+                  EDS2216
+                </td>
+
                 <td contenteditable="true" class="marks-cell">
                   67P
-                  <span class="row-tools">
-                    <button class="add" onclick="addAfter(this)">＋</button>
-                    <button class="delete" onclick="deleteRow(this)">×</button>
-                  </span>
                 </td>
+
               </tr>
 
+
               <tr class="subject-row">
-                <td contenteditable="true">EDS2316</td>
+
+                <td contenteditable="true">
+                  EDS2316
+                </td>
+
                 <td contenteditable="true" class="marks-cell">
                   27P
-                  <span class="row-tools">
-                    <button class="add" onclick="addAfter(this)">＋</button>
-                    <button class="delete" onclick="deleteRow(this)">×</button>
-                  </span>
                 </td>
+
               </tr>
 
+
               <tr class="subject-row">
-                <td contenteditable="true">EDS2416</td>
+
+                <td contenteditable="true">
+                  EDS2416
+                </td>
+
                 <td contenteditable="true" class="marks-cell">
                   29P
-                  <span class="row-tools">
-                    <button class="add" onclick="addAfter(this)">＋</button>
-                    <button class="delete" onclick="deleteRow(this)">×</button>
-                  </span>
                 </td>
+
               </tr>
 
+
               <tr class="subject-row">
-                <td contenteditable="true">EDSP2519</td>
+
+                <td contenteditable="true">
+                  EDSP2519
+                </td>
+
                 <td contenteditable="true" class="marks-cell">
                   125P
-                  <span class="row-tools">
-                    <button class="add" onclick="addAfter(this)">＋</button>
-                    <button class="delete" onclick="deleteRow(this)">×</button>
-                  </span>
                 </td>
+
               </tr>
 
+
               <tr class="subject-row">
-                <td contenteditable="true">EDSP2619</td>
+
+                <td contenteditable="true">
+                  EDSP2619
+                </td>
+
                 <td contenteditable="true" class="marks-cell">
                   25P
-                  <span class="row-tools">
-                    <button class="add" onclick="addAfter(this)">＋</button>
-                    <button class="delete" onclick="deleteRow(this)">×</button>
-                  </span>
                 </td>
+
               </tr>
 
+
               <tr class="subject-row">
-                <td contenteditable="true">EDSP2719</td>
+
+                <td contenteditable="true">
+                  EDSP2719
+                </td>
+
                 <td contenteditable="true" class="marks-cell">
                   25P
-                  <span class="row-tools">
-                    <button class="add" onclick="addAfter(this)">＋</button>
-                    <button class="delete" onclick="deleteRow(this)">×</button>
-                  </span>
                 </td>
+
               </tr>
 
+
               <tr class="subject-row">
-                <td contenteditable="true">EDSP2819</td>
+
+                <td contenteditable="true">
+                  EDSP2819
+                </td>
+
                 <td contenteditable="true" class="marks-cell">
                   25P
-                  <span class="row-tools">
-                    <button class="add" onclick="addAfter(this)">＋</button>
-                    <button class="delete" onclick="deleteRow(this)">×</button>
-                  </span>
                 </td>
+
               </tr>
 
+
               <tr class="subject-row">
-                <td contenteditable="true">EDSP2919</td>
+
+                <td contenteditable="true">
+                  EDSP2919
+                </td>
+
                 <td contenteditable="true" class="marks-cell">
                   25P
-                  <span class="row-tools">
-                    <button class="add" onclick="addAfter(this)">＋</button>
-                    <button class="delete" onclick="deleteRow(this)">×</button>
-                  </span>
                 </td>
+
               </tr>
 
+
               <tr class="subject-row">
-                <td contenteditable="true">EDSP21019</td>
+
+                <td contenteditable="true">
+                  EDSP21019
+                </td>
+
                 <td contenteditable="true" class="marks-cell">
                   23P
-                  <span class="row-tools">
-                    <button class="add" onclick="addAfter(this)">＋</button>
-                    <button class="delete" onclick="deleteRow(this)">×</button>
-                  </span>
                 </td>
+
               </tr>
 
             </tbody>
+
           </table>
+
         </td>
+
       </tr>
+
+
+      <!-- =========================
+           REMARK 1
+           ========================= -->
 
       <tr class="header-row">
 
-        <td class="remark-label editable-cell" contenteditable="true">
+        <td
+          class="remark-label"
+          contenteditable="true"
+        >
           Remark 1
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
 
-        <td class="remark-value editable-cell" contenteditable="true">
+        <td
+          class="remark-value"
+          contenteditable="true"
+        >
           Last Date to Apply Revaluation Date : 01/03/2024, To Submission to P.G<br>
           Co-Ordinator Last Date : 04/03/2024
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-
-        <span class="row-tools">
-          <button class="add" onclick="addHeaderAfter(this)">＋</button>
-          <button class="delete" onclick="deleteHeader(this)">×</button>
-        </span>
 
       </tr>
 
+
+      <!-- =========================
+           REMARK 2
+           ========================= -->
+
       <tr class="header-row">
 
-        <td class="remark-label editable-cell" contenteditable="true">
+        <td
+          class="remark-label"
+          contenteditable="true"
+        >
           Remark 2
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
 
-        <td class="remark-value editable-cell" contenteditable="true">
+        <td
+          class="remark-value"
+          contenteditable="true"
+        >
           Revaluation Fee Per Each Paper : Rs. 1550/-, Xerox Copy/Personal<br>
           Verification fee per each paper Rs: 1820/-
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-
-        <span class="row-tools">
-          <button class="add" onclick="addHeaderAfter(this)">＋</button>
-          <button class="delete" onclick="deleteHeader(this)">×</button>
-        </span>
 
       </tr>
 
+
+      <!-- =========================
+           REMARK 3
+           ========================= -->
+
       <tr class="header-row">
 
-        <td class="remark-label editable-cell" contenteditable="true">
+        <td
+          class="remark-label"
+          contenteditable="true"
+        >
           Remark 3
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
 
-        <td class="remark-value editable-cell" contenteditable="true">
+        <td
+          class="remark-value"
+          contenteditable="true"
+        >
           Student Name/Father Name verify, as per S.S.C, if any correction<br>
           inform with in 7 days.
-          <span class="cell-tools">
-            <button onclick="deleteCell(this)">×</button>
-          </span>
         </td>
-
-        <span class="row-tools">
-          <button class="add" onclick="addHeaderAfter(this)">＋</button>
-          <button class="delete" onclick="deleteHeader(this)">×</button>
-        </span>
 
       </tr>
 
     </tbody>
+
   </table>
+
 
   <div class="bottom-space"></div>
 
+
   <div class="links">
-    <a contenteditable="true">Print result</a><br>
-    <a contenteditable="true">Back</a>
+
+    <a contenteditable="true">
+      Print result
+    </a>
+
+    <br>
+
+    <a contenteditable="true">
+      Back
+    </a>
+
   </div>
 
+
   <div class="disclaimer" contenteditable="true">
+
     Disclaimer : nagarjunauniversity.ac.in/anu.ac.in is not responsible for any inadvertent error that may have crept in the results being published on NET. The results published on net are for the immediate information to the examinees. This does not constitute to be a legal document. While all efforts have been made to make the information available on website as authentic as possible,any staff /persons will not be responsible for any loss to persons caused by any shortcoming, defect or inaccuracy in the information available on website.
+
   </div>
 
 </div>
 
+
 <script>
 
+/* =========================================================
+   GENERAL HTML ESCAPE
+   ========================================================= */
+
 function esc(s){
-  return String(s??'')
+
+  return String(s ?? '')
     .replace(/&/g,'&amp;')
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
+    .replace(/"/g,'&quot;');
+
 }
 
-/* ---------- ADD / DELETE CONTROLS ---------- */
 
-function tools(type){
-  if(type==='header'){
-    return `
-      <span class="row-tools">
-        <button class="add" onclick="addHeaderAfter(this)">＋</button>
-        <button class="delete" onclick="deleteHeader(this)">×</button>
-      </span>`;
-  }
+/* =========================================================
+   SELECTED ITEM
+   ========================================================= */
 
-  return `
-    <span class="row-tools">
-      <button class="add" onclick="addAfter(this)">＋</button>
-      <button class="delete" onclick="deleteRow(this)">×</button>
-    </span>`;
-}
+let selectedItem = null;
 
-function cellTools(){
-  return `
-    <span class="cell-tools">
-      <button onclick="deleteCell(this)">×</button>
-    </span>`;
-}
 
-/* ---------- SUBJECTS ---------- */
+/* =========================================================
+   SELECT A HEADER / SUBJECT ROW
+   ========================================================= */
 
-function rowHTML(code='',marks=''){
-  return `
-    <tr class="subject-row">
-      <td contenteditable="true">${esc(code)}</td>
-      <td contenteditable="true" class="marks-cell">
-        ${esc(marks)}
-        ${tools('subject')}
-      </td>
-    </tr>`;
-}
+function selectItem(element){
 
-function addSubject(){
-  document
-    .getElementById('subjectRows')
-    .insertAdjacentHTML('beforeend',rowHTML('NEW CODE','0P'));
-}
-
-function addAfter(btn){
-  btn.closest('tr')
-     .insertAdjacentHTML('afterend',rowHTML('NEW CODE','0P'));
-}
-
-function deleteRow(btn){
-  const rows=document.querySelectorAll('#subjectRows .subject-row');
-
-  if(rows.length<=1){
-    alert('At least one subject row must remain.');
+  if(!element){
     return;
   }
 
-  btn.closest('tr').remove();
+  if(selectedItem){
+    selectedItem.classList.remove('delete-selected');
+  }
+
+  selectedItem = element;
+
+  selectedItem.classList.add('delete-selected');
+
+  const deleteButton =
+    document.getElementById('deleteSelected');
+
+  deleteButton.disabled = false;
+
+  deleteButton.textContent =
+    '🗑 DELETE SELECTED';
+
 }
 
-/* ---------- HEADER BOXES ---------- */
+
+/* =========================================================
+   CLICK HANDLER
+   ========================================================= */
+
+document.addEventListener('click',function(e){
+
+  /*
+    Do not interfere with toolbar buttons,
+    delete button, links or editable text.
+  */
+
+  if(
+    e.target.closest('.editor-bar') ||
+    e.target.closest('.delete-bar')
+  ){
+    return;
+  }
+
+
+  /*
+    Subject row
+  */
+
+  const subjectRow =
+    e.target.closest('#subjectRows .subject-row');
+
+  if(subjectRow){
+
+    selectItem(subjectRow);
+
+    return;
+  }
+
+
+  /*
+    Header / remark row
+  */
+
+  const headerRow =
+    e.target.closest('#headerRows .header-row, tbody > .header-row');
+
+  if(headerRow){
+
+    selectItem(headerRow);
+
+    return;
+  }
+
+});
+
+
+/* =========================================================
+   DELETE SELECTED
+   ========================================================= */
+
+function deleteSelectedItem(){
+
+  if(!selectedItem){
+    return;
+  }
+
+
+  /*
+    The top blank spacing row is fixed.
+  */
+
+  if(selectedItem.dataset.fixed === 'true'){
+
+    alert(
+      'The top blank spacing row cannot be deleted.'
+    );
+
+    return;
+  }
+
+
+  /*
+    SUBJECT ROW
+  */
+
+  if(
+    selectedItem.classList.contains('subject-row')
+  ){
+
+    const rows =
+      document.querySelectorAll(
+        '#subjectRows .subject-row'
+      );
+
+    /*
+      Keep at least one subject row.
+    */
+
+    if(rows.length <= 1){
+
+      alert(
+        'At least one subject row must remain.'
+      );
+
+      return;
+    }
+
+    selectedItem.remove();
+
+  }
+
+
+  /*
+    HEADER / REMARK BOX
+  */
+
+  else if(
+    selectedItem.classList.contains('header-row')
+  ){
+
+    /*
+      Delete the ENTIRE table row.
+      Nothing is left behind.
+    */
+
+    selectedItem.remove();
+
+  }
+
+
+  /*
+    Clear selection
+  */
+
+  selectedItem = null;
+
+  const deleteButton =
+    document.getElementById('deleteSelected');
+
+  deleteButton.disabled = true;
+
+  deleteButton.textContent =
+    '🗑 DELETE SELECTED';
+
+}
+
+
+/* =========================================================
+   ADD SUBJECT
+   ========================================================= */
+
+function rowHTML(code='',marks=''){
+
+  return `
+    <tr class="subject-row">
+
+      <td contenteditable="true">
+        ${esc(code)}
+      </td>
+
+      <td
+        contenteditable="true"
+        class="marks-cell"
+      >
+        ${esc(marks)}
+      </td>
+
+    </tr>
+  `;
+
+}
+
+
+function addSubject(){
+
+  document
+    .getElementById('subjectRows')
+    .insertAdjacentHTML(
+      'beforeend',
+      rowHTML('NEW CODE','0P')
+    );
+
+}
+
+
+/* =========================================================
+   ADD HEADER BOX
+   ========================================================= */
 
 function headerHTML(label='',value=''){
+
   return `
     <tr class="header-row">
 
-      <td class="label editable-cell" contenteditable="true">
+      <td
+        class="label"
+        contenteditable="true"
+      >
         ${esc(label)}
-        ${cellTools()}
       </td>
 
-      <td class="value editable-cell" contenteditable="true">
-        ${esc(value)||'&nbsp;'}
-        ${cellTools()}
+      <td
+        class="value"
+        contenteditable="true"
+      >
+        ${esc(value) || '&nbsp;'}
       </td>
 
-      ${tools('header')}
+    </tr>
+  `;
 
-    </tr>`;
 }
 
+
 function addHeaderRow(){
+
   document
     .getElementById('headerRows')
     .insertAdjacentHTML(
       'beforeend',
       headerHTML('New Box:','')
     );
+
 }
 
-function addHeaderAfter(btn){
-  btn.closest('tr')
-     .insertAdjacentHTML(
-       'afterend',
-       headerHTML('New Box:','')
-     );
-}
 
-function deleteHeader(btn){
-  const row=btn.closest('tr');
-
-  if(row.dataset.fixed==='true'){
-    alert('The top blank spacing row cannot be deleted.');
-    return;
-  }
-
-  row.remove();
-}
-
-/* ---------- INDIVIDUAL CELL DELETE ---------- */
-
-function deleteCell(btn){
-
-  const cell=btn.closest('td,th');
-
-  if(!cell)return;
-
-  const row=cell.closest('tr');
-
-  /* Subject-code/marks cells:
-     deleting one cell should only clear that cell,
-     not destroy the complete subject row. */
-  if(row && row.classList.contains('subject-row')){
-    cell.innerHTML='';
-
-    if(cell.classList.contains('marks-cell')){
-      cell.classList.add('marks-cell');
-      cell.innerHTML=cellTools();
-    }else{
-      cell.innerHTML=cellTools();
-    }
-
-    return;
-  }
-
-  /* Header/remark cells:
-     delete only the selected cell content while
-     keeping the table structure intact. */
-  cell.innerHTML='';
-  cell.classList.add('editable-cell');
-  cell.setAttribute('contenteditable','true');
-  cell.innerHTML=cellTools();
-}
-
-/* ---------- BOLD ---------- */
+/* =========================================================
+   BOLD / UNBOLD
+   ========================================================= */
 
 function boldSelection(){
 
-  const sel=window.getSelection();
+  const sel = window.getSelection();
 
-  if(!sel || sel.rangeCount===0 || sel.isCollapsed){
-    alert('Select the text you want to bold/un-bold first.');
+  if(
+    !sel ||
+    sel.rangeCount === 0 ||
+    sel.isCollapsed
+  ){
+
+    alert(
+      'Select the text you want to bold/un-bold first.'
+    );
+
     return;
   }
 
-  document.execCommand('bold',false,null);
+  document.execCommand(
+    'bold',
+    false,
+    null
+  );
+
   updateBoldState();
+
 }
+
 
 function updateBoldState(){
 
-  const state=document.getElementById('fontState');
-  let b=false;
+  const state =
+    document.getElementById('fontState');
+
+  let bold = false;
 
   try{
-    b=document.queryCommandState('bold');
+    bold =
+      document.queryCommandState('bold');
   }catch(e){}
 
-  state.textContent=b?'Bold':'Normal';
+  state.textContent =
+    bold ? 'Bold' : 'Normal';
+
 }
 
-document.addEventListener('selectionchange',updateBoldState);
+
+document.addEventListener(
+  'selectionchange',
+  updateBoldState
+);
 
 
 /* =========================================================
@@ -851,134 +1169,218 @@ document.addEventListener('selectionchange',updateBoldState);
 
 async function downloadPDF(){
 
-  const btn=document.getElementById('downloadPDF');
-  const page=document.getElementById('page');
+  const button =
+    document.getElementById('downloadPDF');
 
-  const hide=document.querySelectorAll(
-    '.editor-bar,.row-tools,.cell-tools,.section-tools'
-  );
+  const page =
+    document.getElementById('page');
 
-  const old=[];
 
-  hide.forEach(e=>{
-    old.push([e,e.style.display]);
-    e.style.display='none';
-  });
+  /*
+    Save selected row state.
+    It must not appear in the PDF.
+  */
 
-  btn.disabled=true;
-  btn.textContent='Creating PDF...';
+  const selectedBefore =
+    selectedItem;
+
+
+  if(selectedBefore){
+    selectedBefore.classList.remove(
+      'delete-selected'
+    );
+  }
+
+
+  button.disabled = true;
+
+  button.textContent =
+    'Creating PDF...';
+
 
   try{
 
-    if(!window.html2canvas || !window.jspdf){
-      throw new Error('PDF libraries not loaded');
-    }
+    if(
+      !window.html2canvas ||
+      !window.jspdf
+    ){
 
-    /* Allow the browser to repaint after controls disappear */
-    await new Promise(resolve=>{
-      requestAnimationFrame(()=>{
-        requestAnimationFrame(resolve);
-      });
-    });
-
-    /*
-      A4 at approximately 300 DPI.
-
-      210mm = 8.27 inches
-      8.27 × 300 ≈ 2480 px
-
-      This gives a much sharper rasterized PDF than the
-      previous scale:4 calculation.
-    */
-
-    const targetWidth=2480;
-
-    const rect=page.getBoundingClientRect();
-
-    const scale=targetWidth/rect.width;
-
-    const canvas=await html2canvas(page,{
-      scale:scale,
-      useCORS:true,
-      allowTaint:false,
-      backgroundColor:'#ffffff',
-      logging:false,
-      removeContainer:true,
-      foreignObjectRendering:false,
-      imageTimeout:0
-    });
-
-    const {jsPDF}=window.jspdf;
-
-    const pdf=new jsPDF({
-      orientation:'portrait',
-      unit:'mm',
-      format:'a4',
-      compress:true,
-      putOnlyUsedFonts:true
-    });
-
-    const pageWidth=210;
-    const pageHeight=297;
-
-    /*
-      Calculate image height from the real canvas ratio.
-    */
-    const imageHeight=
-      canvas.height/canvas.width*pageWidth;
-
-    /*
-      PNG keeps text and thin lines cleaner than JPEG.
-      Do not use FAST compression here because it can
-      reduce the quality of the embedded image.
-    */
-    const imgData=canvas.toDataURL(
-      'image/png',
-      1.0
-    );
-
-    /*
-      If the content is taller than one A4 page,
-      split it into A4 pages instead of stretching it.
-    */
-    if(imageHeight<=pageHeight){
-
-      pdf.addImage(
-        imgData,
-        'PNG',
-        0,
-        0,
-        pageWidth,
-        imageHeight,
-        undefined,
-        'NONE'
+      throw new Error(
+        'PDF libraries not loaded'
       );
 
-    }else{
+    }
 
-      const pageCanvas=document.createElement('canvas');
 
-      const pagePixelHeight=
+    /*
+      Give browser time to repaint.
+    */
+
+    await new Promise(resolve => {
+
+      requestAnimationFrame(() => {
+
+        requestAnimationFrame(resolve);
+
+      });
+
+    });
+
+
+    /*
+      Approximately 300 DPI for A4 width.
+    */
+
+    const targetWidth = 2480;
+
+    const rect =
+      page.getBoundingClientRect();
+
+    const scale =
+      targetWidth / rect.width;
+
+
+    const canvas =
+      await html2canvas(page,{
+
+        scale:scale,
+
+        useCORS:true,
+
+        allowTaint:false,
+
+        backgroundColor:'#ffffff',
+
+        logging:false,
+
+        removeContainer:true,
+
+        foreignObjectRendering:false,
+
+        imageTimeout:0
+
+      });
+
+
+    const {jsPDF} =
+      window.jspdf;
+
+
+    const pdf =
+      new jsPDF({
+
+        orientation:'portrait',
+
+        unit:'mm',
+
+        format:'a4',
+
+        compress:true,
+
+        putOnlyUsedFonts:true
+
+      });
+
+
+    const pageWidth = 210;
+
+    const pageHeight = 297;
+
+
+    const imageHeight =
+      canvas.height /
+      canvas.width *
+      pageWidth;
+
+
+    /*
+      PNG is used instead of JPEG so that
+      text and thin table borders remain sharp.
+    */
+
+    const image =
+      canvas.toDataURL(
+        'image/png',
+        1.0
+      );
+
+
+    /*
+      One page.
+    */
+
+    if(imageHeight <= pageHeight){
+
+      pdf.addImage(
+
+        image,
+
+        'PNG',
+
+        0,
+
+        0,
+
+        pageWidth,
+
+        imageHeight,
+
+        undefined,
+
+        'NONE'
+
+      );
+
+    }
+
+
+    /*
+      Multiple pages.
+    */
+
+    else{
+
+      const pageCanvas =
+        document.createElement('canvas');
+
+
+      const pagePixelHeight =
         Math.floor(
-          canvas.width*(pageHeight/pageWidth)
+          canvas.width *
+          (pageHeight / pageWidth)
         );
 
-      pageCanvas.width=canvas.width;
-      pageCanvas.height=pagePixelHeight;
 
-      const ctx=pageCanvas.getContext('2d');
+      pageCanvas.width =
+        canvas.width;
 
-      let sourceY=0;
-      let pageNumber=0;
+      pageCanvas.height =
+        pagePixelHeight;
 
-      while(sourceY<canvas.height){
 
-        const currentHeight=Math.min(
-          pagePixelHeight,
-          canvas.height-sourceY
-        );
+      const ctx =
+        pageCanvas.getContext('2d');
 
-        pageCanvas.height=currentHeight;
+
+      let sourceY = 0;
+
+      let pageNumber = 0;
+
+
+      while(
+        sourceY < canvas.height
+      ){
+
+        const currentHeight =
+          Math.min(
+            pagePixelHeight,
+            canvas.height - sourceY
+          );
+
+
+        pageCanvas.height =
+          currentHeight;
+
 
         ctx.clearRect(
           0,
@@ -987,67 +1389,111 @@ async function downloadPDF(){
           pageCanvas.height
         );
 
+
         ctx.drawImage(
+
           canvas,
+
           0,
           sourceY,
+
           canvas.width,
           currentHeight,
+
           0,
           0,
+
           canvas.width,
           currentHeight
+
         );
 
-        const part=pageCanvas.toDataURL(
-          'image/png',
-          1.0
-        );
 
-        if(pageNumber>0){
+        const part =
+          pageCanvas.toDataURL(
+            'image/png',
+            1.0
+          );
+
+
+        if(pageNumber > 0){
+
           pdf.addPage();
+
         }
 
+
         pdf.addImage(
+
           part,
+
           'PNG',
+
           0,
+
           0,
+
           pageWidth,
-          currentHeight/canvas.width*pageWidth,
+
+          currentHeight /
+          canvas.width *
+          pageWidth,
+
           undefined,
+
           'NONE'
+
         );
 
-        sourceY+=currentHeight;
+
+        sourceY += currentHeight;
+
         pageNumber++;
+
       }
+
     }
+
 
     /*
       Explicit filename.
-      On iPhone/iPad the browser/share sheet will normally
-      offer this filename when saving to Files.
     */
-    pdf.save('2nd_sem_result.pdf');
 
-  }catch(e){
+    pdf.save(
+      '2nd_sem_result.pdf'
+    );
 
-    console.error(e);
+
+  }catch(error){
+
+    console.error(error);
 
     alert(
-      'PDF could not be generated. Please check your internet connection and try again.'
+      'PDF could not be generated. Make sure the internet connection is available so the PDF libraries can load, then try again.'
     );
 
   }finally{
 
-    old.forEach(([e,d])=>{
-      e.style.display=d;
-    });
+    button.disabled = false;
 
-    btn.disabled=false;
-    btn.textContent='Download PDF';
+    button.textContent =
+      'Download PDF';
+
+
+    /*
+      Restore selection visually.
+    */
+
+    if(selectedBefore){
+
+      selectedBefore.classList.add(
+        'delete-selected'
+      );
+
+    }
+
   }
+
 }
 
 </script>
