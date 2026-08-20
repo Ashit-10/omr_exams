@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Editable 2nd Semester Result</title>
+
+<style>
+@page{size:A4 portrait;margin:0}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:#eee;
+  color:#000
+}
+
+body{
+  font-family:"Times New Roman",Times,serif;
+  font-size:12pt;
+  padding-bottom:100px
+}
+
+/* =========================
+   TOP TOOLBAR
+   ========================= */
+
+.editor-bar{
+  position:sticky;
+  top:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  padding:12px;
+  background:#222;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  box-shadow:0 2px 8px #0004
+}
+
+.editor-bar button{
+  border:0;
+  border-radius:6px;
+  padding:12px 16px;
+  min-height:48px;
+  background:#fff;
+  color:#111;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer
+}
+
+.editor-bar button:hover{
+  background:#e9e9e9
+}
+
+.editor-bar button:disabled{
+  opacity:.6;
+  cursor:wait
+}
+
+.editor-bar .hint{
+  font-size:13px;
+  opacity:.8;
+  margin-left:auto
+}
+
+#fontState{
+  font-weight:bold;
+  min-width:65px;
+  text-align:center;
+  font-size:15px
+}
+
+/* =========================
+   LARGE DELETE BUTTON
+   ========================= */
+
+.delete-bar{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:10000;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+
+  background:#222;
+  box-shadow:0 -3px 12px #0005
+}
+
+#deleteSelected{
+  width:min(92vw,520px);
+  min-height:78px;
+
+  border:0;
+  border-radius:12px;
+
+  background:#d71919;
+  color:#fff;
+
+  font-family:Arial,sans-serif;
+  font-size:27px;
+  font-weight:900;
+
+  cursor:pointer;
+
+  box-shadow:0 3px 0 #9c0000
+}
+
+#deleteSelected:active{
+  transform:translateY(2px);
+  box-shadow:none
+}
+
+#deleteSelected:disabled{
+  background:#777;
+  box-shadow:none;
+  opacity:.7
+}
+
+/* =========================
+   PAGE
+   ========================= */
+
+.page{
+  width:210mm;
+  min-height:297mm;
+  margin:10mm auto 15mm;
+  padding:0 10mm 30mm;
+  background:#fff;
+  box-shadow:0 0 14px #0002;
+  position:relative
+}
+
+.breadcrumb{
+  height:13mm;
+  font-size:12pt;
+  white-space:nowrap;
+  padding-top:1mm
+}
+
+.breadcrumb a{
+  color:#00e;
+  text-decoration:underline
+}
+
+/* =========================
+   MAIN TABLE
+   ========================= */
+
+table.result-main{
+  width:100%;
+  border:1px solid #666;
+  border-spacing:2px;
+  border-collapse:separate;
+  table-layout:fixed;
+  margin:0
+}
+
+.result-main td{
+  border:1px solid #666;
+  padding:2px 3px;
+  vertical-align:middle;
+  height:7.1mm
+}
+
+.label,
+.remark-label{
+  width:27.3%;
+  font-weight:bold
+}
+
+.value,
+.remark-value{
+  width:72.7%
+}
+
+/* =========================
+   HEADER ROWS
+   ========================= */
+
+.header-row{
+  position:relative;
+  cursor:pointer
+}
+
+/* =========================
+   SUBJECT TABLE
+   ========================= */
+
+.subject-holder{
+  padding:2px!important;
+  vertical-align:top!important;
+  position:relative
+}
+
+table.subject-table{
+  width:49.1%;
+  margin:0 auto;
+  border:1px solid #666;
+  border-spacing:2px;
+  border-collapse:separate;
+  table-layout:fixed
+}
+
+.subject-table th,
+.subject-table td{
+  border:1px solid #666;
+  padding:1px 3px;
+  height:4.6mm;
+  line-height:4.05mm;
+  text-align:center;
+  font-size:12pt
+}
+
+.subject-table th{
+  font-weight:bold;
+  height:8mm;
+  line-height:3.8mm
+}
+
+.subject-col{
+  width:75%
+}
+
+.marks-col{
+  width:25%
+}
+
+.subject-row{
+  position:relative;
+  cursor:pointer
+}
+
+.remark-value{
+  line-height:4.2mm
+}
+
+/* =========================
+   OTHER CONTENT
+   ========================= */
+
+.bottom-space{
+  height:8mm
+}
+
+.links{
+  text-align:right;
+  padding-right:3px;
+  font-size:12pt;
+  line-height:7mm
+}
+
+.links a{
+  color:#00e;
+  text-decoration:underline;
+  font-weight:bold
+}
+
+.disclaimer{
+  width:calc(100% + 2mm);
+  margin-left:-1mm;
+  font-size:8pt;
+  line-height:2.45mm;
+  text-align:justify
+}
+
+/* =========================
+   EDITABLE TEXT
+   ========================= */
+
+[contenteditable=true]{
+  outline:none;
+  cursor:text
+}
+
+[contenteditable=true]:focus{
+  outline:1px dashed #4285f4;
+  outline-offset:1px
+}
+
+/* =========================
+   SELECTED ROW
+   ========================= */
+
+.delete-selected{
+  outline:4px solid #e00000!important;
+  outline-offset:-2px
+}
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media(max-width:700px){
+
+  .editor-bar{
+    gap:7px;
+    padding:10px 8px
+  }
+
+  .editor-bar button{
+    flex:1 1 auto;
+    min-height:54px;
+    padding:12px 13px;
+    font-size:16px
+  }
+
+  #fontState{
+    display:none
+  }
+
+  .hint{
+    display:none
+  }
+
+  .page{
+    margin:5mm auto 20mm
+  }
+
+  #deleteSelected{
+    min-height:82px;
+    font-size:27px
+  }
+}
+
+/* =========================
+   PRINT
+   ========================= */
+
+@media print{
+
+  html,body{
+    background:#fff!important;
+    padding:0!important
+  }
+
+  .editor-bar,
+  .delete-bar{
+    display:none!important
+  }
+
+  .delete-selected{
+    outline:none!important
+  }
+
+  .page{
+    width:210mm;
+    min-height:297mm;
+    height:auto;
+    margin:0;
+    padding:10mm 10mm 8mm;
+    box-shadow:none;
+    overflow:visible
+  }
+
+  .breadcrumb{
+    height:10mm;
+    padding-top:0
+  }
+
+  .result-main{
+    break-inside:auto
+  }
+
+  a{
+    color:#00e!important;
+    text-decoration:underline!important
+  }
+
+  [contenteditable=true]{
+    outline:none!important
+  }
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+
+<!-- =========================
+     TOP TOOLBAR
+     ========================= -->
+
+<div class="editor-bar">
+
+  <button onclick="addHeaderRow()">
+    ＋ Add Header Box
+  </button>
+
+  <button onclick="addSubject()">
+    ＋ Add Subject Box
+  </button>
+
+  <button onclick="boldSelection()">
+    <b>B</b> Bold / Unbold
+  </button>
+
+  <span id="fontState">Text</span>
+
+  <button id="downloadPDF" onclick="downloadPDF()">
+    Download PDF
+  </button>
+
+  <button onclick="window.print()">
+    🖨 Print
+  </button>
+
+  <span class="hint">
+    Tap a box to select it • Use DELETE at bottom
+  </span>
+
+</div>
+
+
+<!-- =========================
+     LARGE DELETE BUTTON
+     ========================= -->
+
+<div class="delete-bar">
+
+  <button
+    id="deleteSelected"
+    onclick="deleteSelectedItem()"
+    disabled
+  >
+    🗑 DELETE SELECTED
+  </button>
+
+</div>
+
+
+<!-- =========================
+     RESULT PAGE
+     ========================= -->
+
+<div class="page" id="page">
+
+  <div class="breadcrumb">
+    <a contenteditable="true">Home</a>
+    »
+    <span contenteditable="true">RESULTS</span>
+  </div>
+
+
+  <table class="result-main" id="resultMain">
+
+    <colgroup>
+      <col style="width:27.3%">
+      <col style="width:72.7%">
+    </colgroup>
+
+
+    <!-- =========================
+         HEADER ROWS
+         ========================= -->
+
+    <tbody id="headerRows">
+
+      <!-- Fixed blank spacing row -->
+      <tr class="header-row" data-fixed="true">
+        <td colspan="2">&nbsp;</td>
+      </tr>
+
+
+      <tr class="header-row">
+
+        <td class="label" contenteditable="true">
+          Hall Ticket Number :
+        </td>
+
+        <td class="value" contenteditable="true">
+          Y23ED146028
+        </td>
+
+      </tr>
+
+
+      <tr class="header-row">
+
+        <td class="label" contenteditable="true">
+          Student Name :
+        </td>
+
+        <td class="value" contenteditable="true">
+          GURUPRASAD NAYAK
+        </td>
+
+      </tr>
+
+
+      <tr class="header-row">
+
+        <td class="label" contenteditable="true">
+          Father Name:
+        </td>
+
+        <td class="value" contenteditable="true">
+          BISHWAMITRA NAYAK
+        </td>
+
+      </tr>
+
+
+      <tr class="header-row">
+
+        <td class="label" contenteditable="true">
+          COURSE:
+        </td>
+
+        <td class="value" contenteditable="true">
+          B.ED., II SEMESTER REGULAR EXAMINATIONS OCTOBER-2023
+        </td>
+
+      </tr>
+
+
+      <tr class="header-row">
+
+        <td class="label" contenteditable="true">
+          Object Code:
+        </td>
+
+        <td class="value" contenteditable="true">
+          &nbsp;
+        </td>
+
+      </tr>
+
+
+      <tr class="header-row">
+
+        <td class="label" contenteditable="true">
+          Group:
+        </td>
+
+        <td class="value" contenteditable="true">
+          PHYSICAL SCIENCE &amp; MATHEMATICS
+        </td>
+
+      </tr>
+
+    </tbody>
+
+
+    <!-- =========================
+         SUBJECTS + REMARKS
+         ========================= -->
+
+    <tbody>
+
+      <tr>
+
+        <td colspan="2" class="subject-holder">
+
+          <table class="subject-table">
+
+            <colgroup>
+              <col class="subject-col">
+              <col class="marks-col">
+            </colgroup>
+
+
+            <thead>
+
+              <tr>
+
+                <th contenteditable="true">
+                  Subject Code
+                </th>
+
+                <th contenteditable="true">
+                  Marks<br>Obtained
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody id="subjectRows">
+
+              <tr class="subject-row">
+
+                <td contenteditable="true">
+                  EDS2116
+                </td>
+
+                <td contenteditable="true" class="marks-cell">
+                  57P
+                </td>
+
+              </tr>
+
+
+              <tr class="subject-row">
+
+                <td contenteditable="true">
+                  EDS2216
+                </td>
+
+                <td contenteditable="true" class="marks-cell">
+                  67P
+                </td>
+
+              </tr>
+
+
+              <tr class="subject-row">
+
+                <td contenteditable="true">
+                  EDS2316
+                </td>
+
+                <td contenteditable="true" class="marks-cell">
+                  27P
+                </td>
+
+              </tr>
+
+
+              <tr class="subject-row">
+
+                <td contenteditable="true">
+                  EDS2416
+                </td>
+
+                <td contenteditable="true" class="marks-cell">
+                  29P
+                </td>
+
+              </tr>
+
+
+              <tr class="subject-row">
+
+                <td contenteditable="true">
+                  EDSP2519
+                </td>
+
+                <td contenteditable="true" class="marks-cell">
+                  125P
+                </td>
+
+              </tr>
+
+
+              <tr class="subject-row">
+
+                <td contenteditable="true">
+                  EDSP2619
+                </td>
+
+                <td contenteditable="true" class="marks-cell">
+                  25P
+                </td>
+
+              </tr>
+
+
+              <tr class="subject-row">
+
+                <td contenteditable="true">
+                  EDSP2719
+                </td>
+
+                <td contenteditable="true" class="marks-cell">
+                  25P
+                </td>
+
+              </tr>
+
+
+              <tr class="subject-row">
+
+                <td contenteditable="true">
+                  EDSP2819
+                </td>
+
+                <td contenteditable="true" class="marks-cell">
+                  25P
+                </td>
+
+              </tr>
+
+
+              <tr class="subject-row">
+
+                <td contenteditable="true">
+                  EDSP2919
+                </td>
+
+                <td contenteditable="true" class="marks-cell">
+                  25P
+                </td>
+
+              </tr>
+
+
+              <tr class="subject-row">
+
+                <td contenteditable="true">
+                  EDSP21019
+                </td>
+
+                <td contenteditable="true" class="marks-cell">
+                  23P
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </td>
+
+      </tr>
+
+
+      <!-- =========================
+           REMARK 1
+           ========================= -->
+
+      <tr class="header-row">
+
+        <td
+          class="remark-label"
+          contenteditable="true"
+        >
+          Remark 1
+        </td>
+
+        <td
+          class="remark-value"
+          contenteditable="true"
+        >
+          Last Date to Apply Revaluation Date : 01/03/2024, To Submission to P.G<br>
+          Co-Ordinator Last Date : 04/03/2024
+        </td>
+
+      </tr>
+
+
+      <!-- =========================
+           REMARK 2
+           ========================= -->
+
+      <tr class="header-row">
+
+        <td
+          class="remark-label"
+          contenteditable="true"
+        >
+          Remark 2
+        </td>
+
+        <td
+          class="remark-value"
+          contenteditable="true"
+        >
+          Revaluation Fee Per Each Paper : Rs. 1550/-, Xerox Copy/Personal<br>
+          Verification fee per each paper Rs: 1820/-
+        </td>
+
+      </tr>
+
+
+      <!-- =========================
+           REMARK 3
+           ========================= -->
+
+      <tr class="header-row">
+
+        <td
+          class="remark-label"
+          contenteditable="true"
+        >
+          Remark 3
+        </td>
+
+        <td
+          class="remark-value"
+          contenteditable="true"
+        >
+          Student Name/Father Name verify, as per S.S.C, if any correction<br>
+          inform with in 7 days.
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+
+  <div class="bottom-space"></div>
+
+
+  <div class="links">
+
+    <a contenteditable="true">
+      Print result
+    </a>
+
+    <br>
+
+    <a contenteditable="true">
+      Back
+    </a>
+
+  </div>
+
+
+  <div class="disclaimer" contenteditable="true">
+
+    Disclaimer : nagarjunauniversity.ac.in/anu.ac.in is not responsible for any inadvertent error that may have crept in the results being published on NET. The results published on net are for the immediate information to the examinees. This does not constitute to be a legal document. While all efforts have been made to make the information available on website as authentic as possible,any staff /persons will not be responsible for any loss to persons caused by any shortcoming, defect or inaccuracy in the information available on website.
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   GENERAL HTML ESCAPE
+   ========================================================= */
+
+function esc(s){
+
+  return String(s ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+
+}
+
+
+/* =========================================================
+   SELECTED ITEM
+   ========================================================= */
+
+let selectedItem = null;
+
+
+/* =========================================================
+   SELECT A HEADER / SUBJECT ROW
+   ========================================================= */
+
+function selectItem(element){
+
+  if(!element){
+    return;
+  }
+
+  if(selectedItem){
+    selectedItem.classList.remove('delete-selected');
+  }
+
+  selectedItem = element;
+
+  selectedItem.classList.add('delete-selected');
+
+  const deleteButton =
+    document.getElementById('deleteSelected');
+
+  deleteButton.disabled = false;
+
+  deleteButton.textContent =
+    '🗑 DELETE SELECTED';
+
+}
+
+
+/* =========================================================
+   CLICK HANDLER
+   ========================================================= */
+
+document.addEventListener('click',function(e){
+
+  /*
+    Do not interfere with toolbar buttons,
+    delete button, links or editable text.
+  */
+
+  if(
+    e.target.closest('.editor-bar') ||
+    e.target.closest('.delete-bar')
+  ){
+    return;
+  }
+
+
+  /*
+    Subject row
+  */
+
+  const subjectRow =
+    e.target.closest('#subjectRows .subject-row');
+
+  if(subjectRow){
+
+    selectItem(subjectRow);
+
+    return;
+  }
+
+
+  /*
+    Header / remark row
+  */
+
+  const headerRow =
+    e.target.closest('#headerRows .header-row, tbody > .header-row');
+
+  if(headerRow){
+
+    selectItem(headerRow);
+
+    return;
+  }
+
+});
+
+
+/* =========================================================
+   DELETE SELECTED
+   ========================================================= */
+
+function deleteSelectedItem(){
+
+  if(!selectedItem){
+    return;
+  }
+
+
+  /*
+    The top blank spacing row is fixed.
+  */
+
+  if(selectedItem.dataset.fixed === 'true'){
+
+    alert(
+      'The top blank spacing row cannot be deleted.'
+    );
+
+    return;
+  }
+
+
+  /*
+    SUBJECT ROW
+  */
+
+  if(
+    selectedItem.classList.contains('subject-row')
+  ){
+
+    const rows =
+      document.querySelectorAll(
+        '#subjectRows .subject-row'
+      );
+
+    /*
+      Keep at least one subject row.
+    */
+
+    if(rows.length <= 1){
+
+      alert(
+        'At least one subject row must remain.'
+      );
+
+      return;
+    }
+
+    selectedItem.remove();
+
+  }
+
+
+  /*
+    HEADER / REMARK BOX
+  */
+
+  else if(
+    selectedItem.classList.contains('header-row')
+  ){
+
+    /*
+      Delete the ENTIRE table row.
+      Nothing is left behind.
+    */
+
+    selectedItem.remove();
+
+  }
+
+
+  /*
+    Clear selection
+  */
+
+  selectedItem = null;
+
+  const deleteButton =
+    document.getElementById('deleteSelected');
+
+  deleteButton.disabled = true;
+
+  deleteButton.textContent =
+    '🗑 DELETE SELECTED';
+
+}
+
+
+/* =========================================================
+   ADD SUBJECT
+   ========================================================= */
+
+function rowHTML(code='',marks=''){
+
+  return `
+    <tr class="subject-row">
+
+      <td contenteditable="true">
+        ${esc(code)}
+      </td>
+
+      <td
+        contenteditable="true"
+        class="marks-cell"
+      >
+        ${esc(marks)}
+      </td>
+
+    </tr>
+  `;
+
+}
+
+
+function addSubject(){
+
+  document
+    .getElementById('subjectRows')
+    .insertAdjacentHTML(
+      'beforeend',
+      rowHTML('NEW CODE','0P')
+    );
+
+}
+
+
+/* =========================================================
+   ADD HEADER BOX
+   ========================================================= */
+
+function headerHTML(label='',value=''){
+
+  return `
+    <tr class="header-row">
+
+      <td
+        class="label"
+        contenteditable="true"
+      >
+        ${esc(label)}
+      </td>
+
+      <td
+        class="value"
+        contenteditable="true"
+      >
+        ${esc(value) || '&nbsp;'}
+      </td>
+
+    </tr>
+  `;
+
+}
+
+
+function addHeaderRow(){
+
+  document
+    .getElementById('headerRows')
+    .insertAdjacentHTML(
+      'beforeend',
+      headerHTML('New Box:','')
+    );
+
+}
+
+
+/* =========================================================
+   BOLD / UNBOLD
+   ========================================================= */
+
+function boldSelection(){
+
+  const sel = window.getSelection();
+
+  if(
+    !sel ||
+    sel.rangeCount === 0 ||
+    sel.isCollapsed
+  ){
+
+    alert(
+      'Select the text you want to bold/un-bold first.'
+    );
+
+    return;
+  }
+
+  document.execCommand(
+    'bold',
+    false,
+    null
+  );
+
+  updateBoldState();
+
+}
+
+
+function updateBoldState(){
+
+  const state =
+    document.getElementById('fontState');
+
+  let bold = false;
+
+  try{
+    bold =
+      document.queryCommandState('bold');
+  }catch(e){}
+
+  state.textContent =
+    bold ? 'Bold' : 'Normal';
+
+}
+
+
+document.addEventListener(
+  'selectionchange',
+  updateBoldState
+);
+
+
+/* =========================================================
+   HIGH QUALITY PDF
+   ========================================================= */
+
+async function downloadPDF(){
+
+  const button =
+    document.getElementById('downloadPDF');
+
+  const page =
+    document.getElementById('page');
+
+
+  /*
+    Save selected row state.
+    It must not appear in the PDF.
+  */
+
+  const selectedBefore =
+    selectedItem;
+
+
+  if(selectedBefore){
+    selectedBefore.classList.remove(
+      'delete-selected'
+    );
+  }
+
+
+  button.disabled = true;
+
+  button.textContent =
+    'Creating PDF...';
+
+
+  try{
+
+    if(
+      !window.html2canvas ||
+      !window.jspdf
+    ){
+
+      throw new Error(
+        'PDF libraries not loaded'
+      );
+
+    }
+
+
+    /*
+      Give browser time to repaint.
+    */
+
+    await new Promise(resolve => {
+
+      requestAnimationFrame(() => {
+
+        requestAnimationFrame(resolve);
+
+      });
+
+    });
+
+
+    /*
+      Approximately 300 DPI for A4 width.
+    */
+
+    const targetWidth = 2480;
+
+    const rect =
+      page.getBoundingClientRect();
+
+    const scale =
+      targetWidth / rect.width;
+
+
+    const canvas =
+      await html2canvas(page,{
+
+        scale:scale,
+
+        useCORS:true,
+
+        allowTaint:false,
+
+        backgroundColor:'#ffffff',
+
+        logging:false,
+
+        removeContainer:true,
+
+        foreignObjectRendering:false,
+
+        imageTimeout:0
+
+      });
+
+
+    const {jsPDF} =
+      window.jspdf;
+
+
+    const pdf =
+      new jsPDF({
+
+        orientation:'portrait',
+
+        unit:'mm',
+
+        format:'a4',
+
+        compress:true,
+
+        putOnlyUsedFonts:true
+
+      });
+
+
+    const pageWidth = 210;
+
+    const pageHeight = 297;
+
+
+    const imageHeight =
+      canvas.height /
+      canvas.width *
+      pageWidth;
+
+
+    /*
+      PNG is used instead of JPEG so that
+      text and thin table borders remain sharp.
+    */
+
+    const image =
+      canvas.toDataURL(
+        'image/png',
+        1.0
+      );
+
+
+    /*
+      One page.
+    */
+
+    if(imageHeight <= pageHeight){
+
+      pdf.addImage(
+
+        image,
+
+        'PNG',
+
+        0,
+
+        0,
+
+        pageWidth,
+
+        imageHeight,
+
+        undefined,
+
+        'NONE'
+
+      );
+
+    }
+
+
+    /*
+      Multiple pages.
+    */
+
+    else{
+
+      const pageCanvas =
+        document.createElement('canvas');
+
+
+      const pagePixelHeight =
+        Math.floor(
+          canvas.width *
+          (pageHeight / pageWidth)
+        );
+
+
+      pageCanvas.width =
+        canvas.width;
+
+      pageCanvas.height =
+        pagePixelHeight;
+
+
+      const ctx =
+        pageCanvas.getContext('2d');
+
+
+      let sourceY = 0;
+
+      let pageNumber = 0;
+
+
+      while(
+        sourceY < canvas.height
+      ){
+
+        const currentHeight =
+          Math.min(
+            pagePixelHeight,
+            canvas.height - sourceY
+          );
+
+
+        pageCanvas.height =
+          currentHeight;
+
+
+        ctx.clearRect(
+          0,
+          0,
+          pageCanvas.width,
+          pageCanvas.height
+        );
+
+
+        ctx.drawImage(
+
+          canvas,
+
+          0,
+          sourceY,
+
+          canvas.width,
+          currentHeight,
+
+          0,
+          0,
+
+          canvas.width,
+          currentHeight
+
+        );
+
+
+        const part =
+          pageCanvas.toDataURL(
+            'image/png',
+            1.0
+          );
+
+
+        if(pageNumber > 0){
+
+          pdf.addPage();
+
+        }
+
+
+        pdf.addImage(
+
+          part,
+
+          'PNG',
+
+          0,
+
+          0,
+
+          pageWidth,
+
+          currentHeight /
+          canvas.width *
+          pageWidth,
+
+          undefined,
+
+          'NONE'
+
+        );
+
+
+        sourceY += currentHeight;
+
+        pageNumber++;
+
+      }
+
+    }
+
+
+    /*
+      Explicit filename.
+    */
+
+    pdf.save(
+      '2nd_sem_result.pdf'
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      'PDF could not be generated. Make sure the internet connection is available so the PDF libraries can load, then try again.'
+    );
+
+  }finally{
+
+    button.disabled = false;
+
+    button.textContent =
+      'Download PDF';
+
+
+    /*
+      Restore selection visually.
+    */
+
+    if(selectedBefore){
+
+      selectedBefore.classList.add(
+        'delete-selected'
+      );
+
+    }
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
