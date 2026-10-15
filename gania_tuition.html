@@ -227,6 +227,27 @@
             font-size: 0.7rem;
         }
 
+        .config-field {
+            margin-bottom: 8px;
+        }
+
+        .config-field label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: var(--text-muted);
+        }
+
+        .config-field input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            box-sizing: border-box;
+        }
+
         .btn {
             background: var(--primary);
             color: white;
@@ -293,8 +314,9 @@
         <div class="days-grid" id="daysGrid"></div>
 
         <div class="actions-bar">
-            <button class="btn btn-secondary" onclick="exportData()">Backup Data</button>
-            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Restore Data</button>
+            <button class="btn btn-secondary" onclick="exportData()">Backup</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Restore</button>
+            <button class="btn btn-secondary" onclick="openConfigModal()">⚙️ Config</button>
             <input type="file" id="importFile" style="display:none" onchange="importData(event)">
         </div>
     </div>
@@ -311,8 +333,27 @@
         </div>
     </div>
 
+    <!-- Modal for Telegram Config -->
+    <div class="modal" id="configModal">
+        <div class="modal-content">
+            <div class="modal-title">Telegram Cloud Settings</div>
+            <div class="config-field">
+                <label>Bot Token:</label>
+                <input type="text" id="botTokenInput" placeholder="e.g. 123456789:ABCdef...">
+            </div>
+            <div class="config-field">
+                <label>Chat ID:</label>
+                <input type="text" id="chatIdInput" placeholder="e.g. 987654321">
+            </div>
+            <button class="btn" onclick="saveConfig()">Save Config</button>
+            <button class="btn btn-secondary" onclick="closeConfigModal()">Cancel</button>
+        </div>
+    </div>
+
     <script>
         let tuitionData = JSON.parse(localStorage.getItem('tuitionData')) || {};
+        let telegramConfig = JSON.parse(localStorage.getItem('telegramConfig')) || { token: '', chatId: '' };
+        
         let currentDate = new Date();
         let selectedDateKey = '';
 
@@ -426,6 +467,9 @@
 
             localStorage.setItem('tuitionData', JSON.stringify(tuitionData));
 
+            // Sync with Telegram if configured
+            sendToTelegram(selectedDateKey, classes);
+
             closeModal();
             renderCalendar();
             updateStats();
@@ -433,6 +477,46 @@
 
         function closeModal() {
             document.getElementById('classModal').classList.remove('active');
+        }
+
+        // Telegram Integration Function
+        function sendToTelegram(date, classes) {
+            if (!telegramConfig.token || !telegramConfig.chatId) return;
+
+            const classSummary = classes.filter(c => c.trim() !== '').join(', ') || 'No time specified';
+            const message = `📚 Math Tuition Saved!\n📅 Date: ${date}\n⏰ Classes: ${classSummary}`;
+
+            const url = `https://api.telegram.org/bot${telegramConfig.token}/sendMessage`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: telegramConfig.chatId,
+                    text: message
+                })
+            }).catch(err => console.error('Telegram sync error:', err));
+        }
+
+        function openConfigModal() {
+            document.getElementById('botTokenInput').value = telegramConfig.token;
+            document.getElementById('chatIdInput').value = telegramConfig.chatId;
+            document.getElementById('configModal').classList.add('active');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('configModal').classList.remove('active');
+        }
+
+        function saveConfig() {
+            const token = document.getElementById('botTokenInput').value.trim();
+            const chatId = document.getElementById('chatIdInput').value.trim();
+            
+            telegramConfig = { token, chatId };
+            localStorage.setItem('telegramConfig', JSON.stringify(telegramConfig));
+            
+            closeConfigModal();
+            alert('Telegram config saved successfully!');
         }
 
         function updateStats() {
