@@ -8,68 +8,85 @@
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
-            --bg-color: #f8fafc;
+            --bg-color: #f1f5f9;
             --card-bg: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --border: #e2e8f0;
-            --success: #10b981;
+            --border: #cbd5e1;
+        }
+
+        html, body {
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent page scrolling */
         }
 
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            margin: 0;
-            padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
         }
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
+            height: 94vh;
+            max-height: 720px;
             background: var(--card-bg);
-            padding: 24px;
+            padding: 16px 20px;
             border-radius: 16px;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 12px;
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             margin: 0;
             color: var(--primary);
         }
 
+        .stats-container {
+            display: flex;
+            gap: 8px;
+        }
+
         .stats {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             background: var(--bg-color);
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 500;
         }
 
         .calendar-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
         }
 
         .calendar-nav button {
             background: none;
             border: 1px solid var(--border);
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
+            font-size: 0.85rem;
         }
 
         .calendar-nav button:hover {
@@ -81,34 +98,33 @@
             grid-template-columns: repeat(7, 1fr);
             text-align: center;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .days-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
+            gap: 5px;
+            flex: 1;
         }
 
         .day-cell {
-            aspect-ratio: 1;
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 8px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 6px;
+            padding: 5px;
             cursor: pointer;
             transition: all 0.2s;
-            position: relative;
+            overflow: hidden;
         }
 
         .day-cell:hover {
             border-color: var(--primary);
-            transform: translateY(-1px);
+            background-color: #faf5ff;
         }
 
         .day-cell.empty {
@@ -118,37 +134,32 @@
         }
 
         .day-number {
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 3px;
         }
 
         .day-cell.today {
             border-color: var(--primary);
-            font-weight: bold;
+            background-color: #eef2ff;
         }
 
-        .class-dots {
+        .time-entries-preview {
             display: flex;
-            gap: 3px;
-            flex-wrap: wrap;
-            max-height: 18px;
+            flex-direction: column;
+            gap: 2px;
             overflow: hidden;
         }
 
-        .class-dot {
-            width: 6px;
-            height: 6px;
-            background-color: var(--primary);
-            border-radius: 50%;
-        }
-
-        .class-count-badge {
+        .time-badge {
             font-size: 0.65rem;
-            background: var(--primary);
-            color: white;
-            border-radius: 4px;
-            padding: 1px 4px;
-            align-self: flex-start;
+            background: #e2e8f0;
+            color: var(--text-main);
+            border-radius: 3px;
+            padding: 1px 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Modal Overlay */
@@ -160,6 +171,8 @@
             justify-content: center;
             align-items: center;
             padding: 16px;
+            box-sizing: border-box;
+            z-index: 100;
         }
 
         .modal.active {
@@ -168,52 +181,59 @@
 
         .modal-content {
             background: white;
-            padding: 24px;
+            padding: 20px;
             border-radius: 12px;
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
         }
 
         .modal-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .class-input-group {
             display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            background: var(--bg-color);
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 0.85rem;
         }
 
-        .class-input-group input {
-            flex: 1;
-            padding: 8px 12px;
+        .class-input-group input[type="time"] {
+            padding: 4px;
             border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.95rem;
+            border-radius: 4px;
+            font-family: inherit;
         }
 
         .class-input-group button {
             background: #ef4444;
             color: white;
             border: none;
-            padding: 0 12px;
-            border-radius: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 0.75rem;
+            margin-left: auto;
         }
 
         .btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            margin-top: 8px;
+            margin-top: 6px;
+            font-size: 0.9rem;
         }
 
         .btn:hover {
@@ -223,16 +243,24 @@
         .btn-secondary {
             background: #e2e8f0;
             color: var(--text-main);
-            margin-top: 8px;
+            margin-top: 6px;
         }
         .btn-secondary:hover {
             background: #cbd5e1;
         }
 
         .actions-bar {
-            margin-top: 20px;
+            margin-top: 10px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+        }
+
+        .actions-bar button {
+            flex: 1;
+            padding: 6px;
+            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -240,13 +268,16 @@
 
     <div class="container">
         <header>
-            <h1>Tuition Tracker</h1>
-            <div class="stats" id="totalStats">Total Classes: 0</div>
+            <h1>Math Tuition Tracker</h1>
+            <div class="stats-container">
+                <div class="stats" id="monthStats">Month: 0</div>
+                <div class="stats" id="totalStats">Total: 0</div>
+            </div>
         </header>
 
         <div class="calendar-nav">
             <button id="prevMonth">&larr; Prev</button>
-            <h2 id="monthYearDisplay" style="margin: 0; font-size: 1.1rem;"></h2>
+            <h2 id="monthYearDisplay" style="margin: 0; font-size: 1rem;"></h2>
             <button id="nextMonth">Next &rarr;</button>
         </div>
 
@@ -263,22 +294,20 @@
         </div>
     </div>
 
-    <!-- Modal for adding/editing classes -->
+    <!-- Modal for adding/editing time slots -->
     <div class="modal" id="classModal">
         <div class="modal-content">
-            <div class="modal-title" id="modalDateTitle">Manage Classes</div>
-            <div id="classListContainer"></div>
+            <div class="modal-title" id="modalDateTitle">Math Classes</div>
+            <div id="classListContainer" style="max-height: 180px; overflow-y: auto; margin-bottom: 8px;"></div>
             
-            <button class="btn btn-secondary" onclick="addClassInput()" style="margin-bottom: 12px;">+ Add Another Class</button>
+            <button class="btn btn-secondary" onclick="addClassInput('', '')">+ Add Class Slot</button>
             <button class="btn" onclick="saveDayClasses()">Confirm & Save</button>
             <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
         </div>
     </div>
 
     <script>
-        // Load data permanently from localStorage or start fresh
         let tuitionData = JSON.parse(localStorage.getItem('tuitionData')) || {};
-        
         let currentDate = new Date();
         let selectedDateKey = '';
 
@@ -301,14 +330,12 @@
             const grid = document.getElementById('daysGrid');
             grid.innerHTML = '';
 
-            // Blank spaces for previous month overflow
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = 'day-cell empty';
                 grid.appendChild(emptyCell);
             }
 
-            // Days of the current month
             const today = new Date();
             for (let day = 1; day <= totalDays; day++) {
                 const cell = document.createElement('div');
@@ -325,12 +352,18 @@
                 dayNumber.innerText = day;
                 cell.appendChild(dayNumber);
 
-                // Check if classes exist for this date
-                if (tuitionData[dateKey] && tuitionData[dateKey].length > 0) {
-                    const badge = document.createElement('div');
-                    badge.className = 'class-count-badge';
-                    badge.innerText = `${tuitionData[dateKey].length} class${tuitionData[dateKey].length > 1 ? 'es' : ''}`;
-                    cell.appendChild(badge);
+                const classes = tuitionData[dateKey] || [];
+                if (classes.length > 0) {
+                    const previewContainer = document.createElement('div');
+                    previewContainer.className = 'time-entries-preview';
+                    
+                    classes.forEach(cls => {
+                        const badge = document.createElement('div');
+                        badge.className = 'time-badge';
+                        badge.innerText = `${formatTime(cls.start)} - ${formatTime(cls.end)}`;
+                        previewContainer.appendChild(badge);
+                    });
+                    cell.appendChild(previewContainer);
                 }
 
                 cell.onclick = () => openModal(dateKey);
@@ -338,9 +371,18 @@
             }
         }
 
+        function formatTime(timeStr) {
+            if (!timeStr) return '';
+            const [hourStr, minuteStr] = timeStr.split(':');
+            let hour = parseInt(hourStr);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            hour = hour % 12 || 12;
+            return `${hour}:${minuteStr} ${ampm}`;
+        }
+
         function openModal(dateKey) {
             selectedDateKey = dateKey;
-            document.getElementById('modalDateTitle').innerText = `Classes for ${dateKey}`;
+            document.getElementById('modalDateTitle').innerText = `Math Classes: ${dateKey}`;
             
             const container = document.getElementById('classListContainer');
             container.innerHTML = '';
@@ -348,22 +390,22 @@
             const existingClasses = tuitionData[dateKey] || [];
             
             if (existingClasses.length === 0) {
-                // Default to empty input row or pre-populate if you want
-                addClassInput('');
+                addClassInput('09:00', '10:00'); // Default starting suggestion
             } else {
-                existingClasses.forEach(className => addClassInput(className));
+                existingClasses.forEach(cls => addClassInput(cls.start, cls.end));
             }
 
             document.getElementById('classModal').classList.add('active');
         }
 
-        function addClassInput(value = '') {
+        function addClassInput(start = '', end = '') {
             const container = document.getElementById('classListContainer');
             const group = document.createElement('div');
             group.className = 'class-input-group';
             
             group.innerHTML = `
-                <input type="text" placeholder="e.g. Physics / Math Batch" value="${value}">
+                <span>From:</span> <input type="time" value="${start}" class="startTime">
+                <span>To:</span> <input type="time" value="${end}" class="endTime">
                 <button onclick="this.parentElement.remove()">X</button>
             `;
             container.appendChild(group);
@@ -371,23 +413,23 @@
 
         function saveDayClasses() {
             const container = document.getElementById('classListContainer');
-            const inputs = container.querySelectorAll('input');
+            const groups = container.querySelectorAll('.class-input-group');
             const classes = [];
 
-            inputs.forEach(input => {
-                const val = input.value.trim();
-                if (val !== '') {
-                    classes.push(val);
+            groups.forEach(group => {
+                const start = group.querySelector('.startTime').value;
+                const end = group.querySelector('.endTime').value;
+                if (start && end) {
+                    classes.push({ start, end });
                 }
             });
 
             if (classes.length > 0) {
                 tuitionData[selectedDateKey] = classes;
             } else {
-                delete tuitionData[selectedDateKey]; // Clean up if empty
+                delete tuitionData[selectedDateKey];
             }
 
-            // Save permanently to browser storage
             localStorage.setItem('tuitionData', JSON.stringify(tuitionData));
 
             closeModal();
@@ -400,25 +442,37 @@
         }
 
         function updateStats() {
-            let total = 0;
-            Object.values(tuitionData).forEach(classList => {
-                total += classList.length;
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+
+            let monthTotal = 0;
+            let grandTotal = 0;
+
+            Object.keys(tuitionData).forEach(dateKey => {
+                const count = tuitionData[dateKey].length;
+                grandTotal += count;
+                if (dateKey.startsWith(monthPrefix)) {
+                    monthTotal += count;
+                }
             });
-            document.getElementById('totalStats').innerText = `Total Classes Logged: ${total}`;
+
+            document.getElementById('monthStats').innerText = `Month: ${monthTotal}`;
+            document.getElementById('totalStats').innerText = `Total: ${grandTotal}`;
         }
 
-        // Navigation
         document.getElementById('prevMonth').onclick = () => {
             currentDate.setMonth(currentDate.getMonth() - 1);
             renderCalendar();
+            updateStats();
         };
 
         document.getElementById('nextMonth').onclick = () => {
             currentDate.setMonth(currentDate.getMonth() + 1);
             renderCalendar();
+            updateStats();
         };
 
-        // Backup / Export feature
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tuitionData));
             const downloadAnchor = document.createElement('a');
@@ -429,7 +483,6 @@
             downloadAnchor.remove();
         }
 
-        // Restore / Import feature
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -448,7 +501,6 @@
             reader.readAsText(file);
         }
 
-        // Initialize on load
         initCalendar();
     </script>
 </body>
