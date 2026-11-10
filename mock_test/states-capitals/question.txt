@@ -1,215 +1,167 @@
-1. What is the capital of Andhra Pradesh?
-A) Hyderabad
-B) Amaravati
-C) Visakhapatnam
-D) Kurnool
+1. ଆନ୍ଧ୍ର ପ୍ରଦେଶର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ହାଇଦ୍ରାବାଦ
+ଖ) ଅମରାବତୀ
+ଗ) ବେଙ୍ଗାଲୁରୁ
+ଘ) ଚେନ୍ନାଇ
 
-2. Which city serves as the capital of Arunachal Pradesh?
-A) Itanagar
-B) Dispur
-C) Imphal
-D) Kohima
+2. ଅରୁଣାଚଳ ପ୍ରଦେଶର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଇଟାନଗର
+ଖ) କୋହିମା
+ଗ) ଇମ୍ଫାଲ
+ଘ) ଶିଲଂ
 
-3. Assam's state capital is located in which city?
-A) Guwahati
-B) Silchar
-C) Dispur
-D) Jorhat
+3. ଆସାମର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଗୁଆହାଟୀ
+ଖ) ଶିଲଚର
+ଗ) ଡିସପୁର
+ଘ) ଜୋରହାଟ
 
-4. What is the capital of Bihar?
-A) Gaya
-B) Patna
-C) Bhagalpur
-D) Muzaffarpur
+4. ବିହାରର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ରାଞ୍ଚି
+ଖ) ଭୋପାଳ
+ଗ) ଲକ୍ଷ୍ନୌ
+ଘ) ପାଟନା
 
-5. Which of these is the capital of Chhattisgarh?
-A) Bilaspur
-B) Durg
-C) Raipur
-D) Bhilai
+5. ଛତିଶଗଡ଼ର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ରାୟପୁର
+ଖ) ରାୟଗଡ଼
+ଗ) ବିଳାସପୁର
+ଘ) ଜଗଦଲପୁର
 
-6. What is the capital of the coastal state of Goa?
-A) Vasco da Gama
-B) Margao
-C) Panaji
-D) Mapusa
+6. ଗୋଆର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ମାର୍ଗାଓ
+ଖ) ପଣଜୀ
+ଗ) ବାସ୍କୋ
+ଘ) ମାପୁସା
 
-7. Gandhinagar is the capital city of which state?
-A) Rajasthan
-B) Maharashtra
-C) Gujarat
-D) Madhya Pradesh
+7. ଗୁଜରାଟର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଅହମ୍ମଦାବାଦ
+ଖ) ସୁରଟ
+ଗ) ରାଜକୋଟ
+ଘ) ଗାନ୍ଧୀନଗର
 
-8. What is the capital of Haryana (shared with Punjab)?
-A) Ambala
-B) Panchkula
-C) Chandigarh
-D) Rohtak
+8. ହରିୟାଣାର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଗୁରୁଗ୍ରାମ
+ଖ) ରୋହତକ
+ଗ) ଚଣ୍ଡୀଗଡ଼
+ଘ) ହିସାର
 
-9. Shimla is the summer capital of which northern state?
-A) Uttarakhand
-B) Himachal Pradesh
-C) Punjab
-D) Sikkim
+9. ହିମାଚଳ ପ୍ରଦେଶର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଧର୍ମଶାଳା
+ଖ) ଶିମଲା
+ଗ) ମନାଲି
+ଘ) ସୋଲନ
 
-10. What is the capital of Jharkhand, known as the "City of Waterfalls"?
-A) Jamshedpur
-B) Dhanbad
-C) Ranchi
-D) Bokaro
+10. ଝାଡ଼ଖଣ୍ଡର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଧାନବାଦ
+ଖ) ଜାମସେଦପୁର
+ଗ) ରାଞ୍ଚି
+ଘ) ବୋକାରୋ
 
-11. Bengaluru is the capital of which southern state?
-A) Tamil Nadu
-B) Kerala
-C) Karnataka
-D) Telangana
+11. କର୍ଣ୍ଣାଟକର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ବେଙ୍ଗାଲୁରୁ
+ଖ) ମହୀଶୂର
+ଗ) ମାଙ୍ଗାଲୁରୁ
+ଘ) ବେଲଗାଭି
 
-12. What is the capital of Kerala?
-A) Kochi
-B) Thiruvananthapuram
-C) Kozhikode
-D) Thrissur
+12. କେରଳର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) କୋଚି
+ଖ) କୋଝିକୋଡ଼
+ଗ) ତ୍ରିଶୂର
+ଘ) ଥିରୁବନନ୍ତପୁରମ
 
-13. Which city is the capital of Madhya Pradesh?
-A) Indore
-B) Gwalior
-C) Bhopal
-D) Jabalpur
+13. ମଧ୍ୟପ୍ରଦେଶର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଇନ୍ଦୋର
+ଖ) ଭୋପାଳ
+ଗ) ଜବଲପୁର
+ଘ) ଗ୍ୱାଲିୟର
 
-14. Mumbai is the capital of which state?
-A) Gujarat
-B) Maharashtra
-C) Goa
-D) Karnataka
+14. ମହାରାଷ୍ଟ୍ରର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ପୁଣେ
+ଖ) ନାଗପୁର
+ଗ) ମୁମ୍ବାଇ
+ଘ) ନାଶିକ
 
-15. What is the capital of Manipur?
-A) Imphal
-B) Aizawl
-C) Shillong
-D) Agartala
+15. ମଣିପୁରର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଇମ୍ଫାଲ
+ଖ) ଆଇଜଲ
+ଗ) କୋହିମା
+ଘ) ଶିଲଂ
 
-16. Shillong is the capital of which state?
-A) Nagaland
-B) Meghalaya
-C) Mizoram
-D) Manipur
+16. ମେଘାଳୟର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଆଇଜଲ
+ଖ) ଗାଙ୍ଗଟକ
+ଗ) ଡିସପୁର
+ଘ) ଶିଲଂ
 
-17. What is the capital of Mizoram?
-A) Kohima
-B) Aizawl
-C) Imphal
-D) Gangtok
+17. ମିଜୋରାମର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଇମ୍ଫାଲ
+ଖ) ଆଇଜଲ
+ଗ) କୋହିମା
+ଘ) ଇଟାନଗର
 
-18. Which city is the capital of Nagaland?
-A) Dimapur
-B) Kohima
-C) Mokokchung
-D) Wokha
+18. ନାଗାଲାଣ୍ଡର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଶିଲଂ
+ଖ) ଇମ୍ଫାଲ
+ଗ) କୋହିମା
+ଘ) ଆଇଜଲ
 
-19. What is the capital of Odisha?
-A) Cuttack
-B) Rourkela
-C) Bhubaneswar
-D) Puri
+19. ଓଡ଼ିଶାର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) କଟକ
+ଖ) ସମ୍ବଲପୁର
+ଗ) ପୁରୀ
+ଘ) ଭୁବନେଶ୍ୱର
 
-20. What is the capital of Punjab?
-A) Ludhiana
-B) Amritsar
-C) Chandigarh
-D) Patiala
+20. ପଞ୍ଜାବର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଲୁଧିଆନା
+ଖ) ଚଣ୍ଡୀଗଡ଼
+ଗ) ଅମୃତସର
+ଘ) ଜଳନ୍ଧର
 
-21. Jaipur, also known as the Pink City, is the capital of:
-A) Punjab
-B) Haryana
-C) Rajasthan
-D) Gujarat
+21. ରାଜସ୍ଥାନର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଉଦୟପୁର
+ଖ) ଯୋଧପୁର
+ଗ) ଜୟପୁର
+ଘ) କୋଟା
 
-22. What is the capital of Sikkim?
-A) Namchi
-B) Gangtok
-C) Pelling
-D) Lachung
+22. ସିକ୍କିମର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଗାଙ୍ଗଟକ
+ଖ) ଶିଲଂ
+ଗ) ଆଇଜଲ
+ଘ) କୋହିମା
 
-23. Chennai is the capital of which state?
-A) Andhra Pradesh
-B) Karnataka
-C) Tamil Nadu
-D) Kerala
+23. ତାମିଲନାଡୁର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ମଦୁରାଇ
+ଖ) କୋଏମ୍ବାଟୁର
+ଗ) ତିରୁଚିରାପଲ୍ଲୀ
+ଘ) ଚେନ୍ନାଇ
 
-24. What is the capital of Telangana?
-A) Warangal
-B) Hyderabad
-C) Nizamabad
-D) Karimnagar
+24. ତେଲେଙ୍ଗାନାର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ୱାରଙ୍ଗଲ
+ଖ) ହାଇଦ୍ରାବାଦ
+ଗ) କରୀମନଗର
+ଘ) ନିଜାମାବାଦ
 
-25. Agartala is the capital of which northeastern state?
-A) Tripura
-B) Manipur
-C) Mizoram
-D) Assam
+25. ତ୍ରିପୁରାର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଅଗରତାଲା
+ଖ) ଶିଲଂ
+ଗ) ଆଇଜଲ
+ଘ) ଡିସପୁର
 
-26. Which city is the capital of Uttar Pradesh?
-A) Kanpur
-B) Prayagraj
-C) Lucknow
-D) Varanasi
+26. ଉତ୍ତର ପ୍ରଦେଶର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) କାନପୁର
+ଖ) ଆଗ୍ରା
+ଗ) ଲକ୍ଷ୍ନୌ
+ଘ) ବାରାଣସୀ
 
-27. What is the capital of Uttarakhand?
-A) Haridwar
-B) Dehradun
-C) Nainital
-D) Rishikesh
+27. ଉତ୍ତରାଖଣ୍ଡର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ହରିଦ୍ୱାର
+ଖ) ଦେହରାଦୁନ
+ଗ) ନୈନିତାଲ
+ଘ) ଋଷିକେଶ
 
-28. Kolkata is the capital of which state?
-A) Odisha
-B) Jharkhand
-C) West Bengal
-D) Bihar
-
-29. What is the capital of Andaman and Nicobar Islands?
-A) Kavaratti
-B) Port Blair
-C) Silvassa
-D) Daman
-
-30. Which city is the capital of Chandigarh?
-A) Chandigarh
-B) Mohali
-C) Panchkula
-D) Ludhiana
-
-31. What is the capital of Dadra and Nagar Haveli and Daman and Diu?
-A) Silvassa
-B) Diu
-C) Daman
-D) Panaji
-
-32. What is the capital of the National Capital Territory of Delhi?
-A) Old Delhi
-B) New Delhi
-C) Noida
-D) Gurugram
-
-33. Srinagar (Summer) and Jammu (Winter) are the capitals of:
-A) Ladakh
-B) Jammu and Kashmir
-C) Himachal Pradesh
-D) Punjab
-
-34. What is the capital of Lakshadweep?
-A) Port Blair
-B) Kavaratti
-C) Minicoy
-D) Amini
-
-35. Which city is the capital of Puducherry?
-A) Karaikal
-B) Mahe
-C) Yanam
-D) Pondicherry (Puducherry city)
-
-36. What is the capital of Ladakh?
-A) Leh
-B) Kargil
-C) Srinagar
-D) Dras
+28. ପଶ୍ଚିମବଙ୍ଗର ରାଜଧାନୀ କେଉଁ ସହର?
+କ) ଦାର୍ଜିଲିଂ
+ଖ) ହାୱଡ଼ା
+ଗ) ଦୁର୍ଗାପୁର
+ଘ) କୋଲକାତା
