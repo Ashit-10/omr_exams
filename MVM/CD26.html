@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Children's Day Celebration 2026</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #101323;
+    color: white;
+    min-height: 100vh;
+}
+
+/* HEADER */
+
+header {
+    background: linear-gradient(135deg, #7048e8, #e64980);
+    padding: 45px 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: clamp(26px, 5vw, 42px);
+    margin-bottom: 12px;
+}
+
+header p {
+    font-size: 16px;
+    opacity: 0.95;
+}
+
+.badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 18px;
+    border-radius: 30px;
+    margin-bottom: 15px;
+}
+
+/* MAIN */
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 35px 20px;
+}
+
+.intro {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.intro h2 {
+    font-size: 27px;
+    margin-bottom: 10px;
+}
+
+.intro p {
+    color: #b8bdd1;
+    line-height: 1.6;
+}
+
+/* VIDEO GRID */
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 22px;
+}
+
+.video-card {
+    background: #1d2238;
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.3s;
+    border: 1px solid #303650;
+}
+
+.video-card:hover {
+    transform: translateY(-7px);
+    border-color: #a78bfa;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+}
+
+.thumbnail {
+    height: 155px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 55px;
+    position: relative;
+}
+
+.thumb1 { background: linear-gradient(135deg,#ff758c,#ff7eb3); }
+.thumb2 { background: linear-gradient(135deg,#4776e6,#8e54e9); }
+.thumb3 { background: linear-gradient(135deg,#11998e,#38ef7d); }
+.thumb4 { background: linear-gradient(135deg,#f7971e,#ffd200); }
+
+.play-icon {
+    position: absolute;
+    bottom: 12px;
+    right: 15px;
+    background: rgba(0,0,0,0.65);
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.card-content {
+    padding: 18px;
+}
+
+.card-content h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.card-content p {
+    color: #aeb5ca;
+    font-size: 13px;
+}
+
+.watch {
+    margin-top: 15px;
+    display: block;
+    background: #7048e8;
+    text-align: center;
+    padding: 11px;
+    border-radius: 9px;
+    font-weight: 600;
+}
+
+/* INSTRUCTIONS */
+
+.instructions {
+    background: #1d2238;
+    border: 1px solid #303650;
+    padding: 22px;
+    border-radius: 15px;
+    margin-top: 40px;
+}
+
+.instructions h3 {
+    margin-bottom: 12px;
+    color: #c4b5fd;
+}
+
+.instructions p {
+    color: #c3c8d9;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+    padding: 30px 15px;
+    color: #9299b1;
+    font-size: 13px;
+}
+
+/* PASSWORD MODAL */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.modal-box {
+    background: #202640;
+    padding: 30px 22px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid #555c7c;
+}
+
+.modal-box h2 {
+    margin-bottom: 12px;
+}
+
+.modal-box p {
+    color: #b9bfd2;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.modal input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #626b8d;
+    background: #111629;
+    color: white;
+    font-size: 16px;
+    outline: none;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.modal button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    background: #8055ed;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal button:hover {
+    background: #966fff;
+}
+
+.error {
+    color: #ff7676;
+    margin-top: 12px;
+    font-size: 14px;
+    min-height: 18px;
+}
+
+.close {
+    margin-top: 15px;
+    background: transparent !important;
+    color: #b9bfd2 !important;
+}
+
+/* PLAYER MODAL */
+
+.player-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #080b16;
+    z-index: 200;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 12px;
+}
+
+.player-header h2 {
+    font-size: 18px;
+}
+
+.close-player {
+    background: #e64980;
+    color: white;
+    border: none;
+    padding: 10px 17px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.player-container {
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+.player-container iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    border-radius: 12px;
+    background: black;
+}
+
+.player-note {
+    color: #aeb5ca;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 13px;
+}
+
+@media(max-width:500px) {
+    header {
+        padding: 35px 15px;
+    }
+
+    .container {
+        padding: 25px 15px;
+    }
+
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="badge">🎈 SPECIAL CELEBRATION 2026</div>
+
+    <h1>🎉 Children's Day Celebration</h1>
+
+    <p>Memories, Happiness & Togetherness ❤️</p>
+
+</header>
+
+
+<main class="container">
+
+    <div class="intro">
+
+        <h2>🎬 Celebration Video Gallery</h2>
+
+        <p>
+            Relive the beautiful moments of our Children's Day
+            celebration and feast program!
+            <br>
+            Select a video below to start watching.
+        </p>
+
+    </div>
+
+
+    <div class="video-grid" id="videoGrid"></div>
+
+
+    <div class="instructions">
+
+        <h3>📌 How to Watch Videos?</h3>
+
+        <p>
+            1. Select your favourite video.<br>
+            2. Enter the password when asked.<br>
+            3. Click Unlock Video.<br>
+            4. Enjoy watching! 🍿<br><br>
+
+            🔑 Password is required every time you open a video.
+        </p>
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    Made with ❤️ for our wonderful students.
+
+    <br><br>
+
+    Children's Day Celebration 2026
+
+</footer>
+
+
+<!-- PASSWORD MODAL -->
+
+<div class="modal" id="passwordModal">
+
+    <div class="modal-box">
+
+        <h2>🔐 Enter Password</h2>
+
+        <p>
+            Please enter the password to watch this video.
+        </p>
+
+        <input
+            type="password"
+            id="passwordInput"
+            placeholder="Enter password"
+            autocomplete="off"
+        >
+
+        <button onclick="checkPassword()">
+            ▶ Unlock Video
+        </button>
+
+        <div class="error" id="errorMessage"></div>
+
+        <button class="close" onclick="closePassword()">
+            Cancel
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- VIDEO PLAYER -->
+
+<div class="player-modal" id="playerModal">
+
+    <div class="player-header">
+
+        <h2 id="playingTitle">Now Playing</h2>
+
+        <button class="close-player" onclick="closePlayer()">
+            ✕ Close
+        </button>
+
+    </div>
+
+    <div class="player-container">
+
+        <iframe
+            id="videoFrame"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+        ></iframe>
+
+        <div class="player-note">
+            Enjoy the celebration! ❤️
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/*
+========================================
+       VIDEO CONFIGURATION
+========================================
+
+Replace the DRIVE_ID values below
+with your actual Google Drive file IDs.
+
+Example Google Drive link:
+
+https://drive.google.com/file/d/ABC123XYZ/view
+
+File ID = ABC123XYZ
+
+*/
+
+const PASSWORD = "mvm2026";
+
+
+const videos = [
+
+    {
+        title: "Children's Day Celebration",
+        description: "Beautiful moments from the celebration.",
+        icon: "🎉",
+        style: "thumb1",
+        id: "PASTE_DRIVE_ID_1"
+    },
+
+    {
+        title: "Children's Day Feast",
+        description: "Food, fun and happiness!",
+        icon: "🍕",
+        style: "thumb2",
+        id: "PASTE_DRIVE_ID_2"
+    },
+
+    {
+        title: "Students & Teachers",
+        description: "Wonderful memories together.",
+        icon: "🎓",
+        style: "thumb3",
+        id: "PASTE_DRIVE_ID_3"
+    },
+
+    {
+        title: "Special Moments",
+        description: "Unforgettable memories of 2026.",
+        icon: "🎈",
+        style: "thumb4",
+        id: "PASTE_DRIVE_ID_4"
+    }
+
+];
+
+
+let selectedVideo = null;
+
+
+// CREATE VIDEO CARDS
+
+function loadVideos() {
+
+    const grid = document.getElementById("videoGrid");
+
+    grid.innerHTML = "";
+
+    videos.forEach((video, index) => {
+
+        const card = document.createElement("div");
+
+        card.className = "video-card";
+
+        card.innerHTML = `
+
+            <div class="thumbnail ${video.style}">
+
+                ${video.icon}
+
+                <div class="play-icon">▶</div>
+
+            </div>
+
+            <div class="card-content">
+
+                <h3>${video.title}</h3>
+
+                <p>${video.description}</p>
+
+                <div class="watch">
+                    ▶ Watch Video
+                </div>
+
+            </div>
+
+        `;
+
+        card.addEventListener("click", () => {
+            openPassword(index);
+        });
+
+        grid.appendChild(card);
+
+    });
+
+}
+
+
+// OPEN PASSWORD SCREEN
+
+function openPassword(index) {
+
+    selectedVideo = videos[index];
+
+    document.getElementById("passwordInput").value = "";
+
+    document.getElementById("errorMessage").textContent = "";
+
+    document.getElementById("passwordModal").style.display = "flex";
+
+    setTimeout(() => {
+        document.getElementById("passwordInput").focus();
+    }, 100);
+
+}
+
+
+// CHECK PASSWORD
+
+function checkPassword() {
+
+    const entered = document.getElementById("passwordInput").value;
+
+    if (entered === PASSWORD) {
+
+        if (!selectedVideo || !selectedVideo.id ||
+            selectedVideo.id.startsWith("PASTE_")) {
+
+            document.getElementById("errorMessage").textContent =
+                "Video ID has not been configured yet.";
+
+            return;
+        }
+
+        document.getElementById("passwordModal").style.display = "none";
+
+        playVideo(selectedVideo);
+
+    }
+
+    else {
+
+        document.getElementById("errorMessage").textContent =
+            "❌ Incorrect password. Please try again.";
+
+    }
+
+}
+
+
+// PLAY VIDEO
+
+function playVideo(video) {
+
+    const frame = document.getElementById("videoFrame");
+
+    document.getElementById("playingTitle").textContent = video.title;
+
+    document.getElementById("playerModal").style.display = "block";
+
+    frame.src =
+        "https://drive.google.com/file/d/" +
+        encodeURIComponent(video.id) +
+        "/preview";
+
+}
+
+
+// CLOSE PASSWORD
+
+function closePassword() {
+
+    document.getElementById("passwordModal").style.display = "none";
+
+}
+
+
+// CLOSE PLAYER
+
+function closePlayer() {
+
+    document.getElementById("videoFrame").src = "";
+
+    document.getElementById("playerModal").style.display = "none";
+
+}
+
+
+// ENTER KEY SUPPORT
+
+document.getElementById("passwordInput")
+.addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+        checkPassword();
+    }
+
+});
+
+
+// ESCAPE KEY SUPPORT
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+
+        closePassword();
+
+        closePlayer();
+
+    }
+
+});
+
+
+// INITIALIZE
+
+loadVideos();
+
+</script>
+
+</body>
+</html>
