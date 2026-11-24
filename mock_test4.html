@@ -251,6 +251,16 @@
 <script>
 
 // =============================================
+// TELEGRAM CONFIGURATION
+// REPLACE THESE TWO VALUES
+// =============================================
+
+const botToken = "YOUR_BOT_TOKEN";
+
+const chatId = "YOUR_CHAT_ID";
+
+
+// =============================================
 // STUDENT NAME MANAGEMENT
 // =============================================
 
@@ -360,6 +370,48 @@ function shuffleArray(array) {
 
 
 // =============================================
+// TELEGRAM DIRECT API FUNCTION
+// =============================================
+
+async function sendTelegramMessage(message) {
+
+    const telegramURL = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    const response = await fetch(telegramURL, {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            chat_id: chatId,
+
+            text: message
+
+        })
+
+    });
+
+
+    const result = await response.json();
+
+
+    if (!response.ok || !result.ok) {
+
+        throw new Error(result.description || "Telegram message failed.");
+
+    }
+
+
+    return result;
+
+}
+
+
+// =============================================
 // TELEGRAM PAGE OPEN NOTIFICATION
 // =============================================
 
@@ -367,35 +419,27 @@ async function notifyPageOpened() {
 
     try {
 
-        const data = {
+        const message =
 
-            event: "page_open",
+            `🟢 TEST PAGE OPENED\n\n` +
 
-            studentName: studentName,
+            `👤 Student: ${studentName}\n` +
 
-            subject: subjectName,
+            `📚 Subject: ${subjectName}\n\n` +
 
-            page: window.location.href,
+            `🔗 Page: ${window.location.href}\n\n` +
 
-            date: new Date().toLocaleString()
-
-        };
+            `🕒 Time: ${new Date().toLocaleString()}`;
 
 
-        await fetch("send-result.php", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(data)
-
-        });
+        await sendTelegramMessage(message);
 
 
-    } catch (error) {
+        console.log("Page opening notification sent.");
+
+    }
+
+    catch (error) {
 
         console.warn("Page notification error:", error);
 
@@ -974,44 +1018,224 @@ function generateTestReport() {
 
 
 // =============================================
-// SEND DATA TO TELEGRAM BACKEND
+// REMOVE HTML TAGS FOR TELEGRAM REPORT
 // =============================================
 
-async function sendToTelegram(report) {
+function cleanReportText(text) {
 
-    const response = await fetch("send-result.php", {
+    const element = document.createElement("div");
 
-        method: "POST",
+    element.innerHTML = String(text);
 
-        headers: {
+    return element.textContent || element.innerText || "";
 
-            "Content-Type": "application/json"
+}
 
-        },
 
-        body: JSON.stringify(report)
+// =============================================
+// CONVERT COMPLETE REPORT INTO TELEGRAM MESSAGES
+// =============================================
+
+function createTelegramReportMessages(report) {
+
+    const messages = [];
+
+    const maxLength = 3800;
+
+
+    // Summary message.
+
+    let summary =
+
+        `📋 TEST RESULT REPORT\n\n` +
+
+        `👤 Student: ${report.studentName}\n` +
+
+        `📚 Subject: ${report.subject}\n` +
+
+        `🕒 Date: ${report.date}\n` +
+
+        `🔗 Page: ${report.page}\n\n` +
+
+        `━━━━━━━━━━━━━━━━━━\n` +
+
+        `📊 FINAL SUMMARY\n` +
+
+        `━━━━━━━━━━━━━━━━━━\n\n` +
+
+        `Total Questions: ${report.totalQuestions}\n` +
+
+        `Attempted: ${report.answered}\n` +
+
+        `Correct: ${report.correct}\n` +
+
+        `Wrong: ${report.wrong}\n` +
+
+        `Unanswered: ${report.unanswered}\n\n` +
+
+        `🏆 Score: ${report.score} / ${report.totalQuestions}\n` +
+
+        `🎯 Accuracy: ${report.accuracy}%\n\n` +
+
+        `━━━━━━━━━━━━━━━━━━\n` +
+
+        `📝 COMPLETE QUESTION REPORT\n`;
+
+
+    messages.push(summary);
+
+
+    // Add every question with all options and answers.
+
+    report.questions.forEach(q => {
+
+        let questionMessage =
+
+            `\n━━━━━━━━━━━━━━━━━━\n` +
+
+            `Question ${q.questionNumber}\n` +
+
+            `${cleanReportText(q.question)}\n\n`;
+
+
+        q.options.forEach(option => {
+
+            questionMessage +=
+
+                `${option.label}) ${cleanReportText(option.text)}\n`;
+
+        });
+
+
+        questionMessage += "\n";
+
+
+        if (q.selectedAnswer) {
+
+            questionMessage +=
+
+                `Student Answer: ${q.selectedAnswer.label}) ` +
+
+                `${cleanReportText(q.selectedAnswer.text)}\n`;
+
+        } else {
+
+            questionMessage += `Student Answer: NOT ATTEMPTED\n`;
+
+        }
+
+
+        questionMessage +=
+
+            `Correct Answer: ` +
+
+            q.correctAnswers.map(answer =>
+
+                `${answer.label}) ${cleanReportText(answer.text)}`
+
+            ).join(", ") +
+
+            `\n`;
+
+
+        questionMessage +=
+
+            `Status: ${q.status}\n`;
+
+
+        messages.push(questionMessage);
 
     });
 
 
-    if (!response.ok) {
+    // Combine messages while keeping each below Telegram's limit.
 
-        throw new Error("Failed to send report.");
+    const finalMessages = [];
+
+    let currentMessage = "";
+
+
+    messages.forEach(message => {
+
+        if (message.length > maxLength) {
+
+            if (currentMessage) {
+
+                finalMessages.push(currentMessage);
+
+                currentMessage = "";
+
+            }
+
+
+            // Split exceptionally long individual question messages.
+
+            for (let i = 0; i < message.length; i += maxLength) {
+
+                finalMessages.push(message.substring(i, i + maxLength));
+
+            }
+
+        }
+
+        else if ((currentMessage + message).length > maxLength) {
+
+            finalMessages.push(currentMessage);
+
+            currentMessage = message;
+
+        }
+
+        else {
+
+            currentMessage += message;
+
+        }
+
+    });
+
+
+    if (currentMessage) {
+
+        finalMessages.push(currentMessage);
 
     }
 
 
-    const result = await response.json();
+    // Add message numbering.
+
+    return finalMessages.map((message, index) => {
+
+        return `Part ${index + 1}/${finalMessages.length}\n\n${message}`;
+
+    });
+
+}
 
 
-    if (!result.success) {
+// =============================================
+// SEND COMPLETE REPORT DIRECTLY TO TELEGRAM
+// =============================================
 
-        throw new Error(result.message || "Telegram sending failed.");
+async function sendToTelegram(report) {
+
+    const messages = createTelegramReportMessages(report);
+
+
+    // Send messages one by one to avoid rate issues.
+
+    for (const message of messages) {
+
+        await sendTelegramMessage(message);
+
+        // Small delay between messages.
+
+        await new Promise(resolve => setTimeout(resolve, 300));
 
     }
 
 
-    return result;
+    return true;
 
 }
 
