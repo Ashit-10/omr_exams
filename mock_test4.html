@@ -7,7 +7,13 @@
     <title>Online Test System</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 
     <style>
         body {
@@ -15,7 +21,7 @@
             background-color: #fff;
             color: #0a0a0a;
             margin: 0;
-            padding: 0;
+            padding: 0px;
             box-sizing: border-box;
         }
 
@@ -56,6 +62,7 @@
             padding: 15px;
             background-color: #fafafa;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
         }
 
         .question-box:nth-child(odd) {
@@ -129,7 +136,7 @@
             color: #fff;
             display: none;
             font-weight: bold;
-            z-index: 2000;
+            animation: blast 1.5s forwards;
         }
 
         #notification.correct {
@@ -139,6 +146,18 @@
         #notification.incorrect {
             top: 40%;
             background-color: #d85555;
+        }
+
+        @keyframes blast {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
         }
 
         #questions-left {
@@ -180,6 +199,7 @@
             line-height: 40px;
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: none;
             z-index: 1000;
         }
 
@@ -195,17 +215,8 @@
             background: #f5f5f5;
             border-radius: 10px;
         }
-
-        .exam-end-message h2 {
-            color: #198754;
-            margin-bottom: 20px;
-        }
-
-        .sending-message {
-            color: #0d6efd;
-            font-weight: bold;
-        }
     </style>
+
 </head>
 
 <body>
@@ -217,11 +228,16 @@
         <div id="headname" class="exam-name">Mock Test</div>
 
         <div class="status-bar">
+
             <div id="score-banner">Score: 0 / 0</div>
+
             <div id="questions-left">Questions Left: 0</div>
+
         </div>
 
-        <div id="questions-container"></div>
+        <div id="questions-container">
+            <!-- Questions will be dynamically loaded here -->
+        </div>
 
         <div id="notification"></div>
 
@@ -234,603 +250,126 @@
 
 <script>
 
-    // =========================================
-    // STUDENT NAME MANAGEMENT
-    // =========================================
+// =============================================
+// STUDENT NAME MANAGEMENT
+// =============================================
 
-    let studentName = localStorage.getItem("studentName");
+let studentName = localStorage.getItem("studentName");
 
-    if (!studentName || !studentName.trim()) {
+if (!studentName || studentName.trim() === "") {
 
-        while (!studentName || !studentName.trim()) {
+    while (!studentName || studentName.trim() === "") {
 
-            studentName = prompt("Please enter your name:");
+        studentName = prompt("Please enter your name:");
 
-            if (studentName === null) {
-                alert("Name is required to start the test.");
-                studentName = "";
-            }
-
-            studentName = studentName.trim();
+        if (studentName === null) {
+            alert("Name is required to continue.");
+            studentName = "";
         }
 
-        localStorage.setItem("studentName", studentName);
-    }
-
-
-    // =========================================
-    // URL PARAMETERS
-    // =========================================
-
-    const urlParams = new URLSearchParams(window.location.search);
-
-    const fileLoc = urlParams.get('file');
-    const examFile = urlParams.get('exam');
-
-    let questionsFile;
-    let answersFile;
-
-    if (examFile) {
-
-        questionsFile = fileLoc + `_question.txt`;
-        answersFile = fileLoc + `_ans_key.txt`;
-
-    } else {
-
-        questionsFile = fileLoc + `/question.txt`;
-        answersFile = fileLoc + `/answer.txt`;
+        studentName = studentName.trim();
 
     }
 
-    let subjectName = urlParams.get('subject') || "Mock Test";
+    localStorage.setItem("studentName", studentName);
 
-    const shuffleQuestions = urlParams.get('shuffle') === 'true';
-
-    document.getElementById('headname').textContent = subjectName;
+}
 
 
-    // =========================================
-    // VARIABLES
-    // =========================================
+// =============================================
+// GET QUERY PARAMETERS
+// =============================================
 
-    let questions = [];
-    let score = 0;
+const urlParams = new URLSearchParams(window.location.search);
 
-    let examEnded = false;
+const fileLoc = urlParams.get('file');
 
-    // Store each student's answer.
-    let studentAnswers = [];
+const examFile = urlParams.get('exam');
 
-    const floatingCircle = document.getElementById('floating-circle');
+let questionsFile;
+
+let answersFile;
 
 
-    // =========================================
-    // SHUFFLE FUNCTION
-    // =========================================
+if (examFile) {
 
-    function shuffleArray(array) {
+    questionsFile = fileLoc + `_question.txt`;
 
-        for (let i = array.length - 1; i > 0; i--) {
+    answersFile = fileLoc + `_ans_key.txt`;
 
-            const j = Math.floor(Math.random() * (i + 1));
+} else {
 
-            [array[i], array[j]] = [array[j], array[i]];
+    console.log("else");
 
-        }
+    questionsFile = fileLoc + `/question.txt`;
+
+    answersFile = fileLoc + `/answer.txt`;
+
+}
+
+
+let subjectName = urlParams.get('subject');
+
+const shuffleQuestions = urlParams.get('shuffle') === 'true';
+
+
+if (subjectName) {
+    subjectName = subjectName;
+} else {
+    subjectName = "Mock Test";
+}
+
+
+let headName = document.getElementById('headname');
+
+headName.textContent = subjectName;
+
+
+// =============================================
+// VARIABLES
+// =============================================
+
+let questions = [];
+
+let score = 0;
+
+let studentAnswers = [];
+
+let examEnded = false;
+
+let finalReport = null;
+
+const floatingCircle = document.getElementById('floating-circle');
+
+
+// =============================================
+// SHUFFLE ARRAY
+// =============================================
+
+function shuffleArray(array) {
+
+    for (let i = array.length - 1; i > 0; i--) {
+
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [array[i], array[j]] = [array[j], array[i]];
 
     }
 
+}
 
-    // =========================================
-    // LOAD QUESTIONS AND ANSWERS
-    // =========================================
 
-    async function loadQuestionsAndAnswers() {
+// =============================================
+// TELEGRAM PAGE OPEN NOTIFICATION
+// =============================================
 
-        try {
+async function notifyPageOpened() {
 
-            const [questionsResponse, answersResponse] = await Promise.all([
+    try {
 
-                fetch(questionsFile),
-                fetch(answersFile)
+        const data = {
 
-            ]);
-
-            if (!questionsResponse.ok || !answersResponse.ok) {
-                throw new Error("Unable to load question or answer files.");
-            }
-
-            const questionsText = await questionsResponse.text();
-
-            const answersJson = await answersResponse.json();
-
-
-            const lines = questionsText.split('\n').filter(line => line.trim() !== '');
-
-            let questionList = [];
-
-            let currentQuestion = {};
-
-
-            lines.forEach(line => {
-
-                if (line.match(/^\d+\./)) {
-
-                    if (currentQuestion.question) {
-                        questionList.push(currentQuestion);
-                    }
-
-                    currentQuestion = {
-
-                        question: line.replace(/^\d+\.\s*/, ""),
-
-                        options: []
-
-                    };
-
-                } else if (line.match(/^[A-D]\)/)) {
-
-                    const optionText = line.replace(/^[A-D]\)\s*/, "");
-
-                    currentQuestion.options.push(optionText);
-
-                }
-
-            });
-
-
-            if (currentQuestion.question) {
-                questionList.push(currentQuestion);
-            }
-
-
-            // =========================================
-            // MAP QUESTIONS AND ANSWERS
-            // =========================================
-
-            questions = questionList.map((q, index) => {
-
-                const correctAnswers = answersJson[index + 1];
-
-                const correctAnswerArray = Array.isArray(correctAnswers)
-                    ? correctAnswers
-                    : [correctAnswers];
-
-                let optionsWithIndex = q.options.map((opt, i) => ({
-
-                    opt,
-
-                    originalIndex: i
-
-                }));
-
-
-                if (shuffleQuestions) {
-                    shuffleArray(optionsWithIndex);
-                }
-
-
-                const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
-
-
-                const correctIndices = correctAnswerArray.map(correctAnswer => {
-
-                    const originalIndex = correctAnswer.charCodeAt(0) - 65;
-
-                    return optionsWithIndex.findIndex(
-                        optObj => optObj.originalIndex === originalIndex
-                    );
-
-                }).filter(index => index >= 0);
-
-
-                return {
-
-                    question: q.question,
-
-                    options: shuffledOptions,
-
-                    correctAnswerIndices: correctIndices
-
-                };
-
-            });
-
-
-            if (shuffleQuestions) {
-                shuffleArray(questions);
-            }
-
-
-            // Initialize answer tracking.
-
-            studentAnswers = questions.map(() => ({
-
-                selectedIndex: null,
-
-                isCorrect: null
-
-            }));
-
-
-            displayQuestions();
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            document.getElementById('questions-container').innerHTML =
-
-                `<p class="text-danger">Error loading questions. Please try again.</p>`;
-
-        }
-
-    }
-
-
-
-    // =========================================
-    // HANDLE ANSWER SELECTION
-    // =========================================
-
-    function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
-
-        if (examEnded) return;
-
-        floatingCircle.style.display = 'flex';
-
-
-        const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
-
-        const selectedOptionLabel = selectedRadio.parentElement;
-
-
-        const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
-
-
-        // Save student answer.
-
-        studentAnswers[questionIndex] = {
-
-            selectedIndex: selectedOptionIndex,
-
-            isCorrect: isCorrect
-
-        };
-
-
-        const correctOptions = Array.from(
-
-            document.querySelectorAll(`input[name="question-${questionIndex}"]`)
-
-        ).filter((_, index) => correctOptionIndices.includes(index));
-
-
-        const correctOptionLabels = correctOptions.map(option => option.parentElement);
-
-
-        // Disable all options after answering.
-
-        document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
-
-            radio.disabled = true;
-
-        });
-
-
-        if (isCorrect) {
-
-            showNotification('Correct', 'correct');
-
-            selectedOptionLabel.style.backgroundColor = '#5db160';
-
-            correctOptionLabels.forEach(label => {
-
-                label.style.backgroundColor = '#5db160';
-
-            });
-
-            score++;
-
-        } else {
-
-            showNotification('Incorrect', 'incorrect');
-
-            selectedOptionLabel.style.backgroundColor = '#f4a5a5';
-
-            correctOptionLabels.forEach(label => {
-
-                label.style.backgroundColor = '#5db160';
-
-            });
-
-        }
-
-
-        updateUI();
-
-    }
-
-
-
-    // =========================================
-    // DISPLAY QUESTIONS
-    // =========================================
-
-    function displayQuestions() {
-
-        const container = document.getElementById('questions-container');
-
-        container.innerHTML = '';
-
-
-        questions.forEach((q, index) => {
-
-            const questionBox = document.createElement('div');
-
-            questionBox.classList.add('question-box');
-
-
-            const questionNumber = document.createElement('div');
-
-            questionNumber.classList.add('question-number');
-
-            questionNumber.textContent = `Question ${index + 1}`;
-
-
-            const questionText = document.createElement('div');
-
-            questionText.classList.add('question');
-
-            questionText.innerHTML = q.question;
-
-
-            const optionsList = document.createElement('ul');
-
-            optionsList.classList.add('options');
-
-
-            q.options.forEach((opt, optIndex) => {
-
-                const optionItem = document.createElement('li');
-
-                const label = document.createElement('label');
-
-                const radio = document.createElement('input');
-
-
-                radio.type = 'radio';
-
-                radio.name = `question-${index}`;
-
-                radio.value = String.fromCharCode(65 + optIndex);
-
-
-                radio.addEventListener('change', () => {
-
-                    handleOptionChange(index, optIndex, radio);
-
-                });
-
-
-                label.classList.add('option-label');
-
-                label.appendChild(radio);
-
-
-                const optionLabel = document.createElement('span');
-
-                optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;
-
-                optionLabel.style.display = 'inline-block';
-
-                optionLabel.style.marginRight = '5px';
-
-
-                const optionContent = document.createElement('span');
-
-                optionContent.innerHTML = opt;
-
-
-                label.style.display = 'flex';
-
-                label.style.alignItems = 'flex-start';
-
-                label.style.flexWrap = 'wrap';
-
-
-                label.appendChild(optionLabel);
-
-                label.appendChild(optionContent);
-
-
-                optionItem.appendChild(label);
-
-                optionsList.appendChild(optionItem);
-
-            });
-
-
-            questionBox.appendChild(questionNumber);
-
-            questionBox.appendChild(questionText);
-
-            questionBox.appendChild(optionsList);
-
-            container.appendChild(questionBox);
-
-        });
-
-
-        updateUI();
-
-    }
-
-
-
-    // =========================================
-    // UPDATE SCORE
-    // =========================================
-
-    function updateUI() {
-
-        document.getElementById('score-banner').textContent =
-
-            `Score: ${score} / ${questions.length}`;
-
-
-        const questionsLeft = questions.length - getAnsweredQuestionsCount();
-
-
-        document.getElementById('questions-left').textContent =
-
-            `Questions Left: ${questionsLeft}`;
-
-
-        floatingCircle.textContent = `${score}`;
-
-    }
-
-
-
-    // =========================================
-    // COUNT ANSWERED QUESTIONS
-    // =========================================
-
-    function getAnsweredQuestionsCount() {
-
-        return studentAnswers.filter(answer => answer.selectedIndex !== null).length;
-
-    }
-
-
-
-    // =========================================
-    // NOTIFICATION
-    // =========================================
-
-    function showNotification(message, type) {
-
-        const notification = document.getElementById('notification');
-
-        notification.textContent = message;
-
-        notification.className = type;
-
-        notification.style.display = 'block';
-
-
-        setTimeout(() => {
-
-            notification.style.display = 'none';
-
-        }, 1000);
-
-    }
-
-
-
-    // =========================================
-    // GENERATE COMPLETE TEST REPORT
-    // =========================================
-
-    function generateTestReport() {
-
-        let correctCount = 0;
-
-        let wrongCount = 0;
-
-        let unansweredCount = 0;
-
-
-        const questionDetails = questions.map((q, index) => {
-
-            const answer = studentAnswers[index];
-
-            const selectedIndex = answer.selectedIndex;
-
-
-            const correctAnswers = q.correctAnswerIndices.map(i => ({
-
-                label: String.fromCharCode(65 + i),
-
-                text: q.options[i]
-
-            }));
-
-
-            let selectedAnswer = null;
-
-            if (selectedIndex !== null) {
-
-                selectedAnswer = {
-
-                    label: String.fromCharCode(65 + selectedIndex),
-
-                    text: q.options[selectedIndex]
-
-                };
-
-            }
-
-
-            if (selectedIndex === null) {
-
-                unansweredCount++;
-
-            } else if (answer.isCorrect) {
-
-                correctCount++;
-
-            } else {
-
-                wrongCount++;
-
-            }
-
-
-            return {
-
-                questionNumber: index + 1,
-
-                question: q.question,
-
-                options: q.options.map((option, optionIndex) => ({
-
-                    label: String.fromCharCode(65 + optionIndex),
-
-                    text: option
-
-                })),
-
-                selectedAnswer: selectedAnswer,
-
-                correctAnswers: correctAnswers,
-
-                status: selectedIndex === null
-
-                    ? "UNANSWERED"
-
-                    : answer.isCorrect
-
-                        ? "CORRECT"
-
-                        : "WRONG"
-
-            };
-
-        });
-
-
-        const accuracy = questions.length > 0
-
-            ? ((correctCount / questions.length) * 100).toFixed(2)
-
-            : "0.00";
-
-
-        return {
+            event: "page_open",
 
             studentName: studentName,
 
@@ -838,264 +377,808 @@
 
             page: window.location.href,
 
-            date: new Date().toLocaleString(),
-
-            totalQuestions: questions.length,
-
-            answered: correctCount + wrongCount,
-
-            correct: correctCount,
-
-            wrong: wrongCount,
-
-            unanswered: unansweredCount,
-
-            score: correctCount,
-
-            accuracy: accuracy,
-
-            questions: questionDetails
+            date: new Date().toLocaleString()
 
         };
 
-    }
 
-
-
-    // =========================================
-    // SEND REPORT TO TELEGRAM
-    // =========================================
-
-    async function sendToTelegram(report) {
-
-        const response = await fetch("send-result.php", {
+        await fetch("send-result.php", {
 
             method: "POST",
 
             headers: {
-
                 "Content-Type": "application/json"
-
             },
 
-            body: JSON.stringify(report)
+            body: JSON.stringify(data)
 
         });
 
 
-        if (!response.ok) {
+    } catch (error) {
 
-            throw new Error("Failed to send report to server.");
+        console.warn("Page notification error:", error);
 
+    }
+
+}
+
+
+// Send notification whenever someone opens the page.
+
+notifyPageOpened();
+
+
+// =============================================
+// LOAD QUESTIONS AND ANSWERS
+// =============================================
+
+function loadQuestionsAndAnswers() {
+
+    Promise.all([
+
+        fetch(questionsFile).then(response => {
+
+            if (!response.ok) {
+                throw new Error("Question file not found");
+            }
+
+            return response.text();
+
+        }),
+
+        fetch(answersFile).then(response => {
+
+            if (!response.ok) {
+                throw new Error("Answer file not found");
+            }
+
+            return response.json();
+
+        })
+
+    ])
+
+    .then(([questionsText, answersJson]) => {
+
+        const lines = questionsText.split('\n').filter(line => line.trim() !== '');
+
+        let questionList = [];
+
+        let currentQuestion = {};
+
+
+        lines.forEach(line => {
+
+            if (line.match(/^\d+\./)) {
+
+                if (currentQuestion.question) {
+                    questionList.push(currentQuestion);
+                }
+
+                currentQuestion = {
+
+                    question: line.replace(/^\d+\.\s*/, ""),
+
+                    options: []
+
+                };
+
+            }
+
+            else if (line.match(/^[A-D]\)/)) {
+
+                const optionText = line.replace(/^[A-D]\)\s*/, "");
+
+                currentQuestion.options.push(optionText);
+
+            }
+
+        });
+
+
+        if (currentQuestion.question) {
+            questionList.push(currentQuestion);
         }
 
 
-        const result = await response.json();
+        // Combine questions with corresponding answers.
+
+        questions = questionList.map((q, index) => {
+
+            const correctAnswers = answersJson[index + 1];
+
+            const correctAnswerArray = Array.isArray(correctAnswers)
+                ? correctAnswers
+                : [correctAnswers];
 
 
-        if (!result.success) {
+            let optionsWithIndex = q.options.map((opt, i) => ({
 
-            throw new Error(result.message || "Telegram sending failed.");
+                opt,
 
+                originalIndex: i
+
+            }));
+
+
+            // Shuffle options.
+
+            if (shuffleQuestions) {
+                shuffleArray(optionsWithIndex);
+            }
+
+
+            const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
+
+
+            // Map correct answers to shuffled indices.
+
+            const correctIndices = correctAnswerArray.map(correctAnswer => {
+
+                const originalIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
+
+                return optionsWithIndex.findIndex(optObj =>
+                    optObj.originalIndex === originalIndex
+                );
+
+            }).filter(index => index >= 0);
+
+
+            return {
+
+                question: q.question,
+
+                options: shuffledOptions,
+
+                correctAnswerIndices: correctIndices
+
+            };
+
+        });
+
+
+        // Shuffle questions.
+
+        if (shuffleQuestions) {
+            shuffleArray(questions);
         }
 
 
-        return result;
+        // Initialize answer tracking.
+
+        studentAnswers = questions.map(() => ({
+
+            selectedIndex: null,
+
+            isCorrect: null
+
+        }));
+
+
+        displayQuestions();
+
+    })
+
+    .catch(error => {
+
+        console.error("Error loading questions or answers:", error);
+
+        document.getElementById('questions-container').innerHTML =
+
+            `<p class="text-danger">Error loading questions or answers.</p>`;
+
+    });
+
+}
+
+
+// =============================================
+// HANDLE OPTION CHANGE
+// =============================================
+
+function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
+
+    if (examEnded) return;
+
+
+    floatingCircle.style.display = 'flex';
+
+
+    const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
+
+    const selectedOptionLabel = selectedRadio.parentElement;
+
+
+    const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
+
+
+    // Store student's answer.
+
+    studentAnswers[questionIndex] = {
+
+        selectedIndex: selectedOptionIndex,
+
+        isCorrect: isCorrect
+
+    };
+
+
+    const correctOptions = Array.from(
+
+        document.querySelectorAll(`input[name="question-${questionIndex}"]`)
+
+    ).filter((_, index) => correctOptionIndices.includes(index));
+
+
+    const correctOptionLabels = correctOptions.map(option => option.parentElement);
+
+
+    // Disable all radio buttons.
+
+    document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
+
+        radio.disabled = true;
+
+    });
+
+
+    if (isCorrect) {
+
+        showNotification('Correct', 'correct');
+
+        selectedOptionLabel.style.backgroundColor = '#5db160';
+
+        correctOptionLabels.forEach(label => {
+
+            label.style.backgroundColor = '#5db160';
+
+        });
+
+        score++;
+
+    }
+
+    else {
+
+        showNotification('Incorrect', 'incorrect');
+
+        selectedOptionLabel.style.backgroundColor = '#f4a5a5';
+
+        correctOptionLabels.forEach(label => {
+
+            label.style.backgroundColor = '#5db160';
+
+        });
 
     }
 
 
+    updateUI();
 
-    // =========================================
-    // END EXAM
-    // =========================================
+}
 
-    async function endExam() {
 
-        if (examEnded) return;
+// =============================================
+// DISPLAY QUESTIONS
+// =============================================
 
-        if (questions.length === 0) {
+function displayQuestions() {
 
-            alert("Questions have not loaded yet.");
+    const container = document.getElementById('questions-container');
 
-            return;
+    container.innerHTML = '';
 
-        }
 
+    questions.forEach((q, index) => {
 
-        const confirmation = confirm("Are you sure you want to end the test?");
+        const questionBox = document.createElement('div');
 
-        if (!confirmation) return;
+        questionBox.classList.add('question-box');
 
 
-        examEnded = true;
+        const questionNumber = document.createElement('div');
 
+        questionNumber.classList.add('question-number');
 
-        const endButton = document.getElementById('end-exam-button');
+        questionNumber.textContent = `Question ${index + 1}`;
 
-        endButton.disabled = true;
 
-        endButton.textContent = "Sending";
+        const questionText = document.createElement('div');
 
+        questionText.classList.add('question');
 
-        const report = generateTestReport();
+        questionText.innerHTML = q.question;
 
 
-        const container = document.getElementById('questions-container');
+        const optionsList = document.createElement('ul');
 
+        optionsList.classList.add('options');
 
-        const accuracy = report.accuracy;
 
+        q.options.forEach((opt, optIndex) => {
 
-        container.innerHTML = `
+            const optionItem = document.createElement('li');
 
-            <div class="exam-end-message">
+            const label = document.createElement('label');
 
-                <h2>Exam Completed!</h2>
+            const radio = document.createElement('input');
 
-                <p><strong>Student Name:</strong> ${escapeHTML(studentName)}</p>
 
-                <p><strong>Subject:</strong> ${escapeHTML(subjectName)}</p>
+            radio.type = 'radio';
 
-                <hr>
+            radio.name = `question-${index}`;
 
-                <p><strong>Total Questions:</strong> ${report.totalQuestions}</p>
+            radio.value = String.fromCharCode(65 + optIndex);
 
-                <p><strong>Correct Answers:</strong> ${report.correct}</p>
 
-                <p><strong>Wrong Answers:</strong> ${report.wrong}</p>
+            radio.addEventListener('change', () => {
 
-                <p><strong>Unanswered:</strong> ${report.unanswered}</p>
+                handleOptionChange(index, optIndex, radio);
 
-                <hr>
+            });
 
-                <h3>Final Score: ${report.score} / ${report.totalQuestions}</h3>
 
-                <h4>Accuracy: ${accuracy}%</h4>
+            label.classList.add('option-label');
 
-                <p class="sending-message" id="telegram-status">
+            label.appendChild(radio);
 
-                    Sending result to Telegram...
 
-                </p>
+            const optionLabel = document.createElement('span');
 
-            </div>
+            optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;
 
-        `;
+            optionLabel.style.display = 'inline-block';
 
+            optionLabel.style.marginRight = '5px';
 
-        try {
 
-            await sendToTelegram(report);
+            const optionContent = document.createElement('span');
 
+            optionContent.innerHTML = opt;
 
-            document.getElementById('telegram-status').textContent =
 
-                "✓ Result successfully sent to Telegram!";
+            label.style.display = 'flex';
 
+            label.style.alignItems = 'flex-start';
 
-            document.getElementById('telegram-status').style.color = "#198754";
+            label.style.flexWrap = 'wrap';
 
 
-            endButton.style.display = "none";
+            label.appendChild(optionLabel);
 
+            label.appendChild(optionContent);
 
-        } catch (error) {
 
-            console.error("Telegram error:", error);
+            optionItem.appendChild(label);
 
+            optionsList.appendChild(optionItem);
 
-            document.getElementById('telegram-status').textContent =
+        });
 
-                "✗ Unable to send result. Please try again.";
 
+        questionBox.appendChild(questionNumber);
 
-            document.getElementById('telegram-status').style.color = "#dc3545";
+        questionBox.appendChild(questionText);
 
+        questionBox.appendChild(optionsList);
 
-            endButton.disabled = false;
+        container.appendChild(questionBox);
 
-            endButton.textContent = "Retry";
+    });
 
 
-            // Keep examEnded true to prevent changing the report.
-            // Clicking Retry will resend the same report.
+    updateUI();
 
-            endButton.onclick = async function () {
+}
 
-                endButton.disabled = true;
 
-                endButton.textContent = "Sending";
+// =============================================
+// UPDATE UI
+// =============================================
 
+function updateUI() {
 
-                try {
+    document.getElementById('score-banner').textContent =
 
-                    await sendToTelegram(report);
+        `Score: ${score} / ${questions.length}`;
 
 
-                    document.getElementById('telegram-status').textContent =
+    const questionsLeft = questions.length - getAnsweredQuestionsCount();
 
-                        "✓ Result successfully sent to Telegram!";
 
+    document.getElementById('questions-left').textContent =
 
-                    document.getElementById('telegram-status').style.color = "#198754";
+        `Questions Left: ${questionsLeft}`;
 
-                    endButton.style.display = "none";
 
+    floatingCircle.textContent = `${score}`;
 
-                } catch (retryError) {
+}
 
-                    document.getElementById('telegram-status').textContent =
 
-                        "✗ Sending failed. Please check your connection.";
+// =============================================
+// GET ANSWERED QUESTIONS COUNT
+// =============================================
 
+function getAnsweredQuestionsCount() {
 
-                    endButton.disabled = false;
+    return studentAnswers.filter(answer =>
 
-                }
+        answer.selectedIndex !== null
+
+    ).length;
+
+}
+
+
+// =============================================
+// NOTIFICATION
+// =============================================
+
+function showNotification(message, type) {
+
+    const notification = document.getElementById('notification');
+
+    notification.textContent = message;
+
+    notification.className = type;
+
+    notification.style.display = 'block';
+
+
+    setTimeout(() => {
+
+        notification.style.display = 'none';
+
+    }, 1000);
+
+}
+
+
+// =============================================
+// GENERATE COMPLETE TEST REPORT
+// =============================================
+
+function generateTestReport() {
+
+    let correctCount = 0;
+
+    let wrongCount = 0;
+
+    let unansweredCount = 0;
+
+
+    const questionDetails = questions.map((q, index) => {
+
+        const answer = studentAnswers[index];
+
+        const selectedIndex = answer.selectedIndex;
+
+
+        const correctAnswers = q.correctAnswerIndices.map(i => ({
+
+            label: String.fromCharCode(65 + i),
+
+            text: q.options[i]
+
+        }));
+
+
+        let selectedAnswer = null;
+
+
+        if (selectedIndex !== null) {
+
+            selectedAnswer = {
+
+                label: String.fromCharCode(65 + selectedIndex),
+
+                text: q.options[selectedIndex]
 
             };
 
         }
 
+
+        if (selectedIndex === null) {
+
+            unansweredCount++;
+
+        }
+
+        else if (answer.isCorrect) {
+
+            correctCount++;
+
+        }
+
+        else {
+
+            wrongCount++;
+
+        }
+
+
+        return {
+
+            questionNumber: index + 1,
+
+            question: q.question,
+
+            options: q.options.map((option, optionIndex) => ({
+
+                label: String.fromCharCode(65 + optionIndex),
+
+                text: option
+
+            })),
+
+            selectedAnswer: selectedAnswer,
+
+            correctAnswers: correctAnswers,
+
+            status: selectedIndex === null
+
+                ? "UNANSWERED"
+
+                : answer.isCorrect
+
+                    ? "CORRECT"
+
+                    : "WRONG"
+
+        };
+
+    });
+
+
+    const accuracy = questions.length > 0
+
+        ? ((correctCount / questions.length) * 100).toFixed(2)
+
+        : "0.00";
+
+
+    return {
+
+        event: "test_result",
+
+        studentName: studentName,
+
+        subject: subjectName,
+
+        page: window.location.href,
+
+        date: new Date().toLocaleString(),
+
+        totalQuestions: questions.length,
+
+        answered: correctCount + wrongCount,
+
+        correct: correctCount,
+
+        wrong: wrongCount,
+
+        unanswered: unansweredCount,
+
+        score: correctCount,
+
+        accuracy: accuracy,
+
+        questions: questionDetails
+
+    };
+
+}
+
+
+// =============================================
+// SEND DATA TO TELEGRAM BACKEND
+// =============================================
+
+async function sendToTelegram(report) {
+
+    const response = await fetch("send-result.php", {
+
+        method: "POST",
+
+        headers: {
+
+            "Content-Type": "application/json"
+
+        },
+
+        body: JSON.stringify(report)
+
+    });
+
+
+    if (!response.ok) {
+
+        throw new Error("Failed to send report.");
+
     }
 
 
+    const result = await response.json();
 
-    // =========================================
-    // HTML ESCAPE
-    // =========================================
 
-    function escapeHTML(text) {
+    if (!result.success) {
 
-        return String(text).replace(/[&<>"']/g, function (char) {
-
-            return {
-
-                '&': '&amp;',
-
-                '<': '&lt;',
-
-                '>': '&gt;',
-
-                '"': '&quot;',
-
-                "'": '&#039;'
-
-            }[char];
-
-        });
+        throw new Error(result.message || "Telegram sending failed.");
 
     }
 
 
+    return result;
 
-    // =========================================
-    // START TEST
-    // =========================================
+}
 
-    loadQuestionsAndAnswers();
 
+// =============================================
+// END EXAM
+// NO CONFIRMATION POPUP
+// =============================================
+
+async function endExam() {
+
+    if (examEnded) return;
+
+
+    if (questions.length === 0) return;
+
+
+    // Immediately end the exam.
+
+    examEnded = true;
+
+
+    const endButton = document.getElementById('end-exam-button');
+
+    endButton.disabled = true;
+
+    endButton.textContent = "Sending";
+
+
+    // Generate complete report.
+
+    finalReport = generateTestReport();
+
+
+    const container = document.getElementById('questions-container');
+
+
+    // Display final result.
+
+    container.innerHTML = `
+
+        <div class="exam-end-message">
+
+            <h2>Exam Completed</h2>
+
+            <p><strong>Student Name:</strong> ${escapeHTML(studentName)}</p>
+
+            <p><strong>Subject:</strong> ${escapeHTML(subjectName)}</p>
+
+            <hr>
+
+            <p><strong>Total Questions:</strong> ${finalReport.totalQuestions}</p>
+
+            <p><strong>Correct Answers:</strong> ${finalReport.correct}</p>
+
+            <p><strong>Wrong Answers:</strong> ${finalReport.wrong}</p>
+
+            <p><strong>Unanswered:</strong> ${finalReport.unanswered}</p>
+
+            <hr>
+
+            <h3>Final Score: ${finalReport.score} / ${finalReport.totalQuestions}</h3>
+
+            <h4>Accuracy: ${finalReport.accuracy}%</h4>
+
+            <p id="telegram-status"></p>
+
+        </div>
+
+    `;
+
+
+    // Send report immediately.
+
+    await submitFinalReport();
+
+}
+
+
+// =============================================
+// SUBMIT FINAL REPORT
+// =============================================
+
+async function submitFinalReport() {
+
+    const endButton = document.getElementById('end-exam-button');
+
+    const status = document.getElementById('telegram-status');
+
+
+    try {
+
+        await sendToTelegram(finalReport);
+
+
+        status.textContent = "✓ Result sent successfully";
+
+        status.style.color = "#198754";
+
+
+        endButton.style.display = "none";
+
+
+    }
+
+    catch (error) {
+
+        console.error("Telegram error:", error);
+
+
+        status.textContent = "Sending failed. Click Retry to send again.";
+
+        status.style.color = "#dc3545";
+
+
+        endButton.disabled = false;
+
+        endButton.textContent = "Retry";
+
+
+        endButton.onclick = async function () {
+
+            endButton.disabled = true;
+
+            endButton.textContent = "Sending";
+
+            await submitFinalReport();
+
+        };
+
+    }
+
+}
+
+
+// =============================================
+// HTML ESCAPE
+// =============================================
+
+function escapeHTML(text) {
+
+    return String(text).replace(/[&<>"']/g, function (char) {
+
+        return {
+
+            '&': '&amp;',
+
+            '<': '&lt;',
+
+            '>': '&gt;',
+
+            '"': '&quot;',
+
+            "'": '&#039;'
+
+        }[char];
+
+    });
+
+}
+
+
+// =============================================
+// LOAD QUESTIONS ON PAGE LOAD
+// =============================================
+
+loadQuestionsAndAnswers();
 
 </script>
 
