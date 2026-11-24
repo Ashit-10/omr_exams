@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Test System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: "Noto Sans Odia", "Nirmala UI", "Kalinga", sans-serif;
+            background-color: #fff;
+            color: #0a0a0a;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .test-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            margin: 0 auto;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .exam-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .question-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fafafa;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-box:nth-child(odd) {
+            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.5);
+        }
+
+        .question-box:nth-child(even) {
+            box-shadow: 0 4px 8px rgba(0, 0, 255, 0.5);
+        }
+
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .question {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .options li {
+            margin-bottom: 15px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            background-color: #fff;
+            transition: background-color 0.3s, border-color 0.3s;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            text-align: left;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .options input[type="radio"] {
+            display: none;
+        }
+
+        .options input[type="radio"]:checked + .option-label {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0b5ed7;
+        }
+
+        #score-banner {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        #notification {
+            position: fixed;
+            top: 30%;
+            left: 40%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: #fff;
+            display: none;
+            font-weight: bold;
+            z-index: 2000;
+        }
+
+        #notification.correct {
+            background-color: #64b966;
+        }
+
+        #notification.incorrect {
+            top: 40%;
+            background-color: #d85555;
+        }
+
+        #questions-left {
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        #floating-circle {
+            position: fixed;
+            top: 20%;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        #end-exam-button {
+            position: fixed;
+            top: 30%;
+            right: 20px;
+            width: 60px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        #end-exam-button:disabled {
+            background-color: #888;
+            cursor: not-allowed;
+        }
+
+        .exam-end-message {
+            text-align: center;
+            padding: 25px;
+            margin-top: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .exam-end-message h2 {
+            color: #198754;
+            margin-bottom: 20px;
+        }
+
+        .sending-message {
+            color: #0d6efd;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="test-container">
+
+        <h1>Online Test System</h1>
+
+        <div id="headname" class="exam-name">Mock Test</div>
+
+        <div class="status-bar">
+            <div id="score-banner">Score: 0 / 0</div>
+            <div id="questions-left">Questions Left: 0</div>
+        </div>
+
+        <div id="questions-container"></div>
+
+        <div id="notification"></div>
+
+        <div id="floating-circle"></div>
+
+        <button id="end-exam-button" onclick="endExam()">End</button>
+
+    </div>
+
+
+<script>
+
+    // =========================================
+    // STUDENT NAME MANAGEMENT
+    // =========================================
+
+    let studentName = localStorage.getItem("studentName");
+
+    if (!studentName || !studentName.trim()) {
+
+        while (!studentName || !studentName.trim()) {
+
+            studentName = prompt("Please enter your name:");
+
+            if (studentName === null) {
+                alert("Name is required to start the test.");
+                studentName = "";
+            }
+
+            studentName = studentName.trim();
+        }
+
+        localStorage.setItem("studentName", studentName);
+    }
+
+
+    // =========================================
+    // URL PARAMETERS
+    // =========================================
+
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const fileLoc = urlParams.get('file');
+    const examFile = urlParams.get('exam');
+
+    let questionsFile;
+    let answersFile;
+
+    if (examFile) {
+
+        questionsFile = fileLoc + `_question.txt`;
+        answersFile = fileLoc + `_ans_key.txt`;
+
+    } else {
+
+        questionsFile = fileLoc + `/question.txt`;
+        answersFile = fileLoc + `/answer.txt`;
+
+    }
+
+    let subjectName = urlParams.get('subject') || "Mock Test";
+
+    const shuffleQuestions = urlParams.get('shuffle') === 'true';
+
+    document.getElementById('headname').textContent = subjectName;
+
+
+    // =========================================
+    // VARIABLES
+    // =========================================
+
+    let questions = [];
+    let score = 0;
+
+    let examEnded = false;
+
+    // Store each student's answer.
+    let studentAnswers = [];
+
+    const floatingCircle = document.getElementById('floating-circle');
+
+
+    // =========================================
+    // SHUFFLE FUNCTION
+    // =========================================
+
+    function shuffleArray(array) {
+
+        for (let i = array.length - 1; i > 0; i--) {
+
+            const j = Math.floor(Math.random() * (i + 1));
+
+            [array[i], array[j]] = [array[j], array[i]];
+
+        }
+
+    }
+
+
+    // =========================================
+    // LOAD QUESTIONS AND ANSWERS
+    // =========================================
+
+    async function loadQuestionsAndAnswers() {
+
+        try {
+
+            const [questionsResponse, answersResponse] = await Promise.all([
+
+                fetch(questionsFile),
+                fetch(answersFile)
+
+            ]);
+
+            if (!questionsResponse.ok || !answersResponse.ok) {
+                throw new Error("Unable to load question or answer files.");
+            }
+
+            const questionsText = await questionsResponse.text();
+
+            const answersJson = await answersResponse.json();
+
+
+            const lines = questionsText.split('\n').filter(line => line.trim() !== '');
+
+            let questionList = [];
+
+            let currentQuestion = {};
+
+
+            lines.forEach(line => {
+
+                if (line.match(/^\d+\./)) {
+
+                    if (currentQuestion.question) {
+                        questionList.push(currentQuestion);
+                    }
+
+                    currentQuestion = {
+
+                        question: line.replace(/^\d+\.\s*/, ""),
+
+                        options: []
+
+                    };
+
+                } else if (line.match(/^[A-D]\)/)) {
+
+                    const optionText = line.replace(/^[A-D]\)\s*/, "");
+
+                    currentQuestion.options.push(optionText);
+
+                }
+
+            });
+
+
+            if (currentQuestion.question) {
+                questionList.push(currentQuestion);
+            }
+
+
+            // =========================================
+            // MAP QUESTIONS AND ANSWERS
+            // =========================================
+
+            questions = questionList.map((q, index) => {
+
+                const correctAnswers = answersJson[index + 1];
+
+                const correctAnswerArray = Array.isArray(correctAnswers)
+                    ? correctAnswers
+                    : [correctAnswers];
+
+                let optionsWithIndex = q.options.map((opt, i) => ({
+
+                    opt,
+
+                    originalIndex: i
+
+                }));
+
+
+                if (shuffleQuestions) {
+                    shuffleArray(optionsWithIndex);
+                }
+
+
+                const shuffledOptions = optionsWithIndex.map(optObj => optObj.opt);
+
+
+                const correctIndices = correctAnswerArray.map(correctAnswer => {
+
+                    const originalIndex = correctAnswer.charCodeAt(0) - 65;
+
+                    return optionsWithIndex.findIndex(
+                        optObj => optObj.originalIndex === originalIndex
+                    );
+
+                }).filter(index => index >= 0);
+
+
+                return {
+
+                    question: q.question,
+
+                    options: shuffledOptions,
+
+                    correctAnswerIndices: correctIndices
+
+                };
+
+            });
+
+
+            if (shuffleQuestions) {
+                shuffleArray(questions);
+            }
+
+
+            // Initialize answer tracking.
+
+            studentAnswers = questions.map(() => ({
+
+                selectedIndex: null,
+
+                isCorrect: null
+
+            }));
+
+
+            displayQuestions();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            document.getElementById('questions-container').innerHTML =
+
+                `<p class="text-danger">Error loading questions. Please try again.</p>`;
+
+        }
+
+    }
+
+
+
+    // =========================================
+    // HANDLE ANSWER SELECTION
+    // =========================================
+
+    function handleOptionChange(questionIndex, selectedOptionIndex, selectedRadio) {
+
+        if (examEnded) return;
+
+        floatingCircle.style.display = 'flex';
+
+
+        const correctOptionIndices = questions[questionIndex].correctAnswerIndices;
+
+        const selectedOptionLabel = selectedRadio.parentElement;
+
+
+        const isCorrect = correctOptionIndices.includes(selectedOptionIndex);
+
+
+        // Save student answer.
+
+        studentAnswers[questionIndex] = {
+
+            selectedIndex: selectedOptionIndex,
+
+            isCorrect: isCorrect
+
+        };
+
+
+        const correctOptions = Array.from(
+
+            document.querySelectorAll(`input[name="question-${questionIndex}"]`)
+
+        ).filter((_, index) => correctOptionIndices.includes(index));
+
+
+        const correctOptionLabels = correctOptions.map(option => option.parentElement);
+
+
+        // Disable all options after answering.
+
+        document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach(radio => {
+
+            radio.disabled = true;
+
+        });
+
+
+        if (isCorrect) {
+
+            showNotification('Correct', 'correct');
+
+            selectedOptionLabel.style.backgroundColor = '#5db160';
+
+            correctOptionLabels.forEach(label => {
+
+                label.style.backgroundColor = '#5db160';
+
+            });
+
+            score++;
+
+        } else {
+
+            showNotification('Incorrect', 'incorrect');
+
+            selectedOptionLabel.style.backgroundColor = '#f4a5a5';
+
+            correctOptionLabels.forEach(label => {
+
+                label.style.backgroundColor = '#5db160';
+
+            });
+
+        }
+
+
+        updateUI();
+
+    }
+
+
+
+    // =========================================
+    // DISPLAY QUESTIONS
+    // =========================================
+
+    function displayQuestions() {
+
+        const container = document.getElementById('questions-container');
+
+        container.innerHTML = '';
+
+
+        questions.forEach((q, index) => {
+
+            const questionBox = document.createElement('div');
+
+            questionBox.classList.add('question-box');
+
+
+            const questionNumber = document.createElement('div');
+
+            questionNumber.classList.add('question-number');
+
+            questionNumber.textContent = `Question ${index + 1}`;
+
+
+            const questionText = document.createElement('div');
+
+            questionText.classList.add('question');
+
+            questionText.innerHTML = q.question;
+
+
+            const optionsList = document.createElement('ul');
+
+            optionsList.classList.add('options');
+
+
+            q.options.forEach((opt, optIndex) => {
+
+                const optionItem = document.createElement('li');
+
+                const label = document.createElement('label');
+
+                const radio = document.createElement('input');
+
+
+                radio.type = 'radio';
+
+                radio.name = `question-${index}`;
+
+                radio.value = String.fromCharCode(65 + optIndex);
+
+
+                radio.addEventListener('change', () => {
+
+                    handleOptionChange(index, optIndex, radio);
+
+                });
+
+
+                label.classList.add('option-label');
+
+                label.appendChild(radio);
+
+
+                const optionLabel = document.createElement('span');
+
+                optionLabel.textContent = `${String.fromCharCode(65 + optIndex)}) `;
+
+                optionLabel.style.display = 'inline-block';
+
+                optionLabel.style.marginRight = '5px';
+
+
+                const optionContent = document.createElement('span');
+
+                optionContent.innerHTML = opt;
+
+
+                label.style.display = 'flex';
+
+                label.style.alignItems = 'flex-start';
+
+                label.style.flexWrap = 'wrap';
+
+
+                label.appendChild(optionLabel);
+
+                label.appendChild(optionContent);
+
+
+                optionItem.appendChild(label);
+
+                optionsList.appendChild(optionItem);
+
+            });
+
+
+            questionBox.appendChild(questionNumber);
+
+            questionBox.appendChild(questionText);
+
+            questionBox.appendChild(optionsList);
+
+            container.appendChild(questionBox);
+
+        });
+
+
+        updateUI();
+
+    }
+
+
+
+    // =========================================
+    // UPDATE SCORE
+    // =========================================
+
+    function updateUI() {
+
+        document.getElementById('score-banner').textContent =
+
+            `Score: ${score} / ${questions.length}`;
+
+
+        const questionsLeft = questions.length - getAnsweredQuestionsCount();
+
+
+        document.getElementById('questions-left').textContent =
+
+            `Questions Left: ${questionsLeft}`;
+
+
+        floatingCircle.textContent = `${score}`;
+
+    }
+
+
+
+    // =========================================
+    // COUNT ANSWERED QUESTIONS
+    // =========================================
+
+    function getAnsweredQuestionsCount() {
+
+        return studentAnswers.filter(answer => answer.selectedIndex !== null).length;
+
+    }
+
+
+
+    // =========================================
+    // NOTIFICATION
+    // =========================================
+
+    function showNotification(message, type) {
+
+        const notification = document.getElementById('notification');
+
+        notification.textContent = message;
+
+        notification.className = type;
+
+        notification.style.display = 'block';
+
+
+        setTimeout(() => {
+
+            notification.style.display = 'none';
+
+        }, 1000);
+
+    }
+
+
+
+    // =========================================
+    // GENERATE COMPLETE TEST REPORT
+    // =========================================
+
+    function generateTestReport() {
+
+        let correctCount = 0;
+
+        let wrongCount = 0;
+
+        let unansweredCount = 0;
+
+
+        const questionDetails = questions.map((q, index) => {
+
+            const answer = studentAnswers[index];
+
+            const selectedIndex = answer.selectedIndex;
+
+
+            const correctAnswers = q.correctAnswerIndices.map(i => ({
+
+                label: String.fromCharCode(65 + i),
+
+                text: q.options[i]
+
+            }));
+
+
+            let selectedAnswer = null;
+
+            if (selectedIndex !== null) {
+
+                selectedAnswer = {
+
+                    label: String.fromCharCode(65 + selectedIndex),
+
+                    text: q.options[selectedIndex]
+
+                };
+
+            }
+
+
+            if (selectedIndex === null) {
+
+                unansweredCount++;
+
+            } else if (answer.isCorrect) {
+
+                correctCount++;
+
+            } else {
+
+                wrongCount++;
+
+            }
+
+
+            return {
+
+                questionNumber: index + 1,
+
+                question: q.question,
+
+                options: q.options.map((option, optionIndex) => ({
+
+                    label: String.fromCharCode(65 + optionIndex),
+
+                    text: option
+
+                })),
+
+                selectedAnswer: selectedAnswer,
+
+                correctAnswers: correctAnswers,
+
+                status: selectedIndex === null
+
+                    ? "UNANSWERED"
+
+                    : answer.isCorrect
+
+                        ? "CORRECT"
+
+                        : "WRONG"
+
+            };
+
+        });
+
+
+        const accuracy = questions.length > 0
+
+            ? ((correctCount / questions.length) * 100).toFixed(2)
+
+            : "0.00";
+
+
+        return {
+
+            studentName: studentName,
+
+            subject: subjectName,
+
+            page: window.location.href,
+
+            date: new Date().toLocaleString(),
+
+            totalQuestions: questions.length,
+
+            answered: correctCount + wrongCount,
+
+            correct: correctCount,
+
+            wrong: wrongCount,
+
+            unanswered: unansweredCount,
+
+            score: correctCount,
+
+            accuracy: accuracy,
+
+            questions: questionDetails
+
+        };
+
+    }
+
+
+
+    // =========================================
+    // SEND REPORT TO TELEGRAM
+    // =========================================
+
+    async function sendToTelegram(report) {
+
+        const response = await fetch("send-result.php", {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type": "application/json"
+
+            },
+
+            body: JSON.stringify(report)
+
+        });
+
+
+        if (!response.ok) {
+
+            throw new Error("Failed to send report to server.");
+
+        }
+
+
+        const result = await response.json();
+
+
+        if (!result.success) {
+
+            throw new Error(result.message || "Telegram sending failed.");
+
+        }
+
+
+        return result;
+
+    }
+
+
+
+    // =========================================
+    // END EXAM
+    // =========================================
+
+    async function endExam() {
+
+        if (examEnded) return;
+
+        if (questions.length === 0) {
+
+            alert("Questions have not loaded yet.");
+
+            return;
+
+        }
+
+
+        const confirmation = confirm("Are you sure you want to end the test?");
+
+        if (!confirmation) return;
+
+
+        examEnded = true;
+
+
+        const endButton = document.getElementById('end-exam-button');
+
+        endButton.disabled = true;
+
+        endButton.textContent = "Sending";
+
+
+        const report = generateTestReport();
+
+
+        const container = document.getElementById('questions-container');
+
+
+        const accuracy = report.accuracy;
+
+
+        container.innerHTML = `
+
+            <div class="exam-end-message">
+
+                <h2>Exam Completed!</h2>
+
+                <p><strong>Student Name:</strong> ${escapeHTML(studentName)}</p>
+
+                <p><strong>Subject:</strong> ${escapeHTML(subjectName)}</p>
+
+                <hr>
+
+                <p><strong>Total Questions:</strong> ${report.totalQuestions}</p>
+
+                <p><strong>Correct Answers:</strong> ${report.correct}</p>
+
+                <p><strong>Wrong Answers:</strong> ${report.wrong}</p>
+
+                <p><strong>Unanswered:</strong> ${report.unanswered}</p>
+
+                <hr>
+
+                <h3>Final Score: ${report.score} / ${report.totalQuestions}</h3>
+
+                <h4>Accuracy: ${accuracy}%</h4>
+
+                <p class="sending-message" id="telegram-status">
+
+                    Sending result to Telegram...
+
+                </p>
+
+            </div>
+
+        `;
+
+
+        try {
+
+            await sendToTelegram(report);
+
+
+            document.getElementById('telegram-status').textContent =
+
+                "✓ Result successfully sent to Telegram!";
+
+
+            document.getElementById('telegram-status').style.color = "#198754";
+
+
+            endButton.style.display = "none";
+
+
+        } catch (error) {
+
+            console.error("Telegram error:", error);
+
+
+            document.getElementById('telegram-status').textContent =
+
+                "✗ Unable to send result. Please try again.";
+
+
+            document.getElementById('telegram-status').style.color = "#dc3545";
+
+
+            endButton.disabled = false;
+
+            endButton.textContent = "Retry";
+
+
+            // Keep examEnded true to prevent changing the report.
+            // Clicking Retry will resend the same report.
+
+            endButton.onclick = async function () {
+
+                endButton.disabled = true;
+
+                endButton.textContent = "Sending";
+
+
+                try {
+
+                    await sendToTelegram(report);
+
+
+                    document.getElementById('telegram-status').textContent =
+
+                        "✓ Result successfully sent to Telegram!";
+
+
+                    document.getElementById('telegram-status').style.color = "#198754";
+
+                    endButton.style.display = "none";
+
+
+                } catch (retryError) {
+
+                    document.getElementById('telegram-status').textContent =
+
+                        "✗ Sending failed. Please check your connection.";
+
+
+                    endButton.disabled = false;
+
+                }
+
+            };
+
+        }
+
+    }
+
+
+
+    // =========================================
+    // HTML ESCAPE
+    // =========================================
+
+    function escapeHTML(text) {
+
+        return String(text).replace(/[&<>"']/g, function (char) {
+
+            return {
+
+                '&': '&amp;',
+
+                '<': '&lt;',
+
+                '>': '&gt;',
+
+                '"': '&quot;',
+
+                "'": '&#039;'
+
+            }[char];
+
+        });
+
+    }
+
+
+
+    // =========================================
+    // START TEST
+    // =========================================
+
+    loadQuestionsAndAnswers();
+
+
+</script>
+
+</body>
+</html>
